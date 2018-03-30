@@ -11,10 +11,14 @@
 Make sure to have [golang](https://golang.org/) installed, then do:
 
 ```bash
-go get -u github.com/miguelmota/cointop
+go install github.com/miguelmota/cointop
 ```
 
 ## Usage
+
+```bash
+$ cointop
+```
 
 ### Table commands
 
