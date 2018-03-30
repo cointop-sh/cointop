@@ -250,16 +250,18 @@ func (ct *Cointop) sort(sortby string, desc bool) func(g *gocui.Gui, v *gocui.Vi
 			ct.setTable()
 			return nil
 		})
-		g.Update(func(g *gocui.Gui) error {
-			ct.chartview.Clear()
-			maxX, _ := g.Size()
-			_, cy := ct.chartview.Cursor()
-			coin := "ethereum"
-			ct.chartPoints(maxX, coin)
-			ct.setChart()
-			fmt.Fprint(v, cy)
-			return nil
-		})
+		/*
+			g.Update(func(g *gocui.Gui) error {
+				ct.chartview.Clear()
+				maxX, _ := g.Size()
+				_, cy := ct.chartview.Cursor()
+				coin := "ethereum"
+				ct.chartPoints(maxX, coin)
+				ct.setChart()
+				fmt.Fprint(ct.chartview, cy)
+				return nil
+			})
+		*/
 
 		return nil
 	}
