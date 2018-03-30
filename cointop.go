@@ -58,7 +58,6 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			return err
 		}
 		t := table.New().SetWidth(maxX)
-
 		headers := []string{
 			pad.Right("[r]ank", 13, " "),
 			pad.Right("[n]ame", 13, " "),
@@ -97,73 +96,6 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.updateTable()
 	}
 
-	return nil
-}
-
-func (ct *Cointop) keybindings(g *gocui.Gui) error {
-	if err := g.SetKeybinding("", gocui.KeyArrowDown, gocui.ModNone, ct.cursorDown); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'j', gocui.ModNone, ct.cursorDown); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", gocui.KeyArrowUp, gocui.ModNone, ct.cursorUp); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'k', gocui.ModNone, ct.cursorUp); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", gocui.KeyCtrlD, gocui.ModNone, ct.pageDown); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", gocui.KeyCtrlU, gocui.ModNone, ct.pageUp); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'r', gocui.ModNone, ct.sort("rank", false)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'n', gocui.ModNone, ct.sort("name", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 's', gocui.ModNone, ct.sort("symbol", false)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'p', gocui.ModNone, ct.sort("price", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'm', gocui.ModNone, ct.sort("marketcap", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'v', gocui.ModNone, ct.sort("24hvolume", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", '1', gocui.ModNone, ct.sort("1hchange", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", '2', gocui.ModNone, ct.sort("24hchange", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", '7', gocui.ModNone, ct.sort("7dchange", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 't', gocui.ModNone, ct.sort("totalsupply", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'a', gocui.ModNone, ct.sort("availablesupply", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'l', gocui.ModNone, ct.sort("lastupdated", true)); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", gocui.KeyCtrlC, gocui.ModNone, ct.quit); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", 'q', gocui.ModNone, ct.quit); err != nil {
-		return err
-	}
-	if err := g.SetKeybinding("", gocui.KeyEsc, gocui.ModNone, ct.quit); err != nil {
-		return err
-	}
 	return nil
 }
 
