@@ -11,8 +11,10 @@ import (
 	"github.com/fatih/color"
 	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/cointop/apis"
+	cmc "github.com/miguelmota/cointop/apis/cmc"
+	apitypes "github.com/miguelmota/cointop/apis/types"
 	"github.com/miguelmota/cointop/table"
-	cmc "github.com/miguelmota/go-coinmarketcap"
 	"github.com/willf/pad"
 )
 
@@ -42,7 +44,33 @@ type Cointop struct {
 	table       *table.Table
 	sortdesc    bool
 	currentsort string
-	coins       []*cmc.Coin
+	api         apis.Interface
+	coins       []*apitypes.Coin
+}
+
+func main() {
+	g, err := gocui.NewGui(gocui.Output256)
+	if err != nil {
+		log.Fatalf("new gocui: %v", err)
+	}
+	defer g.Close()
+	g.Cursor = true
+	g.Mouse = true
+	g.Highlight = true
+
+	ct := Cointop{
+		g:   g,
+		api: cmc.New(),
+	}
+	g.SetManagerFunc(ct.layout)
+
+	if err := ct.keybindings(g); err != nil {
+		log.Fatalf("keybindings: %v", err)
+	}
+
+	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
+		log.Fatalf("main loop: %v", err)
+	}
 }
 
 func (ct *Cointop) chartPoints(maxX int, coin string) error {
@@ -59,7 +87,7 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 
 	_ = coin
 	//graphData, err := cmc.GetCoinGraphData(coin, start, end)
-	graphData, err := cmc.GetGlobalMarketGraphData(start, end)
+	graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
 	if err != nil {
 		log.Fatal(err)
 		return nil
@@ -101,30 +129,6 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 
 	ct.chartpoints = points
 	return nil
-}
-
-func main() {
-	g, err := gocui.NewGui(gocui.Output256)
-	if err != nil {
-		log.Fatalf("new gocui: %v", err)
-	}
-	defer g.Close()
-	g.Cursor = true
-	g.Mouse = true
-	g.Highlight = true
-
-	ct := Cointop{
-		g: g,
-	}
-	g.SetManagerFunc(ct.layout)
-
-	if err := ct.keybindings(g); err != nil {
-		log.Fatalf("keybindings: %v", err)
-	}
-
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Fatalf("main loop: %v", err)
-	}
 }
 
 func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
@@ -325,23 +329,23 @@ func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
 	if ct.tableview == nil {
 		return nil
 	}
-	ox, oy := v.Origin()
-	cx, cy := v.Cursor()
-	_, sy := v.Size()
+	ox, oy := ct.tableview.Origin()
+	cx, cy := ct.tableview.Cursor()
+	_, sy := ct.tableview.Size()
 	rows := sy
 	//fmt.Fprint(v, oy)
-	if err := v.SetCursor(cx, cy-rows); err != nil && oy > 0 {
-		if err := v.SetOrigin(ox, oy-rows); err != nil {
+	if err := ct.tableview.SetCursor(cx, cy-rows); err != nil && oy > 0 {
+		if err := ct.tableview.SetOrigin(ox, oy-rows); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func fetchData() ([]*cmc.Coin, error) {
+func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
 	limit := 100
-	result := []*cmc.Coin{}
-	coins, err := cmc.GetAllCoinData(int(limit))
+	result := []*apitypes.Coin{}
+	coins, err := ct.api.GetAllCoinData(int(limit))
 	if err != nil {
 		return result, err
 	}
@@ -362,8 +366,8 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Frame = false
 		ct.chartview = v
+		ct.chartview.Frame = false
 		ct.setChart()
 	}
 
@@ -392,21 +396,22 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 
 		t.Format().Fprint(v)
-		v.Highlight = true
-		v.SelBgColor = gocui.ColorGreen
-		v.SelFgColor = gocui.ColorBlack
-		v.Frame = false
+		ct.headersview = v
+		ct.headersview.Highlight = true
+		ct.headersview.SelBgColor = gocui.ColorGreen
+		ct.headersview.SelFgColor = gocui.ColorBlack
+		ct.headersview.Frame = false
 	}
 
 	if v, err := g.SetView("table", 0, chartHeight+1, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Highlight = true
-		v.SelBgColor = gocui.ColorCyan
-		v.SelFgColor = gocui.ColorBlack
-		v.Frame = false
 		ct.tableview = v
+		ct.tableview.Highlight = true
+		ct.tableview.SelBgColor = gocui.ColorCyan
+		ct.tableview.SelFgColor = gocui.ColorBlack
+		ct.tableview.Frame = false
 		ct.setTable()
 	}
 
@@ -448,7 +453,7 @@ func (ct *Cointop) setTable() error {
 	ct.table.HideColumHeaders = true
 	var err error
 	if len(ct.coins) == 0 {
-		ct.coins, err = fetchData()
+		ct.coins, err = ct.fetchData()
 		if err != nil {
 			return err
 		}
