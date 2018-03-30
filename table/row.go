@@ -1,21 +1,26 @@
 package table
 
+// Row row
 type Row struct {
 	table     *Table
 	values    []interface{}
 	strValues []string
 }
 
+// Rows rows
 type Rows []*Row
 
+// Len count
 func (r Rows) Len() int {
 	return len(r)
 }
 
+// Swap swap rows
 func (r Rows) Swap(i, j int) {
 	r[i], r[j] = r[j], r[i]
 }
 
+// Less less
 func (r Rows) Less(i, j int) bool {
 	sortOrder := r[i].table.sort
 	var k int
@@ -52,13 +57,12 @@ func gt(a interface{}, b interface{}, fn SortFn) bool {
 func lt(a interface{}, b interface{}, fn SortFn) bool {
 	if fn != nil {
 		return fn(a, b)
-	} else {
-		switch a.(type) {
-		case int:
-			return a.(int) < b.(int)
-		case string:
-			return a.(string) < b.(string)
-		}
+	}
+	switch a.(type) {
+	case int:
+		return a.(int) < b.(int)
+	case string:
+		return a.(string) < b.(string)
 	}
 	return false
 }

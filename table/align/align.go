@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// AlignLeft align left
 func AlignLeft(s string, n int) string {
 	if len(s) > n {
 		return s[:n]
@@ -13,6 +14,7 @@ func AlignLeft(s string, n int) string {
 	return fmt.Sprintf("%s%s", s, strings.Repeat(" ", n-len(s)))
 }
 
+// AlignRight align right
 func AlignRight(s string, n int) string {
 	if len(s) > n {
 		return s[:n]
@@ -21,6 +23,7 @@ func AlignRight(s string, n int) string {
 	return fmt.Sprintf("%s%s", strings.Repeat(" ", n-len(s)), s)
 }
 
+// AlignCenter align center
 func AlignCenter(s string, n int) string {
 	if len(s) > n {
 		return s[:n]
