@@ -3,3 +3,6 @@ all:
 
 run:
 	go run cointop.go keybindings.go
+
+build:
+	go build
