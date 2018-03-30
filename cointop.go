@@ -8,21 +8,13 @@ import (
 
 	"github.com/bradfitz/slice"
 	humanize "github.com/dustin/go-humanize"
-	"github.com/fatih/color"
 	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/apis"
-	cmc "github.com/miguelmota/cointop/apis/cmc"
 	apitypes "github.com/miguelmota/cointop/apis/types"
+	"github.com/miguelmota/cointop/color"
+	"github.com/miguelmota/cointop/pad"
 	"github.com/miguelmota/cointop/table"
-	"github.com/willf/pad"
-)
-
-var (
-	white = color.New(color.FgWhite).SprintFunc()
-	green = color.New(color.FgGreen).SprintFunc()
-	red   = color.New(color.FgRed).SprintFunc()
-	cyan  = color.New(color.FgCyan).SprintFunc()
 )
 
 var (
@@ -60,7 +52,7 @@ func main() {
 
 	ct := Cointop{
 		g:   g,
-		api: cmc.New(),
+		api: apis.NewCMC(),
 	}
 	g.SetManagerFunc(ct.layout)
 
@@ -463,27 +455,27 @@ func (ct *Cointop) setTable() error {
 	for _, coin := range ct.coins {
 		unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 		lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
-		colorprice := cyan
-		color1h := white
-		color24h := white
-		color7d := white
+		colorprice := color.Cyan
+		color1h := color.White
+		color24h := color.White
+		color7d := color.White
 		if coin.PercentChange1H > 0 {
-			color1h = green
+			color1h = color.Green
 		}
 		if coin.PercentChange1H < 0 {
-			color1h = red
+			color1h = color.Red
 		}
 		if coin.PercentChange24H > 0 {
-			color24h = green
+			color24h = color.Green
 		}
 		if coin.PercentChange24H < 0 {
-			color24h = red
+			color24h = color.Red
 		}
 		if coin.PercentChange7D > 0 {
-			color7d = green
+			color7d = color.Green
 		}
 		if coin.PercentChange7D < 0 {
-			color7d = red
+			color7d = color.Red
 		}
 		ct.table.AddRow(
 			pad.Left(fmt.Sprint(coin.Rank), 4, " "),
