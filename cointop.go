@@ -40,91 +40,64 @@ type Cointop struct {
 	coins       []*apitypes.Coin
 }
 
-func main() {
-	g, err := gocui.NewGui(gocui.Output256)
-	if err != nil {
-		log.Fatalf("new gocui: %v", err)
-	}
-	defer g.Close()
-	g.Cursor = true
-	g.Mouse = true
-	g.Highlight = true
+func (ct *Cointop) layout(g *gocui.Gui) error {
+	maxX, maxY := g.Size()
 
-	ct := Cointop{
-		g:   g,
-		api: apis.NewCMC(),
-	}
-	g.SetManagerFunc(ct.layout)
-
-	if err := ct.keybindings(g); err != nil {
-		log.Fatalf("keybindings: %v", err)
-	}
-
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Fatalf("main loop: %v", err)
-	}
-}
-
-func (ct *Cointop) chartPoints(maxX int, coin string) error {
-	chart := termui.NewLineChart()
-	chart.Height = 10
-	chart.AxesColor = termui.ColorWhite
-	chart.LineColor = termui.ColorCyan
-	chart.Border = false
-
-	now := time.Now()
-	secs := now.Unix()
-	start := secs - oneDay
-	end := secs
-
-	_ = coin
-	//graphData, err := cmc.GetCoinGraphData(coin, start, end)
-	graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	}
-
-	var data []float64
-	/*
-		for i := range graphData.PriceUSD {
-			data = append(data, graphData.PriceUSD[i][1])
+	chartHeight := 10
+	if v, err := g.SetView("chart", 0, 0, maxX, chartHeight); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
 		}
-	*/
-	for i := range graphData.MarketCapByAvailableSupply {
-		data = append(data, graphData.MarketCapByAvailableSupply[i][1])
+		ct.chartview = v
+		ct.chartview.Frame = false
+		ct.updateChart()
 	}
-	chart.Data = data
-	termui.Body = termui.NewGrid()
-	termui.Body.Width = maxX
-	termui.Body.AddRows(
-		termui.NewRow(
-			termui.NewCol(12, 0, chart),
-		),
-	)
 
-	var points [][]termui.Cell
-	// calculate layout
-	termui.Body.Align()
-	w := termui.Body.Width
-	h := 10
-	row := termui.Body.Rows[0]
-	b := row.Buffer()
-	for i := 0; i < h; i = i + 1 {
-		var rowpoints []termui.Cell
-		for j := 0; j < w; j = j + 1 {
-			p := b.At(j, i)
-			rowpoints = append(rowpoints, p)
+	if v, err := g.SetView("header", 0, chartHeight, maxX, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
 		}
-		points = append(points, rowpoints)
+		t := table.New().SetWidth(maxX)
+
+		headers := []string{
+			pad.Right("[r]ank", 13, " "),
+			pad.Right("[n]ame", 13, " "),
+			pad.Right("[s]ymbol", 8, " "),
+			pad.Left("[p]rice", 10, " "),
+			pad.Left("[m]arket cap", 17, " "),
+			pad.Left("24H [v]olume", 15, " "),
+			pad.Left("[1]H%", 9, " "),
+			pad.Left("[2]4H%", 9, " "),
+			pad.Left("[7]D%", 9, " "),
+			pad.Left("[t]otal supply", 20, " "),
+			pad.Left("[a]vailable supply", 19, " "),
+			pad.Left("[l]ast updated", 17, " "),
+		}
+		for _, h := range headers {
+			t.AddCol(h)
+		}
+
+		t.Format().Fprint(v)
+		ct.headersview = v
+		ct.headersview.Highlight = true
+		ct.headersview.SelBgColor = gocui.ColorGreen
+		ct.headersview.SelFgColor = gocui.ColorBlack
+		ct.headersview.Frame = false
 	}
 
-	ct.chartpoints = points
+	if v, err := g.SetView("table", 0, chartHeight+1, maxX, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		ct.tableview = v
+		ct.tableview.Highlight = true
+		ct.tableview.SelBgColor = gocui.ColorCyan
+		ct.tableview.SelFgColor = gocui.ColorBlack
+		ct.tableview.Frame = false
+		ct.updateTable()
+	}
+
 	return nil
-}
-
-func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
-	return gocui.ErrQuit
 }
 
 func (ct *Cointop) keybindings(g *gocui.Gui) error {
@@ -239,7 +212,7 @@ func (ct *Cointop) sort(sortby string, desc bool) func(g *gocui.Gui, v *gocui.Vi
 		})
 		g.Update(func(g *gocui.Gui) error {
 			ct.tableview.Clear()
-			ct.setTable()
+			ct.updateTable()
 			return nil
 		})
 		/*
@@ -249,7 +222,7 @@ func (ct *Cointop) sort(sortby string, desc bool) func(g *gocui.Gui, v *gocui.Vi
 				_, cy := ct.chartview.Cursor()
 				coin := "ethereum"
 				ct.chartPoints(maxX, coin)
-				ct.setChart()
+				ct.updateChart()
 				fmt.Fprint(ct.chartview, cy)
 				return nil
 			})
@@ -352,67 +325,65 @@ func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
 	return result, nil
 }
 
-func (ct *Cointop) layout(g *gocui.Gui) error {
-	maxX, maxY := g.Size()
+func (ct *Cointop) chartPoints(maxX int, coin string) error {
+	chart := termui.NewLineChart()
+	chart.Height = 10
+	chart.AxesColor = termui.ColorWhite
+	chart.LineColor = termui.ColorCyan
+	chart.Border = false
 
-	chartHeight := 10
-	if v, err := g.SetView("chart", 0, 0, maxX, chartHeight); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		ct.chartview = v
-		ct.chartview.Frame = false
-		ct.setChart()
+	now := time.Now()
+	secs := now.Unix()
+	start := secs - oneDay
+	end := secs
+
+	_ = coin
+	//graphData, err := cmc.GetCoinGraphData(coin, start, end)
+	graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
+	if err != nil {
+		log.Fatal(err)
+		return nil
 	}
 
-	if v, err := g.SetView("header", 0, chartHeight, maxX, maxY); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
+	var data []float64
+	/*
+		for i := range graphData.PriceUSD {
+			data = append(data, graphData.PriceUSD[i][1])
 		}
-		t := table.New().SetWidth(maxX)
+	*/
+	for i := range graphData.MarketCapByAvailableSupply {
+		data = append(data, graphData.MarketCapByAvailableSupply[i][1])
+	}
+	chart.Data = data
+	termui.Body = termui.NewGrid()
+	termui.Body.Width = maxX
+	termui.Body.AddRows(
+		termui.NewRow(
+			termui.NewCol(12, 0, chart),
+		),
+	)
 
-		headers := []string{
-			pad.Right("[r]ank", 13, " "),
-			pad.Right("[n]ame", 13, " "),
-			pad.Right("[s]ymbol", 8, " "),
-			pad.Left("[p]rice", 10, " "),
-			pad.Left("[m]arket cap", 17, " "),
-			pad.Left("24H [v]olume", 15, " "),
-			pad.Left("[1]H%", 9, " "),
-			pad.Left("[2]4H%", 9, " "),
-			pad.Left("[7]D%", 9, " "),
-			pad.Left("[t]otal supply", 20, " "),
-			pad.Left("[a]vailable supply", 19, " "),
-			pad.Left("[l]ast updated", 17, " "),
+	var points [][]termui.Cell
+	// calculate layout
+	termui.Body.Align()
+	w := termui.Body.Width
+	h := 10
+	row := termui.Body.Rows[0]
+	b := row.Buffer()
+	for i := 0; i < h; i = i + 1 {
+		var rowpoints []termui.Cell
+		for j := 0; j < w; j = j + 1 {
+			p := b.At(j, i)
+			rowpoints = append(rowpoints, p)
 		}
-		for _, h := range headers {
-			t.AddCol(h)
-		}
-
-		t.Format().Fprint(v)
-		ct.headersview = v
-		ct.headersview.Highlight = true
-		ct.headersview.SelBgColor = gocui.ColorGreen
-		ct.headersview.SelFgColor = gocui.ColorBlack
-		ct.headersview.Frame = false
+		points = append(points, rowpoints)
 	}
 
-	if v, err := g.SetView("table", 0, chartHeight+1, maxX, maxY); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		ct.tableview = v
-		ct.tableview.Highlight = true
-		ct.tableview.SelBgColor = gocui.ColorCyan
-		ct.tableview.SelFgColor = gocui.ColorBlack
-		ct.tableview.Frame = false
-		ct.setTable()
-	}
-
+	ct.chartpoints = points
 	return nil
 }
 
-func (ct *Cointop) setChart() error {
+func (ct *Cointop) updateChart() error {
 	maxX, _ := ct.g.Size()
 	if len(ct.chartpoints) == 0 {
 		ct.chartPoints(maxX, "bitcoin")
@@ -429,7 +400,7 @@ func (ct *Cointop) setChart() error {
 	return nil
 }
 
-func (ct *Cointop) setTable() error {
+func (ct *Cointop) updateTable() error {
 	maxX, _ := ct.g.Size()
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.AddCol("")
@@ -496,4 +467,33 @@ func (ct *Cointop) setTable() error {
 
 	ct.table.Format().Fprint(ct.tableview)
 	return nil
+}
+
+func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
+}
+
+func main() {
+	g, err := gocui.NewGui(gocui.Output256)
+	if err != nil {
+		log.Fatalf("new gocui: %v", err)
+	}
+	defer g.Close()
+	g.Cursor = true
+	g.Mouse = true
+	g.Highlight = true
+
+	ct := Cointop{
+		g:   g,
+		api: apis.NewCMC(),
+	}
+	g.SetManagerFunc(ct.layout)
+
+	if err := ct.keybindings(g); err != nil {
+		log.Fatalf("keybindings: %v", err)
+	}
+
+	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
+		log.Fatalf("main loop: %v", err)
+	}
 }
