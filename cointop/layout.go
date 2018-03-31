@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"github.com/jroimartin/gocui"
+	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
 )
@@ -40,7 +41,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		t := table.New().SetWidth(maxX)
 		headers := []string{
 			pad.Right("[r]ank", 7, " "),
-			pad.Right("[n]ame", 22, " "),
+			pad.Right("[n]ame", 18, " "),
 			pad.Right("[s]ymbol", 8, " "),
 			pad.Left("[p]rice", 13, " "),
 			pad.Left("[m]arket cap", 17, " "),
@@ -98,4 +99,19 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	return nil
+}
+
+func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
+	result := []*apitypes.Coin{}
+	coins, err := ct.api.GetAllCoinData()
+	if err != nil {
+		return result, err
+	}
+
+	for i := range coins {
+		coin := coins[i]
+		result = append(result, &coin)
+	}
+
+	return result, nil
 }

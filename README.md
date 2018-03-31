@@ -85,6 +85,15 @@ List of shortcuts:
     export PATH=$PATH:$GOPATH/bin
     ```
 
+## TODO
+
+- markets/exchanges
+- search, using /
+- euro/yen
+- mark favorites
+- cryptocompare api
+- more cool stuff
+
 ## Authors
 
 - [Miguel Mota](https://github.com/miguelmota)

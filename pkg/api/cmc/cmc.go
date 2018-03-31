@@ -69,3 +69,21 @@ func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (types.Market
 	ret.VolumeUSD = graphData.VolumeUSD
 	return ret, nil
 }
+
+// GetGlobalMarketData gets global market data
+func (s *Service) GetGlobalMarketData() (types.GlobalMarketData, error) {
+	ret := types.GlobalMarketData{}
+	market, err := cmc.GetGlobalMarketData()
+	if err != nil {
+		return ret, err
+	}
+	ret = types.GlobalMarketData{
+		TotalMarketCapUSD:            market.TotalMarketCapUSD,
+		Total24HVolumeUSD:            market.Total24HVolumeUSD,
+		BitcoinPercentageOfMarketCap: market.BitcoinPercentageOfMarketCap,
+		ActiveCurrencies:             market.ActiveCurrencies,
+		ActiveAssets:                 market.ActiveCurrencies,
+		ActiveMarkets:                market.ActiveAssets,
+	}
+	return ret, nil
+}

@@ -1,14 +1,12 @@
 package cointop
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/pkg/api"
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -35,32 +33,6 @@ type Cointop struct {
 	sortby      string
 	api         api.Interface
 	coins       []*apitypes.Coin
-}
-
-func (ct *Cointop) rowChanged() {
-	ct.showLink()
-}
-
-func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
-	result := []*apitypes.Coin{}
-	coins, err := ct.api.GetAllCoinData()
-	if err != nil {
-		return result, err
-	}
-
-	for i := range coins {
-		coin := coins[i]
-		result = append(result, &coin)
-	}
-
-	return result, nil
-}
-
-func (ct *Cointop) updateMarket() error {
-	maxX, _ := ct.g.Size()
-	s := ""
-	fmt.Fprintln(ct.marketview, pad.Right(fmt.Sprintf("30D %s", s), maxX, " "))
-	return nil
 }
 
 // Run runs cointop
