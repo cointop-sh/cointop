@@ -77,7 +77,11 @@ func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
 	_, sy := ct.tableview.Size()
 	rows := sy
 	if err := ct.tableview.SetCursor(cx, cy-rows); err != nil && oy > 0 {
-		if err := ct.tableview.SetOrigin(ox, oy-rows); err != nil {
+		k := oy - rows
+		if k < 0 {
+			k = 0
+		}
+		if err := ct.tableview.SetOrigin(ox, k); err != nil {
 			return err
 		}
 	}
