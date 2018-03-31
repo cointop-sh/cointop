@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "downloading..."
-curl -s "https://github.com/miguelmota/cointop/raw/master/bin/cointop" -o cointop
+wget "https://github.com/miguelmota/cointop/raw/master/bin/cointop" -O cointop
 echo "installing..."
 chmod +x cointop
 mv cointop /usr/local/bin/
