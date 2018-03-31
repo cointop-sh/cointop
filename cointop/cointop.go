@@ -32,7 +32,7 @@ type Cointop struct {
 	table       *table.Table
 	statusview  *gocui.View
 	sortdesc    bool
-	currentsort string
+	sortby      string
 	api         api.Interface
 	coins       []*apitypes.Coin
 }
@@ -42,9 +42,8 @@ func (ct *Cointop) rowChanged() {
 }
 
 func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
-	limit := 100
 	result := []*apitypes.Coin{}
-	coins, err := ct.api.GetAllCoinData(int(limit))
+	coins, err := ct.api.GetAllCoinData()
 	if err != nil {
 		return result, err
 	}
@@ -75,8 +74,10 @@ func Run() {
 	g.Mouse = true
 	g.Highlight = true
 	ct := Cointop{
-		g:   g,
-		api: api.NewCMC(),
+		g:        g,
+		api:      api.NewCMC(),
+		sortdesc: true,
+		sortby:   "rank",
 	}
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {

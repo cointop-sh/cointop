@@ -15,9 +15,9 @@ func New() *Service {
 }
 
 // GetAllCoinData gets all coin data
-func (s *Service) GetAllCoinData(limit int) (map[string]types.Coin, error) {
+func (s *Service) GetAllCoinData() (map[string]types.Coin, error) {
 	ret := make(map[string]types.Coin)
-	coins, err := cmc.GetAllCoinData(int(limit))
+	coins, err := cmc.GetAllCoinData(0)
 	if err != nil {
 		return ret, err
 	}
