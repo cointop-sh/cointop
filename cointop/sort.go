@@ -1,4 +1,4 @@
-package main
+package cointop
 
 import (
 	"github.com/bradfitz/slice"
