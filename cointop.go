@@ -3,10 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/bradfitz/slice"
 	humanize "github.com/dustin/go-humanize"
 	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
@@ -34,6 +35,7 @@ type Cointop struct {
 	headersview *gocui.View
 	tableview   *gocui.View
 	table       *table.Table
+	statusview  *gocui.View
 	sortdesc    bool
 	currentsort string
 	api         apis.Interface
@@ -93,162 +95,26 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
 		ct.updateTable()
+		ct.rowChanged()
 	}
 
-	if v, err := g.SetView("footer", 0, maxY-2, maxX, maxY); err != nil {
+	if v, err := g.SetView("status", 0, maxY-2, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Frame = false
-		v.Highlight = true
-		v.SelBgColor = gocui.ColorCyan
-		v.SelFgColor = gocui.ColorBlack
-		fmt.Fprintln(v, pad.Right("[q]uit", maxX, " "))
+		ct.statusview = v
+		ct.statusview.Frame = false
+		ct.statusview.Highlight = true
+		ct.statusview.SelBgColor = gocui.ColorCyan
+		ct.statusview.SelFgColor = gocui.ColorBlack
+		ct.updateStatus("")
 	}
 
 	return nil
 }
 
-func (ct *Cointop) sort(sortby string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
-	return func(g *gocui.Gui, v *gocui.View) error {
-		if ct.currentsort == sortby {
-			ct.sortdesc = !ct.sortdesc
-		} else {
-			ct.currentsort = sortby
-			ct.sortdesc = desc
-		}
-		slice.Sort(ct.coins[:], func(i, j int) bool {
-			if ct.sortdesc {
-				i, j = j, i
-			}
-			a := ct.coins[i]
-			b := ct.coins[j]
-			switch sortby {
-			case "rank":
-				return a.Rank < b.Rank
-			case "name":
-				return a.Name < b.Name
-			case "symbol":
-				return a.Symbol < b.Symbol
-			case "price":
-				return a.PriceUSD < b.PriceUSD
-			case "marketcap":
-				return a.MarketCapUSD < b.MarketCapUSD
-			case "24hvolume":
-				return a.USD24HVolume < b.USD24HVolume
-			case "1hchange":
-				return a.PercentChange1H < b.PercentChange1H
-			case "24hchange":
-				return a.PercentChange24H < b.PercentChange24H
-			case "7dchange":
-				return a.PercentChange7D < b.PercentChange7D
-			case "totalsupply":
-				return a.TotalSupply < b.TotalSupply
-			case "availablesupply":
-				return a.AvailableSupply < b.AvailableSupply
-			case "lastupdated":
-				return a.LastUpdated < b.LastUpdated
-			default:
-				return a.Rank < b.Rank
-			}
-		})
-		g.Update(func(g *gocui.Gui) error {
-			ct.tableview.Clear()
-			ct.updateTable()
-			return nil
-		})
-		/*
-			g.Update(func(g *gocui.Gui) error {
-				ct.chartview.Clear()
-				maxX, _ := g.Size()
-				_, cy := ct.chartview.Cursor()
-				coin := "ethereum"
-				ct.chartPoints(maxX, coin)
-				ct.updateChart()
-				fmt.Fprint(ct.chartview, cy)
-				return nil
-			})
-		*/
-
-		return nil
-	}
-}
-
-func (ct *Cointop) cursorDown(g *gocui.Gui, v *gocui.View) error {
-	if ct.tableview == nil {
-		return nil
-	}
-	_, y := ct.tableview.Origin()
-	cx, cy := ct.tableview.Cursor()
-	numRows := len(ct.coins) - 1
-	//fmt.Fprint(v, cy)
-	if (cy + y + 1) > numRows {
-		return nil
-	}
-	if err := ct.tableview.SetCursor(cx, cy+1); err != nil {
-		ox, oy := ct.tableview.Origin()
-		if err := ct.tableview.SetOrigin(ox, oy+1); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (ct *Cointop) cursorUp(g *gocui.Gui, v *gocui.View) error {
-	if ct.tableview == nil {
-		return nil
-	}
-	ox, oy := ct.tableview.Origin()
-	cx, cy := ct.tableview.Cursor()
-	//fmt.Fprint(v, oy)
-	if err := ct.tableview.SetCursor(cx, cy-1); err != nil && oy > 0 {
-		if err := ct.tableview.SetOrigin(ox, oy-1); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (ct *Cointop) pageDown(g *gocui.Gui, v *gocui.View) error {
-	if ct.tableview == nil {
-		return nil
-	}
-	_, y := ct.tableview.Origin()
-	cx, cy := ct.tableview.Cursor()
-	numRows := len(ct.coins) - 1
-	_, sy := ct.tableview.Size()
-	rows := sy
-	if (cy + y + rows) > numRows {
-		// go to last row
-		ct.tableview.SetCursor(cx, numRows)
-		ox, _ := ct.tableview.Origin()
-		ct.tableview.SetOrigin(ox, numRows)
-		return nil
-	}
-	if err := ct.tableview.SetCursor(cx, cy+rows); err != nil {
-		ox, oy := ct.tableview.Origin()
-		if err := ct.tableview.SetOrigin(ox, oy+rows); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
-	if ct.tableview == nil {
-		return nil
-	}
-	ox, oy := ct.tableview.Origin()
-	cx, cy := ct.tableview.Cursor()
-	_, sy := ct.tableview.Size()
-	rows := sy
-	//fmt.Fprint(v, oy)
-	if err := ct.tableview.SetCursor(cx, cy-rows); err != nil && oy > 0 {
-		if err := ct.tableview.SetOrigin(ox, oy-rows); err != nil {
-			return err
-		}
-	}
-	return nil
+func (ct *Cointop) rowChanged() {
+	ct.showLink()
 }
 
 func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
@@ -411,8 +277,42 @@ func (ct *Cointop) updateTable() error {
 	return nil
 }
 
+func (ct *Cointop) updateStatus(s string) {
+	maxX, _ := ct.g.Size()
+	ct.statusview.Clear()
+	fmt.Fprintln(ct.statusview, pad.Right(fmt.Sprintf("[q]uit %s", s), maxX, " "))
+}
+
+func (ct *Cointop) showLink() {
+	url := ct.rowLink()
+	ct.g.Update(func(g *gocui.Gui) error {
+		ct.updateStatus(fmt.Sprintf("[enter]=%s", url))
+		return nil
+	})
+}
+
+func (ct *Cointop) enter(g *gocui.Gui, v *gocui.View) error {
+	exec.Command("open", ct.rowLink()).Output()
+	return nil
+}
+
 func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
 	return gocui.ErrQuit
+}
+
+func (ct *Cointop) selectedRowIndex() int {
+	_, y := ct.tableview.Origin()
+	_, cy := ct.tableview.Cursor()
+	return y + cy
+}
+
+func (ct *Cointop) selectedCoin() *apitypes.Coin {
+	return ct.coins[ct.selectedRowIndex()]
+}
+
+func (ct *Cointop) rowLink() string {
+	slug := strings.ToLower(strings.Replace(ct.selectedCoin().Name, " ", "-", -1))
+	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
 }
 
 func main() {

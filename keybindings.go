@@ -38,6 +38,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding('t', ct.sort("totalsupply", true))
 	ct.setKeybinding('a', ct.sort("availablesupply", true))
 	ct.setKeybinding('l', ct.sort("lastupdated", true))
+	ct.setKeybinding(gocui.KeyEnter, ct.enter)
+	ct.setKeybinding(gocui.KeySpace, ct.enter)
 	ct.setKeybinding(gocui.KeyCtrlC, ct.quit)
 	ct.setKeybinding('q', ct.quit)
 	ct.setKeybinding(gocui.KeyEsc, ct.quit)
