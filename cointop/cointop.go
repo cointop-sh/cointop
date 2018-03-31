@@ -59,8 +59,8 @@ func (ct *Cointop) fetchData() ([]*apitypes.Coin, error) {
 
 func (ct *Cointop) updateMarket() error {
 	maxX, _ := ct.g.Size()
-	s := "foo"
-	fmt.Fprintln(ct.marketview, pad.Right(fmt.Sprintf("[q]uit %s", s), maxX, " "))
+	s := ""
+	fmt.Fprintln(ct.marketview, pad.Right(fmt.Sprintf("30D %s", s), maxX, " "))
 	return nil
 }
 
