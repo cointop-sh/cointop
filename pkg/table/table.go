@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/miguelmota/cointop/table/align"
+	"github.com/miguelmota/cointop/pkg/table/align"
 )
 
 // Table table

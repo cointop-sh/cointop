@@ -14,6 +14,11 @@ Make sure to have [golang](https://golang.org/) installed, then do:
 go install github.com/miguelmota/cointop
 ```
 
+### Alternatively
+
+```
+```
+
 ## Usage
 
 ```bash

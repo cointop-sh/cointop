@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os/exec"
 
 	"github.com/jroimartin/gocui"
 )
@@ -44,4 +45,13 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding('q', ct.quit)
 	ct.setKeybinding(gocui.KeyEsc, ct.quit)
 	return nil
+}
+
+func (ct *Cointop) enter(g *gocui.Gui, v *gocui.View) error {
+	exec.Command("open", ct.rowLink()).Output()
+	return nil
+}
+
+func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
 }

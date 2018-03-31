@@ -49,10 +49,6 @@
   branch = "master"
   name = "github.com/miguelmota/go-coinmarketcap"
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/willf/pad"
-
 [prune]
   go-tests = true
   unused-packages = true

@@ -1,4 +1,4 @@
-package apis
+package api
 
 // Coin struct
 type Coin struct {
