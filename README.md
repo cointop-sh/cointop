@@ -19,7 +19,7 @@ go install github.com/miguelmota/cointop
 #### Alternatively (without go)
 
 ```
-sudo curl -s https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh | bash
+sudo curl -s "https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh??$(date +%s)" | bash
 ```
 
 ## Usage
