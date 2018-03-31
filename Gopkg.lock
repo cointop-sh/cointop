@@ -65,7 +65,7 @@
   branch = "master"
   name = "github.com/miguelmota/go-coinmarketcap"
   packages = ["."]
-  revision = "05fd2d0c45f763462f90e630da2ddc0392d2cdd3"
+  revision = "9c6b4c2a42d7189f8778825da9640c3efda17d7e"
 
 [[projects]]
   branch = "master"
@@ -81,12 +81,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/willf/pad"
-  packages = ["."]
-  revision = "b3d7806010228b1a954b4d9c4ee4cf6cb476b063"
-
-[[projects]]
-  branch = "master"
   name = "go4.org"
   packages = ["reflectutil"]
   revision = "e6a7f04a962e05f288f348eec6de20fe93b6b292"
@@ -98,7 +92,7 @@
     "html",
     "html/atom"
   ]
-  revision = "6078986fec03a1dcc236c34816c71b0e05018fda"
+  revision = "b68f30494add4df6bd8ef5e82803f308e7f7c59c"
 
 [[projects]]
   branch = "master"
@@ -109,6 +103,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ff54fa52bac3cde3f10f5c237dad28da497594584e4291356b5efd040501fe4e"
+  inputs-digest = "cc43de082ffa9bbc96488c9bfc6659269a914a24c4ff2a04e1d43bfc66a992a4"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,5 +1,17 @@
 package coinmarketcap
 
+// Interface interface
+type Interface interface {
+	GetGlobalMarketData() (GlobalMarketData, error)
+	GetGlobalMarketGraphData(start int64, end int64) (MarketGraph, error)
+	GetAltcoinMarketGraphData(start int64, end int64) (MarketGraph, error)
+	GetCoinData(coin string) (Coin, error)
+	GetAllCoinData(limit int) (map[string]Coin, error)
+	GetCoinGraphData(coin string, start int64, end int64) (CoinGraph, error)
+	GetCoinPriceUSD(coin string) (float64, error)
+	GetCoinMarkets(coin string) ([]Market, error)
+}
+
 // Coin struct
 type Coin struct {
 	ID               string  `json:"id"`

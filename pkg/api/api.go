@@ -1,7 +1,7 @@
-package apis
+package api
 
 import (
-	cmc "github.com/miguelmota/cointop/apis/cmc"
+	cmc "github.com/miguelmota/cointop/pkg/api/cmc"
 )
 
 // NewCMC new CoinMarketCap api
