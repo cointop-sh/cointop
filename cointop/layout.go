@@ -42,15 +42,15 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			pad.Right("[r]ank", 13, " "),
 			pad.Right("[n]ame", 13, " "),
 			pad.Right("[s]ymbol", 8, " "),
-			pad.Left("[p]rice", 10, " "),
+			pad.Left("[p]rice", 13, " "),
 			pad.Left("[m]arket cap", 17, " "),
 			pad.Left("24H [v]olume", 15, " "),
 			pad.Left("[1]H%", 9, " "),
 			pad.Left("[2]4H%", 9, " "),
 			pad.Left("[7]D%", 9, " "),
 			pad.Left("[t]otal supply", 20, " "),
-			pad.Left("[a]vailable supply", 19, " "),
-			pad.Left("[l]ast updated", 17, " "),
+			pad.Left("[a]vailable supply", 18, " "),
+			pad.Left("[l]ast updated", 18, " "),
 		}
 		for _, h := range headers {
 			t.AddCol(h)
@@ -74,6 +74,14 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview.Highlight = true
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
+		var err error
+		if len(ct.coins) == 0 {
+			ct.coins, err = ct.fetchData()
+			if err != nil {
+				return err
+			}
+		}
+		ct.sort(ct.sortby, ct.sortdesc)
 		ct.updateTable()
 		ct.rowChanged()
 	}

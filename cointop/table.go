@@ -29,13 +29,6 @@ func (ct *Cointop) updateTable() error {
 	ct.table.AddCol("")
 	ct.table.AddCol("")
 	ct.table.HideColumHeaders = true
-	var err error
-	if len(ct.coins) == 0 {
-		ct.coins, err = ct.fetchData()
-		if err != nil {
-			return err
-		}
-	}
 	for _, coin := range ct.coins {
 		unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 		lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
@@ -61,9 +54,15 @@ func (ct *Cointop) updateTable() error {
 		if coin.PercentChange7D < 0 {
 			color7d = color.Red
 		}
+		name := coin.Name
+		lastchar := len(name)
+		if lastchar > 20 {
+			lastchar = 20
+			name = fmt.Sprintf("%s...", name[0:17])
+		}
 		ct.table.AddRow(
 			pad.Left(fmt.Sprint(coin.Rank), 4, " "),
-			pad.Right(coin.Name, 22, " "),
+			pad.Right("  "+string(name), 22, " "),
 			pad.Right(coin.Symbol, 6, " "),
 			colorprice(pad.Left(humanize.Commaf(coin.PriceUSD), 12, " ")),
 			pad.Left(humanize.Commaf(coin.MarketCapUSD), 17, " "),

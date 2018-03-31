@@ -6,7 +6,7 @@ import (
 
 // Interface interface
 type Interface interface {
-	GetAllCoinData(limit int) (map[string]types.Coin, error)
+	GetAllCoinData() (map[string]types.Coin, error)
 	GetCoinGraphData(coin string, start int64, end int64) (types.CoinGraph, error)
 	GetGlobalMarketGraphData(start int64, end int64) (types.MarketGraph, error)
 	//GetCoinData(coin string) (types.Coin, error)
