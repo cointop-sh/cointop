@@ -6,8 +6,15 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-func (ct *Cointop) setKeybinding(key gocui.Key, callback func(g *gocui.Gui, v *gocui.View) error) {
-	if err := ct.g.SetKeybinding("", key, gocui.ModNone, callback); err != nil {
+func (ct *Cointop) setKeybinding(key interface{}, callback func(g *gocui.Gui, v *gocui.View) error) {
+	var err error
+	switch t := key.(type) {
+	case gocui.Key:
+		err = ct.g.SetKeybinding("", t, gocui.ModNone, callback)
+	case rune:
+		err = ct.g.SetKeybinding("", t, gocui.ModNone, callback)
+	}
+	if err != nil {
 		log.Fatal(err)
 	}
 }
