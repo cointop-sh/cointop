@@ -42,7 +42,6 @@ type Cointop struct {
 
 func (ct *Cointop) layout(g *gocui.Gui) error {
 	maxX, maxY := g.Size()
-
 	chartHeight := 10
 	if v, err := g.SetView("chart", 0, 0, maxX, chartHeight); err != nil {
 		if err != gocui.ErrUnknownView {
@@ -78,22 +77,33 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 
 		t.Format().Fprint(v)
 		ct.headersview = v
+		ct.headersview.Frame = false
 		ct.headersview.Highlight = true
 		ct.headersview.SelBgColor = gocui.ColorGreen
 		ct.headersview.SelFgColor = gocui.ColorBlack
-		ct.headersview.Frame = false
 	}
 
-	if v, err := g.SetView("table", 0, chartHeight+1, maxX, maxY); err != nil {
+	if v, err := g.SetView("table", 0, chartHeight+1, maxX, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		ct.tableview = v
+		ct.tableview.Frame = false
 		ct.tableview.Highlight = true
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
-		ct.tableview.Frame = false
 		ct.updateTable()
+	}
+
+	if v, err := g.SetView("footer", 0, maxY-2, maxX, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		v.Frame = false
+		v.Highlight = true
+		v.SelBgColor = gocui.ColorCyan
+		v.SelFgColor = gocui.ColorBlack
+		fmt.Fprintln(v, pad.Right("[q]uit", maxX, " "))
 	}
 
 	return nil
