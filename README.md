@@ -16,7 +16,7 @@ Make sure to have [golang](https://golang.org/) installed, then do:
 go install github.com/miguelmota/cointop
 ```
 
-#### Alternatively (without go)
+##### Alternatively (without go)
 
 ```
 sudo curl -s https://git.io/vxKUA | bash
