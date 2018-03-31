@@ -16,7 +16,7 @@ Make sure to have [golang](https://golang.org/) installed, then do:
 go install github.com/miguelmota/cointop
 ```
 
-### Alternatively
+### Alternatively (without go)
 
 ```
 sudo curl -s https://git.io/vxKUA | bash
@@ -85,6 +85,10 @@ List of shortcuts:
     export PATH=$PATH:$GOPATH/bin
     ```
 
+## Author
+
+[Miguel Mota](https://github.com/miguelmota)
+
 ## License
 
-MIT
+Released under the MIT license.
