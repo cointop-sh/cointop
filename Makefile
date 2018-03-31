@@ -2,7 +2,7 @@ all:
 	@echo "no default"
 
 run:
-	go run cointop.go keybindings.go navigation.go sort.go layout.go status.go chart.go table.go
+	go run main.go
 
 # http://macappstore.org/upx
 build: clean

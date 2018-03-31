@@ -1,4 +1,4 @@
-package main
+package cointop
 
 import (
 	"fmt"
@@ -64,7 +64,8 @@ func (ct *Cointop) updateMarket() error {
 	return nil
 }
 
-func main() {
+// Run runs cointop
+func Run() {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)
