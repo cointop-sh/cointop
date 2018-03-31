@@ -19,7 +19,7 @@ go install github.com/miguelmota/cointop
 ### Alternatively
 
 ```
-sudo
+sudo curl -s https://git.io/vxKUA | bash
 ```
 
 ## Usage
