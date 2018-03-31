@@ -34,7 +34,7 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 
 	now := time.Now()
 	secs := now.Unix()
-	start := secs - oneDay
+	start := secs - oneWeek
 	end := secs
 
 	_ = coin
@@ -52,7 +52,7 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 		}
 	*/
 	for i := range graphData.MarketCapByAvailableSupply {
-		data = append(data, graphData.MarketCapByAvailableSupply[i][1])
+		data = append(data, graphData.MarketCapByAvailableSupply[i][1]/1E9)
 	}
 	chart.Data = data
 	termui.Body = termui.NewGrid()
