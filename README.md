@@ -6,6 +6,8 @@
 
 <img src="./assets/screenshot.gif" width="750" />
 
+[`cointop`](https://github.com/miguelmota/cointop) is a fast and tiny (~2mb) command-line interface application for viewing cryptocurrency stats and information in your terminal. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
+
 ## Install
 
 Make sure to have [golang](https://golang.org/) installed, then do:
@@ -17,6 +19,7 @@ go install github.com/miguelmota/cointop
 ### Alternatively
 
 ```
+sudo
 ```
 
 ## Usage
