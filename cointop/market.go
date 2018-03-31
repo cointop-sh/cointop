@@ -14,6 +14,7 @@ func (ct *Cointop) updateMarket() error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(ct.marketview, pad.Right(fmt.Sprintf("%s   Total Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Assets: %s • Active Markets: %s", color.Cyan("cointop"), color.WhiteBold(humanize.Commaf(market.TotalMarketCapUSD)), humanize.Commaf(market.Total24HVolumeUSD), market.BitcoinPercentageOfMarketCap, humanize.Comma(int64(market.ActiveCurrencies)), humanize.Comma(int64(market.ActiveAssets)), humanize.Comma(int64(market.ActiveMarkets))), maxX, " "))
+	timeframe := "7 Day"
+	fmt.Fprintln(ct.marketview, pad.Right(fmt.Sprintf("%s Chart: %s • Total Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s", color.Cyan("cointop"), timeframe, color.WhiteBold(humanize.Commaf(market.TotalMarketCapUSD)), humanize.Commaf(market.Total24HVolumeUSD), market.BitcoinPercentageOfMarketCap, humanize.Comma(int64(market.ActiveCurrencies)), humanize.Comma(int64(market.ActiveMarkets))), maxX, " "))
 	return nil
 }
