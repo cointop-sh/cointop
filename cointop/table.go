@@ -9,7 +9,6 @@ import (
 	humanize "github.com/dustin/go-humanize"
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -58,21 +57,21 @@ func (ct *Cointop) updateTable() error {
 		lastchar := len(name)
 		if lastchar > 20 {
 			lastchar = 20
-			name = fmt.Sprintf("%s...", name[0:17])
+			name = fmt.Sprintf("%s...", name[0:18])
 		}
 		ct.table.AddRow(
-			pad.Left(fmt.Sprint(coin.Rank), 4, " "),
-			pad.Right("  "+string(name), 22, " "),
-			pad.Right(coin.Symbol, 6, " "),
-			colorprice(pad.Left(humanize.Commaf(coin.PriceUSD), 12, " ")),
-			pad.Left(humanize.Commaf(coin.MarketCapUSD), 17, " "),
-			pad.Left(humanize.Commaf(coin.USD24HVolume), 15, " "),
-			color1h(pad.Left(fmt.Sprintf("%.2f%%", coin.PercentChange1H), 9, " ")),
-			color24h(pad.Left(fmt.Sprintf("%.2f%%", coin.PercentChange24H), 9, " ")),
-			color7d(pad.Left(fmt.Sprintf("%.2f%%", coin.PercentChange7D), 9, " ")),
-			pad.Left(humanize.Commaf(coin.TotalSupply), 20, " "),
-			pad.Left(humanize.Commaf(coin.AvailableSupply), 18, " "),
-			pad.Left(fmt.Sprintf("%s", lastUpdated), 18, " "),
+			fmt.Sprintf("%6v ", coin.Rank),
+			fmt.Sprintf("%.22s", name),
+			fmt.Sprintf("%.6s", coin.Symbol),
+			colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.PriceUSD))),
+			fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCapUSD)),
+			fmt.Sprintf("%15s", humanize.Commaf(coin.USD24HVolume)),
+			color1h(fmt.Sprintf("%8.2f%%", coin.PercentChange1H)),
+			color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
+			color7d(fmt.Sprintf("%8.2f%%", coin.PercentChange7D)),
+			fmt.Sprintf("%20s", humanize.Commaf(coin.TotalSupply)),
+			fmt.Sprintf("%18s", humanize.Commaf(coin.AvailableSupply)),
+			fmt.Sprintf("%18s", lastUpdated),
 			// add %percent of cap
 		)
 	}

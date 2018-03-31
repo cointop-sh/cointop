@@ -39,8 +39,8 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		t := table.New().SetWidth(maxX)
 		headers := []string{
-			pad.Right("[r]ank", 13, " "),
-			pad.Right("[n]ame", 13, " "),
+			pad.Right("[r]ank", 7, " "),
+			pad.Right("[n]ame", 22, " "),
 			pad.Right("[s]ymbol", 8, " "),
 			pad.Left("[p]rice", 13, " "),
 			pad.Left("[m]arket cap", 17, " "),
