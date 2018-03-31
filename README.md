@@ -85,9 +85,9 @@ List of shortcuts:
     export PATH=$PATH:$GOPATH/bin
     ```
 
-## Author
+## Authors
 
-[Miguel Mota](https://github.com/miguelmota)
+- [Miguel Mota](https://github.com/miguelmota)
 
 ## License
 
