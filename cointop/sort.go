@@ -6,12 +6,8 @@ import (
 )
 
 func (ct *Cointop) sort(sortby string, desc bool) {
-	if ct.sortby == sortby {
-		ct.sortdesc = !ct.sortdesc
-	} else {
-		ct.sortby = sortby
-		ct.sortdesc = desc
-	}
+	ct.sortby = sortby
+	ct.sortdesc = desc
 	slice.Sort(ct.coins[:], func(i, j int) bool {
 		if ct.sortdesc {
 			i, j = j, i
@@ -51,6 +47,10 @@ func (ct *Cointop) sort(sortby string, desc bool) {
 
 func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
+		if ct.sortby == sortby {
+			desc = !desc
+		}
+
 		ct.sort(sortby, desc)
 		ct.g.Update(func(g *gocui.Gui) error {
 			ct.tableview.Clear()

@@ -7,13 +7,13 @@ import (
 	"time"
 
 	humanize "github.com/dustin/go-humanize"
+	"github.com/jroimartin/gocui"
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
 func (ct *Cointop) refreshTable() error {
-	ct.tableview.Clear()
 	maxX, _ := ct.g.Size()
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.AddCol("")
@@ -77,7 +77,12 @@ func (ct *Cointop) refreshTable() error {
 		)
 	}
 
-	ct.table.Format().Fprint(ct.tableview)
+	ct.g.Update(func(g *gocui.Gui) error {
+		ct.tableview.Clear()
+		ct.table.Format().Fprint(ct.tableview)
+		return nil
+	})
+
 	return nil
 }
 
