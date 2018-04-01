@@ -1,8 +1,6 @@
 package cointop
 
 import (
-	"time"
-
 	"github.com/jroimartin/gocui"
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/pad"
@@ -78,6 +76,8 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
 		ct.updateTable()
+		ct.sort("rank", false)
+		ct.rowChanged()
 	}
 
 	if v, err := g.SetView("status", 0, maxY-2, maxX, maxY); err != nil {
@@ -91,38 +91,39 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.updateStatus("")
 	}
 
-	//ct.intervalFetchData()
+	ct.intervalFetchData()
 	return nil
 }
 
 func (ct *Cointop) updateTable() error {
-	result := []*apitypes.Coin{}
-	coins, err := ct.api.GetAllCoinData()
+	list := []*apitypes.Coin{}
+	coinsmap, err := ct.api.GetAllCoinData()
 	if err != nil {
 		return err
 	}
 
-	for i := range coins {
-		coin := coins[i]
-		result = append(result, &coin)
+	ct.coinsmap = coinsmap
+	for i := range ct.coinsmap {
+		coin := ct.coinsmap[i]
+		list = append(list, &coin)
 	}
 
-	ct.coins = result
+	ct.coins = list
 	ct.sort(ct.sortby, ct.sortdesc)
 	ct.refreshTable()
-	ct.rowChanged()
 	return nil
 }
 
 func (ct *Cointop) intervalFetchData() {
-	ticker := time.NewTicker(5 * time.Second)
 	go func() {
 		for {
 			select {
-			case <-ticker.C:
+			case <-ct.refreshticker.C:
+				ct.refreshmux.Lock()
 				ct.updateTable()
-				//ct.updateMarket()
-				//ct.updateChart()
+				ct.updateMarket()
+				ct.updateChart()
+				ct.refreshmux.Unlock()
 			}
 		}
 	}()

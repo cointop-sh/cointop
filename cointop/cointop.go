@@ -2,6 +2,8 @@ package cointop
 
 import (
 	"log"
+	"sync"
+	"time"
 
 	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
@@ -21,18 +23,21 @@ var (
 
 // Cointop cointop
 type Cointop struct {
-	g           *gocui.Gui
-	marketview  *gocui.View
-	chartview   *gocui.View
-	chartpoints [][]termui.Cell
-	headersview *gocui.View
-	tableview   *gocui.View
-	table       *table.Table
-	statusview  *gocui.View
-	sortdesc    bool
-	sortby      string
-	api         api.Interface
-	coins       []*apitypes.Coin
+	g             *gocui.Gui
+	marketview    *gocui.View
+	chartview     *gocui.View
+	chartpoints   [][]termui.Cell
+	headersview   *gocui.View
+	tableview     *gocui.View
+	table         *table.Table
+	statusview    *gocui.View
+	sortdesc      bool
+	sortby        string
+	api           api.Interface
+	coins         []*apitypes.Coin
+	coinsmap      map[string]apitypes.Coin
+	refreshmux    sync.Mutex
+	refreshticker *time.Ticker
 }
 
 // Run runs cointop
@@ -46,10 +51,9 @@ func Run() {
 	g.Mouse = true
 	g.Highlight = true
 	ct := Cointop{
-		g:        g,
-		api:      api.NewCMC(),
-		sortdesc: true,
-		sortby:   "rank",
+		g:             g,
+		api:           api.NewCMC(),
+		refreshticker: time.NewTicker(1 * time.Minute),
 	}
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {
