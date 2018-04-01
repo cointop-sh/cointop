@@ -6,7 +6,7 @@
 
 <img src="./assets/screenshot.gif" width="880" />
 
-[`cointop`](https://github.com/miguelmota/cointop) is a fast and tiny (~2mb) command-line interface application for viewing cryptocurrency stats and information in your terminal. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
+[`cointop`](https://github.com/miguelmota/cointop) is a fast command-line interface application for viewing cryptocurrency stats and information in your terminal. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
 
 ## Install
 
@@ -84,6 +84,10 @@ List of shortcuts:
     export GOPATH=$HOME/go
     export PATH=$PATH:$GOPATH/bin
     ```
+
+- Q: What is the size of the binary?
+
+  - A: The executable is only ~1.9MB in size.
 
 ## TODO
 
