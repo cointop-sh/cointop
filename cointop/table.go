@@ -12,7 +12,8 @@ import (
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
-func (ct *Cointop) updateTable() error {
+func (ct *Cointop) refreshTable() error {
+	ct.tableview.Clear()
 	maxX, _ := ct.g.Size()
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.AddCol("")
