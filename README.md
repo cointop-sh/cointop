@@ -13,7 +13,7 @@
 Make sure to have [golang](https://golang.org/) installed, then do:
 
 ```bash
-go install github.com/miguelmota/cointop
+go get -u github.com/miguelmota/cointop
 ```
 
 #### Alternatively (without go)
