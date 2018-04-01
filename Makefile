@@ -6,8 +6,8 @@ run:
 
 # http://macappstore.org/upx
 build: clean
-	GOARCH=386 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
-	GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop32 && upx bin/cointop32
+	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
+	env GOARCH=386 go build -ldflags "-s -w" -o bin/cointop32 && upx bin/cointop32
 
 clean:
 	go clean && \
