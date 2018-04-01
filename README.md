@@ -16,11 +16,13 @@ Make sure to have [golang](https://golang.org/) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
+<!--
 #### Alternatively (without go)
 
 ```
 sudo curl -s "https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh?$(date +%s)" | bash
 ```
+-->
 
 ## Usage
 
@@ -88,15 +90,6 @@ List of shortcuts:
 - Q: What is the size of the binary?
 
   - A: The executable is only ~1.9MB in size.
-
-## TODO
-
-- markets/exchanges
-- search, using /
-- euro/yen
-- mark favorites
-- cryptocompare api
-- more cool stuff
 
 ## Authors
 
