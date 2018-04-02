@@ -34,8 +34,11 @@ type Cointop struct {
 	sortdesc      bool
 	sortby        string
 	api           api.Interface
+	allcoins      []*apitypes.Coin
 	coins         []*apitypes.Coin
-	coinsmap      map[string]apitypes.Coin
+	allcoinsmap   map[string]apitypes.Coin
+	page          int
+	perpage       int
 	refreshmux    sync.Mutex
 	refreshticker *time.Ticker
 }
@@ -54,6 +57,10 @@ func Run() {
 		g:             g,
 		api:           api.NewCMC(),
 		refreshticker: time.NewTicker(1 * time.Minute),
+		sortby:        "rank",
+		sortdesc:      false,
+		page:          0,
+		perpage:       100,
 	}
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {

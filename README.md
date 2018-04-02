@@ -38,6 +38,8 @@ List of shortcuts:
 |----|------|
 |`<up>`|navigate up|
 |`<down>`|navigate down|
+|`<right>`|next page|
+|`<left>`|previous page|
 |`<ctrl-u>`|page up|
 |`<ctrl-d>`|page down|
 |`<enter>`|visit highlighted coin on CoinMarketCap|

@@ -89,11 +89,19 @@ func (ct *Cointop) refreshTable() error {
 func (ct *Cointop) selectedRowIndex() int {
 	_, y := ct.tableview.Origin()
 	_, cy := ct.tableview.Cursor()
-	return y + cy
+	idx := y + cy
+	if idx < 0 {
+		idx = 0
+	}
+	if idx >= len(ct.coins) {
+		idx = len(ct.coins) - 1
+	}
+	return idx
 }
 
 func (ct *Cointop) selectedCoin() *apitypes.Coin {
-	return ct.coins[ct.selectedRowIndex()]
+	idx := ct.selectedRowIndex()
+	return ct.coins[idx]
 }
 
 func (ct *Cointop) rowLink() string {

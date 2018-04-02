@@ -3,17 +3,18 @@ package cointop
 import (
 	"github.com/bradfitz/slice"
 	"github.com/jroimartin/gocui"
+	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 )
 
-func (ct *Cointop) sort(sortby string, desc bool) {
+func (ct *Cointop) sort(sortby string, desc bool, list []*apitypes.Coin) {
 	ct.sortby = sortby
 	ct.sortdesc = desc
-	slice.Sort(ct.coins[:], func(i, j int) bool {
+	slice.Sort(list[:], func(i, j int) bool {
 		if ct.sortdesc {
 			i, j = j, i
 		}
-		a := ct.coins[i]
-		b := ct.coins[j]
+		a := list[i]
+		b := list[j]
 		switch sortby {
 		case "rank":
 			return a.Rank < b.Rank
@@ -51,7 +52,7 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 			desc = !desc
 		}
 
-		ct.sort(sortby, desc)
+		ct.sort(sortby, desc, ct.coins)
 		ct.g.Update(func(g *gocui.Gui) error {
 			ct.tableview.Clear()
 			ct.updateTable()

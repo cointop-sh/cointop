@@ -10,7 +10,7 @@ import (
 func (ct *Cointop) updateStatus(s string) {
 	maxX, _ := ct.g.Size()
 	ct.statusview.Clear()
-	fmt.Fprintln(ct.statusview, pad.Right(fmt.Sprintf("[q]uit %s", s), maxX, " "))
+	fmt.Fprintln(ct.statusview, pad.Right(fmt.Sprintf("[q]uit [← →]page %s", s), maxX, " "))
 }
 
 func (ct *Cointop) showLink() {

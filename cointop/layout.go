@@ -1,6 +1,8 @@
 package cointop
 
 import (
+	"math"
+
 	"github.com/jroimartin/gocui"
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/pad"
@@ -75,8 +77,8 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview.Highlight = true
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
+		ct.updateCoins()
 		ct.updateTable()
-		ct.sort("rank", false)
 		ct.rowChanged()
 	}
 
@@ -95,21 +97,67 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	return nil
 }
 
-func (ct *Cointop) updateTable() error {
+func (ct *Cointop) updateCoins() error {
 	list := []*apitypes.Coin{}
-	coinsmap, err := ct.api.GetAllCoinData()
+	allcoinsmap, err := ct.api.GetAllCoinData()
 	if err != nil {
 		return err
 	}
 
-	ct.coinsmap = coinsmap
-	for i := range ct.coinsmap {
-		coin := ct.coinsmap[i]
-		list = append(list, &coin)
+	ct.allcoinsmap = allcoinsmap
+	if len(ct.allcoins) == 0 {
+		for i := range ct.allcoinsmap {
+			coin := ct.allcoinsmap[i]
+			list = append(list, &coin)
+		}
+		ct.allcoins = list
+		ct.sort(ct.sortby, ct.sortdesc, ct.allcoins)
+	} else {
+		// update list in place without changing order
+		for i := range ct.allcoinsmap {
+			cm := ct.allcoinsmap[i]
+			for k := range ct.allcoins {
+				c := ct.allcoins[k]
+				if c.ID == cm.ID {
+					/*
+						if c.ID == "ethereum" {
+							// test
+							cm.PriceUSD = float64(time.Now().Unix())
+						}
+					*/
+					c.ID = cm.ID
+					c.Name = cm.Name
+					c.Symbol = cm.Symbol
+					c.Rank = cm.Rank
+					c.PriceUSD = cm.PriceUSD
+					c.PriceBTC = cm.PriceBTC
+					c.USD24HVolume = cm.USD24HVolume
+					c.MarketCapUSD = cm.MarketCapUSD
+					c.AvailableSupply = cm.AvailableSupply
+					c.TotalSupply = cm.TotalSupply
+					c.PercentChange1H = cm.PercentChange1H
+					c.PercentChange24H = cm.PercentChange24H
+					c.PercentChange7D = cm.PercentChange7D
+					c.LastUpdated = cm.LastUpdated
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func (ct *Cointop) updateTable() error {
+	start := ct.page * ct.perpage
+	end := start + ct.perpage
+	if end >= len(ct.allcoins)-1 {
+		start = int(math.Floor(float64(start/100)) * 100)
+
+		end = len(ct.allcoins) - 1
 	}
 
-	ct.coins = list
-	ct.sort(ct.sortby, ct.sortdesc)
+	sliced := ct.allcoins[start:end]
+	ct.coins = sliced
+	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
 	ct.refreshTable()
 	return nil
 }
@@ -120,6 +168,7 @@ func (ct *Cointop) intervalFetchData() {
 			select {
 			case <-ct.refreshticker.C:
 				ct.refreshmux.Lock()
+				ct.updateCoins()
 				ct.updateTable()
 				ct.updateMarket()
 				ct.updateChart()
