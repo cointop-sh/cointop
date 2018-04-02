@@ -42,6 +42,8 @@ List of shortcuts:
 |`<left>`|previous page|
 |`<ctrl-u>`|page up|
 |`<ctrl-d>`|page down|
+|`<ctrl-n>`|alias to next page|
+|`<ctrl-p>`|alias to previous page|
 |`<enter>`|visit highlighted coin on CoinMarketCap|
 |`<space>`|alias to `<enter>`
 |`j`|alias to `<down>`|
