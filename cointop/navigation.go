@@ -50,7 +50,7 @@ func (ct *Cointop) pageDown(g *gocui.Gui, v *gocui.View) error {
 	numRows := len(ct.coins) - 1
 	_, sy := ct.tableview.Size()
 	rows := sy
-	if (cy + y + rows) > numRows {
+	if (cy + +y + rows) > numRows {
 		// go to last row
 		ct.tableview.SetCursor(cx, numRows)
 		ox, _ := ct.tableview.Origin()
@@ -86,5 +86,21 @@ func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
 		}
 	}
 	ct.rowChanged()
+	return nil
+}
+
+func (ct *Cointop) prevPage(g *gocui.Gui, v *gocui.View) error {
+	if (ct.page - 1) >= 0 {
+		ct.page = ct.page - 1
+	}
+	ct.updateTable()
+	return nil
+}
+
+func (ct *Cointop) nextPage(g *gocui.Gui, v *gocui.View) error {
+	if ((ct.page + 1) * ct.perpage) <= len(ct.allcoins) {
+		ct.page = ct.page + 1
+	}
+	ct.updateTable()
 	return nil
 }

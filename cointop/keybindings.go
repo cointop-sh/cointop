@@ -21,6 +21,8 @@ func (ct *Cointop) setKeybinding(key interface{}, callback func(g *gocui.Gui, v 
 }
 
 func (ct *Cointop) keybindings(g *gocui.Gui) error {
+	ct.setKeybinding(gocui.KeyArrowRight, ct.nextPage)
+	ct.setKeybinding(gocui.KeyArrowLeft, ct.prevPage)
 	ct.setKeybinding(gocui.KeyArrowDown, ct.cursorDown)
 	ct.setKeybinding('j', ct.cursorDown)
 	ct.setKeybinding(gocui.KeyArrowUp, ct.cursorUp)
