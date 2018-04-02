@@ -8,6 +8,22 @@
 
 [`cointop`](https://github.com/miguelmota/cointop) is a fast command-line interface application for viewing cryptocurrency stats and information in your terminal. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
 
+## Features
+
+- Quick sort shortcuts
+- Vim style keys
+- Pagination
+- Color coded
+
+#### Future releases
+
+- Advanced search
+- "Favorites" list
+- Dynamic charts
+- Currency conversion (i.e. Euro, Yen)
+- Markets/Exchanges
+- CryptoCompare API
+
 ## Install
 
 Make sure to have [go](https://golang.org/) (1.9+) installed, then do:

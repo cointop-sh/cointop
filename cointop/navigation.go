@@ -94,6 +94,7 @@ func (ct *Cointop) prevPage(g *gocui.Gui, v *gocui.View) error {
 		ct.page = ct.page - 1
 	}
 	ct.updateTable()
+	ct.rowChanged()
 	return nil
 }
 
@@ -102,5 +103,6 @@ func (ct *Cointop) nextPage(g *gocui.Gui, v *gocui.View) error {
 		ct.page = ct.page + 1
 	}
 	ct.updateTable()
+	ct.rowChanged()
 	return nil
 }
