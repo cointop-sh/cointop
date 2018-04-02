@@ -13,7 +13,7 @@ func (ct *Cointop) updateStatus(s string) {
 	fmt.Fprintln(ct.statusview, pad.Right(fmt.Sprintf("[q]uit [← →]page %s", s), maxX, " "))
 }
 
-func (ct *Cointop) showLink() {
+func (ct *Cointop) refreshRowLink() {
 	url := ct.rowLink()
 	ct.g.Update(func(g *gocui.Gui) error {
 		ct.updateStatus(fmt.Sprintf("[↵]%s", url))
