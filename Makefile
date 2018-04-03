@@ -15,4 +15,4 @@ clean:
 	rm -f bin/cointop32
 
 test:
-	@echo "no tests"
+	go test ./...
