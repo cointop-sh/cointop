@@ -9,7 +9,7 @@ import (
 )
 
 func (ct *Cointop) updateChart() error {
-	maxX, _ := ct.g.Size()
+	maxX := ct.Width()
 	if len(ct.chartpoints) == 0 {
 		ct.chartPoints(maxX, "bitcoin")
 	}

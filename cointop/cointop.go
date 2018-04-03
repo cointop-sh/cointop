@@ -30,7 +30,7 @@ type Cointop struct {
 	headersview   *gocui.View
 	tableview     *gocui.View
 	table         *table.Table
-	statusview    *gocui.View
+	statusbarview *gocui.View
 	sortdesc      bool
 	sortby        string
 	api           api.Interface

@@ -53,23 +53,10 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 		}
 
 		ct.sort(sortby, desc, ct.coins)
-		ct.g.Update(func(g *gocui.Gui) error {
+		ct.Update(func() {
 			ct.tableview.Clear()
 			ct.updateTable()
-			return nil
 		})
-		/*
-			g.Update(func(g *gocui.Gui) error {
-				ct.chartview.Clear()
-				maxX, _ := g.Size()
-				_, cy := ct.chartview.Cursor()
-				coin := "ethereum"
-				ct.chartPoints(maxX, coin)
-				ct.updateChart()
-				fmt.Fprint(ct.chartview, cy)
-				return nil
-			})
-		*/
 
 		ct.rowChanged()
 		return nil
