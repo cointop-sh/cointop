@@ -56,30 +56,30 @@ List of shortcuts:
 |`<down>`|navigate down|
 |`<right>`|next page|
 |`<left>`|previous page|
-|`<ctrl-u>`|page up|
+|`<enter>`|visit highlighted coin on CoinMarketCap|
+|`<esc>`|alias to quit|
+|`<space>`|alias to `<enter>`|
+|`<ctrl-c>`|alias to quit|
 |`<ctrl-d>`|page down|
 |`<ctrl-n>`|alias to next page|
+|`<ctrl-u>`|page up|
 |`<ctrl-p>`|alias to previous page|
-|`<enter>`|visit highlighted coin on CoinMarketCap|
-|`<space>`|alias to `<enter>`
 |`<ctrl-r>`|force refresh|
-|`j`|alias to `<down>`|
-|`k`|alias to `<up>`|
-|`r`|sort by *[r]ank*|
-|`n`|sort by *[n]ame*|
-|`s`|sort by *[s]ymbol*|
-|`p`|sort by *[p]rice*|
-|`m`|sort by *[m]arket cap*|
-|`v`|sort by *24 hour [v]olume*|
 |`1`|sort by *[1] hour change*|
 |`2`|sort by *[2]4 hour change*|
 |`7`|sort by *[7] day change*|
-|`t`|sort by *[t]otal supply*|
 |`a`|sort by *[a]vailable supply*|
+|`j`|alias to `<down>`|
+|`k`|alias to `<up>`|
 |`l`|sort by *[l]ast updated*|
+|`m`|sort by *[m]arket cap*|
+|`n`|sort by *[n]ame*|
+|`p`|sort by *[p]rice*|
+|`r`|sort by *[r]ank*|
+|`s`|sort by *[s]ymbol*|
+|`t`|sort by *[t]otal supply*|
+|`v`|sort by *24 hour [v]olume*|
 |`q`|[q]uit|
-|`<esc>`|alias to quit|
-|`<ctrl-c>`|alias to quit|
 
 <!--
 |`h`|toggle [h]elp|
