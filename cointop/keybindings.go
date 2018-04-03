@@ -38,6 +38,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding('2', ct.sortfn("24hchange", true))
 	ct.setKeybinding('7', ct.sortfn("7dchange", true))
 	ct.setKeybinding('a', ct.sortfn("availablesupply", true))
+	ct.setKeybinding('g', ct.navigateFirstLine)
 	ct.setKeybinding('G', ct.navigateLastLine)
 	ct.setKeybinding('h', ct.prevPage)
 	ct.setKeybinding('j', ct.cursorDown)
