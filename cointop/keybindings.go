@@ -43,11 +43,17 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding('t', ct.sortfn("totalsupply", true))
 	ct.setKeybinding('a', ct.sortfn("availablesupply", true))
 	ct.setKeybinding('l', ct.sortfn("lastupdated", true))
+	ct.setKeybinding(gocui.KeyCtrlR, ct.refresh)
 	ct.setKeybinding(gocui.KeyEnter, ct.enter)
 	ct.setKeybinding(gocui.KeySpace, ct.enter)
 	ct.setKeybinding(gocui.KeyCtrlC, ct.quit)
 	ct.setKeybinding('q', ct.quit)
 	ct.setKeybinding(gocui.KeyEsc, ct.quit)
+	return nil
+}
+
+func (ct *Cointop) refresh(g *gocui.Gui, v *gocui.View) error {
+	ct.forcerefresh <- true
 	return nil
 }
 

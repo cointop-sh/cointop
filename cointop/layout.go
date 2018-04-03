@@ -2,6 +2,8 @@ package cointop
 
 import (
 	"math"
+	"strings"
+	"time"
 
 	"github.com/jroimartin/gocui"
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
@@ -166,14 +168,43 @@ func (ct *Cointop) intervalFetchData() {
 	go func() {
 		for {
 			select {
+			case <-ct.forcerefresh:
+				ct.refreshAll()
 			case <-ct.refreshticker.C:
-				ct.refreshmux.Lock()
-				ct.updateCoins()
-				ct.updateTable()
-				ct.updateMarket()
-				ct.updateChart()
-				ct.refreshmux.Unlock()
+				ct.refreshAll()
 			}
 		}
 	}()
+}
+
+func (ct *Cointop) refreshAll() error {
+	ct.refreshmux.Lock()
+	ct.setRefreshStatus()
+	ct.updateCoins()
+	ct.updateTable()
+	ct.updateMarket()
+	ct.updateChart()
+	ct.refreshmux.Unlock()
+	return nil
+}
+
+func (ct *Cointop) setRefreshStatus() {
+	go func() {
+		ct.loadingTicks("refreshing", 900)
+		ct.updateStatus("")
+		ct.rowChanged()
+	}()
+}
+
+func (ct *Cointop) loadingTicks(s string, t int) {
+	interval := 150
+	k := 0
+	for i := 0; i < (t / interval); i++ {
+		ct.updateStatus(s + strings.Repeat(".", k))
+		time.Sleep(time.Duration(i*interval) * time.Millisecond)
+		k = k + 1
+		if k > 3 {
+			k = 0
+		}
+	}
 }
