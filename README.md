@@ -62,7 +62,7 @@ List of shortcuts:
 |`<ctrl-p>`|alias to previous page|
 |`<enter>`|visit highlighted coin on CoinMarketCap|
 |`<space>`|alias to `<enter>`
-|`<ctr-r>`|force refresh|
+|`<ctrl-r>`|force refresh|
 |`j`|alias to `<down>`|
 |`k`|alias to `<up>`|
 |`r`|sort by *[r]ank*|
