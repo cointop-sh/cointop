@@ -6,7 +6,7 @@
 
 <img src="./assets/screenshot-001.gif" width="880" />
 
-[`cointop`](https://github.com/miguelmota/cointop) is a fast command-line interface application for viewing cryptocurrency stats and information in your terminal. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
+[`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
 
 ## Features
 
