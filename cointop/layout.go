@@ -119,12 +119,7 @@ func (ct *Cointop) updateCoins() error {
 			for k := range ct.allcoins {
 				c := ct.allcoins[k]
 				if c.ID == cm.ID {
-					/*
-						if c.ID == "ethereum" {
-							// test
-							cm.PriceUSD = float64(time.Now().Unix())
-						}
-					*/
+					// TODO: improve this
 					c.ID = cm.ID
 					c.Name = cm.Name
 					c.Symbol = cm.Symbol
