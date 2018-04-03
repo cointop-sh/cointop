@@ -91,6 +91,25 @@ func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
+func (ct *Cointop) navigateLastLine(g *gocui.Gui, v *gocui.View) error {
+	if ct.tableview == nil {
+		return nil
+	}
+	ox, _ := ct.tableview.Origin()
+	cx, _ := ct.tableview.Cursor()
+	_, sy := ct.tableview.Size()
+	l := len(ct.coins)
+	k := l - sy
+	if err := ct.tableview.SetOrigin(ox, k); err != nil {
+		return err
+	}
+	if err := ct.tableview.SetCursor(cx, sy-1); err != nil {
+		return err
+	}
+	ct.rowChanged()
+	return nil
+}
+
 func (ct *Cointop) prevPage(g *gocui.Gui, v *gocui.View) error {
 	if (ct.page - 1) >= 0 {
 		ct.page = ct.page - 1
