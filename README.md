@@ -50,36 +50,39 @@ $ cointop
 
 List of shortcuts:
 
-|Key|Action|
-|----|------|
-|`<up>`|navigate up|
-|`<down>`|navigate down|
-|`<right>`|next page|
-|`<left>`|previous page|
-|`<enter>`|visit highlighted coin on CoinMarketCap|
-|`<esc>`|alias to quit|
-|`<space>`|alias to `<enter>`|
-|`<ctrl-c>`|alias to quit|
-|`<ctrl-d>`|page down|
-|`<ctrl-n>`|alias to next page|
-|`<ctrl-u>`|page up|
-|`<ctrl-p>`|alias to previous page|
-|`<ctrl-r>`|force refresh|
-|`1`|sort by *[1] hour change*|
-|`2`|sort by *[2]4 hour change*|
-|`7`|sort by *[7] day change*|
-|`a`|sort by *[a]vailable supply*|
-|`j`|alias to `<down>`|
-|`k`|alias to `<up>`|
-|`l`|sort by *[l]ast updated*|
-|`m`|sort by *[m]arket cap*|
-|`n`|sort by *[n]ame*|
-|`p`|sort by *[p]rice*|
-|`r`|sort by *[r]ank*|
-|`s`|sort by *[s]ymbol*|
-|`t`|sort by *[t]otal supply*|
-|`v`|sort by *24 hour [v]olume*|
-|`q`|[q]uit|
+Key|Action
+----|------
+`<up>`|navigate up
+`<down>`|navigate down
+`<right>`|next page
+`<left>`|previous page
+`<enter>`|visit highlighted coin on CoinMarketCap
+`<esc>`|alias to quit
+`<space>`|alias to `<enter>`
+`<ctrl-c>`|alias to quit
+`<ctrl-d>`|page down
+`<ctrl-n>`|alias to next page
+`<ctrl-p>`|alias to previous page
+`<ctrl-r>`|force refresh
+`<ctrl-u>`|page up
+`1`|sort by *[1] hour change*
+`2`|sort by *[2]4 hour change*
+`7`|sort by *[7] day change*
+`a`|sort by *[a]vailable supply*
+`G`|navigate to last line
+`h`|alias to previous page
+`j`|alias to `<down>`
+`k`|alias to `<up>`
+`l`|alias to next page
+`m`|sort by *[m]arket cap*
+`n`|sort by *[n]ame*
+`p`|sort by *[p]rice*
+`r`|sort by *[r]ank*
+`s`|sort by *[s]ymbol*
+`t`|sort by *[t]otal supply*
+`u`|sort by *last [u]pdated*
+`v`|sort by *24 hour [v]olume*
+`q`|[q]uit
 
 <!--
 |`h`|toggle [h]elp|
