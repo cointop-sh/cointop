@@ -69,6 +69,7 @@ Key|Action
 <kbd>2</kbd>|sort by *[2]4 hour change*
 <kbd>7</kbd>|sort by *[7] day change*
 <kbd>a</kbd>|sort by *[a]vailable supply*
+<kbd>g</kbd>|navigate to first line
 <kbd>G</kbd>|navigate to last line
 <kbd>h</kbd>|alias to previous page
 <kbd>j</kbd>|alias to navigate down
