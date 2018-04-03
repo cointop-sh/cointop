@@ -9,8 +9,11 @@ import (
 
 func (ct *Cointop) updateStatus(s string) {
 	maxX, _ := ct.g.Size()
-	ct.statusview.Clear()
-	fmt.Fprintln(ct.statusview, pad.Right(fmt.Sprintf("[q]uit [← →]page %s", s), maxX, " "))
+	ct.g.Update(func(g *gocui.Gui) error {
+		ct.statusview.Clear()
+		fmt.Fprintln(ct.statusview, pad.Right(fmt.Sprintf("[q]uit [← →]page %s", s), maxX, " "))
+		return nil
+	})
 }
 
 func (ct *Cointop) refreshRowLink() {

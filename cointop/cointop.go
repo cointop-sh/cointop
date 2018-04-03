@@ -41,6 +41,7 @@ type Cointop struct {
 	perpage       int
 	refreshmux    sync.Mutex
 	refreshticker *time.Ticker
+	forcerefresh  chan bool
 }
 
 // Run runs cointop
@@ -61,6 +62,7 @@ func Run() {
 		sortdesc:      false,
 		page:          0,
 		perpage:       100,
+		forcerefresh:  make(chan bool),
 	}
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {
