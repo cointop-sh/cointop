@@ -52,8 +52,8 @@ List of shortcuts:
 
 Key|Action
 ----|------
-`<up>`|navigate up
-`<down>`|navigate down
+<kbd>↑</kbd>|navigate up
+<kbd>↓</kbd>|navigate down
 `<right>`|next page
 `<left>`|previous page
 `<enter>`|visit highlighted coin on CoinMarketCap
