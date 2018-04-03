@@ -53,7 +53,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			pad.Left("[7]D%", 9, " "),
 			pad.Left("[t]otal supply", 20, " "),
 			pad.Left("[a]vailable supply", 18, " "),
-			pad.Left("[l]ast updated", 18, " "),
+			pad.Left("last [u]pdated", 18, " "),
 		}
 		for _, h := range headers {
 			t.AddCol(h)
