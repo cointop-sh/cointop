@@ -12,7 +12,7 @@ import (
 )
 
 func (ct *Cointop) layout(g *gocui.Gui) error {
-	maxX, maxY := g.Size()
+	maxX, maxY := ct.Size()
 	chartHeight := 10
 	topOffset := 0
 
@@ -84,15 +84,15 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.rowChanged()
 	}
 
-	if v, err := g.SetView("status", 0, maxY-2, maxX, maxY); err != nil {
+	if v, err := g.SetView("statusbar", 0, maxY-2, maxX, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.statusview = v
-		ct.statusview.Frame = false
-		ct.statusview.BgColor = gocui.ColorCyan
-		ct.statusview.FgColor = gocui.ColorBlack
-		ct.updateStatus("")
+		ct.statusbarview = v
+		ct.statusbarview.Frame = false
+		ct.statusbarview.BgColor = gocui.ColorCyan
+		ct.statusbarview.FgColor = gocui.ColorBlack
+		ct.updateStatusbar("")
 	}
 
 	ct.intervalFetchData()
@@ -191,7 +191,7 @@ func (ct *Cointop) refreshAll() error {
 func (ct *Cointop) setRefreshStatus() {
 	go func() {
 		ct.loadingTicks("refreshing", 900)
-		ct.updateStatus("")
+		ct.updateStatusbar("")
 		ct.rowChanged()
 	}()
 }
@@ -200,7 +200,7 @@ func (ct *Cointop) loadingTicks(s string, t int) {
 	interval := 150
 	k := 0
 	for i := 0; i < (t / interval); i++ {
-		ct.updateStatus(s + strings.Repeat(".", k))
+		ct.updateStatusbar(s + strings.Repeat(".", k))
 		time.Sleep(time.Duration(i*interval) * time.Millisecond)
 		k = k + 1
 		if k > 3 {

@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jroimartin/gocui"
 	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/humanize"
@@ -14,7 +13,7 @@ import (
 )
 
 func (ct *Cointop) refreshTable() error {
-	maxX, _ := ct.g.Size()
+	maxX := ct.Width()
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.AddCol("")
 	ct.table.AddCol("")
@@ -77,10 +76,9 @@ func (ct *Cointop) refreshTable() error {
 		)
 	}
 
-	ct.g.Update(func(g *gocui.Gui) error {
+	ct.Update(func() {
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
-		return nil
 	})
 
 	return nil
