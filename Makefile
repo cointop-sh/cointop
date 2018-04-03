@@ -13,3 +13,6 @@ clean:
 	go clean && \
 	rm -f bin/cointop64 && \
 	rm -f bin/cointop32
+
+test:
+	@echo "no tests"
