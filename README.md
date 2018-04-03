@@ -56,15 +56,15 @@ Key|Action
 <kbd>↓</kbd>|navigate down
 <kbd>→</kbd>|next page
 <kbd>←</kbd>|previous page
-<kbd>enter</kbd>|visit highlighted coin on CoinMarketCap
-<kbd>esc</kbd>|alias to quit
-<kbd>space</kbd>|alias to enter key
-<kbd>ctrl</kbd>-<kbd>c</kbd>|alias to quit
-<kbd>ctrl</kbd>-<kbd>d</kbd>|page down
-<kbd>ctrl</kbd>-<kbd>n</kbd>|alias to next page
-<kbd>ctrl</kbd>-<kbd>p</kbd>|alias to previous page
-<kbd>ctrl</kbd>-<kbd>r</kbd>|force refresh
-<kbd>ctrl</kbd>-<kbd>u</kbd>|page up
+<kbd>Enter</kbd>|visit highlighted coin on CoinMarketCap
+<kbd>Esc</kbd>|alias to quit
+<kbd>Space</kbd>|alias to enter key
+<kbd>Ctrl</kbd>+<kbd>c</kbd>|alias to quit
+<kbd>Ctrl</kbd>+<kbd>d</kbd>|page down
+<kbd>Ctrl</kbd>+<kbd>n</kbd>|alias to next page
+<kbd>Ctrl</kbd>+<kbd>p</kbd>|alias to previous page
+<kbd>Ctrl</kbd>+<kbd>r</kbd>|force refresh
+<kbd>Ctrl</kbd>+<kbd>u</kbd>|page up
 <kbd>1</kbd>|sort by *[1] hour change*
 <kbd>2</kbd>|sort by *[2]4 hour change*
 <kbd>7</kbd>|sort by *[7] day change*
