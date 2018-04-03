@@ -3,10 +3,10 @@ package cointop
 import (
 	"github.com/bradfitz/slice"
 	"github.com/jroimartin/gocui"
-	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	apt "github.com/miguelmota/cointop/pkg/api/types"
 )
 
-func (ct *Cointop) sort(sortby string, desc bool, list []*apitypes.Coin) {
+func (ct *Cointop) sort(sortby string, desc bool, list []*apt.Coin) {
 	ct.sortby = sortby
 	ct.sortdesc = desc
 	slice.Sort(list[:], func(i, j int) bool {

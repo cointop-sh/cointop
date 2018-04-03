@@ -14,12 +14,6 @@
   revision = "d9036e2120b5ddfa53f3ebccd618c4af275f47da"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/dustin/go-humanize"
-  packages = ["."]
-  revision = "bb3d318650d48840a39aa21a027c6630e198e626"
-
-[[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
   revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
