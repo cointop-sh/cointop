@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jroimartin/gocui"
-	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
 )
@@ -100,7 +100,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 }
 
 func (ct *Cointop) updateCoins() error {
-	list := []*apitypes.Coin{}
+	list := []*apt.Coin{}
 	allcoinsmap, err := ct.api.GetAllCoinData()
 	if err != nil {
 		return err

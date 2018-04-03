@@ -30,10 +30,6 @@
   name = "github.com/bradfitz/slice"
 
 [[constraint]]
-  branch = "master"
-  name = "github.com/dustin/go-humanize"
-
-[[constraint]]
   name = "github.com/fatih/color"
   version = "1.6.0"
 

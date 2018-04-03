@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	humanize "github.com/dustin/go-humanize"
 	"github.com/jroimartin/gocui"
-	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
+	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -99,7 +99,7 @@ func (ct *Cointop) selectedRowIndex() int {
 	return idx
 }
 
-func (ct *Cointop) selectedCoin() *apitypes.Coin {
+func (ct *Cointop) selectedCoin() *apt.Coin {
 	idx := ct.selectedRowIndex()
 	return ct.coins[idx]
 }

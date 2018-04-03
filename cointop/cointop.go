@@ -8,7 +8,7 @@ import (
 	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/pkg/api"
-	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -34,9 +34,9 @@ type Cointop struct {
 	sortdesc      bool
 	sortby        string
 	api           api.Interface
-	allcoins      []*apitypes.Coin
-	coins         []*apitypes.Coin
-	allcoinsmap   map[string]apitypes.Coin
+	allcoins      []*apt.Coin
+	coins         []*apt.Coin
+	allcoinsmap   map[string]apt.Coin
 	page          int
 	perpage       int
 	refreshmux    sync.Mutex
