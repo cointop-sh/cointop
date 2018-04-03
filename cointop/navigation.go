@@ -11,7 +11,6 @@ func (ct *Cointop) cursorDown(g *gocui.Gui, v *gocui.View) error {
 	_, y := ct.tableview.Origin()
 	cx, cy := ct.tableview.Cursor()
 	numRows := len(ct.coins) - 1
-	//fmt.Fprint(v, cy)
 	if (cy + y + 1) > numRows {
 		return nil
 	}
@@ -31,7 +30,6 @@ func (ct *Cointop) cursorUp(g *gocui.Gui, v *gocui.View) error {
 	}
 	ox, oy := ct.tableview.Origin()
 	cx, cy := ct.tableview.Cursor()
-	//fmt.Fprint(v, oy)
 	if err := ct.tableview.SetCursor(cx, cy-1); err != nil && oy > 0 {
 		if err := ct.tableview.SetOrigin(ox, oy-1); err != nil {
 			return err
