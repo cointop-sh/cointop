@@ -54,35 +54,35 @@ Key|Action
 ----|------
 <kbd>↑</kbd>|navigate up
 <kbd>↓</kbd>|navigate down
-`<right>`|next page
-`<left>`|previous page
-`<enter>`|visit highlighted coin on CoinMarketCap
-`<esc>`|alias to quit
-`<space>`|alias to `<enter>`
-`<ctrl-c>`|alias to quit
-`<ctrl-d>`|page down
-`<ctrl-n>`|alias to next page
-`<ctrl-p>`|alias to previous page
-`<ctrl-r>`|force refresh
-`<ctrl-u>`|page up
-`1`|sort by *[1] hour change*
-`2`|sort by *[2]4 hour change*
-`7`|sort by *[7] day change*
-`a`|sort by *[a]vailable supply*
-`G`|navigate to last line
-`h`|alias to previous page
-`j`|alias to `<down>`
-`k`|alias to `<up>`
-`l`|alias to next page
-`m`|sort by *[m]arket cap*
-`n`|sort by *[n]ame*
-`p`|sort by *[p]rice*
-`r`|sort by *[r]ank*
-`s`|sort by *[s]ymbol*
-`t`|sort by *[t]otal supply*
-`u`|sort by *last [u]pdated*
-`v`|sort by *24 hour [v]olume*
-`q`|[q]uit
+<kbd>→</kbd>|next page
+<kbd>←</kbd>|previous page
+<kbd>enter</kbd>|visit highlighted coin on CoinMarketCap
+<kbd>esc</kbd>|alias to quit
+<kbd>space</kbd>|alias to enter key
+<kbd>ctrl</kbd>-<kbd>c</kbd>|alias to quit
+<kbd>ctrl</kbd>-<kbd>d</kbd>|page down
+<kbd>ctrl</kbd>-<kbd>n</kbd>|alias to next page
+<kbd>ctrl</kbd>-<kbd>p</kbd>|alias to previous page
+<kbd>ctrl</kbd>-<kbd>r</kbd>|force refresh
+<kbd>ctrl</kbd>-<kbd>u</kbd>|page up
+<kbd>1</kbd>|sort by *[1] hour change*
+<kbd>2</kbd>|sort by *[2]4 hour change*
+<kbd>7</kbd>|sort by *[7] day change*
+<kbd>a</kbd>|sort by *[a]vailable supply*
+<kbd>G</kbd>|navigate to last line
+<kbd>h</kbd>|alias to previous page
+<kbd>j</kbd>|alias to navigate down
+<kbd>k</kbd>|alias to navigate up
+<kbd>l</kbd>|alias to next page
+<kbd>m</kbd>|sort by *[m]arket cap*
+<kbd>n</kbd>|sort by *[n]ame*
+<kbd>p</kbd>|sort by *[p]rice*
+<kbd>r</kbd>|sort by *[r]ank*
+<kbd>s</kbd>|sort by *[s]ymbol*
+<kbd>t</kbd>|sort by *[t]otal supply*
+<kbd>u</kbd>|sort by *last [u]pdated*
+<kbd>v</kbd>|sort by *24 hour [v]olume*
+<kbd>q</kbd>|[q]uit
 
 <!--
 |`h`|toggle [h]elp|
