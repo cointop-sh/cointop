@@ -8,7 +8,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/pad"
 )
 
-func (ct *Cointop) updateMarket() error {
+func (ct *Cointop) updateMarketbar() error {
 	maxX := ct.Width()
 	market, err := ct.api.GetGlobalMarketData()
 	if err != nil {

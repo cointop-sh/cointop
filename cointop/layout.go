@@ -2,8 +2,6 @@ package cointop
 
 import (
 	"math"
-	"strings"
-	"time"
 
 	"github.com/jroimartin/gocui"
 	apt "github.com/miguelmota/cointop/pkg/api/types"
@@ -24,7 +22,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.marketview.Frame = false
 		ct.marketview.BgColor = gocui.ColorBlack
 		ct.marketview.FgColor = gocui.ColorWhite
-		ct.updateMarket()
+		ct.updateMarketbar()
 	}
 
 	topOffset = topOffset + 1
@@ -175,36 +173,4 @@ func (ct *Cointop) intervalFetchData() {
 			}
 		}
 	}()
-}
-
-func (ct *Cointop) refreshAll() error {
-	ct.refreshmux.Lock()
-	ct.setRefreshStatus()
-	ct.updateCoins()
-	ct.updateTable()
-	ct.updateMarket()
-	ct.updateChart()
-	ct.refreshmux.Unlock()
-	return nil
-}
-
-func (ct *Cointop) setRefreshStatus() {
-	go func() {
-		ct.loadingTicks("refreshing", 900)
-		ct.updateStatusbar("")
-		ct.rowChanged()
-	}()
-}
-
-func (ct *Cointop) loadingTicks(s string, t int) {
-	interval := 150
-	k := 0
-	for i := 0; i < (t / interval); i++ {
-		ct.updateStatusbar(s + strings.Repeat(".", k))
-		time.Sleep(time.Duration(i*interval) * time.Millisecond)
-		k = k + 1
-		if k > 3 {
-			k = 0
-		}
-	}
 }
