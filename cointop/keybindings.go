@@ -51,6 +51,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding(gocui.KeyCtrlP, ct.prevPage)
 	ct.setKeybinding(gocui.KeyCtrlR, ct.refresh)
 	ct.setKeybinding(gocui.KeyCtrlU, ct.pageUp)
+	ct.setKeybindingMod(gocui.KeyArrowUp, gocui.ModAlt, ct.sortAsc)
+	ct.setKeybindingMod(gocui.KeyArrowDown, gocui.ModAlt, ct.sortDesc)
 	ct.setKeybindingMod(gocui.KeyArrowLeft, gocui.ModAlt, ct.sortPrevCol)
 	ct.setKeybindingMod(gocui.KeyArrowRight, gocui.ModAlt, ct.sortNextCol)
 	ct.setKeybinding(gocui.KeyF1, ct.openHelp)

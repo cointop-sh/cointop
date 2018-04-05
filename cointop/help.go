@@ -12,5 +12,5 @@ func (ct *Cointop) openHelp(g *gocui.Gui, v *gocui.View) error {
 }
 
 func (ct *Cointop) helpLink() string {
-	return "https://github.com/miguelmota/cointop"
+	return "https://github.com/miguelmota/cointop#shortcuts"
 }
