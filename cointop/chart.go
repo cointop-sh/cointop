@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gizak/termui"
+	"github.com/miguelmota/cointop/pkg/color"
 )
 
 func (ct *Cointop) updateChart() error {
@@ -20,7 +21,7 @@ func (ct *Cointop) updateChart() error {
 			p := ct.chartpoints[i][j]
 			s = fmt.Sprintf("%s%c", s, p.Ch)
 		}
-		fmt.Fprintln(ct.chartview, s)
+		fmt.Fprintln(ct.chartview, color.White(s))
 	}
 	return nil
 }

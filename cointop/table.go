@@ -60,18 +60,18 @@ func (ct *Cointop) refreshTable() error {
 			name = fmt.Sprintf("%s...", name[0:18])
 		}
 		ct.table.AddRow(
-			fmt.Sprintf("%7v ", coin.Rank),
-			fmt.Sprintf("%.22s", name),
-			fmt.Sprintf("%.6s", coin.Symbol),
+			color.White(fmt.Sprintf("%7v ", coin.Rank)),
+			color.White(fmt.Sprintf("%.22s", name)),
+			color.White(fmt.Sprintf("%.6s", coin.Symbol)),
 			colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.PriceUSD))),
-			fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCapUSD)),
-			fmt.Sprintf("%15s", humanize.Commaf(coin.USD24HVolume)),
+			color.White(fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCapUSD))),
+			color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.USD24HVolume))),
 			color1h(fmt.Sprintf("%8.2f%%", coin.PercentChange1H)),
 			color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
 			color7d(fmt.Sprintf("%8.2f%%", coin.PercentChange7D)),
-			fmt.Sprintf("%21s", humanize.Commaf(coin.TotalSupply)),
-			fmt.Sprintf("%18s", humanize.Commaf(coin.AvailableSupply)),
-			fmt.Sprintf("%18s", lastUpdated),
+			color.White(fmt.Sprintf("%21s", humanize.Commaf(coin.TotalSupply))),
+			color.White(fmt.Sprintf("%18s", humanize.Commaf(coin.AvailableSupply))),
+			color.White(fmt.Sprintf("%18s", lastUpdated)),
 			// add %percent of cap
 		)
 	}
