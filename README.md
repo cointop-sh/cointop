@@ -35,7 +35,7 @@ go get -u github.com/miguelmota/cointop
 
 ### Updating
 
-To update make sure to use the `u` flag.
+To update make sure to use the `-u` flag.
 
 ```bash
 go get -u github.com/miguelmota/cointop
