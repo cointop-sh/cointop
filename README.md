@@ -55,7 +55,7 @@ sudo curl -s "https://raw.githubusercontent.com/miguelmota/cointop/master/instal
 $ cointop
 ```
 
-### Cointop commands
+### Shortcuts
 
 List of default shortcuts:
 
@@ -78,6 +78,8 @@ Key|Action
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page (vim style)
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
+<kbd>Alt</kbd>+<kbd>↑</kbd>|Sort current column in ascending order
+<kbd>Alt</kbd>+<kbd>↓</kbd>|Sort current column in descending order
 <kbd>Alt</kbd>+<kbd>←</kbd>|Sort column to the left
 <kbd>Alt</kbd>+<kbd>→</kbd>|Sort column to the right
 <kbd>F1</kbd>|Show help|
