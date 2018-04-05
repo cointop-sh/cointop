@@ -78,8 +78,8 @@ Key|Action
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page (vim style)
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
-<kbd>Alt</kbd>+<kbd>←</kbd>|Sort next column to the left
-<kbd>Alt</kbd>+<kbd>→</kbd>|Sort next column to the right
+<kbd>Alt</kbd>+<kbd>←</kbd>|Sort column to the left
+<kbd>Alt</kbd>+<kbd>→</kbd>|Sort column to the right
 <kbd>F1</kbd>|Show help|
 <kbd>0</kbd>|Go to first page (vim style)
 <kbd>1</kbd>|Sort table by *[1] hour change*
