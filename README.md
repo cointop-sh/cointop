@@ -53,47 +53,47 @@ List of default shortcuts:
 
 Key|Action
 ----|------|
-<kbd>↑</kbd>|move up
-<kbd>↓</kbd>|move down
-<kbd>→</kbd>|go to next page
-<kbd>←</kbd>|go to previous page
-<kbd>Page Up</kbd>|jump page up
-<kbd>Page Down</kbd>|jump page down
-<kbd>Home</kbd>|go to first line of page
-<kbd>End</kbd>|go to last line of page
-<kbd>Enter</kbd>|visit highlighted coin on CoinMarketCap
-<kbd>Esc</kbd>|alias to quit
-<kbd>Space</kbd>|alias to enter key
-<kbd>Ctrl</kbd>+<kbd>c</kbd>|alias to quit
-<kbd>Ctrl</kbd>+<kbd>d</kbd>|jump page down (vim style)
-<kbd>Ctrl</kbd>+<kbd>n</kbd>|go to next page (vim style)
-<kbd>Ctrl</kbd>+<kbd>p</kbd>|go to previous page (vim style)
-<kbd>Ctrl</kbd>+<kbd>r</kbd>|force refresh
-<kbd>Ctrl</kbd>+<kbd>u</kbd>|jump page up (vim style)
-<kbd>0</kbd>|go to first page (vim style)
-<kbd>1</kbd>|sort table by *[1] hour change*
-<kbd>2</kbd>|sort table by *[2]4 hour change*
-<kbd>7</kbd>|sort table by *[7] day change*
-<kbd>a</kbd>|sort table by *[a]vailable supply*
-<kbd>g</kbd>|go to first line of page  (vim style)
-<kbd>G</kbd>|go to last line of page (vim style)
-<kbd>h</kbd>|go to previous page (vim style)
-<kbd>H</kbd>|go to top of table window (vim style)
-<kbd>j</kbd>|move down (vim style)
-<kbd>k</kbd>|move up (vim style)
-<kbd>l</kbd>|go to next page (vim style)
-<kbd>L</kbd>|go to last line of table window (vim style)
-<kbd>m</kbd>|sort table by *[m]arket cap*
-<kbd>M</kbd>|go to middle of table window (vim style)
-<kbd>n</kbd>|sort table by *[n]ame*
-<kbd>p</kbd>|sort table by *[p]rice*
-<kbd>r</kbd>|sort table by *[r]ank*
-<kbd>s</kbd>|sort table by *[s]ymbol*
-<kbd>t</kbd>|sort table by *[t]otal supply*
-<kbd>u</kbd>|sort table by *last [u]pdated*
-<kbd>v</kbd>|sort table by *24 hour [v]olume*
+<kbd>↑</kbd>|Move up
+<kbd>↓</kbd>|Move down
+<kbd>→</kbd>|Go to next page
+<kbd>←</kbd>|Go to previous page
+<kbd>Page Up</kbd>|Jump page up
+<kbd>Page Down</kbd>|Jump page down
+<kbd>Home</kbd>|Go to first line of page
+<kbd>End</kbd>|Go to last line of page
+<kbd>Enter</kbd>|Visit highlighted coin on [CoinMarketCap](https://coinmarketcap.com/)
+<kbd>Esc</kbd>|Alias to quit
+<kbd>Space</kbd>|Alias to enter key
+<kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
+<kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim style)
+<kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page (vim style)
+<kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page (vim style)
+<kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
+<kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
+<kbd>0</kbd>|Go to first page (vim style)
+<kbd>1</kbd>|Sort table by *[1] hour change*
+<kbd>2</kbd>|Sort table by *[2]4 hour change*
+<kbd>7</kbd>|Sort table by *[7] day change*
+<kbd>a</kbd>|Sort table by *[a]vailable supply*
+<kbd>g</kbd>|Go to first line of page  (vim style)
+<kbd>G</kbd>|Go to last line of page (vim style)
+<kbd>h</kbd>|Go to previous page (vim style)
+<kbd>H</kbd>|Go to top of table window (vim style)
+<kbd>j</kbd>|Move down (vim style)
+<kbd>k</kbd>|Move up (vim style)
+<kbd>l</kbd>|Go to next page (vim style)
+<kbd>L</kbd>|Go to last line of visible table window (vim style)
+<kbd>m</kbd>|Sort table by *[m]arket cap*
+<kbd>M</kbd>|Go to middle of visible table window (vim style)
+<kbd>n</kbd>|Sort table by *[n]ame*
+<kbd>p</kbd>|Sort table by *[p]rice*
+<kbd>r</kbd>|Sort table by *[r]ank*
+<kbd>s</kbd>|Sort table by *[s]ymbol*
+<kbd>t</kbd>|Sort table by *[t]otal supply*
+<kbd>u</kbd>|Sort table by *last [u]pdated*
+<kbd>v</kbd>|Sort table by *24 hour [v]olume*
 <kbd>q</kbd>|[q]uit
-<kbd>$</kbd>|go to last page (vim style)
+<kbd>$</kbd>|Go to last page (vim style)
 
 <!--
 |`h`|toggle [h]elp|
