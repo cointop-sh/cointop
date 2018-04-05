@@ -44,6 +44,7 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*apt.Coin) {
 			return a.Rank < b.Rank
 		}
 	})
+	ct.updateHeaders()
 }
 
 func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
