@@ -78,6 +78,9 @@ Key|Action
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page (vim style)
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
+<kbd>Alt</kbd>+<kbd>→</kbd>|Sort next column to the left
+<kbd>Alt</kbd>+<kbd>←</kbd>|Sort next column to the right
+<kbd>F1</kbd>|Show help|
 <kbd>0</kbd>|Go to first page (vim style)
 <kbd>1</kbd>|Sort table by *[1] hour change*
 <kbd>2</kbd>|Sort table by *[2]4 hour change*
@@ -102,11 +105,7 @@ Key|Action
 <kbd>v</kbd>|Sort table by *24 hour [v]olume*
 <kbd>q</kbd>|[q]uit
 <kbd>$</kbd>|Go to last page (vim style)
-
-<!--
-|`h`|toggle [h]elp|
-|`?`|alias to help|
--->
+<kbd>?</kbd>|Show help|
 
 ## FAQ
 
