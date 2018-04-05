@@ -4,6 +4,18 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
+func (ct *Cointop) getCurrentPage() int {
+	return ct.page + 1
+}
+
+func (ct *Cointop) getTotalPages() int {
+	return (ct.getListCount() / ct.perpage) + 1
+}
+
+func (ct *Cointop) getListCount() int {
+	return len(ct.allcoins)
+}
+
 func (ct *Cointop) cursorDown(g *gocui.Gui, v *gocui.View) error {
 	if ct.tableview == nil {
 		return nil
@@ -194,16 +206,4 @@ func (ct *Cointop) lastPage(g *gocui.Gui, v *gocui.View) error {
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
-}
-
-func (ct *Cointop) getCurrentPage() int {
-	return ct.page + 1
-}
-
-func (ct *Cointop) getTotalPages() int {
-	return (ct.getListCount() / ct.perpage) + 1
-}
-
-func (ct *Cointop) getListCount() int {
-	return len(ct.allcoins)
 }
