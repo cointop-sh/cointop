@@ -6,6 +6,20 @@ import (
 	apt "github.com/miguelmota/cointop/pkg/api/types"
 )
 
+var colorder = []string{
+	"rank",
+	"name",
+	"symbol",
+	"price",
+	"marketcap",
+	"24hvolume",
+	"1hchange",
+	"7dchange",
+	"totalsupply",
+	"availablesupply",
+	"lastupdated",
+}
+
 func (ct *Cointop) sort(sortby string, desc bool, list []*apt.Coin) {
 	ct.sortby = sortby
 	ct.sortdesc = desc
@@ -62,4 +76,48 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 		ct.rowChanged()
 		return nil
 	}
+}
+
+func (ct *Cointop) getSortColIndex() int {
+	for i, col := range colorder {
+		if ct.sortby == col {
+			return i
+		}
+	}
+	return 0
+}
+
+func (ct *Cointop) sortPrevCol(g *gocui.Gui, v *gocui.View) error {
+	nextsortby := colorder[0]
+	i := ct.getSortColIndex()
+	k := i - 1
+	if k < 0 {
+		k = 0
+	}
+	nextsortby = colorder[k]
+	ct.sort(nextsortby, ct.sortdesc, ct.coins)
+	ct.Update(func() {
+		ct.tableview.Clear()
+		ct.updateTable()
+	})
+	ct.rowChanged()
+	return nil
+}
+
+func (ct *Cointop) sortNextCol(g *gocui.Gui, v *gocui.View) error {
+	nextsortby := colorder[0]
+	l := len(colorder)
+	i := ct.getSortColIndex()
+	k := i + 1
+	if k > l-1 {
+		k = l - 1
+	}
+	nextsortby = colorder[k]
+	ct.sort(nextsortby, ct.sortdesc, ct.coins)
+	ct.Update(func() {
+		ct.tableview.Clear()
+		ct.updateTable()
+	})
+	ct.rowChanged()
+	return nil
 }

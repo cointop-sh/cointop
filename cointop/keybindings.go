@@ -20,6 +20,19 @@ func (ct *Cointop) setKeybinding(key interface{}, callback func(g *gocui.Gui, v 
 	}
 }
 
+func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error) {
+	var err error
+	switch t := key.(type) {
+	case gocui.Key:
+		err = ct.g.SetKeybinding("", t, mod, callback)
+	case rune:
+		err = ct.g.SetKeybinding("", t, mod, callback)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding(gocui.KeyArrowUp, ct.cursorUp)
 	ct.setKeybinding(gocui.KeyArrowDown, ct.cursorDown)
@@ -38,6 +51,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding(gocui.KeyCtrlP, ct.prevPage)
 	ct.setKeybinding(gocui.KeyCtrlR, ct.refresh)
 	ct.setKeybinding(gocui.KeyCtrlU, ct.pageUp)
+	ct.setKeybindingMod(gocui.KeyArrowLeft, gocui.ModAlt, ct.sortPrevCol)
+	ct.setKeybindingMod(gocui.KeyArrowRight, gocui.ModAlt, ct.sortNextCol)
 	ct.setKeybinding('0', ct.firstPage)
 	ct.setKeybinding('1', ct.sortfn("1hchange", true))
 	ct.setKeybinding('2', ct.sortfn("24hchange", true))
