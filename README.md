@@ -51,31 +51,39 @@ $ cointop
 List of shortcuts:
 
 Key|Action
-----|------
+----|------|
 <kbd>↑</kbd>|navigate up
 <kbd>↓</kbd>|navigate down
 <kbd>→</kbd>|next page
 <kbd>←</kbd>|previous page
+<kbd>Page Up</kbd>|page up
+<kbd>Page Down</kbd>|page down
+<kbd>Home</kbd>|navigate to first line of page
+<kbd>End</kbd>|navigate to last line of page
 <kbd>Enter</kbd>|visit highlighted coin on CoinMarketCap
 <kbd>Esc</kbd>|alias to quit
 <kbd>Space</kbd>|alias to enter key
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|alias to quit
-<kbd>Ctrl</kbd>+<kbd>d</kbd>|page down
-<kbd>Ctrl</kbd>+<kbd>n</kbd>|alias to next page
-<kbd>Ctrl</kbd>+<kbd>p</kbd>|alias to previous page
+<kbd>Ctrl</kbd>+<kbd>d</kbd>|page down (vim style)
+<kbd>Ctrl</kbd>+<kbd>n</kbd>|next page (vim style)
+<kbd>Ctrl</kbd>+<kbd>p</kbd>|previous page (vim style)
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|force refresh
-<kbd>Ctrl</kbd>+<kbd>u</kbd>|page up
+<kbd>Ctrl</kbd>+<kbd>u</kbd>|page up (vim style)
+<kbd>0</kbd>|navigate to first page (vim style)
 <kbd>1</kbd>|sort by *[1] hour change*
 <kbd>2</kbd>|sort by *[2]4 hour change*
 <kbd>7</kbd>|sort by *[7] day change*
 <kbd>a</kbd>|sort by *[a]vailable supply*
-<kbd>g</kbd>|navigate to first line
-<kbd>G</kbd>|navigate to last line
-<kbd>h</kbd>|alias to previous page
-<kbd>j</kbd>|alias to navigate down
-<kbd>k</kbd>|alias to navigate up
-<kbd>l</kbd>|alias to next page
+<kbd>g</kbd>|navigate to first line of page  (vim style)
+<kbd>G</kbd>|navigate to last line of page (vim style)
+<kbd>h</kbd>|previous page (vim style)
+<kbd>H</kbd>|navigate to top of table window (vim style)
+<kbd>j</kbd>|navigate down (vim style)
+<kbd>k</kbd>|navigate up (vim style)
+<kbd>l</kbd>|next page (vim style)
+<kbd>L</kbd>|navigate to last line of table window (vim style)
 <kbd>m</kbd>|sort by *[m]arket cap*
+<kbd>M</kbd>|navigate to middle of table window (vim style)
 <kbd>n</kbd>|sort by *[n]ame*
 <kbd>p</kbd>|sort by *[p]rice*
 <kbd>r</kbd>|sort by *[r]ank*
@@ -84,6 +92,7 @@ Key|Action
 <kbd>u</kbd>|sort by *last [u]pdated*
 <kbd>v</kbd>|sort by *24 hour [v]olume*
 <kbd>q</kbd>|[q]uit
+<kbd>$</kbd>|navigate to last page (vim style)
 
 <!--
 |`h`|toggle [h]elp|

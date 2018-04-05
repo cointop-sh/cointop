@@ -126,6 +126,44 @@ func (ct *Cointop) navigateLastLine(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
+func (ct *Cointop) navigatePageFirstLine(g *gocui.Gui, v *gocui.View) error {
+	if ct.tableview == nil {
+		return nil
+	}
+	cx, _ := ct.tableview.Cursor()
+	if err := ct.tableview.SetCursor(cx, 0); err != nil {
+		return err
+	}
+	ct.rowChanged()
+	return nil
+}
+
+func (ct *Cointop) navigatePageMiddleLine(g *gocui.Gui, v *gocui.View) error {
+	if ct.tableview == nil {
+		return nil
+	}
+	cx, _ := ct.tableview.Cursor()
+	_, sy := ct.tableview.Size()
+	if err := ct.tableview.SetCursor(cx, (sy/2)-1); err != nil {
+		return err
+	}
+	ct.rowChanged()
+	return nil
+}
+
+func (ct *Cointop) navigatePageLastLine(g *gocui.Gui, v *gocui.View) error {
+	if ct.tableview == nil {
+		return nil
+	}
+	cx, _ := ct.tableview.Cursor()
+	_, sy := ct.tableview.Size()
+	if err := ct.tableview.SetCursor(cx, sy-1); err != nil {
+		return err
+	}
+	ct.rowChanged()
+	return nil
+}
+
 func (ct *Cointop) prevPage(g *gocui.Gui, v *gocui.View) error {
 	if (ct.page - 1) >= 0 {
 		ct.page = ct.page - 1
@@ -139,6 +177,20 @@ func (ct *Cointop) nextPage(g *gocui.Gui, v *gocui.View) error {
 	if ((ct.page + 1) * ct.perpage) <= len(ct.allcoins) {
 		ct.page = ct.page + 1
 	}
+	ct.updateTable()
+	ct.rowChanged()
+	return nil
+}
+
+func (ct *Cointop) firstPage(g *gocui.Gui, v *gocui.View) error {
+	ct.page = 0
+	ct.updateTable()
+	ct.rowChanged()
+	return nil
+}
+
+func (ct *Cointop) lastPage(g *gocui.Gui, v *gocui.View) error {
+	ct.page = len(ct.allcoins) / ct.perpage
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
