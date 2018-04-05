@@ -5,8 +5,6 @@ import (
 
 	"github.com/jroimartin/gocui"
 	apt "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/table"
 )
 
 func (ct *Cointop) layout(g *gocui.Gui) error {
@@ -40,31 +38,11 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		t := table.New().SetWidth(maxX)
-		headers := []string{
-			pad.Right("[r]ank", 7, " "),
-			pad.Right("[n]ame", 18, " "),
-			pad.Right("[s]ymbol", 8, " "),
-			pad.Left("[p]rice", 13, " "),
-			pad.Left("[m]arket cap", 17, " "),
-			pad.Left("24H [v]olume", 15, " "),
-			pad.Left("[1]H%", 9, " "),
-			pad.Left("[2]4H%", 9, " "),
-			pad.Left("[7]D%", 9, " "),
-			pad.Left("[t]otal supply", 20, " "),
-			pad.Left("[a]vailable supply", 18, " "),
-			pad.Left("last [u]pdated", 18, " "),
-		}
-		for _, h := range headers {
-			t.AddCol(h)
-		}
-
-		t.Format().Fprint(v)
 		ct.headersview = v
 		ct.headersview.Frame = false
-		ct.headersview.Highlight = true
-		ct.headersview.SelBgColor = gocui.ColorGreen
-		ct.headersview.SelFgColor = gocui.ColorBlack
+		ct.headersview.FgColor = gocui.ColorBlack
+		ct.headersview.BgColor = gocui.ColorGreen
+		ct.updateHeaders()
 	}
 
 	topOffset = topOffset + 1
