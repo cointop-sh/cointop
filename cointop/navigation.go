@@ -174,7 +174,7 @@ func (ct *Cointop) prevPage(g *gocui.Gui, v *gocui.View) error {
 }
 
 func (ct *Cointop) nextPage(g *gocui.Gui, v *gocui.View) error {
-	if ((ct.page + 1) * ct.perpage) <= len(ct.allcoins) {
+	if ((ct.page + 1) * ct.perpage) <= ct.getListCount() {
 		ct.page = ct.page + 1
 	}
 	ct.updateTable()
@@ -190,8 +190,20 @@ func (ct *Cointop) firstPage(g *gocui.Gui, v *gocui.View) error {
 }
 
 func (ct *Cointop) lastPage(g *gocui.Gui, v *gocui.View) error {
-	ct.page = len(ct.allcoins) / ct.perpage
+	ct.page = ct.getListCount() / ct.perpage
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
+}
+
+func (ct *Cointop) getCurrentPage() int {
+	return ct.page + 1
+}
+
+func (ct *Cointop) getTotalPages() int {
+	return (ct.getListCount() / ct.perpage) + 1
+}
+
+func (ct *Cointop) getListCount() int {
+	return len(ct.allcoins)
 }

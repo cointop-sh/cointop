@@ -10,7 +10,9 @@ func (ct *Cointop) updateStatusbar(s string) {
 	maxX := ct.Width()
 	ct.Update(func() {
 		ct.statusbarview.Clear()
-		fmt.Fprintln(ct.statusbarview, pad.Right(fmt.Sprintf("[q]uit [← →]page %s", s), maxX, " "))
+		currpage := ct.getCurrentPage()
+		totalpages := ct.getTotalPages()
+		fmt.Fprintln(ct.statusbarview, pad.Right(fmt.Sprintf("[q]uit [← →]page %v/%v %s", currpage, totalpages, s), maxX, " "))
 	})
 }
 
