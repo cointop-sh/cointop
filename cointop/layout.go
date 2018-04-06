@@ -34,7 +34,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	topOffset = topOffset + chartHeight
-	if v, err := g.SetView("header", 0, topOffset, maxX, topOffset+2); err != nil {
+	if v, err := g.SetView("header", 0, topOffset, ct.maxtablewidth, topOffset+2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -46,7 +46,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	topOffset = topOffset + 1
-	if v, err := g.SetView("table", 0, topOffset, maxX, maxY-1); err != nil {
+	if v, err := g.SetView("table", 0, topOffset, ct.maxtablewidth, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -60,7 +60,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.rowChanged()
 	}
 
-	if v, err := g.SetView("statusbar", 0, maxY-2, maxX, maxY); err != nil {
+	if v, err := g.SetView("statusbar", 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}

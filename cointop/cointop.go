@@ -43,6 +43,7 @@ type Cointop struct {
 	refreshticker *time.Ticker
 	forcerefresh  chan bool
 	selectedcoin  *apt.Coin
+	maxtablewidth int
 }
 
 // Run runs cointop
@@ -64,6 +65,7 @@ func Run() {
 		page:          0,
 		perpage:       100,
 		forcerefresh:  make(chan bool),
+		maxtablewidth: 175,
 	}
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {

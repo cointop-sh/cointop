@@ -139,8 +139,7 @@ func (t *Table) Format() *Table {
 		}
 	}
 
-	t.normalizeColWidthPerc()
-
+	//t.normalizeColWidthPerc()
 	unused := t.width - t.colWidth()
 	if unused <= 0 {
 		return t

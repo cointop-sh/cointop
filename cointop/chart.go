@@ -11,9 +11,11 @@ import (
 
 func (ct *Cointop) updateChart() error {
 	maxX := ct.Width()
+	if maxX > ct.maxtablewidth {
+		maxX = ct.maxtablewidth
+	}
 	coin := ct.selectedCoinName()
 	ct.chartPoints(maxX, coin)
-
 	for i := range ct.chartpoints {
 		var s string
 		for j := range ct.chartpoints[i] {
