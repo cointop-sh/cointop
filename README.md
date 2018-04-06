@@ -13,7 +13,7 @@
 - Quick sort shortcuts
 - Vim style keys
 - Pagination
-- 7 day Charts
+- 7 day charts
 - Color coded
 
 #### Future releases
