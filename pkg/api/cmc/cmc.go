@@ -1,6 +1,8 @@
 package api
 
 import (
+	"strings"
+
 	types "github.com/miguelmota/cointop/pkg/api/types"
 	cmc "github.com/miguelmota/go-coinmarketcap"
 )
@@ -45,7 +47,7 @@ func (s *Service) GetAllCoinData() (map[string]types.Coin, error) {
 // GetCoinGraphData gets coin graph data
 func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (types.CoinGraph, error) {
 	ret := types.CoinGraph{}
-	graphData, err := cmc.GetCoinGraphData(coin, start, end)
+	graphData, err := cmc.GetCoinGraphData(strings.ToLower(coin), start, end)
 	if err != nil {
 		return ret, err
 	}

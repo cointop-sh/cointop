@@ -15,25 +15,28 @@ func (ct *Cointop) updateMarketbar() error {
 		return err
 	}
 	timeframe := "7 Day"
+	chartname := ct.selectedCoinName()
+	if chartname == "" {
+		chartname = "Global"
+	}
 	ct.Update(func() {
 		ct.marketview.Clear()
 		fmt.Fprintln(
 			ct.marketview,
-			color.White(
-				pad.Right(
-					fmt.Sprintf(
-						"%s Chart: %s • Total Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s",
-						color.Cyan("cointop"),
-						timeframe,
-						humanize.Commaf(market.TotalMarketCapUSD),
-						humanize.Commaf(market.Total24HVolumeUSD),
-						market.BitcoinPercentageOfMarketCap,
-						humanize.Commaf(float64(market.ActiveCurrencies)),
-						humanize.Commaf(float64(market.ActiveMarkets)),
-					),
-					maxX,
-					" ",
+			pad.Right(
+				fmt.Sprintf(
+					"%s [ Chart: %s %s ] Global ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s",
+					fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop")),
+					color.Cyan(chartname),
+					timeframe,
+					humanize.Commaf(market.TotalMarketCapUSD),
+					humanize.Commaf(market.Total24HVolumeUSD),
+					market.BitcoinPercentageOfMarketCap,
+					humanize.Commaf(float64(market.ActiveCurrencies)),
+					humanize.Commaf(float64(market.ActiveMarkets)),
 				),
+				maxX,
+				" ",
 			),
 		)
 	})
