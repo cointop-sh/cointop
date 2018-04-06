@@ -2,9 +2,9 @@ package cointop
 
 import (
 	"log"
-	"os/exec"
 
 	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/cointop/pkg/open"
 )
 
 func (ct *Cointop) setKeybinding(key interface{}, callback func(g *gocui.Gui, v *gocui.View) error) {
@@ -90,7 +90,7 @@ func (ct *Cointop) refresh(g *gocui.Gui, v *gocui.View) error {
 }
 
 func (ct *Cointop) openLink(g *gocui.Gui, v *gocui.View) error {
-	exec.Command("open", ct.rowLink()).Output()
+	open.URL(ct.rowLink())
 	return nil
 }
 
