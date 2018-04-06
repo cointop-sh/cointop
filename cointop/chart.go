@@ -2,18 +2,17 @@ package cointop
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/gizak/termui"
+	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/pkg/color"
 )
 
 func (ct *Cointop) updateChart() error {
 	maxX := ct.Width()
-	if len(ct.chartpoints) == 0 {
-		ct.chartPoints(maxX, "bitcoin")
-	}
+	coin := ct.selectedCoinName()
+	ct.chartPoints(maxX, coin)
 
 	for i := range ct.chartpoints {
 		var s string
@@ -38,23 +37,25 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 	start := secs - oneWeek
 	end := secs
 
-	_ = coin
-	//graphData, err := cmc.GetCoinGraphData(coin, start, end)
-	graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
-	if err != nil {
-		log.Fatal(err)
-		return nil
-	}
-
 	var data []float64
-	/*
+	if coin == "" {
+		graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
+		if err != nil {
+			return nil
+		}
+		for i := range graphData.MarketCapByAvailableSupply {
+			data = append(data, graphData.MarketCapByAvailableSupply[i][1]/1E9)
+		}
+	} else {
+		graphData, err := ct.api.GetCoinGraphData(coin, start, end)
+		if err != nil {
+			return nil
+		}
 		for i := range graphData.PriceUSD {
 			data = append(data, graphData.PriceUSD[i][1])
 		}
-	*/
-	for i := range graphData.MarketCapByAvailableSupply {
-		data = append(data, graphData.MarketCapByAvailableSupply[i][1]/1E9)
 	}
+
 	chart.Data = data
 	termui.Body = termui.NewGrid()
 	termui.Body.Width = maxX
@@ -81,5 +82,29 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 	}
 
 	ct.chartpoints = points
+	return nil
+}
+
+func (ct *Cointop) selectedCoinName() string {
+	coin := ct.selectedcoin
+	if coin != nil {
+		return coin.Name
+	}
+
+	return ""
+}
+
+func (ct *Cointop) toggleCoinChart(g *gocui.Gui, v *gocui.View) error {
+	highlightedcoin := ct.highlightedRowCoin()
+	if ct.selectedcoin == highlightedcoin {
+		ct.selectedcoin = nil
+	} else {
+		ct.selectedcoin = highlightedcoin
+	}
+	ct.Update(func() {
+		ct.chartview.Clear()
+		ct.updateMarketbar()
+		ct.updateChart()
+	})
 	return nil
 }

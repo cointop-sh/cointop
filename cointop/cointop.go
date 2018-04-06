@@ -42,6 +42,7 @@ type Cointop struct {
 	refreshmux    sync.Mutex
 	refreshticker *time.Ticker
 	forcerefresh  chan bool
+	selectedcoin  *apt.Coin
 }
 
 // Run runs cointop

@@ -86,7 +86,7 @@ func (ct *Cointop) refreshTable() error {
 	return nil
 }
 
-func (ct *Cointop) selectedRowIndex() int {
+func (ct *Cointop) highlightedRowIndex() int {
 	_, y := ct.tableview.Origin()
 	_, cy := ct.tableview.Cursor()
 	idx := y + cy
@@ -99,13 +99,13 @@ func (ct *Cointop) selectedRowIndex() int {
 	return idx
 }
 
-func (ct *Cointop) selectedCoin() *apt.Coin {
-	idx := ct.selectedRowIndex()
+func (ct *Cointop) highlightedRowCoin() *apt.Coin {
+	idx := ct.highlightedRowIndex()
 	return ct.coins[idx]
 }
 
 func (ct *Cointop) rowLink() string {
-	slug := strings.ToLower(strings.Replace(ct.selectedCoin().Name, " ", "-", -1))
+	slug := strings.ToLower(strings.Replace(ct.highlightedRowCoin().Name, " ", "-", -1))
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
 }
 

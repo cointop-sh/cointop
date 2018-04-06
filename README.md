@@ -19,7 +19,6 @@
 
 - Advanced search
 - "Favorites" list
-- Coin charts
 - Currency conversion (i.e. Euro, Yen)
 - Markets/Exchanges
 - CryptoCompare API
@@ -88,6 +87,7 @@ Key|Action
 <kbd>2</kbd>|Sort table by *[2]4 hour change*
 <kbd>7</kbd>|Sort table by *[7] day change*
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
+<kbd>c</kbd>|Toggle [c]hart for highlighted coin
 <kbd>g</kbd>|Go to first line of page  (vim style)
 <kbd>G</kbd>|Go to last line of page (vim style)
 <kbd>h</kbd>|Go to previous page (vim style)
