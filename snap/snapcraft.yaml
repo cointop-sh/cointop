@@ -1,0 +1,27 @@
+name: cointop
+version: master
+version-script: git -C parts/cointop/build rev-parse --short HEAD
+summary: Coin tracking for hackers
+description: |
+  cointop is a fast command-line interface application for viewing
+  cryptocurrency stats and information in your terminal. The interface
+  is inspired by htop. 
+
+grade: stable
+confinement: strict
+
+parts:
+  go:
+    source-tag: go1.9.4
+  cointop:
+    after: [go]
+    source: .
+    plugin: go
+    go-importpath: github.com/miguelmota/cointop
+
+apps:
+  cointop:
+    command: cointop
+    plugs:
+      - network
+      - network-bind
