@@ -72,3 +72,12 @@ func Run() {
 		log.Fatalf("main loop: %v", err)
 	}
 }
+
+func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
+	return gocui.ErrQuit
+}
+
+func (ct *Cointop) refresh(g *gocui.Gui, v *gocui.View) error {
+	ct.forcerefresh <- true
+	return nil
+}

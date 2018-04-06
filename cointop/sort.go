@@ -78,6 +78,15 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 	}
 }
 
+func (ct *Cointop) getSortColIndex() int {
+	for i, col := range colorder {
+		if ct.sortby == col {
+			return i
+		}
+	}
+	return 0
+}
+
 func (ct *Cointop) sortAsc(g *gocui.Gui, v *gocui.View) error {
 	ct.sortdesc = false
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
@@ -133,13 +142,4 @@ func (ct *Cointop) sortNextCol(g *gocui.Gui, v *gocui.View) error {
 	})
 	ct.rowChanged()
 	return nil
-}
-
-func (ct *Cointop) getSortColIndex() int {
-	for i, col := range colorder {
-		if ct.sortby == col {
-			return i
-		}
-	}
-	return 0
 }

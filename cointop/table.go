@@ -6,9 +6,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jroimartin/gocui"
 	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/humanize"
+	"github.com/miguelmota/cointop/pkg/open"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -105,4 +107,9 @@ func (ct *Cointop) selectedCoin() *apt.Coin {
 func (ct *Cointop) rowLink() string {
 	slug := strings.ToLower(strings.Replace(ct.selectedCoin().Name, " ", "-", -1))
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
+}
+
+func (ct *Cointop) openLink(g *gocui.Gui, v *gocui.View) error {
+	open.URL(ct.rowLink())
+	return nil
 }

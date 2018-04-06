@@ -4,34 +4,7 @@ import (
 	"log"
 
 	"github.com/jroimartin/gocui"
-	"github.com/miguelmota/cointop/pkg/open"
 )
-
-func (ct *Cointop) setKeybinding(key interface{}, callback func(g *gocui.Gui, v *gocui.View) error) {
-	var err error
-	switch t := key.(type) {
-	case gocui.Key:
-		err = ct.g.SetKeybinding("", t, gocui.ModNone, callback)
-	case rune:
-		err = ct.g.SetKeybinding("", t, gocui.ModNone, callback)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error) {
-	var err error
-	switch t := key.(type) {
-	case gocui.Key:
-		err = ct.g.SetKeybinding("", t, mod, callback)
-	case rune:
-		err = ct.g.SetKeybinding("", t, mod, callback)
-	}
-	if err != nil {
-		log.Fatal(err)
-	}
-}
 
 func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybinding(gocui.KeyArrowUp, ct.cursorUp)
@@ -84,16 +57,28 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	return nil
 }
 
-func (ct *Cointop) refresh(g *gocui.Gui, v *gocui.View) error {
-	ct.forcerefresh <- true
-	return nil
+func (ct *Cointop) setKeybinding(key interface{}, callback func(g *gocui.Gui, v *gocui.View) error) {
+	var err error
+	switch t := key.(type) {
+	case gocui.Key:
+		err = ct.g.SetKeybinding("", t, gocui.ModNone, callback)
+	case rune:
+		err = ct.g.SetKeybinding("", t, gocui.ModNone, callback)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func (ct *Cointop) openLink(g *gocui.Gui, v *gocui.View) error {
-	open.URL(ct.rowLink())
-	return nil
-}
-
-func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
-	return gocui.ErrQuit
+func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error) {
+	var err error
+	switch t := key.(type) {
+	case gocui.Key:
+		err = ct.g.SetKeybinding("", t, mod, callback)
+	case rune:
+		err = ct.g.SetKeybinding("", t, mod, callback)
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
 }
