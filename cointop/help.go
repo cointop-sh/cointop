@@ -1,13 +1,12 @@
 package cointop
 
 import (
-	"os/exec"
-
 	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/cointop/pkg/open"
 )
 
 func (ct *Cointop) openHelp(g *gocui.Gui, v *gocui.View) error {
-	exec.Command("open", ct.helpLink()).Output()
+	open.URL(ct.helpLink())
 	return nil
 }
 
