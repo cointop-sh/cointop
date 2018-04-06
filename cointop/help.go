@@ -5,6 +5,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/open"
 )
 
+// TODO: create a help menu
 func (ct *Cointop) openHelp(g *gocui.Gui, v *gocui.View) error {
 	open.URL(ct.helpLink())
 	return nil
