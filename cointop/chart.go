@@ -9,6 +9,8 @@ import (
 	"github.com/miguelmota/cointop/pkg/color"
 )
 
+var oneWeek = (time.Hour * 24) * 7
+
 func (ct *Cointop) updateChart() error {
 	maxX := ct.Width()
 	if maxX > ct.maxtablewidth {
@@ -36,7 +38,7 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 
 	now := time.Now()
 	secs := now.Unix()
-	start := secs - oneWeek
+	start := secs - int64(oneWeek.Seconds())
 	end := secs
 
 	var data []float64

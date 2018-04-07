@@ -57,7 +57,7 @@ $ cointop
 
 ### Shortcuts
 
-List of default shortcuts:
+List of default shortcut keys:
 
 Key|Action
 ----|------|

@@ -12,15 +12,6 @@ import (
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
-var (
-	oneMinute int64 = 60
-	oneHour         = oneMinute * 60
-	oneDay          = oneHour * 24
-	oneWeek         = oneDay * 7
-	oneMonth        = oneDay * 30
-	oneYear         = oneDay * 365
-)
-
 // Cointop cointop
 type Cointop struct {
 	g             *gocui.Gui
