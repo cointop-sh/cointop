@@ -16,7 +16,6 @@
 - [Usage](#usage)
 - [Shortcuts](#shortcuts)
 - [Config](#config)
-- [Actions](#actions)
 - [FAQ](#faq)
 - [Authors](#authors)
 - [License](#license)
