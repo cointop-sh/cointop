@@ -46,6 +46,14 @@ Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
+### Snap
+
+cointop is also available as a [snap](https://snapcraft.io/cointop) for Linux users.
+
+```bash
+sudo snap install cointop --edge
+```
+
 ## Updating
 
 To update make sure to use the `-u` flag.

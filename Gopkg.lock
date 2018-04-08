@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/BurntSushi/toml"
+  packages = ["."]
+  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
+  version = "v0.3.0"
+
+[[projects]]
   name = "github.com/anaskhan96/soup"
   packages = ["."]
   revision = "cd07662ec9300d16d2ece1c24b0b29ad89f65ff4"
@@ -97,6 +103,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "cc43de082ffa9bbc96488c9bfc6659269a914a24c4ff2a04e1d43bfc66a992a4"
+  inputs-digest = "32fd20155545d4c756d57dc0c4d04f15f1817ae029e701c805b347b86df77943"
   solver-name = "gps-cdcl"
   solver-version = 1
