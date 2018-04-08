@@ -175,6 +175,8 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 	case "pagedown":
 		fallthrough
 	case "pgdown":
+		fallthrough
+	case "pgdn":
 		key = gocui.KeyPgdn
 	case "home":
 		key = gocui.KeyHome
