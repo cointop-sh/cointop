@@ -11,7 +11,7 @@
 ## Table of Contents
 
 - [Features](#features)
-- [Install](#install)
+- [Installing](#install)
 - [Updating](#updating)
 - [Usage](#usage)
 - [Shortcuts](#shortcuts)
@@ -37,7 +37,7 @@
 - Markets/Exchanges
 - CryptoCompare API
 
-## Install
+## Installing
 
 Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 
