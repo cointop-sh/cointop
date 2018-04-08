@@ -35,20 +35,13 @@ type Cointop struct {
 	forcerefresh  chan bool
 	selectedcoin  *apt.Coin
 	maxtablewidth int
+	shortcutkeys  map[string]string
+	config        config // toml config
 }
 
 // Run runs cointop
 func Run() {
-	g, err := gocui.NewGui(gocui.Output256)
-	if err != nil {
-		log.Fatalf("new gocui: %v", err)
-	}
-	defer g.Close()
-	g.Cursor = true
-	g.Mouse = true
-	g.Highlight = true
 	ct := Cointop{
-		g:             g,
 		api:           api.NewCMC(),
 		refreshticker: time.NewTicker(1 * time.Minute),
 		sortby:        "rank",
@@ -57,7 +50,18 @@ func Run() {
 		perpage:       100,
 		forcerefresh:  make(chan bool),
 		maxtablewidth: 175,
+		shortcutkeys:  defaultShortcuts(),
 	}
+	_ = ct.setupConfig()
+	g, err := gocui.NewGui(gocui.Output256)
+	if err != nil {
+		log.Fatalf("new gocui: %v", err)
+	}
+	ct.g = g
+	defer g.Close()
+	g.Cursor = true
+	g.Mouse = true
+	g.Highlight = true
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {
 		log.Fatalf("keybindings: %v", err)

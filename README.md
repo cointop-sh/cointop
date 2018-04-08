@@ -8,6 +8,19 @@
 
 [`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
 
+## Table of Contents
+
+- [Features](#features)
+- [Install](#install)
+- [Updating](#updating)
+- [Usage](#usage)
+- [Shortcuts](#shortcuts)
+- [Config](#config)
+- [Actions](#actions)
+- [FAQ](#faq)
+- [Authors](#authors)
+- [License](#license)
+
 ## Features
 
 - Quick sort shortcuts
@@ -15,6 +28,7 @@
 - Pagination
 - 7 day charts
 - Color coded
+- Custom key bindings
 
 #### Future releases
 
@@ -23,7 +37,6 @@
 - Currency conversion (i.e. Euro, Yen)
 - Markets/Exchanges
 - CryptoCompare API
-- Custom shortcuts
 
 ## Install
 
@@ -51,11 +64,13 @@ sudo curl -s "https://raw.githubusercontent.com/miguelmota/cointop/master/instal
 
 ## Usage
 
+Just run the `cointop` command to get started:
+
 ```bash
 $ cointop
 ```
 
-### Shortcuts
+## Shortcuts
 
 List of default shortcut keys:
 
@@ -100,6 +115,7 @@ Key|Action
 <kbd>m</kbd>|Sort table by *[m]arket cap*
 <kbd>M</kbd>|Go to middle of visible table window (vim style)
 <kbd>n</kbd>|Sort table by *[n]ame*
+<kbd>o</kbd>|[o]pen row link
 <kbd>p</kbd>|Sort table by *[p]rice*
 <kbd>r</kbd>|Sort table by *[r]ank*
 <kbd>s</kbd>|Sort table by *[s]ymbol*
@@ -109,6 +125,110 @@ Key|Action
 <kbd>q</kbd>|[q]uit
 <kbd>$</kbd>|Go to last page (vim style)
 <kbd>?</kbd>|Show help|
+
+## Config
+
+The first time you run cointop, it'll create a config file in:
+
+```
+~/.cointop/config
+```
+
+You can then configure the actions you want for each key:
+
+(default `~/.cointop/config`)
+
+```toml
+[shortcuts]
+  "$" = "last_page"
+  0 = "first_page"
+  1 = "sort_column_1h_change"
+  2 = "sort_column_24h_change"
+  7 = "sort_column_7d_change"
+  "?" = "help"
+  G = "move_to_page_last_row"
+  H = "move_to_page_visible_first_row"
+  L = "move_to_page_visible_last_row"
+  M = "move_to_page_visible_middle_row"
+  a = "sort_column_available_supply"
+  "alt+arrowdown" = "sort_column_desc"
+  "alt+arrowleft" = "sort_left_column"
+  "alt+arrowright" = "sort_right_column"
+  "alt+arrowup" = "sort_column_asc"
+  arrowdown = "move_down"
+  arrowleft = "previous_page"
+  arrowright = "next_page"
+  arrowup = "move_up"
+  c = "toggle_row_chart"
+  "ctrl+c" = "quit"
+  "ctrl+d" = "page_down"
+  "ctrl+n" = "next_page"
+  "ctrl+p" = "previous_page"
+  "ctrl+r" = "refresh"
+  "ctrl+u" = "page_up"
+  end = "move_to_page_last_row"
+  enter = "open_link"
+  esc = "quit"
+  f1 = "help"
+  g = "move_to_page_first_row"
+  h = "previous_page"
+  home = "move_to_page_first_row"
+  j = "move_down"
+  k = "move_up"
+  l = "next_page"
+  m = "sort_column_market_cap"
+  n = "sort_column_name"
+  o = "open_link"
+  p = "sort_column_price"
+  pagedown = "page_down"
+  pageup = "page_up"
+  q = "quit"
+  r = "sort_column_rank"
+  s = "sort_column_symbol"
+  space = "open_link"
+  t = "sort_column_total_supply"
+  u = "sort_column_last_updated"
+  v = "sort_column_24h_volume"
+```
+
+## List of actions
+
+Action|Description
+----|------|
+`first_page`|Go to first page
+`help`|Show help
+`last_page`|Go to last page
+`move_to_page_first_row`|Move to first row on page
+`move_to_page_last_row`|Move to last row on page
+`move_to_page_visible_first_row`|Move to first visible row on page
+`move_to_page_visible_last_row`|Move to last visible row on page
+`move_to_page_visible_middle_row`|Move to middle visible row on page
+`move_up`|Move one row up
+`move_down`|Move one row down
+`next_page`|Go to next page
+`open_link`|Open row link
+`page_down`|Move one row down
+`page_up`|Scroll one page up
+`previous_page`|Go to previous page
+`quit`|Quit application
+`refresh`|Do a manual refresh on the data
+`sort_column_1h_change`|Sort table by column *1 hour change*
+`sort_column_24h_change`|Sort table by column *24 hour change*
+`sort_column_24h_volume`|Sort table by column *24 hour volume*
+`sort_column_7d_change`|Sort table by column *7 day change*
+`sort_column_asc`|Sort highlighted column by ascending order
+`sort_column_available_supply`|Sort table by column *available supply*
+`sort_column_desc`|Sort highlighted column by descending order
+`sort_column_last_updated`|Sort table by column *last updated*
+`sort_column_market_cap`|Sort table by column *market cap*
+`sort_column_name`|Sort table by column *name*
+`sort_column_price`|Sort table by column *price*
+`sort_column_rank`|Sort table by column *rank*
+`sort_column_symbol`|Sort table by column *symbol*
+`sort_column_total_supply`|Sort table by column *total supply*
+`sort_left_column`|Sort the column to the left of the highlighted column
+`sort_right_column`|Sort the column to the right of the highlighted column
+`toggle_row_chart`|Toggle the chart for the highlighted row
 
 ## FAQ
 

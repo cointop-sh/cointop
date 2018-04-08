@@ -6,58 +6,6 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-// defaults
-var shortcutkeys = map[string]string{
-	"arrowup":        "moveup",
-	"arrowdown":      "movedown",
-	"arrowleft":      "prevpage",
-	"arrowright":     "nextpage",
-	"pagedown":       "pagedown",
-	"pageup":         "pageup",
-	"home":           "movepagefirstrow",
-	"end":            "movepagelastrow",
-	"enter":          "openlink",
-	"esc":            "quit",
-	"space":          "openlink",
-	"ctrl+c":         "quit",
-	"ctrl+d":         "pagedown",
-	"ctrl+n":         "nextpage",
-	"ctrl+p":         "prevpage",
-	"ctrl+r":         "refresh",
-	"ctrl+u":         "pageup",
-	"alt+arrowup":    "sortcolasc",
-	"alt+arrowdown":  "sortcoldesc",
-	"alt+arrowleft":  "sortleftcol",
-	"alt+arrowright": "sortrightcol",
-	"f1":             "help",
-	"0":              "movefirstpage",
-	"1":              "sortcol1hchange",
-	"2":              "sortcol24hchange",
-	"7":              "sortcol7dchange",
-	"a":              "sortcolavailablesupply",
-	"c":              "togglerowchart",
-	"g":              "movepagefirstrow",
-	"G":              "movepagelastrow",
-	"h":              "prevpage",
-	"H":              "movepagevisiblefirstrow",
-	"j":              "movedown",
-	"k":              "moveup",
-	"l":              "nextpage",
-	"L":              "movepagevisiblelastrow",
-	"m":              "sortcolmarketcap",
-	"M":              "movepagevisiblemiddlerow",
-	"n":              "sortcolname",
-	"p":              "sortcolprice",
-	"r":              "sortcolrank",
-	"s":              "sortcolsymbol",
-	"t":              "sortcoltotalsupply",
-	"u":              "sortcollastupdated",
-	"v":              "sortcol24hvolume",
-	"q":              "quit",
-	"$":              "movelastpage",
-	"?":              "help",
-}
-
 func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 	var key interface{}
 	mod := gocui.ModNone
@@ -238,75 +186,76 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 }
 
 func (ct *Cointop) keybindings(g *gocui.Gui) error {
-	for k, v := range shortcutkeys {
+	for k, v := range ct.shortcutkeys {
+		v = strings.TrimSpace(strings.ToLower(v))
 		var fn func(g *gocui.Gui, v *gocui.View) error
 		key, mod := ct.parseKeys(k)
 		switch v {
-		case "moveup":
+		case "move_up":
 			fn = ct.cursorUp
-		case "movedown":
+		case "move_down":
 			fn = ct.cursorDown
-		case "prevpage":
+		case "previous_page":
 			fn = ct.prevPage
-		case "nextpage":
+		case "next_page":
 			fn = ct.nextPage
-		case "pagedown":
+		case "page_down":
 			fn = ct.pageDown
-		case "pageup":
+		case "page_up":
 			fn = ct.pageUp
-		case "sortcolsymbol":
+		case "sort_column_symbol":
 			fn = ct.sortfn("symbol", false)
-		case "movepagefirstrow":
+		case "move_to_page_first_row":
 			fn = ct.navigateFirstLine
-		case "movepagelastrow":
+		case "move_to_page_last_row":
 			fn = ct.navigateLastLine
-		case "openlink":
+		case "open_link":
 			fn = ct.openLink
 		case "refresh":
 			fn = ct.refresh
-		case "sortcolasc":
+		case "sort_column_asc":
 			fn = ct.sortAsc
-		case "sortcoldesc":
+		case "sort_column_desc":
 			fn = ct.sortDesc
-		case "sortleftcol":
+		case "sort_left_column":
 			fn = ct.sortPrevCol
-		case "sortrightcol":
+		case "sort_right_column":
 			fn = ct.sortNextCol
 		case "help":
 			fn = ct.openHelp
-		case "movefirstpage":
+		case "first_page":
 			fn = ct.firstPage
-		case "sortcol1hchange":
+		case "sort_column_1h_change":
 			fn = ct.sortfn("1hchange", true)
-		case "sortcol24hchange":
+		case "sort_column_24h_change":
 			fn = ct.sortfn("24hchange", true)
-		case "sortcol7dchange":
+		case "sort_column_7d_change":
 			fn = ct.sortfn("7dchange", true)
-		case "sortcolavailablesupply":
+		case "sort_column_available_supply":
 			fn = ct.sortfn("availablesupply", true)
-		case "togglerowchart":
+		case "toggle_row_chart":
 			fn = ct.toggleCoinChart
-		case "movepagevisiblefirstrow":
+		case "move_to_page_visible_first_row":
 			fn = ct.navigatePageFirstLine
-		case "movepagevisiblelastrow":
+		case "move_to_page_visible_last_row":
 			fn = ct.navigatePageLastLine
-		case "sortcolmarketcap":
+		case "sort_column_market_cap":
 			fn = ct.sortfn("marketcap", true)
-		case "movepagevisiblemiddlerow":
+		case "move_to_page_visible_middle_row":
 			fn = ct.navigatePageMiddleLine
-		case "sortcolname":
+		case "sort_column_name":
 			fn = ct.sortfn("name", true)
-		case "sortcolprice":
+		case "sort_column_price":
 			fn = ct.sortfn("price", true)
-		case "sortcolrank":
+		case "sort_column_rank":
 			fn = ct.sortfn("rank", false)
-		case "sortcoltotalsupply":
+		case "sort_column_total_supply":
 			fn = ct.sortfn("totalsupply", true)
-		case "sortcollastupdated":
+		case "sort_column_last_updated":
 			fn = ct.sortfn("lastupdated", true)
-		case "sortcol24hvolume":
+		case "sort_column_24h_volume":
 			fn = ct.sortfn("24hvolume", true)
-		case "movelastpage":
+		case "last_page":
 			fn = ct.lastPage
 		case "quit":
 			fn = ct.quit
