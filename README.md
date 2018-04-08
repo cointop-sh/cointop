@@ -46,7 +46,7 @@ Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
-### Updating
+## Updating
 
 To update make sure to use the `-u` flag.
 
