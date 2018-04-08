@@ -28,6 +28,7 @@
 - 7 day charts
 - Color coded
 - Custom key bindings
+- Works on macOS, Linux, and Windows
 
 #### Future releases
 
