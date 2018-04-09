@@ -26,9 +26,9 @@
 - Vim style keys
 - Pagination
 - 7 day charts
-- Color coded
-- Custom key bindings
 - Search by name or symbol
+- Custom key bindings
+- Color coded
 - Works on macOS, Linux, and Windows
 
 #### Future releases
