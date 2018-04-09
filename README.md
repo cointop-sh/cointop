@@ -28,6 +28,7 @@
 - 7 day charts
 - Color coded
 - Custom key bindings
+- Search by name or symbol
 - Works on macOS, Linux, and Windows
 
 #### Future releases
@@ -133,6 +134,7 @@ Key|Action
 <kbd>q</kbd>|[q]uit
 <kbd>$</kbd>|Go to last page (vim style)
 <kbd>?</kbd>|Show help|
+<kbd>/</kbd>|Search|
 
 ## Config
 
@@ -154,6 +156,7 @@ You can then configure the actions you want for each key:
   2 = "sort_column_24h_change"
   7 = "sort_column_7d_change"
   "?" = "help"
+  "/" = "open_search"
   G = "move_to_page_last_row"
   H = "move_to_page_visible_first_row"
   L = "move_to_page_visible_last_row"
@@ -215,6 +218,7 @@ Action|Description
 `move_down`|Move one row down
 `next_page`|Go to next page
 `open_link`|Open row link
+`open_search`|Open search field
 `page_down`|Move one row down
 `page_up`|Scroll one page up
 `previous_page`|Go to previous page
@@ -263,6 +267,10 @@ Action|Description
 - Q: What is the size of the binary?
 
   - A: The executable is only ~1.9MB in size.
+
+- Q: How do I search?
+
+  - A: The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
 
 ## Authors
 
