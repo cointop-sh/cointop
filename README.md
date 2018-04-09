@@ -26,7 +26,7 @@
 - Vim style keys
 - Pagination
 - 7 day charts
-- Search by name or symbol
+- Search by name/symbol
 - Custom key bindings
 - Color coded
 - Works on macOS, Linux, and Windows
@@ -134,7 +134,7 @@ Key|Action
 <kbd>q</kbd>|[q]uit
 <kbd>$</kbd>|Go to last page (vim style)
 <kbd>?</kbd>|Show help|
-<kbd>/</kbd>|Search|
+<kbd>/</kbd>|Search (vim style)|
 
 ## Config
 
