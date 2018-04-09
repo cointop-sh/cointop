@@ -232,3 +232,14 @@ func (ct *Cointop) lastPage() error {
 	ct.rowChanged()
 	return nil
 }
+
+func (ct *Cointop) goToGlobalIndex(idx int) error {
+	perpage := ct.totalPerPage()
+	atpage := idx / perpage
+	ct.setPage(atpage)
+	rowIndex := (idx % perpage)
+	ct.highlightRow(rowIndex)
+	ct.updateTable()
+	ct.rowChanged()
+	return nil
+}

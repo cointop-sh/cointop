@@ -42,38 +42,45 @@ func (ct *Cointop) search(q string) error {
 	q = strings.TrimSpace(strings.ToLower(q))
 	idx := -1
 	min := -1
+	var hasprefixidx []int
+	var hasprefixdist []int
 	for i := range ct.allcoins {
 		coin := ct.allcoins[i]
 		name := strings.ToLower(coin.Name)
 		symbol := strings.ToLower(coin.Symbol)
+		// if query matches symbol, return immediately
 		if symbol == q {
-			idx = i
-			min = 0
-			break
+			ct.goToGlobalIndex(i)
+			return nil
 		}
+		// if query matches name, return immediately
+		if name == q {
+			ct.goToGlobalIndex(i)
+			return nil
+		}
+		// store index with the smallest levenshtein
 		dist := levenshtein.Distance(name, q)
-		if min == -1 {
-			min = dist
-		}
-		if dist <= min {
+		if min == -1 || dist <= min {
 			idx = i
 			min = dist
+		}
+		// store index where query is substring to name
+		if strings.HasPrefix(name, q) {
+			if len(hasprefixdist) == 0 || dist < hasprefixdist[0] {
+				hasprefixidx = append(hasprefixidx, i)
+				hasprefixdist = append(hasprefixdist, dist)
+			}
 		}
 	}
-
+	// go to row if prefix match
+	if len(hasprefixidx) > 0 && hasprefixidx[0] != -1 && min > 0 {
+		ct.goToGlobalIndex(hasprefixidx[0])
+		return nil
+	}
+	// go to row if levenshtein distance is small enough
 	if idx > -1 && min <= 6 {
 		ct.goToGlobalIndex(idx)
+		return nil
 	}
-	return nil
-}
-
-func (ct *Cointop) goToGlobalIndex(idx int) error {
-	perpage := ct.totalPerPage()
-	atpage := idx / perpage
-	ct.setPage(atpage)
-	rowIndex := (idx % perpage)
-	ct.highlightRow(rowIndex)
-	ct.updateTable()
-	ct.rowChanged()
 	return nil
 }
