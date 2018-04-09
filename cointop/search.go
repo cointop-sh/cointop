@@ -1,7 +1,6 @@
 package cointop
 
 import (
-	"log"
 	"regexp"
 	"strings"
 )
@@ -55,7 +54,6 @@ func (ct *Cointop) goToGlobalIndex(idx int) error {
 	ct.setPage(atpage)
 	rowIndex := (idx % perpage)
 	ct.highlightRow(rowIndex)
-	log.Println(rowIndex)
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
