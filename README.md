@@ -63,6 +63,12 @@ To update make sure to use the `-u` flag.
 go get -u github.com/miguelmota/cointop
 ```
 
+### Updating Snap
+
+```bash
+sudo snap refresh cointop --edge
+```
+
 <!--
 #### Alternatively (without go)
 
