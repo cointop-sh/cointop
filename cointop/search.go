@@ -48,6 +48,7 @@ func (ct *Cointop) search(q string) error {
 		symbol := strings.ToLower(coin.Symbol)
 		if symbol == q {
 			idx = i
+			min = 0
 			break
 		}
 		dist := levenshtein.Distance(name, q)
