@@ -24,8 +24,20 @@ func (ct *Cointop) setPage(page int) int {
 }
 
 func (ct *Cointop) highlightRow(idx int) error {
+	ct.tableview.SetOrigin(0, 0)
+	ct.tableview.SetCursor(0, 0)
+	ox, _ := ct.tableview.Origin()
 	cx, _ := ct.tableview.Cursor()
-	ct.tableview.SetCursor(cx, idx)
+	_, sy := ct.tableview.Size()
+	perpage := ct.getTotalPerPage()
+	p := idx % perpage
+	oy := (p / sy) * sy
+	cy := p % sy
+	if oy > 0 {
+		ct.tableview.SetOrigin(ox, oy)
+	}
+	ct.tableview.SetCursor(cx, cy)
+
 	return nil
 }
 

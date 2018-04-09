@@ -40,7 +40,14 @@ func (ct *Cointop) search(q string) error {
 	q = strings.TrimSpace(strings.ToLower(q))
 	for i := range ct.allcoins {
 		coin := ct.allcoins[i]
-		if strings.ToLower(coin.Name) == q || strings.ToLower(coin.Symbol) == q {
+		if strings.ToLower(coin.Name) == q {
+			ct.goToGlobalIndex(i)
+			return nil
+		}
+	}
+	for i := range ct.allcoins {
+		coin := ct.allcoins[i]
+		if strings.ToLower(coin.Symbol) == q {
 			ct.goToGlobalIndex(i)
 			return nil
 		}
