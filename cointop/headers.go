@@ -8,7 +8,7 @@ import (
 )
 
 func (ct *Cointop) updateHeaders() {
-	ct.Update(func() {
+	ct.update(func() {
 		cm := map[string]func(a ...interface{}) string{
 			"rank":            color.Black,
 			"name":            color.Black,

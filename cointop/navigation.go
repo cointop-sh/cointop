@@ -1,9 +1,5 @@
 package cointop
 
-import (
-	"github.com/jroimartin/gocui"
-)
-
 func (ct *Cointop) getCurrentPage() int {
 	return ct.page + 1
 }
@@ -12,11 +8,28 @@ func (ct *Cointop) getTotalPages() int {
 	return (ct.getListCount() / ct.perpage) + 1
 }
 
+func (ct *Cointop) getTotalPerPage() int {
+	return ct.perpage
+}
+
 func (ct *Cointop) getListCount() int {
 	return len(ct.allcoins)
 }
 
-func (ct *Cointop) cursorDown(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) setPage(page int) int {
+	if (page*ct.perpage) <= ct.getListCount() && page >= 0 {
+		ct.page = page
+	}
+	return ct.page
+}
+
+func (ct *Cointop) highlightRow(idx int) error {
+	cx, _ := ct.tableview.Cursor()
+	ct.tableview.SetCursor(cx, idx)
+	return nil
+}
+
+func (ct *Cointop) cursorDown() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -37,7 +50,7 @@ func (ct *Cointop) cursorDown(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) cursorUp(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) cursorUp() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -53,7 +66,7 @@ func (ct *Cointop) cursorUp(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) pageDown(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) pageDown() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -79,7 +92,7 @@ func (ct *Cointop) pageDown(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) pageUp() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -103,7 +116,7 @@ func (ct *Cointop) pageUp(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) navigateFirstLine(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) navigateFirstLine() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -119,7 +132,7 @@ func (ct *Cointop) navigateFirstLine(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) navigateLastLine(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) navigateLastLine() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -138,7 +151,7 @@ func (ct *Cointop) navigateLastLine(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) navigatePageFirstLine(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) navigatePageFirstLine() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -150,7 +163,7 @@ func (ct *Cointop) navigatePageFirstLine(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) navigatePageMiddleLine(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) navigatePageMiddleLine() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -163,7 +176,7 @@ func (ct *Cointop) navigatePageMiddleLine(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) navigatePageLastLine(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) navigatePageLastLine() error {
 	if ct.tableview == nil {
 		return nil
 	}
@@ -176,32 +189,28 @@ func (ct *Cointop) navigatePageLastLine(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) prevPage(g *gocui.Gui, v *gocui.View) error {
-	if (ct.page - 1) >= 0 {
-		ct.page = ct.page - 1
-	}
+func (ct *Cointop) prevPage() error {
+	ct.setPage(ct.page - 1)
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
 }
 
-func (ct *Cointop) nextPage(g *gocui.Gui, v *gocui.View) error {
-	if ((ct.page + 1) * ct.perpage) <= ct.getListCount() {
-		ct.page = ct.page + 1
-	}
+func (ct *Cointop) nextPage() error {
+	ct.setPage(ct.page + 1)
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
 }
 
-func (ct *Cointop) firstPage(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) firstPage() error {
 	ct.page = 0
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
 }
 
-func (ct *Cointop) lastPage(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) lastPage() error {
 	ct.page = ct.getListCount() / ct.perpage
 	ct.updateTable()
 	ct.rowChanged()

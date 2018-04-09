@@ -6,11 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jroimartin/gocui"
 	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/open"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -78,7 +76,7 @@ func (ct *Cointop) refreshTable() error {
 		)
 	}
 
-	ct.Update(func() {
+	ct.update(func() {
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
 	})
@@ -107,9 +105,4 @@ func (ct *Cointop) highlightedRowCoin() *apt.Coin {
 func (ct *Cointop) rowLink() string {
 	slug := strings.ToLower(strings.Replace(ct.highlightedRowCoin().Name, " ", "-", -1))
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
-}
-
-func (ct *Cointop) openLink(g *gocui.Gui, v *gocui.View) error {
-	open.URL(ct.rowLink())
-	return nil
 }

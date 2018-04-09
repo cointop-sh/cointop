@@ -5,6 +5,11 @@ import (
 	"time"
 )
 
+func (ct *Cointop) refresh() error {
+	ct.forcerefresh <- true
+	return nil
+}
+
 func (ct *Cointop) refreshAll() error {
 	ct.refreshmux.Lock()
 	ct.setRefreshStatus()

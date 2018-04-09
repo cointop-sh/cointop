@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/gizak/termui"
-	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/pkg/color"
 )
 
@@ -98,14 +97,14 @@ func (ct *Cointop) selectedCoinName() string {
 	return ""
 }
 
-func (ct *Cointop) toggleCoinChart(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) toggleCoinChart() error {
 	highlightedcoin := ct.highlightedRowCoin()
 	if ct.selectedcoin == highlightedcoin {
 		ct.selectedcoin = nil
 	} else {
 		ct.selectedcoin = highlightedcoin
 	}
-	ct.Update(func() {
+	ct.update(func() {
 		ct.chartview.Clear()
 		ct.updateMarketbar()
 		ct.updateChart()

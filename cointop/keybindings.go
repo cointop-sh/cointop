@@ -192,41 +192,43 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		v = strings.TrimSpace(strings.ToLower(v))
 		var fn func(g *gocui.Gui, v *gocui.View) error
 		key, mod := ct.parseKeys(k)
+		view := "table"
 		switch v {
 		case "move_up":
-			fn = ct.cursorUp
+			fn = ct.keyfn(ct.cursorUp)
 		case "move_down":
-			fn = ct.cursorDown
+			fn = ct.keyfn(ct.cursorDown)
 		case "previous_page":
-			fn = ct.prevPage
+			fn = ct.keyfn(ct.prevPage)
 		case "next_page":
-			fn = ct.nextPage
+			fn = ct.keyfn(ct.nextPage)
 		case "page_down":
-			fn = ct.pageDown
+			fn = ct.keyfn(ct.pageDown)
 		case "page_up":
-			fn = ct.pageUp
+			fn = ct.keyfn(ct.pageUp)
 		case "sort_column_symbol":
 			fn = ct.sortfn("symbol", false)
 		case "move_to_page_first_row":
-			fn = ct.navigateFirstLine
+			fn = ct.keyfn(ct.navigateFirstLine)
 		case "move_to_page_last_row":
-			fn = ct.navigateLastLine
+			fn = ct.keyfn(ct.navigateLastLine)
 		case "open_link":
-			fn = ct.openLink
+			fn = ct.keyfn(ct.openLink)
 		case "refresh":
-			fn = ct.refresh
+			fn = ct.keyfn(ct.refresh)
 		case "sort_column_asc":
-			fn = ct.sortAsc
+			fn = ct.keyfn(ct.sortAsc)
 		case "sort_column_desc":
-			fn = ct.sortDesc
+			fn = ct.keyfn(ct.sortDesc)
 		case "sort_left_column":
-			fn = ct.sortPrevCol
+			fn = ct.keyfn(ct.sortPrevCol)
 		case "sort_right_column":
-			fn = ct.sortNextCol
+			fn = ct.keyfn(ct.sortNextCol)
 		case "help":
-			fn = ct.openHelp
+			fn = ct.keyfn(ct.openHelp)
+			view = ""
 		case "first_page":
-			fn = ct.firstPage
+			fn = ct.keyfn(ct.firstPage)
 		case "sort_column_1h_change":
 			fn = ct.sortfn("1hchange", true)
 		case "sort_column_24h_change":
@@ -236,15 +238,15 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "sort_column_available_supply":
 			fn = ct.sortfn("availablesupply", true)
 		case "toggle_row_chart":
-			fn = ct.toggleCoinChart
+			fn = ct.keyfn(ct.toggleCoinChart)
 		case "move_to_page_visible_first_row":
-			fn = ct.navigatePageFirstLine
+			fn = ct.keyfn(ct.navigatePageFirstLine)
 		case "move_to_page_visible_last_row":
-			fn = ct.navigatePageLastLine
+			fn = ct.keyfn(ct.navigatePageLastLine)
 		case "sort_column_market_cap":
 			fn = ct.sortfn("marketcap", true)
 		case "move_to_page_visible_middle_row":
-			fn = ct.navigatePageMiddleLine
+			fn = ct.keyfn(ct.navigatePageMiddleLine)
 		case "sort_column_name":
 			fn = ct.sortfn("name", true)
 		case "sort_column_price":
@@ -258,30 +260,42 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "sort_column_24h_volume":
 			fn = ct.sortfn("24hvolume", true)
 		case "last_page":
-			fn = ct.lastPage
+			fn = ct.keyfn(ct.lastPage)
 		case "quit":
-			fn = ct.quit
+			fn = ct.keyfn(ct.quit)
+			view = ""
+		case "open_search":
+			fn = ct.keyfn(ct.openSearch)
+			view = ""
 		default:
-			fn = keynoop
+			fn = ct.keyfn(ct.noop)
 		}
 
-		ct.setKeybindingMod(key, mod, fn)
+		ct.setKeybindingMod(key, mod, fn, view)
 	}
 
+	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), "searchfield")
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), "searchfield")
 	return nil
 }
 
-func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error) error {
+func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error, view string) error {
 	var err error
 	switch t := key.(type) {
 	case gocui.Key:
-		err = ct.g.SetKeybinding("", t, mod, callback)
+		err = ct.g.SetKeybinding(view, t, mod, callback)
 	case rune:
-		err = ct.g.SetKeybinding("", t, mod, callback)
+		err = ct.g.SetKeybinding(view, t, mod, callback)
 	}
 	return err
 }
 
-func keynoop(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) keyfn(fn func() error) func(g *gocui.Gui, v *gocui.View) error {
+	return func(g *gocui.Gui, v *gocui.View) error {
+		return fn()
+	}
+}
+
+func (ct *Cointop) noop() error {
 	return nil
 }

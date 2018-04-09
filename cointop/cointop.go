@@ -37,6 +37,7 @@ type Cointop struct {
 	maxtablewidth int
 	shortcutkeys  map[string]string
 	config        config // toml config
+	searchfield   *gocui.View
 }
 
 // Run runs cointop
@@ -71,11 +72,6 @@ func Run() {
 	}
 }
 
-func (ct *Cointop) quit(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) quit() error {
 	return gocui.ErrQuit
-}
-
-func (ct *Cointop) refresh(g *gocui.Gui, v *gocui.View) error {
-	ct.forcerefresh <- true
-	return nil
 }

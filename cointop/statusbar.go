@@ -7,7 +7,7 @@ import (
 )
 
 func (ct *Cointop) updateStatusbar(s string) {
-	ct.Update(func() {
+	ct.update(func() {
 		ct.statusbarview.Clear()
 		currpage := ct.getCurrentPage()
 		totalpages := ct.getTotalPages()
@@ -18,7 +18,7 @@ func (ct *Cointop) updateStatusbar(s string) {
 
 func (ct *Cointop) refreshRowLink() {
 	url := ct.rowLink()
-	ct.Update(func() {
+	ct.update(func() {
 		ct.updateStatusbar(fmt.Sprintf("[↵]%s", url))
 	})
 }

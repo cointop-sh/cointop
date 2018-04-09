@@ -1,6 +1,7 @@
 package cointop
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/jroimartin/gocui"
@@ -71,7 +72,35 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.updateStatusbar("")
 	}
 
-	ct.intervalFetchData()
+	if v, err := g.SetView("searchfield", 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		ct.searchfield = v
+		ct.searchfield.Editable = true
+		ct.searchfield.Wrap = true
+		ct.searchfield.Frame = false
+		ct.searchfield.FgColor = gocui.ColorWhite
+
+		// run only once on init
+		ct.g = g
+		g.SetViewOnBottom("searchfield")
+		ct.setActiveView("table")
+		ct.intervalFetchData()
+	}
+	return nil
+}
+
+func (ct *Cointop) setActiveView(v string) error {
+	ct.g.SetViewOnTop(v)
+	ct.g.SetCurrentView(v)
+	if v == "searchfield" {
+		ct.searchfield.Clear()
+		ct.searchfield.SetCursor(1, 0)
+		fmt.Fprintf(ct.searchfield, "%s", "/")
+	} else if v == "table" {
+		ct.g.SetViewOnTop("statusbar")
+	}
 	return nil
 }
 

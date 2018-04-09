@@ -68,7 +68,7 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 		}
 
 		ct.sort(sortby, desc, ct.coins)
-		ct.Update(func() {
+		ct.update(func() {
 			ct.tableview.Clear()
 			ct.updateTable()
 		})
@@ -87,10 +87,10 @@ func (ct *Cointop) getSortColIndex() int {
 	return 0
 }
 
-func (ct *Cointop) sortAsc(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) sortAsc() error {
 	ct.sortdesc = false
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-	ct.Update(func() {
+	ct.update(func() {
 		ct.tableview.Clear()
 		ct.updateTable()
 	})
@@ -98,10 +98,10 @@ func (ct *Cointop) sortAsc(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) sortDesc(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) sortDesc() error {
 	ct.sortdesc = true
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-	ct.Update(func() {
+	ct.update(func() {
 		ct.tableview.Clear()
 		ct.updateTable()
 	})
@@ -109,7 +109,7 @@ func (ct *Cointop) sortDesc(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) sortPrevCol(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) sortPrevCol() error {
 	nextsortby := colorder[0]
 	i := ct.getSortColIndex()
 	k := i - 1
@@ -118,7 +118,7 @@ func (ct *Cointop) sortPrevCol(g *gocui.Gui, v *gocui.View) error {
 	}
 	nextsortby = colorder[k]
 	ct.sort(nextsortby, ct.sortdesc, ct.coins)
-	ct.Update(func() {
+	ct.update(func() {
 		ct.tableview.Clear()
 		ct.updateTable()
 	})
@@ -126,7 +126,7 @@ func (ct *Cointop) sortPrevCol(g *gocui.Gui, v *gocui.View) error {
 	return nil
 }
 
-func (ct *Cointop) sortNextCol(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) sortNextCol() error {
 	nextsortby := colorder[0]
 	l := len(colorder)
 	i := ct.getSortColIndex()
@@ -136,7 +136,7 @@ func (ct *Cointop) sortNextCol(g *gocui.Gui, v *gocui.View) error {
 	}
 	nextsortby = colorder[k]
 	ct.sort(nextsortby, ct.sortdesc, ct.coins)
-	ct.Update(func() {
+	ct.update(func() {
 		ct.tableview.Clear()
 		ct.updateTable()
 	})

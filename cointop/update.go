@@ -2,8 +2,8 @@ package cointop
 
 import "github.com/jroimartin/gocui"
 
-// Update update view
-func (ct *Cointop) Update(f func()) {
+// update update view
+func (ct *Cointop) update(f func()) {
 	ct.g.Update(func(g *gocui.Gui) error {
 		f()
 		return nil

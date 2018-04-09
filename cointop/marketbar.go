@@ -19,7 +19,7 @@ func (ct *Cointop) updateMarketbar() error {
 	if chartname == "" {
 		chartname = "Global"
 	}
-	ct.Update(func() {
+	ct.update(func() {
 		ct.marketview.Clear()
 		fmt.Fprintln(
 			ct.marketview,

@@ -36,6 +36,7 @@ func actionsMap() map[string]bool {
 		"sort_left_column":                true,
 		"sort_right_column":               true,
 		"toggle_row_chart":                true,
+		"open_search":                     true,
 	}
 }
 
@@ -90,5 +91,6 @@ func defaultShortcuts() map[string]string {
 		"q":         "quit",
 		"$":         "last_page",
 		"?":         "help",
+		"/":         "open_search",
 	}
 }
