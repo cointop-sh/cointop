@@ -3,6 +3,8 @@ package cointop
 import (
 	"regexp"
 	"strings"
+
+	"github.com/miguelmota/cointop/pkg/levenshtein"
 )
 
 func (ct *Cointop) openSearch() error {
@@ -38,25 +40,34 @@ func (ct *Cointop) doSearch() error {
 
 func (ct *Cointop) search(q string) error {
 	q = strings.TrimSpace(strings.ToLower(q))
+	idx := -1
+	min := -1
 	for i := range ct.allcoins {
 		coin := ct.allcoins[i]
-		if strings.ToLower(coin.Name) == q {
-			ct.goToGlobalIndex(i)
-			return nil
+		name := strings.ToLower(coin.Name)
+		symbol := strings.ToLower(coin.Symbol)
+		if symbol == q {
+			idx = i
+			break
+		}
+		dist := levenshtein.Distance(name, q)
+		if min == -1 {
+			min = dist
+		}
+		if dist <= min {
+			idx = i
+			min = dist
 		}
 	}
-	for i := range ct.allcoins {
-		coin := ct.allcoins[i]
-		if strings.ToLower(coin.Symbol) == q {
-			ct.goToGlobalIndex(i)
-			return nil
-		}
+
+	if idx > -1 && min <= 6 {
+		ct.goToGlobalIndex(idx)
 	}
 	return nil
 }
 
 func (ct *Cointop) goToGlobalIndex(idx int) error {
-	perpage := ct.getTotalPerPage()
+	perpage := ct.totalPerPage()
 	atpage := idx / perpage
 	ct.setPage(atpage)
 	rowIndex := (idx % perpage)

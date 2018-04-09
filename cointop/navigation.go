@@ -1,14 +1,18 @@
 package cointop
 
-func (ct *Cointop) getCurrentPage() int {
+func (ct *Cointop) currentPage() int {
 	return ct.page + 1
 }
 
-func (ct *Cointop) getTotalPages() int {
+func (ct *Cointop) currentDisplayPage() int {
+	return ct.page + 1
+}
+
+func (ct *Cointop) totalPages() int {
 	return (ct.getListCount() / ct.perpage) + 1
 }
 
-func (ct *Cointop) getTotalPerPage() int {
+func (ct *Cointop) totalPerPage() int {
 	return ct.perpage
 }
 
@@ -29,7 +33,7 @@ func (ct *Cointop) highlightRow(idx int) error {
 	ox, _ := ct.tableview.Origin()
 	cx, _ := ct.tableview.Cursor()
 	_, sy := ct.tableview.Size()
-	perpage := ct.getTotalPerPage()
+	perpage := ct.totalPerPage()
 	p := idx % perpage
 	oy := (p / sy) * sy
 	cy := p % sy
