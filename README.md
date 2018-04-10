@@ -104,8 +104,8 @@ Key|Action
 <kbd>Space</kbd>|Alias to enter key
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim style)
-<kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page (vim style)
-<kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page (vim style)
+<kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page
+<kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
 <kbd>Alt</kbd>+<kbd>↑</kbd>|Sort current column in ascending order

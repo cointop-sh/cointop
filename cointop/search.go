@@ -59,7 +59,7 @@ func (ct *Cointop) search(q string) error {
 			return nil
 		}
 		// store index with the smallest levenshtein
-		dist := levenshtein.Distance(name, q)
+		dist := levenshtein.DamerauLevenshteinDistance(name, q)
 		if min == -1 || dist <= min {
 			idx = i
 			min = dist
