@@ -17,7 +17,6 @@
 - [Shortcuts](#shortcuts)
 - [Config](#config)
 - [FAQ](#faq)
-- [Authors](#authors)
 - [License](#license)
 
 ## Features
@@ -277,10 +276,6 @@ Action|Description
 - Q: How do I search?
 
   - A: The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
-
-## Authors
-
-- [Miguel Mota](https://github.com/miguelmota)
 
 ## License
 
