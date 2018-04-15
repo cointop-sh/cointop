@@ -2,11 +2,11 @@ package cointop
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"time"
 
-	apt "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/table"
@@ -84,6 +84,30 @@ func (ct *Cointop) refreshTable() error {
 	return nil
 }
 
+func (ct *Cointop) updateTable() error {
+	start := ct.page * ct.perpage
+	end := start + ct.perpage
+	if start >= len(ct.allCoins())-1 {
+		start = 0
+	}
+	if end >= len(ct.allCoins())-1 {
+		start = int(math.Floor(float64(start/100)) * 100)
+
+		end = len(ct.allCoins()) - 1
+	}
+	if start < 0 {
+		start = 0
+	}
+	if end >= len(ct.allCoins()) {
+		end = len(ct.allCoins()) - 1
+	}
+	sliced := ct.allCoins()[start:end]
+	ct.coins = sliced
+	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
+	ct.refreshTable()
+	return nil
+}
+
 func (ct *Cointop) highlightedRowIndex() int {
 	_, y := ct.tableview.Origin()
 	_, cy := ct.tableview.Cursor()
@@ -97,7 +121,7 @@ func (ct *Cointop) highlightedRowIndex() int {
 	return idx
 }
 
-func (ct *Cointop) highlightedRowCoin() *apt.Coin {
+func (ct *Cointop) highlightedRowCoin() *coin {
 	idx := ct.highlightedRowIndex()
 	return ct.coins[idx]
 }
@@ -105,4 +129,19 @@ func (ct *Cointop) highlightedRowCoin() *apt.Coin {
 func (ct *Cointop) rowLink() string {
 	slug := strings.ToLower(strings.Replace(ct.highlightedRowCoin().Name, " ", "-", -1))
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
+}
+
+func (ct *Cointop) allCoins() []*coin {
+	if ct.filterByFavorites {
+		var list []*coin
+		for i := range ct.allcoins {
+			coin := ct.allcoins[i]
+			if coin.Favorite {
+				list = append(list, coin)
+			}
+		}
+		return list
+	}
+
+	return ct.allcoins
 }

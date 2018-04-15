@@ -37,6 +37,7 @@ func actionsMap() map[string]bool {
 		"sort_right_column":               true,
 		"toggle_row_chart":                true,
 		"open_search":                     true,
+		"show_favorites":                  true,
 	}
 }
 
@@ -70,6 +71,7 @@ func defaultShortcuts() map[string]string {
 		"7":         "sort_column_7d_change",
 		"a":         "sort_column_available_supply",
 		"c":         "toggle_row_chart",
+		"f":         "show_favorites",
 		"g":         "move_to_page_first_row",
 		"G":         "move_to_page_last_row",
 		"h":         "previous_page",

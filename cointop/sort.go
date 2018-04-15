@@ -3,7 +3,6 @@ package cointop
 import (
 	"github.com/bradfitz/slice"
 	"github.com/jroimartin/gocui"
-	apt "github.com/miguelmota/cointop/pkg/api/types"
 )
 
 var colorder = []string{
@@ -20,7 +19,7 @@ var colorder = []string{
 	"lastupdated",
 }
 
-func (ct *Cointop) sort(sortby string, desc bool, list []*apt.Coin) {
+func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 	ct.sortby = sortby
 	ct.sortdesc = desc
 	slice.Sort(list[:], func(i, j int) bool {

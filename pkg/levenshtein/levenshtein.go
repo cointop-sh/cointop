@@ -88,7 +88,7 @@ func DamerauLevenshteinDistance(s1, s2 string) int {
 
 // min returns the minimum number of passed int slices.
 func min(is ...int) int {
-	min := int(math.MaxInt64)
+	min := int(math.MaxInt32)
 	for _, v := range is {
 		if min > v {
 			min = v

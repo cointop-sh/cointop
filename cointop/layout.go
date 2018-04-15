@@ -2,10 +2,8 @@ package cointop
 
 import (
 	"fmt"
-	"math"
 
 	"github.com/jroimartin/gocui"
-	apt "github.com/miguelmota/cointop/pkg/api/types"
 )
 
 func (ct *Cointop) layout(g *gocui.Gui) error {
@@ -105,13 +103,34 @@ func (ct *Cointop) setActiveView(v string) error {
 }
 
 func (ct *Cointop) updateCoins() error {
-	list := []*apt.Coin{}
+	list := []*coin{}
 	allcoinsmap, err := ct.api.GetAllCoinData()
 	if err != nil {
 		return err
 	}
 
-	ct.allcoinsmap = allcoinsmap
+	if len(ct.allcoinsmap) == 0 {
+		ct.allcoinsmap = map[string]coin{}
+	}
+
+	for k, v := range allcoinsmap {
+		ct.allcoinsmap[k] = coin{
+			ID:               v.ID,
+			Name:             v.Name,
+			Symbol:           v.Symbol,
+			Rank:             v.Rank,
+			PriceUSD:         v.PriceUSD,
+			PriceBTC:         v.PriceBTC,
+			USD24HVolume:     v.USD24HVolume,
+			MarketCapUSD:     v.MarketCapUSD,
+			AvailableSupply:  v.AvailableSupply,
+			TotalSupply:      v.TotalSupply,
+			PercentChange1H:  v.PercentChange1H,
+			PercentChange24H: v.PercentChange24H,
+			PercentChange7D:  v.PercentChange7D,
+			LastUpdated:      v.LastUpdated,
+		}
+	}
 	if len(ct.allcoins) == 0 {
 		for i := range ct.allcoinsmap {
 			coin := ct.allcoinsmap[i]
@@ -145,22 +164,6 @@ func (ct *Cointop) updateCoins() error {
 			}
 		}
 	}
-	return nil
-}
-
-func (ct *Cointop) updateTable() error {
-	start := ct.page * ct.perpage
-	end := start + ct.perpage
-	if end >= len(ct.allcoins)-1 {
-		start = int(math.Floor(float64(start/100)) * 100)
-
-		end = len(ct.allcoins) - 1
-	}
-
-	sliced := ct.allcoins[start:end]
-	ct.coins = sliced
-	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-	ct.refreshTable()
 	return nil
 }
 

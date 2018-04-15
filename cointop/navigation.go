@@ -17,7 +17,7 @@ func (ct *Cointop) totalPerPage() int {
 }
 
 func (ct *Cointop) getListCount() int {
-	return len(ct.allcoins)
+	return len(ct.allCoins())
 }
 
 func (ct *Cointop) setPage(page int) int {

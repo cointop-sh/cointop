@@ -261,11 +261,14 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.sortfn("24hvolume", true)
 		case "last_page":
 			fn = ct.keyfn(ct.lastPage)
-		case "quit":
-			fn = ct.keyfn(ct.quit)
-			view = ""
 		case "open_search":
 			fn = ct.keyfn(ct.openSearch)
+			view = ""
+		case "show_favorites":
+			fn = ct.keyfn(ct.toggleShowFavorites)
+			view = ""
+		case "quit":
+			fn = ct.keyfn(ct.quit)
 			view = ""
 		default:
 			fn = ct.keyfn(ct.noop)

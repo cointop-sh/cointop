@@ -30,14 +30,6 @@
 - Color coded
 - Works on macOS, Linux, and Windows
 
-#### Future releases
-
-- Advanced search
-- "Favorites" list
-- Currency conversion (i.e. Euro, Yen)
-- Markets/Exchanges
-- CryptoCompare API
-
 ## Installing
 
 Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
