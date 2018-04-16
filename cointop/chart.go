@@ -17,6 +17,9 @@ func (ct *Cointop) updateChart() error {
 	}
 	coin := ct.selectedCoinName()
 	ct.chartPoints(maxX, coin)
+	if len(ct.chartpoints) != 0 {
+		ct.chartview.Clear()
+	}
 	for i := range ct.chartpoints {
 		var s string
 		for j := range ct.chartpoints[i] {
@@ -25,6 +28,7 @@ func (ct *Cointop) updateChart() error {
 		}
 		fmt.Fprintln(ct.chartview, color.White(s))
 	}
+
 	return nil
 }
 
@@ -104,10 +108,7 @@ func (ct *Cointop) toggleCoinChart() error {
 	} else {
 		ct.selectedcoin = highlightedcoin
 	}
-	ct.update(func() {
-		ct.chartview.Clear()
-		ct.updateMarketbar()
-		ct.updateChart()
-	})
+	ct.updateChart()
+	ct.updateMarketbar()
 	return nil
 }

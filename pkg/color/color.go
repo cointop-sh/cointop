@@ -9,6 +9,8 @@ var (
 	White = color.New(color.FgWhite).SprintFunc()
 	// WhiteBold bold
 	WhiteBold = color.New(color.FgWhite, color.Bold).SprintFunc()
+	// Yellow color
+	Yellow = color.New(color.FgYellow).SprintFunc()
 	// Green color
 	Green = color.New(color.FgGreen).SprintFunc()
 	// GreenBg color

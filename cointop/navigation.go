@@ -240,6 +240,5 @@ func (ct *Cointop) goToGlobalIndex(idx int) error {
 	rowIndex := (idx % perpage)
 	ct.highlightRow(rowIndex)
 	ct.updateTable()
-	ct.rowChanged()
 	return nil
 }

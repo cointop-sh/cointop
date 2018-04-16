@@ -251,7 +251,7 @@ Action|Description
 
 - Q: How often is the data polled?
 
-  - A: Data gets polled once every minute by default.
+  - A: Data gets polled once every minute by default. You can press <kbd>Ctrl</kbd>+<kbd>r</kbd> to force refresh.
 
 - Q: I installed cointop without errors but the command is not found.
 
@@ -268,6 +268,10 @@ Action|Description
 - Q: How do I search?
 
   - A: The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
+
+- Q: Does this work on the Raspberry Pi?
+
+  - A: Yes, cointop works on the Rasperry Pi?
 
 ## License
 

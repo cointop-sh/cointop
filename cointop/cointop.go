@@ -26,7 +26,7 @@ type Cointop struct {
 	api               api.Interface
 	allcoins          []*coin
 	coins             []*coin
-	allcoinsmap       map[string]coin
+	allcoinsmap       map[string]*coin
 	page              int
 	perpage           int
 	refreshmux        sync.Mutex
@@ -53,10 +53,6 @@ func Run() {
 		forcerefresh:  make(chan bool),
 		maxtablewidth: 175,
 		shortcutkeys:  defaultShortcuts(),
-		favorites: map[string]bool{
-			"ETH": true,
-			"ADT": true,
-		},
 	}
 	_ = ct.setupConfig()
 	g, err := gocui.NewGui(gocui.Output256)
@@ -65,7 +61,6 @@ func Run() {
 	}
 	ct.g = g
 	defer g.Close()
-	g.Cursor = true
 	g.Mouse = true
 	g.Highlight = true
 	g.SetManagerFunc(ct.layout)

@@ -67,12 +67,7 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 		}
 
 		ct.sort(sortby, desc, ct.coins)
-		ct.update(func() {
-			ct.tableview.Clear()
-			ct.updateTable()
-		})
-
-		ct.rowChanged()
+		ct.updateTable()
 		return nil
 	}
 }
@@ -89,22 +84,14 @@ func (ct *Cointop) getSortColIndex() int {
 func (ct *Cointop) sortAsc() error {
 	ct.sortdesc = false
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-	ct.update(func() {
-		ct.tableview.Clear()
-		ct.updateTable()
-	})
-	ct.rowChanged()
+	ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) sortDesc() error {
 	ct.sortdesc = true
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-	ct.update(func() {
-		ct.tableview.Clear()
-		ct.updateTable()
-	})
-	ct.rowChanged()
+	ct.updateTable()
 	return nil
 }
 
@@ -117,11 +104,7 @@ func (ct *Cointop) sortPrevCol() error {
 	}
 	nextsortby = colorder[k]
 	ct.sort(nextsortby, ct.sortdesc, ct.coins)
-	ct.update(func() {
-		ct.tableview.Clear()
-		ct.updateTable()
-	})
-	ct.rowChanged()
+	ct.updateTable()
 	return nil
 }
 
@@ -135,10 +118,6 @@ func (ct *Cointop) sortNextCol() error {
 	}
 	nextsortby = colorder[k]
 	ct.sort(nextsortby, ct.sortdesc, ct.coins)
-	ct.update(func() {
-		ct.tableview.Clear()
-		ct.updateTable()
-	})
-	ct.rowChanged()
+	ct.updateTable()
 	return nil
 }

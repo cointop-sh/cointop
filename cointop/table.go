@@ -31,10 +31,14 @@ func (ct *Cointop) refreshTable() error {
 	for _, coin := range ct.coins {
 		unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 		lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
+		namecolor := color.White
 		colorprice := color.Cyan
 		color1h := color.White
 		color24h := color.White
 		color7d := color.White
+		if coin.Favorite {
+			namecolor = color.Yellow
+		}
 		if coin.PercentChange1H > 0 {
 			color1h = color.Green
 		}
@@ -61,7 +65,7 @@ func (ct *Cointop) refreshTable() error {
 		}
 		ct.table.AddRow(
 			color.White(fmt.Sprintf("%7v ", coin.Rank)),
-			color.White(fmt.Sprintf("%.22s", name)),
+			namecolor(fmt.Sprintf("%.22s", name)),
 			color.White(fmt.Sprintf("%.6s", coin.Symbol)),
 			colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.PriceUSD))),
 			color.White(fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCapUSD))),
@@ -85,26 +89,55 @@ func (ct *Cointop) refreshTable() error {
 }
 
 func (ct *Cointop) updateTable() error {
+	sliced := []*coin{}
+
+	for i := range ct.allcoinsmap {
+		v := ct.allcoinsmap[i]
+		if ct.favorites[v.Symbol] {
+			v.Favorite = true
+		}
+	}
+
+	if ct.filterByFavorites {
+		for i := range ct.allcoins {
+			coin := ct.allcoins[i]
+			if coin.Favorite {
+				sliced = append(sliced, coin)
+			}
+		}
+		ct.coins = sliced
+		ct.sort(ct.sortby, ct.sortdesc, ct.coins)
+		ct.refreshTable()
+		return nil
+	}
+
 	start := ct.page * ct.perpage
 	end := start + ct.perpage
-	if start >= len(ct.allCoins())-1 {
+	allcoins := ct.allCoins()
+	size := len(allcoins)
+	if start < 0 {
 		start = 0
 	}
-	if end >= len(ct.allCoins())-1 {
+	if end >= size-1 {
 		start = int(math.Floor(float64(start/100)) * 100)
-
-		end = len(ct.allCoins()) - 1
+		end = size - 1
 	}
 	if start < 0 {
 		start = 0
 	}
-	if end >= len(ct.allCoins()) {
-		end = len(ct.allCoins()) - 1
+	if end >= size {
+		end = size - 1
 	}
-	sliced := ct.allCoins()[start:end]
+	if end < 0 {
+		end = 0
+	}
+	if end > 0 {
+		sliced = allcoins[start:end]
+	}
 	ct.coins = sliced
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
 	ct.refreshTable()
+	ct.rowChanged()
 	return nil
 }
 
@@ -123,11 +156,18 @@ func (ct *Cointop) highlightedRowIndex() int {
 
 func (ct *Cointop) highlightedRowCoin() *coin {
 	idx := ct.highlightedRowIndex()
+	if len(ct.coins) == 0 {
+		return nil
+	}
 	return ct.coins[idx]
 }
 
 func (ct *Cointop) rowLink() string {
-	slug := strings.ToLower(strings.Replace(ct.highlightedRowCoin().Name, " ", "-", -1))
+	coin := ct.highlightedRowCoin()
+	if coin == nil {
+		return ""
+	}
+	slug := strings.ToLower(strings.Replace(coin.Name, " ", "-", -1))
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
 }
 

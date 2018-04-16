@@ -266,7 +266,6 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			view = ""
 		case "show_favorites":
 			fn = ct.keyfn(ct.toggleShowFavorites)
-			view = ""
 		case "quit":
 			fn = ct.keyfn(ct.quit)
 			view = ""
