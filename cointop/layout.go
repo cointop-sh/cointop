@@ -85,6 +85,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.setActiveView("table")
 		ct.intervalFetchData()
 	}
+	ct.rowChanged()
 	return nil
 }
 
