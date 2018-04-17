@@ -3,7 +3,6 @@ package cointop
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"os"
 	"os/user"
 	"strings"
@@ -113,7 +112,6 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 		k = strings.ToLower(k)
 		v, ok := ifc.(string)
 		if ok {
-			log.Println(k, v)
 			if !actionsmap[v] {
 				continue
 			}
