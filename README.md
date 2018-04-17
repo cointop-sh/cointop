@@ -25,7 +25,7 @@
 - Vim style keys
 - Pagination
 - 7 day charts
-- Search by name/symbol
+- Fuzzy Searching
 - Custom key bindings
 - Color coded
 - Works on macOS, Linux, and Windows
@@ -271,7 +271,7 @@ Action|Description
 
 - Q: Does this work on the Raspberry Pi?
 
-  - A: Yes, cointop works on the Rasperry Pi?
+  - A: Yes, cointop works on the Rasperry Pi including the RPi Zero.
 
 ## License
 

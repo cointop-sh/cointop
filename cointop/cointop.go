@@ -54,7 +54,10 @@ func Run() {
 		maxtablewidth: 175,
 		shortcutkeys:  defaultShortcuts(),
 	}
-	_ = ct.setupConfig()
+	err := ct.setupConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)
