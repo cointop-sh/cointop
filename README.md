@@ -293,6 +293,15 @@ Action|Description
 
   - A: Press <kbd>ctrl</kbd>+<kbd>s</kbd> to save your favorites.
 
+- Q: I'm getting question marks or weird symbols instead of the correct characters.
+
+  - A: Make sure that your terminal has the encoding set to UTF-8 and that your terminal font supports UTF-8.
+
+    You can also try running cointop with the following environment variables:
+    ```bash
+    LANG=en_US.utf8 TERM=xterm-256color cointop
+    ```
+
 ## License
 
 Released under the MIT license.
