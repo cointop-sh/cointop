@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gizak/termui"
 	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/pkg/api"
 	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/miguelmota/cointop/pkg/termui"
 )
 
 // Cointop cointop

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gizak/termui"
 	"github.com/miguelmota/cointop/pkg/color"
+	"github.com/miguelmota/cointop/pkg/termui"
 )
 
 var oneWeek = (time.Hour * 24) * 7

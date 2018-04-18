@@ -26,22 +26,10 @@
   version = "v1.6.0"
 
 [[projects]]
-  name = "github.com/gizak/termui"
-  packages = ["."]
-  revision = "24acd523c756fd9728824cdfac66aad9d8982fb7"
-  version = "v2.2.0"
-
-[[projects]]
   branch = "master"
   name = "github.com/jroimartin/gocui"
   packages = ["."]
-  revision = "4f518eddb04b8f73870836b6d1941e8aa3c06637"
-
-[[projects]]
-  name = "github.com/maruel/panicparse"
-  packages = ["stack"]
-  revision = "785840568bdc7faa0dfb1cd6c643207f03271f64"
-  version = "v1.1.1"
+  revision = "c055c87ae801372cd74a0839b972db4f7697ae5f"
 
 [[projects]]
   name = "github.com/mattn/go-colorable"
@@ -65,25 +53,19 @@
   branch = "master"
   name = "github.com/miguelmota/go-coinmarketcap"
   packages = ["."]
-  revision = "9c6b4c2a42d7189f8778825da9640c3efda17d7e"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/mitchellh/go-wordwrap"
-  packages = ["."]
-  revision = "ad45545899c7b13c020ea92b2072220eefad42b8"
+  revision = "824d58bf0ced24a3c5211695d1da4751c179ab64"
 
 [[projects]]
   branch = "master"
   name = "github.com/nsf/termbox-go"
   packages = ["."]
-  revision = "e2050e41c8847748ec5288741c0b19a8cb26d084"
+  revision = "3e24a7b6661e09b87a9f49d693034219f81602fa"
 
 [[projects]]
   branch = "master"
   name = "go4.org"
   packages = ["reflectutil"]
-  revision = "e6a7f04a962e05f288f348eec6de20fe93b6b292"
+  revision = "9599cf28b011184741f249bd9f9330756b506cbc"
 
 [[projects]]
   branch = "master"
@@ -92,17 +74,17 @@
     "html",
     "html/atom"
   ]
-  revision = "b68f30494add4df6bd8ef5e82803f308e7f7c59c"
+  revision = "84348c2dc81a524fe94aaea3e3d9f967135338ef"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "378d26f46672a356c46195c28f61bdb4c0a781dd"
+  revision = "b126b21c05a91c856b027c16779c12e3bf236954"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "32fd20155545d4c756d57dc0c4d04f15f1817ae029e701c805b347b86df77943"
+  inputs-digest = "8949d0a22e4e0c000e6c21a69eac0b147496e2b65320a4f5a63f966d54524473"
   solver-name = "gps-cdcl"
   solver-version = 1

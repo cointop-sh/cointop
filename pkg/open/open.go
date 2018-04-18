@@ -8,7 +8,9 @@ import (
 var openCmd string
 var possibleCmds = []string{
 	"xdg-open",   // linux
+	"gvfs-open",  // linux
 	"gnome-open", // linux
+	"kde-open",   // linux
 	"open",       // mac
 	"start",      // windows
 	"cygstart",   // windows
