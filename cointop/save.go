@@ -8,7 +8,7 @@ func (ct *Cointop) save() error {
 
 func (ct *Cointop) setSavingStatus() {
 	go func() {
-		ct.loadingTicks("saving", 900)
+		ct.loadingTicks("saving", 590)
 		ct.updateStatusbar("")
 		ct.rowChanged()
 	}()

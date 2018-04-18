@@ -3,6 +3,7 @@ package cointop
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/user"
 	"strings"
@@ -98,13 +99,12 @@ func (ct *Cointop) saveConfig() error {
 	defer ct.savemux.Unlock()
 	path := ct.configPath()
 	if _, err := os.Stat(path); err == nil {
-		fo, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
-		defer fo.Close()
 		b, err := ct.configToToml()
 		if err != nil {
 			return err
 		}
-		if _, err := fo.Write(b); err != nil {
+		err = ioutil.WriteFile(path, b, 0644)
+		if err != nil {
 			return err
 		}
 	}

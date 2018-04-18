@@ -88,6 +88,7 @@ func (ct *Cointop) refreshTable() error {
 	ct.update(func() {
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
+		ct.rowChanged()
 	})
 
 	return nil
@@ -142,7 +143,6 @@ func (ct *Cointop) updateTable() error {
 	ct.coins = sliced
 	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
 	ct.refreshTable()
-	ct.rowChanged()
 	return nil
 }
 
