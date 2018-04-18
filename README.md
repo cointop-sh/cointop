@@ -26,7 +26,7 @@
 - Vim style keys
 - Fast pagination
 - 7 day charts for coins and global market graphs
-- Fuzzy Searching (name/symbol) for finding coins
+- Fuzzy searching for finding coins
 - Save and view favorite coins
 - Color coding
 - Works on macOS, Linux, and Windows
