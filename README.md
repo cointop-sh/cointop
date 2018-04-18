@@ -281,6 +281,18 @@ Action|Description
 
   - A: Yes, cointop works on the Rasperry Pi including the RPi Zero.
 
+- Q: How do I add/remove a favorite?
+
+  - A: Press the <kbd>space</kbd> key to toggle a coin as a favorite.
+
+- Q: How do I view all my favorites?
+
+  - A: Press <kbd>f</kbd> to toggle view all your favorites.
+
+- Q: How do I save my favorites?
+
+  - A: Press <kbd>ctrl</kbd>+<kbd>s</kbd> to save your favorites.
+
 ## License
 
 Released under the MIT license.
