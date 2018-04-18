@@ -2,14 +2,16 @@ package open
 
 import (
 	"os/exec"
+	"strings"
 )
 
 var openCmd string
 var possibleCmds = []string{
-	"xdg-open", // linux
-	"open",     // mac
-	"start",    // windows?
-	"cygstart", // windows?
+	"xdg-open",   // linux
+	"gnome-open", // linux
+	"open",       // mac
+	"start",      // windows
+	"cygstart",   // windows
 }
 
 func init() {
@@ -19,7 +21,7 @@ func init() {
 			continue
 		}
 
-		bin := string(out)
+		bin := strings.TrimSpace(string(out))
 		if bin != "" {
 			openCmd = possibleCmds[i]
 		}
