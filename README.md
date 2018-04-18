@@ -22,12 +22,13 @@
 ## Features
 
 - Quick sort shortcuts
+- Custom key bindings config
 - Vim style keys
-- Pagination
-- 7 day charts
-- Fuzzy Searching
-- Custom key bindings
-- Color coded
+- Fast pagination
+- 7 day charts for coins and global market graphs
+- Fuzzy Searching (name/symbol) for finding coins
+- Save and view favorite coins
+- Color coding
 - Works on macOS, Linux, and Windows
 
 ## Installing
@@ -90,14 +91,15 @@ Key|Action
 <kbd>Page Down</kbd>|Jump page down
 <kbd>Home</kbd>|Go to first line of page
 <kbd>End</kbd>|Go to last line of page
-<kbd>Enter</kbd>|Visit highlighted coin on [CoinMarketCap](https://coinmarketcap.com/)
-<kbd>Esc</kbd>|Alias to quit
-<kbd>Space</kbd>|Alias to enter key
+<kbd>Enter</kbd>|Toggle [c]hart for highlighted coin
+<kbd>Esc</kbd>|Quit
+<kbd>Space</kbd>|Toggle coin as favorite
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim style)
 <kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
+<kbd>Ctrl</kbd>+<kbd>s</kbd>|Save config
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
 <kbd>Alt</kbd>+<kbd>↑</kbd>|Sort current column in ascending order
 <kbd>Alt</kbd>+<kbd>↓</kbd>|Sort current column in descending order
@@ -110,6 +112,7 @@ Key|Action
 <kbd>7</kbd>|Sort table by *[7] day change*
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
 <kbd>c</kbd>|Toggle [c]hart for highlighted coin
+<kbd>f</kbd>|Toggle show favorites
 <kbd>g</kbd>|Go to first line of page  (vim style)
 <kbd>G</kbd>|Go to last line of page (vim style)
 <kbd>h</kbd>|Go to previous page (vim style)
@@ -121,7 +124,7 @@ Key|Action
 <kbd>m</kbd>|Sort table by *[m]arket cap*
 <kbd>M</kbd>|Go to middle of visible table window (vim style)
 <kbd>n</kbd>|Sort table by *[n]ame*
-<kbd>o</kbd>|[o]pen row link
+<kbd>o</kbd>|[o]pen link to highlighted coin on [CoinMarketCap](https://coinmarketcap.com/)
 <kbd>p</kbd>|Sort table by *[p]rice*
 <kbd>r</kbd>|Sort table by *[r]ank*
 <kbd>s</kbd>|Sort table by *[s]ymbol*
@@ -173,10 +176,12 @@ You can then configure the actions you want for each key:
   "ctrl+n" = "next_page"
   "ctrl+p" = "previous_page"
   "ctrl+r" = "refresh"
+  "ctrl+s" = "save"
   "ctrl+u" = "page_up"
   end = "move_to_page_last_row"
-  enter = "open_link"
+  enter = "toggle_row_chart"
   esc = "quit"
+  f = "toggle_show_favorites"
   F1 = "help"
   g = "move_to_page_first_row"
   h = "previous_page"
@@ -193,7 +198,7 @@ You can then configure the actions you want for each key:
   q = "quit"
   r = "sort_column_rank"
   s = "sort_column_symbol"
-  space = "open_link"
+  space = "toggle_favorite"
   t = "sort_column_total_supply"
   u = "sort_column_last_updated"
   v = "sort_column_24h_volume"
@@ -238,6 +243,9 @@ Action|Description
 `sort_left_column`|Sort the column to the left of the highlighted column
 `sort_right_column`|Sort the column to the right of the highlighted column
 `toggle_row_chart`|Toggle the chart for the highlighted row
+`toggle_favorite`|Toggle coin as favorite
+`toggle_show_favorites`|Toggle show favorites
+`save`|Save config
 
 ## FAQ
 

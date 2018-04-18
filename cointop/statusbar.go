@@ -18,5 +18,5 @@ func (ct *Cointop) updateStatusbar(s string) {
 
 func (ct *Cointop) refreshRowLink() {
 	url := ct.rowLink()
-	ct.updateStatusbar(fmt.Sprintf("[↵]%s", url))
+	ct.updateStatusbar(fmt.Sprintf("[o]pen %s", url))
 }

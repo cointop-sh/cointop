@@ -264,8 +264,12 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "open_search":
 			fn = ct.keyfn(ct.openSearch)
 			view = ""
-		case "show_favorites":
+		case "toggle_favorite":
+			fn = ct.keyfn(ct.toggleFavorite)
+		case "toggle_show_favorites":
 			fn = ct.keyfn(ct.toggleShowFavorites)
+		case "save":
+			fn = ct.keyfn(ct.save)
 		case "quit":
 			fn = ct.keyfn(ct.quit)
 			view = ""

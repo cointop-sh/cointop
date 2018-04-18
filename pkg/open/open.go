@@ -9,6 +9,7 @@ var possibleCmds = []string{
 	"xdg-open", // linux
 	"open",     // mac
 	"start",    // windows?
+	"cygstart", // windows?
 }
 
 func init() {

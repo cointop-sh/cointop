@@ -39,6 +39,7 @@ type Cointop struct {
 	searchfield       *gocui.View
 	favorites         map[string]bool
 	filterByFavorites bool
+	savemux           sync.Mutex
 }
 
 // Run runs cointop
@@ -53,6 +54,7 @@ func Run() {
 		forcerefresh:  make(chan bool),
 		maxtablewidth: 175,
 		shortcutkeys:  defaultShortcuts(),
+		favorites:     map[string]bool{},
 	}
 	err := ct.setupConfig()
 	if err != nil {

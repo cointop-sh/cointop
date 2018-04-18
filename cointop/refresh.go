@@ -12,12 +12,12 @@ func (ct *Cointop) refresh() error {
 
 func (ct *Cointop) refreshAll() error {
 	ct.refreshmux.Lock()
+	defer ct.refreshmux.Unlock()
 	ct.setRefreshStatus()
 	ct.updateCoins()
 	ct.updateTable()
 	ct.updateMarketbar()
 	ct.updateChart()
-	ct.refreshmux.Unlock()
 	return nil
 }
 

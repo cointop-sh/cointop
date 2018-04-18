@@ -11,7 +11,8 @@ import (
 )
 
 type config struct {
-	Shortcuts map[string]interface{} `toml:"shortcuts"`
+	Shortcuts map[string]interface{}   `toml:"shortcuts"`
+	Favorites map[string][]interface{} `toml:"favorites"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -30,6 +31,24 @@ func (ct *Cointop) setupConfig() error {
 	err = ct.loadShortcutsFromConfig()
 	if err != nil {
 		return err
+	}
+	err = ct.loadFavoritesFromConfig()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (ct *Cointop) loadFavoritesFromConfig() error {
+	for k, arr := range ct.config.Favorites {
+		if k == "symbols" {
+			for _, ifc := range arr {
+				v, ok := ifc.(string)
+				if ok {
+					ct.favorites[strings.ToUpper(v)] = true
+				}
+			}
+		}
 	}
 	return nil
 }
@@ -74,6 +93,24 @@ func (ct *Cointop) makeConfigFile() error {
 	return nil
 }
 
+func (ct *Cointop) saveConfig() error {
+	ct.savemux.Lock()
+	defer ct.savemux.Unlock()
+	path := ct.configPath()
+	if _, err := os.Stat(path); err == nil {
+		fo, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE, 0666)
+		defer fo.Close()
+		b, err := ct.configToToml()
+		if err != nil {
+			return err
+		}
+		if _, err := fo.Write(b); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (ct *Cointop) parseConfig() error {
 	var conf config
 	path := ct.configPath()
@@ -86,14 +123,26 @@ func (ct *Cointop) parseConfig() error {
 }
 
 func (ct *Cointop) configToToml() ([]byte, error) {
-	s := defaultShortcuts()
-	ifcs := map[string]interface{}{}
-	for k, v := range s {
+	shortcutsIfcs := map[string]interface{}{}
+	for k, v := range ct.shortcutkeys {
 		var i interface{} = v
-		ifcs[k] = i
+		shortcutsIfcs[k] = i
 	}
+
+	var favorites []interface{}
+	for k, ok := range ct.favorites {
+		if ok {
+			var i interface{} = strings.ToUpper(k)
+			favorites = append(favorites, i)
+		}
+	}
+	favoritesIfcs := map[string][]interface{}{
+		"symbols": favorites,
+	}
+
 	var inputs = &config{
-		Shortcuts: ifcs,
+		Shortcuts: shortcutsIfcs,
+		Favorites: favoritesIfcs,
 	}
 
 	var b bytes.Buffer
