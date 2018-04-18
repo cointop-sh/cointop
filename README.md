@@ -39,6 +39,10 @@ Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
+### Windows WSL
+
+You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
+
 ### Snap
 
 cointop is also available as a [snap](https://snapcraft.io/cointop) for Linux users.
@@ -264,6 +268,7 @@ Action|Description
 - Q: I installed cointop without errors but the command is not found.
 
   - A: Make sure your `GOPATH` and `PATH` is set correctly.
+
     ```bash
     export GOPATH=$HOME/go
     export PATH=$PATH:$GOPATH/bin
@@ -298,9 +303,13 @@ Action|Description
   - A: Make sure that your terminal has the encoding set to UTF-8 and that your terminal font supports UTF-8.
 
     You can also try running cointop with the following environment variables:
+
     ```bash
     LANG=en_US.utf8 TERM=xterm-256color cointop
     ```
+
+    If you're on Windows WSL, please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for font support instructions.
+
 
 ## License
 
