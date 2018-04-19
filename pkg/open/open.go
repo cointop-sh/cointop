@@ -27,11 +27,11 @@ func init() {
 		}
 
 		bin := strings.TrimSpace(string(out))
+		log.Fatal("bin ", bin)
 		if bin != "" {
 			openCmd = possibleCmds[i]
 		}
 	}
-	log.Fatal("CMD ", openCmd)
 }
 
 // URL open url
