@@ -33,7 +33,7 @@
 
 ## Installing
 
-Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
+Make sure to have [go](https://golang.org/) (1.4+) installed, then do:
 
 ```bash
 go get -u github.com/miguelmota/cointop
@@ -309,6 +309,10 @@ Action|Description
     ```
 
     If you're on Windows WSL, please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for font support instructions.
+
+- Q: How do I install Go on Ubuntu?
+
+  - A: There's instructions on installing Go on Ubuntu in the [wiki](https://github.com/miguelmota/cointop/wiki/Install-Go-on-Ubuntu).
 
 
 ## License
