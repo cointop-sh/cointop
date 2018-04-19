@@ -312,7 +312,7 @@ Action|Description
 
 - Q: How do I install Go on Ubuntu?
 
-  - A: There's instructions on installing Go on Ubuntu in the [wiki](https://github.com/miguelmota/cointop/wiki/Install-Go-on-Ubuntu).
+  - A: There's instructions on installing Go on Ubuntu in the [wiki](https://github.com/miguelmota/cointop/wiki/Installing-Go-on-Ubuntu).
 
 
 ## License
