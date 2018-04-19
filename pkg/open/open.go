@@ -4,6 +4,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 var openCmd string
@@ -23,15 +24,19 @@ func init() {
 	for i, cmd := range possibleCmds {
 		out, err := exec.Command("command", "-v", cmd).Output()
 		if err != nil {
+			log.Println("err ", err)
 			continue
 		}
 
+		log.Println("out ", string(out))
 		bin := strings.TrimSpace(string(out))
-		log.Fatal("bin ", bin)
 		if bin != "" {
 			openCmd = possibleCmds[i]
+			break
 		}
 	}
+	log.Println("cmd ", openCmd)
+	time.Sleep(2 * time.Second)
 }
 
 // URL open url
