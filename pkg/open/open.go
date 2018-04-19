@@ -21,8 +21,8 @@ var possibleCmds = []string{
 }
 
 func init() {
-	for i, cmd := range possibleCmds {
-		out, err := exec.Command("command", "-v", cmd).Output()
+	for _, cmd := range possibleCmds {
+		out, err := exec.Command("/usr/bin/command", "-v", cmd).Output()
 		if err != nil {
 			log.Println("err ", err)
 			continue
@@ -31,7 +31,7 @@ func init() {
 		log.Println("out ", string(out))
 		bin := strings.TrimSpace(string(out))
 		if bin != "" {
-			openCmd = possibleCmds[i]
+			openCmd = bin
 			break
 		}
 	}
