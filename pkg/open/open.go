@@ -1,6 +1,7 @@
 package open
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 	"strings"
@@ -22,7 +23,7 @@ var possibleCmds = []string{
 
 func init() {
 	for _, cmd := range possibleCmds {
-		out, err := exec.Command("/usr/bin/command", "-v", cmd).Output()
+		out, err := exec.Command("/bin/bash", "-c", fmt.Sprintf("%s %s %s", "command", "-v", cmd)).Output()
 		if err != nil {
 			log.Println("err ", err)
 			continue
