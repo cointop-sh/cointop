@@ -13,7 +13,7 @@ import (
 )
 
 func (ct *Cointop) refreshTable() error {
-	maxX := ct.Width()
+	maxX := ct.width()
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.AddCol("")
 	ct.table.AddCol("")

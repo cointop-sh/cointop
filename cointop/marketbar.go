@@ -9,7 +9,7 @@ import (
 )
 
 func (ct *Cointop) updateMarketbar() error {
-	maxX := ct.Width()
+	maxX := ct.width()
 	market, err := ct.api.GetGlobalMarketData()
 	if err != nil {
 		return err

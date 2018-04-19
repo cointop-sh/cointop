@@ -7,7 +7,7 @@ import (
 )
 
 func (ct *Cointop) layout(g *gocui.Gui) error {
-	maxX, maxY := ct.Size()
+	maxX, maxY := ct.size()
 	chartHeight := 10
 	topOffset := 0
 

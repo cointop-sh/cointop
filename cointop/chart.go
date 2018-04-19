@@ -11,7 +11,7 @@ import (
 var oneWeek = (time.Hour * 24) * 7
 
 func (ct *Cointop) updateChart() error {
-	maxX := ct.Width()
+	maxX := ct.width()
 	if maxX > ct.maxtablewidth {
 		maxX = ct.maxtablewidth
 	}
