@@ -1,19 +1,22 @@
 package open
 
 import (
+	"log"
 	"os/exec"
 	"strings"
 )
 
 var openCmd string
 var possibleCmds = []string{
-	"xdg-open",   // linux
-	"gvfs-open",  // linux
-	"gnome-open", // linux
-	"kde-open",   // linux
-	"open",       // mac
-	"start",      // windows
-	"cygstart",   // windows
+	"gvfs-open",          // gnome linux
+	"gnome-open",         // gnome linux
+	"kde-open",           // kde linux
+	"exo-open",           // xfce linux
+	"enlightenment_open", // enlightenment linux
+	"xdg-open",           // generic linux
+	"open",               // mac
+	"start",              // windows
+	"cygstart",           // windows
 }
 
 func init() {
@@ -28,6 +31,7 @@ func init() {
 			openCmd = possibleCmds[i]
 		}
 	}
+	log.Fatal("CMD ", openCmd)
 }
 
 // URL open url
