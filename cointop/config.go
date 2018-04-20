@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"os/user"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -21,7 +20,7 @@ func (ct *Cointop) setupConfig() error {
 	if err != nil {
 		return err
 	}
-	err = ct.makeConfigFile()
+	Err = ct.makeConfigFile()
 	if err != nil {
 		return err
 	}
@@ -55,12 +54,8 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 }
 
 func (ct *Cointop) configDirPath() string {
-	usr, err := user.Current()
-	if err != nil {
-		return ".cointop"
-	}
-
-	return fmt.Sprintf("%s%s", usr.HomeDir, "/.cointop")
+	homedir := userHomeDir()
+	return fmt.Sprintf("%s%s", homedir, "/.cointop")
 }
 
 func (ct *Cointop) configPath() string {
@@ -171,4 +166,15 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 		}
 	}
 	return nil
+}
+
+func userHomeDir() string {
+    if runtime.GOOS == "windows" {
+        home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+        if home == "" {
+            home = os.Getenv("USERPROFILE")
+        }
+        return home
+    }
+    return os.Getenv("HOME")
 }
