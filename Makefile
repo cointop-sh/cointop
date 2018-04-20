@@ -17,8 +17,17 @@ clean:
 test:
 	go test ./...
 
-snap:
-	snapcraft clean && snapcraft stage && snapcraft snap
+snap/clean:
+	snapcraft clean
+
+snap/stage:
+	snapcraft stage
+
+snap/build: snap/clean snap/stage 
+	snapcraft snap
 
 snap/deploy:
-	snapcraft push <*.snap> --release stable
+	snapcraft push cointop_*.snap --release stable
+
+snap/remove:
+	snap remove cointop
