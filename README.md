@@ -65,7 +65,9 @@ To update make sure to use the `-u` flag.
 go get -u github.com/miguelmota/cointop
 ```
 
-### Updating Snap
+### snap
+
+Use the `refresh` command to update snap.
 
 ```bash
 sudo snap refresh cointop --stable
