@@ -12,3 +12,11 @@
 *.out
 
 .DS_Store
+
+# snapcraft files
+parts
+prime
+snap
+stage
+*.snap
+

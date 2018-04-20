@@ -48,7 +48,13 @@ You'll need additional font support for Windows WSL. Please see the [wiki](https
 cointop is also available as a [snap](https://snapcraft.io/cointop) for Linux users.
 
 ```bash
-sudo snap install cointop --edge
+sudo snap install cointop --stable
+```
+
+Running snap:
+
+```bash
+sudo snap run cointop 
 ```
 
 ## Updating
@@ -62,7 +68,7 @@ go get -u github.com/miguelmota/cointop
 ### Updating Snap
 
 ```bash
-sudo snap refresh cointop --edge
+sudo snap refresh cointop --stable
 ```
 
 <!--

@@ -16,3 +16,9 @@ clean:
 
 test:
 	go test ./...
+
+snap:
+	snapcraft clean && snapcraft stage && snapcraft snap
+
+snap/deploy:
+	snapcraft push <*.snap> --release stable
