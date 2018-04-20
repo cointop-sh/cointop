@@ -21,7 +21,7 @@ func (ct *Cointop) setupConfig() error {
 	if err != nil {
 		return err
 	}
-	Err = ct.makeConfigFile()
+	err = ct.makeConfigFile()
 	if err != nil {
 		return err
 	}
