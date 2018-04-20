@@ -57,6 +57,8 @@ Running snap:
 sudo snap run cointop 
 ```
 
+Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216/16).
+
 ## Updating
 
 To update make sure to use the `-u` flag.
@@ -322,6 +324,9 @@ Action|Description
 
   - A: There's instructions on installing Go on Ubuntu in the [wiki](https://github.com/miguelmota/cointop/wiki/Installing-Go-on-Ubuntu).
 
+- Q: I'm getting errors installing the snap in Windows WSL.
+
+  - A: Unfortunately Windows WSL doesn't support `snapd` which is required for snaps to run. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216/16).
 
 ## License
 
