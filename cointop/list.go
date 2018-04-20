@@ -1,10 +1,49 @@
 package cointop
 
+import (
+	"encoding/json"
+	"time"
+
+	types "github.com/miguelmota/cointop/pkg/api/types"
+)
+
 func (ct *Cointop) updateCoins() error {
 	list := []*coin{}
-	allcoinsmap, err := ct.api.GetAllCoinData()
-	if err != nil {
-		return err
+	cachekey := "allcoinsmap"
+
+	var err error
+	var allcoinsmap map[string]types.Coin
+	cached, found := ct.cache.Get(cachekey)
+	if found {
+		// cache hit
+		allcoinsmap, _ = cached.(map[string]types.Coin)
+		ct.debuglog("soft cache hit")
+	} else {
+		ifc, ok, _ := ct.readCache(&allcoinsmap)
+		if ok {
+			// hard cache hit
+			if ifc != nil {
+				ct.debuglog("hard cache hit")
+			}
+		}
+	}
+
+	// cache miss
+	if allcoinsmap == nil {
+		ct.debuglog("cache miss")
+		allcoinsmap, err = ct.api.GetAllCoinData()
+		if err != nil {
+			return err
+		}
+		ct.cache.Set(cachekey, allcoinsmap, 10*time.Second)
+		b, err := json.Marshal(allcoinsmap)
+		if err != nil {
+			return err
+		}
+		err = ct.writeCache(b)
+		if err != nil {
+			return err
+		}
 	}
 
 	if len(ct.allcoinsmap) == 0 {

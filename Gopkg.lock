@@ -62,6 +62,12 @@
   revision = "3e24a7b6661e09b87a9f49d693034219f81602fa"
 
 [[projects]]
+  name = "github.com/patrickmn/go-cache"
+  packages = ["."]
+  revision = "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
+  version = "v2.1.0"
+
+[[projects]]
   branch = "master"
   name = "go4.org"
   packages = ["reflectutil"]
@@ -85,6 +91,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8949d0a22e4e0c000e6c21a69eac0b147496e2b65320a4f5a63f966d54524473"
+  inputs-digest = "a379741758ab87277a2159f17b7f9741ece58d2f94b1c959191189f9100a6f29"
   solver-name = "gps-cdcl"
   solver-version = 1

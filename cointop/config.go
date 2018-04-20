@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"runtime"
 	"strings"
 
 	"github.com/BurntSushi/toml"
@@ -152,11 +151,10 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 }
 
 func (ct *Cointop) loadShortcutsFromConfig() error {
-	actionsmap := actionsMap()
 	for k, ifc := range ct.config.Shortcuts {
 		v, ok := ifc.(string)
 		if ok {
-			if !actionsmap[v] {
+			if !ct.actionExists(v) {
 				continue
 			}
 			if ct.shortcutkeys[k] == "" {
@@ -166,15 +164,4 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 		}
 	}
 	return nil
-}
-
-func userHomeDir() string {
-	if runtime.GOOS == "windows" {
-		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
-		if home == "" {
-			home = os.Getenv("USERPROFILE")
-		}
-		return home
-	}
-	return os.Getenv("HOME")
 }

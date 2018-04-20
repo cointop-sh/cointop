@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"log"
+	"os"
 	"sync"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/api"
 	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/termui"
+	"github.com/patrickmn/go-cache"
 )
 
 // Cointop cointop
@@ -34,16 +36,23 @@ type Cointop struct {
 	forcerefresh      chan bool
 	selectedcoin      *coin
 	maxtablewidth     int
+	actionsmap        map[string]bool
 	shortcutkeys      map[string]string
 	config            config // toml config
 	searchfield       *gocui.View
 	favorites         map[string]bool
 	filterByFavorites bool
 	savemux           sync.Mutex
+	cache             *cache.Cache
+	debug             bool
 }
 
 // Run runs cointop
 func Run() {
+	var debug bool
+	if os.Getenv("DEBUG") != "" {
+		debug = true
+	}
 	ct := Cointop{
 		api:           api.NewCMC(),
 		refreshticker: time.NewTicker(1 * time.Minute),
@@ -53,8 +62,11 @@ func Run() {
 		perpage:       100,
 		forcerefresh:  make(chan bool),
 		maxtablewidth: 175,
+		actionsmap:    actionsMap(),
 		shortcutkeys:  defaultShortcuts(),
 		favorites:     map[string]bool{},
+		cache:         cache.New(1*time.Minute, 2*time.Minute),
+		debug:         debug,
 	}
 	err := ct.setupConfig()
 	if err != nil {
