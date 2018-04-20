@@ -54,10 +54,10 @@ sudo snap install cointop --stable
 Running snap:
 
 ```bash
-sudo snap run cointop 
+sudo snap run cointop
 ```
 
-Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216/16).
+Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
 ## Updating
 
@@ -326,7 +326,7 @@ Action|Description
 
 - Q: I'm getting errors installing the snap in Windows WSL.
 
-  - A: Unfortunately Windows WSL doesn't support `snapd` which is required for snaps to run. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216/16).
+  - A: Unfortunately Windows WSL doesn't support `snapd` which is required for snaps to run. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
 ## License
 
