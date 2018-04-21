@@ -10,6 +10,8 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+var fileperm = os.FileMode(0644)
+
 type config struct {
 	Shortcuts map[string]interface{}   `toml:"shortcuts"`
 	Favorites map[string][]interface{} `toml:"favorites"`
@@ -98,7 +100,7 @@ func (ct *Cointop) saveConfig() error {
 		if err != nil {
 			return err
 		}
-		err = ioutil.WriteFile(path, b, 0644)
+		err = ioutil.WriteFile(path, b, fileperm)
 		if err != nil {
 			return err
 		}

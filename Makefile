@@ -4,6 +4,9 @@ all:
 run:
 	go run main.go
 
+debug:
+	DEBUG=1 go run main.go
+
 # http://macappstore.org/upx
 build: clean
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
@@ -23,7 +26,7 @@ snap/clean:
 snap/stage:
 	snapcraft stage
 
-snap/build: snap/clean snap/stage 
+snap/build: snap/clean snap/stage
 	snapcraft snap
 
 snap/deploy:

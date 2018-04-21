@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/miguelmota/cointop/pkg/color"
@@ -45,6 +46,11 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 	end := secs
 
 	var data []float64
+	filename := strings.ToLower(coin)
+	if filename == "" {
+		filename = "globaldata"
+	}
+
 	if coin == "" {
 		graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
 		if err != nil {
@@ -62,6 +68,10 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 			data = append(data, graphData.PriceUSD[i][1])
 		}
 	}
+
+	go func() {
+		_ = ct.writeHardCache(data, filename)
+	}()
 
 	chart.Data = data
 	termui.Body = termui.NewGrid()

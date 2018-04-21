@@ -14,6 +14,9 @@ func (ct *Cointop) updateMarketbar() error {
 	if err != nil {
 		return err
 	}
+	go func() {
+		_ = ct.writeHardCache(market, "market")
+	}()
 	timeframe := "7 Day"
 	chartname := ct.selectedCoinName()
 	if chartname == "" {

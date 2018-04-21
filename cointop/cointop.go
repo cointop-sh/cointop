@@ -72,6 +72,10 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	err = ct.createCacheDir()
+	if err != nil {
+		log.Fatal(err)
+	}
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)
@@ -87,6 +91,24 @@ func Run() {
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Fatalf("main loop: %v", err)
 	}
+	/*
+		ifc, ok, _ := ct.readHardCache(&data, filename)
+		if ok {
+			// hard cache hit
+			if ifc != nil {
+				ct.debuglog("hard cache hit")
+			}
+		}
+	*/
+	/*
+		ifc, ok, _ := ct.readHardCache(&allcoinsmap, "allcoinsmap")
+		if ok {
+			// hard cache hit
+			if ifc != nil {
+				ct.debuglog("hard cache hit")
+			}
+		}
+	*/
 }
 
 func (ct *Cointop) quit() error {
