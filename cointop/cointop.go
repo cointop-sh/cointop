@@ -72,10 +72,6 @@ func Run() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = ct.createCacheDir()
-	if err != nil {
-		log.Fatal(err)
-	}
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)

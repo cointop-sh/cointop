@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/miguelmota/cointop/pkg/color"
+	"github.com/miguelmota/cointop/pkg/fcache"
 	"github.com/miguelmota/cointop/pkg/termui"
 )
 
@@ -46,32 +47,42 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 	end := secs
 
 	var data []float64
-	filename := strings.ToLower(coin)
-	if filename == "" {
-		filename = "globaldata"
+	cachekey := strings.ToLower(coin)
+	if cachekey == "" {
+		cachekey = "globaldata"
 	}
 
-	if coin == "" {
-		graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
-		if err != nil {
-			return nil
-		}
-		for i := range graphData.MarketCapByAvailableSupply {
-			data = append(data, graphData.MarketCapByAvailableSupply[i][1]/1E9)
-		}
-	} else {
-		graphData, err := ct.api.GetCoinGraphData(coin, start, end)
-		if err != nil {
-			return nil
-		}
-		for i := range graphData.PriceUSD {
-			data = append(data, graphData.PriceUSD[i][1])
-		}
+	cached, found := ct.cache.Get(cachekey)
+	if found {
+		// cache hit
+		data, _ = cached.([]float64)
+		ct.debuglog("soft cache hit")
 	}
 
-	go func() {
-		_ = ct.writeHardCache(data, filename)
-	}()
+	if len(data) == 0 {
+		if coin == "" {
+			graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
+			if err != nil {
+				return nil
+			}
+			for i := range graphData.MarketCapByAvailableSupply {
+				data = append(data, graphData.MarketCapByAvailableSupply[i][1]/1E9)
+			}
+		} else {
+			graphData, err := ct.api.GetCoinGraphData(coin, start, end)
+			if err != nil {
+				return nil
+			}
+			for i := range graphData.PriceUSD {
+				data = append(data, graphData.PriceUSD[i][1])
+			}
+		}
+
+		ct.cache.Set(cachekey, data, 10*time.Second)
+		go func() {
+			_ = fcache.Set(cachekey, data, 24*time.Hour)
+		}()
+	}
 
 	chart.Data = data
 	termui.Body = termui.NewGrid()

@@ -2,21 +2,41 @@ package cointop
 
 import (
 	"fmt"
+	"time"
 
+	types "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/color"
+	"github.com/miguelmota/cointop/pkg/fcache"
 	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/pad"
 )
 
 func (ct *Cointop) updateMarketbar() error {
 	maxX := ct.width()
-	market, err := ct.api.GetGlobalMarketData()
-	if err != nil {
-		return err
+
+	var market types.GlobalMarketData
+	var err error
+	cachekey := "market"
+	cached, found := ct.cache.Get(cachekey)
+	if found {
+		// cache hit
+		var ok bool
+		market, ok = cached.(types.GlobalMarketData)
+		if ok {
+			ct.debuglog("soft cache hit")
+		}
+	} else {
+		market, err = ct.api.GetGlobalMarketData()
+		if err != nil {
+			return err
+		}
+
+		ct.cache.Set(cachekey, market, 10*time.Second)
+		go func() {
+			_ = fcache.Set(cachekey, market, 24*time.Hour)
+		}()
 	}
-	go func() {
-		_ = ct.writeHardCache(market, "market")
-	}()
+
 	timeframe := "7 Day"
 	chartname := ct.selectedCoinName()
 	if chartname == "" {

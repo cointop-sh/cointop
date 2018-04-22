@@ -4,6 +4,7 @@ import (
 	"time"
 
 	types "github.com/miguelmota/cointop/pkg/api/types"
+	"github.com/miguelmota/cointop/pkg/fcache"
 )
 
 func (ct *Cointop) updateCoins() error {
@@ -28,7 +29,7 @@ func (ct *Cointop) updateCoins() error {
 		}
 		ct.cache.Set(cachekey, allcoinsmap, 10*time.Second)
 		go func() {
-			_ = ct.writeHardCache(allcoinsmap, "allcoinsmap")
+			_ = fcache.Set(cachekey, allcoinsmap, 24*time.Hour)
 		}()
 	}
 
