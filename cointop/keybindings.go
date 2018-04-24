@@ -297,6 +297,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
 	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
 	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
+	ct.setKeybindingMod('c', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
 	return nil
 }
 

@@ -15,7 +15,7 @@ func (ct *Cointop) toggleHelp() error {
 }
 
 func (ct *Cointop) updateHelp() {
-	str := fmt.Sprintf(" Help %s\n\n", pad.Left("[x] exit", ct.maxtablewidth-11, " "))
+	str := fmt.Sprintf(" Help %s\n\n", pad.Left("[c]lose", ct.maxtablewidth-11, " "))
 	i := 0
 	for k, v := range ct.shortcutkeys {
 		nl := " "
