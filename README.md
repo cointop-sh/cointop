@@ -25,7 +25,7 @@
 - Custom key bindings config
 - Vim style keys
 - Fast pagination
-- 7 day charts for coins and global market graphs
+- Charts for coins and global market graphs
 - Fuzzy searching for finding coins
 - Save and view favorite coins
 - Color coding
@@ -327,6 +327,10 @@ Action|Description
 - Q: I'm getting errors installing the snap in Windows WSL.
 
   - A: Unfortunately Windows WSL doesn't support `snapd` which is required for snaps to run. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
+
+- Q: How do I show the help menu?
+
+  - A: Press <kbd>?</kbd> to toggle the help menu.
 
 ## License
 
