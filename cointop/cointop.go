@@ -45,6 +45,7 @@ type Cointop struct {
 	savemux           sync.Mutex
 	cache             *cache.Cache
 	debug             bool
+	helpview          *gocui.View
 }
 
 // Run runs cointop
