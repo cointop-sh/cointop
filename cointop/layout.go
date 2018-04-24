@@ -80,20 +80,12 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.searchfield.FgColor = gocui.ColorWhite
 	}
 
-	helpwidth := 50
-	helpheight := 25
-	tablewidth := 182
-	helpX := (tablewidth / 2) - (helpwidth / 2)
-	helpY := topOffset + 2
-	if helpX <= 0 {
-		helpX = 5
-	}
-	if v, err := g.SetView("help", helpX, helpY, helpX+helpwidth, helpY+helpheight); err != nil {
+	if v, err := g.SetView("help", 1, 1, ct.maxtablewidth-2, maxY-2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		ct.helpview = v
-		ct.helpview.Frame = true
+		ct.helpview.Frame = false
 		ct.helpview.BgColor = gocui.ColorBlack
 		ct.helpview.FgColor = gocui.ColorWhite
 
@@ -120,6 +112,11 @@ func (ct *Cointop) setActiveView(v string) error {
 		ct.g.SetViewOnTop("statusbar")
 	}
 	return nil
+}
+
+func (ct *Cointop) setViewOnBottom(v string) error {
+	_, err := ct.g.SetViewOnBottom(v)
+	return err
 }
 
 func (ct *Cointop) intervalFetchData() {

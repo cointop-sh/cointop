@@ -4,6 +4,8 @@ func actionsMap() map[string]bool {
 	return map[string]bool{
 		"first_page":                      true,
 		"help":                            true,
+		"toggle_show_help":                true,
+		"close_help":                      true,
 		"last_page":                       true,
 		"move_to_page_first_row":          true,
 		"move_to_page_last_row":           true,

@@ -46,6 +46,7 @@ type Cointop struct {
 	cache             *cache.Cache
 	debug             bool
 	helpview          *gocui.View
+	helpvisible       bool
 }
 
 // Run runs cointop
@@ -109,5 +110,13 @@ func Run() {
 }
 
 func (ct *Cointop) quit() error {
+	if ct.helpvisible {
+		return nil
+	}
+
+	return ct.forceQuit()
+}
+
+func (ct *Cointop) forceQuit() error {
 	return gocui.ErrQuit
 }

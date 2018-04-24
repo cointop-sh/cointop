@@ -225,8 +225,13 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "sort_right_column":
 			fn = ct.keyfn(ct.sortNextCol)
 		case "help":
-			fn = ct.keyfn(ct.openHelp)
+			fallthrough
+		case "toggle_show_help":
+			fn = ct.keyfn(ct.toggleHelp)
 			view = ""
+		case "hide_help":
+			fn = ct.keyfn(ct.hideHelp)
+			view = "help"
 		case "first_page":
 			fn = ct.keyfn(ct.firstPage)
 		case "sort_column_1h_change":
@@ -280,8 +285,18 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		ct.setKeybindingMod(key, mod, fn, view)
 	}
 
+	// keys to force quit
+	ct.setKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.keyfn(ct.forceQuit), "")
+	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.forceQuit), "")
+
+	// searchfield keys
 	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), "searchfield")
 	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), "searchfield")
+
+	// keys to quit help when open
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
+	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
 	return nil
 }
 
