@@ -19,7 +19,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.marketview.Frame = false
 		ct.marketview.BgColor = gocui.ColorBlack
 		ct.marketview.FgColor = gocui.ColorWhite
-		ct.updateMarketbar()
+		go ct.updateMarketbar()
 	}
 
 	topOffset = topOffset + 1
@@ -29,7 +29,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.chartview = v
 		ct.chartview.Frame = false
-		ct.updateChart()
+		go ct.updateChart()
 	}
 
 	topOffset = topOffset + chartHeight
@@ -41,7 +41,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.headersview.Frame = false
 		ct.headersview.FgColor = gocui.ColorBlack
 		ct.headersview.BgColor = gocui.ColorGreen
-		ct.updateHeaders()
+		go ct.updateHeaders()
 	}
 
 	topOffset = topOffset + 1
@@ -54,8 +54,10 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview.Highlight = true
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
-		ct.updateCoins()
-		ct.updateTable()
+		go func() {
+			ct.updateCoins()
+			ct.updateTable()
+		}()
 	}
 
 	if v, err := g.SetView("statusbar", 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
@@ -66,7 +68,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.statusbarview.Frame = false
 		ct.statusbarview.BgColor = gocui.ColorCyan
 		ct.statusbarview.FgColor = gocui.ColorBlack
-		ct.updateStatusbar("")
+		go ct.updateStatusbar("")
 	}
 
 	if v, err := g.SetView("searchfield", 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
