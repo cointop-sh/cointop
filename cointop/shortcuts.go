@@ -25,6 +25,7 @@ func defaultShortcuts() map[string]string {
 		"alt+left":  "sort_left_column",
 		"alt+right": "sort_right_column",
 		"F1":        "help",
+		"F5":        "refresh",
 		"0":         "first_page",
 		"1":         "sort_column_1h_change",
 		"2":         "sort_column_24h_change",
