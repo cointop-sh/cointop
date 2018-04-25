@@ -21,3 +21,4 @@ stage
 *.snap
 *bfg-report*
 *bfg-report
+vendor
