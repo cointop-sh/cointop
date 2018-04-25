@@ -80,7 +80,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.searchfield.FgColor = gocui.ColorWhite
 	}
 
-	if v, err := g.SetView("help", 1, 1, ct.maxtablewidth-2, maxY-2); err != nil {
+	if v, err := g.SetView("help", 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
