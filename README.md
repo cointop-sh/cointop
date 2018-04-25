@@ -23,7 +23,7 @@
 
 - Quick sort shortcuts
 - Custom key bindings config
-- Vim style keys
+- Vim inspired shortcut keys
 - Fast pagination
 - Charts for coins and global market graphs
 - Fuzzy searching for finding coins
@@ -110,35 +110,35 @@ Key|Action
 <kbd>Esc</kbd>|Quit
 <kbd>Space</kbd>|Toggle coin as favorite
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
-<kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim style)
+<kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim inspired)
 <kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh data
 <kbd>Ctrl</kbd>+<kbd>s</kbd>|Save config
-<kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
+<kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim inspired)
 <kbd>Alt</kbd>+<kbd>↑</kbd>|Sort current column in ascending order
 <kbd>Alt</kbd>+<kbd>↓</kbd>|Sort current column in descending order
 <kbd>Alt</kbd>+<kbd>←</kbd>|Sort column to the left
 <kbd>Alt</kbd>+<kbd>→</kbd>|Sort column to the right
 <kbd>F1</kbd>|Show help|
 <kbd>F5</kbd>|Force refresh data|
-<kbd>0</kbd>|Go to first page (vim style)
+<kbd>0</kbd>|Go to first page (vim inspired)
 <kbd>1</kbd>|Sort table by *[1] hour change*
 <kbd>2</kbd>|Sort table by *[2]4 hour change*
 <kbd>7</kbd>|Sort table by *[7] day change*
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
 <kbd>c</kbd>|Toggle [c]hart for highlighted coin
 <kbd>f</kbd>|Toggle show favorites
-<kbd>g</kbd>|Go to first line of page  (vim style)
-<kbd>G</kbd>|Go to last line of page (vim style)
-<kbd>h</kbd>|Go to previous page (vim style)
-<kbd>H</kbd>|Go to top of table window (vim style)
-<kbd>j</kbd>|Move down (vim style)
-<kbd>k</kbd>|Move up (vim style)
-<kbd>l</kbd>|Go to next page (vim style)
-<kbd>L</kbd>|Go to last line of visible table window (vim style)
+<kbd>g</kbd>|Go to first line of page  (vim inspired)
+<kbd>G</kbd>|Go to last line of page (vim inspired)
+<kbd>h</kbd>|Go to previous page (vim inspired)
+<kbd>H</kbd>|Go to top of table window (vim inspired)
+<kbd>j</kbd>|Move down (vim inspired)
+<kbd>k</kbd>|Move up (vim inspired)
+<kbd>l</kbd>|Go to next page (vim inspired)
+<kbd>L</kbd>|Go to last line of visible table window (vim inspired)
 <kbd>m</kbd>|Sort table by *[m]arket cap*
-<kbd>M</kbd>|Go to middle of visible table window (vim style)
+<kbd>M</kbd>|Go to middle of visible table window (vim inspired)
 <kbd>n</kbd>|Sort table by *[n]ame*
 <kbd>o</kbd>|[o]pen link to highlighted coin on [CoinMarketCap](https://coinmarketcap.com/)
 <kbd>p</kbd>|Sort table by *[p]rice*
@@ -148,9 +148,9 @@ Key|Action
 <kbd>u</kbd>|Sort table by *last [u]pdated*
 <kbd>v</kbd>|Sort table by *24 hour [v]olume*
 <kbd>q</kbd>|[q]uit
-<kbd>$</kbd>|Go to last page (vim style)
+<kbd>$</kbd>|Go to last page (vim inspired)
 <kbd>?</kbd>|Show help|
-<kbd>/</kbd>|Search (vim style)|
+<kbd>/</kbd>|Search (vim inspired)|
 
 ## Config
 
