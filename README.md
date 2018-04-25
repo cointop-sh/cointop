@@ -336,4 +336,4 @@ Action|Description
 
 ## License
 
-Released under the MIT license.
+Released under the [Apache 2.0](./LICENSE.md) license.
