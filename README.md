@@ -28,7 +28,8 @@
 - Charts for coins and global market graphs
 - Fuzzy searching for finding coins
 - Save and view favorite coins
-- Color coding
+- Color support
+- Help menu
 - Works on macOS, Linux, and Windows
 
 ## Installing
@@ -112,7 +113,7 @@ Key|Action
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim style)
 <kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page
-<kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh
+<kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh data
 <kbd>Ctrl</kbd>+<kbd>s</kbd>|Save config
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim style)
 <kbd>Alt</kbd>+<kbd>↑</kbd>|Sort current column in ascending order
@@ -120,6 +121,7 @@ Key|Action
 <kbd>Alt</kbd>+<kbd>←</kbd>|Sort column to the left
 <kbd>Alt</kbd>+<kbd>→</kbd>|Sort column to the right
 <kbd>F1</kbd>|Show help|
+<kbd>F5</kbd>|Force refresh data|
 <kbd>0</kbd>|Go to first page (vim style)
 <kbd>1</kbd>|Sort table by *[1] hour change*
 <kbd>2</kbd>|Sort table by *[2]4 hour change*
@@ -330,7 +332,7 @@ Action|Description
 
 - Q: How do I show the help menu?
 
-  - A: Press <kbd>?</kbd> to toggle the help menu.
+  - A: Press <kbd>?</kbd> to toggle the help menu. Press <kbd>q</kbd> to close help menu.
 
 ## License
 
