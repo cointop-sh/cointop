@@ -4,11 +4,11 @@
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/miguelmota/cointop/master/LICENSE.md) [![Build Status](https://travis-ci.org/miguelmota/cointop.svg?branch=master)](https://travis-ci.org/miguelmota/cointop) [![Go Report Card](https://goreportcard.com/badge/github.com/miguelmota/cointop?)](https://goreportcard.com/report/github.com/miguelmota/cointop) [![GoDoc](https://godoc.org/github.com/miguelmota/cointop?status.svg)](https://godoc.org/github.com/miguelmota/cointop)
 
-[`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time. The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop).
+[`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
+
+The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and default shortcut keys are inspired by [vim](https://en.wikipedia.org/wiki/Vim_(text_editor)).
 
 <img src="https://user-images.githubusercontent.com/168240/39320731-e99b928a-4939-11e8-8a62-ff3951353d92.png" width="880" />
-
-Help menu
 
 <img src="https://user-images.githubusercontent.com/168240/39320886-44a2142e-493a-11e8-82f7-561043512783.png" width="880" />
 
