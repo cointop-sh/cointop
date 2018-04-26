@@ -8,12 +8,12 @@ import (
 )
 
 func (ct *Cointop) openSearch() error {
-	ct.setActiveView("searchfield")
+	ct.setActiveView(ct.searchfieldviewname)
 	return nil
 }
 
 func (ct *Cointop) cancelSearch() error {
-	ct.setActiveView("table")
+	ct.setActiveView(ct.tableviewname)
 	return nil
 }
 
@@ -21,7 +21,7 @@ func (ct *Cointop) doSearch() error {
 	ct.searchfield.Rewind()
 	b := make([]byte, 100)
 	n, err := ct.searchfield.Read(b)
-	defer ct.setActiveView("table")
+	defer ct.setActiveView(ct.tableviewname)
 	if err != nil {
 		return nil
 	}

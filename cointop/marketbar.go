@@ -43,9 +43,9 @@ func (ct *Cointop) updateMarketbar() error {
 		chartname = "Global"
 	}
 	ct.update(func() {
-		ct.marketview.Clear()
+		ct.marketbarview.Clear()
 		fmt.Fprintln(
-			ct.marketview,
+			ct.marketbarview,
 			pad.Right(
 				fmt.Sprintf(
 					"%s [ Chart: %s %s ] Global ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s",

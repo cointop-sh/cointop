@@ -6,34 +6,49 @@ import (
 	"github.com/miguelmota/cointop/pkg/gocui"
 )
 
+// layout sets initial layout
 func (ct *Cointop) layout(g *gocui.Gui) error {
 	maxX, maxY := ct.size()
 	chartHeight := 10
 	topOffset := 0
 
-	if v, err := g.SetView("market", 0, topOffset, maxX, 2); err != nil {
+	if v, err := g.SetView(ct.marketbarviewname, 0, topOffset, maxX, 2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.marketview = v
-		ct.marketview.Frame = false
-		ct.marketview.BgColor = gocui.ColorBlack
-		ct.marketview.FgColor = gocui.ColorWhite
-		go ct.updateMarketbar()
+		ct.marketbarview = v
+		ct.marketbarview.Frame = false
+		ct.marketbarview.BgColor = gocui.ColorBlack
+		ct.marketbarview.FgColor = gocui.ColorWhite
+		go func() {
+			ct.updateMarketbar()
+			_, found := ct.cache.Get(ct.marketbarviewname)
+			if found {
+				ct.cache.Delete(ct.marketbarviewname)
+				ct.updateMarketbar()
+			}
+		}()
 	}
 
 	topOffset = topOffset + 1
-	if v, err := g.SetView("chart", 0, topOffset, maxX, topOffset+chartHeight); err != nil {
+	if v, err := g.SetView(ct.chartviewname, 0, topOffset, maxX, topOffset+chartHeight); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		ct.chartview = v
 		ct.chartview.Frame = false
-		go ct.updateChart()
+		go func() {
+			ct.updateChart()
+			_, found := ct.cache.Get("globaldata")
+			if found {
+				ct.cache.Delete("globaldata")
+				ct.updateChart()
+			}
+		}()
 	}
 
 	topOffset = topOffset + chartHeight
-	if v, err := g.SetView("header", 0, topOffset, ct.maxtablewidth, topOffset+2); err != nil {
+	if v, err := g.SetView(ct.headerviewname, 0, topOffset, ct.maxtablewidth, topOffset+2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -45,7 +60,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	topOffset = topOffset + 1
-	if v, err := g.SetView("table", 0, topOffset, ct.maxtablewidth, maxY-1); err != nil {
+	if v, err := g.SetView(ct.tableviewname, 0, topOffset, ct.maxtablewidth, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -57,10 +72,16 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		go func() {
 			ct.updateCoins()
 			ct.updateTable()
+			_, found := ct.cache.Get("allcoinsmap")
+			if found {
+				ct.cache.Delete("allcoinsmap")
+				ct.updateCoins()
+				ct.updateTable()
+			}
 		}()
 	}
 
-	if v, err := g.SetView("statusbar", 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
+	if v, err := g.SetView(ct.statusbarviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -71,7 +92,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		go ct.updateStatusbar("")
 	}
 
-	if v, err := g.SetView("searchfield", 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
+	if v, err := g.SetView(ct.searchfieldviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -82,7 +103,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.searchfield.FgColor = gocui.ColorWhite
 	}
 
-	if v, err := g.SetView("help", 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
+	if v, err := g.SetView(ct.helpviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -94,9 +115,9 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		// run only once on init.
 		// this bit of code should be at the bottom
 		ct.g = g
-		g.SetViewOnBottom("searchfield") // hide
-		g.SetViewOnBottom("help")        // hide
-		ct.setActiveView("table")
+		g.SetViewOnBottom(ct.searchfieldviewname) // hide
+		g.SetViewOnBottom(ct.helpviewname)        // hide
+		ct.setActiveView(ct.tableviewname)
 		ct.intervalFetchData()
 	}
 
@@ -106,12 +127,12 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 func (ct *Cointop) setActiveView(v string) error {
 	ct.g.SetViewOnTop(v)
 	ct.g.SetCurrentView(v)
-	if v == "searchfield" {
+	if v == ct.searchfieldviewname {
 		ct.searchfield.Clear()
 		ct.searchfield.SetCursor(1, 0)
 		fmt.Fprintf(ct.searchfield, "%s", "/")
-	} else if v == "table" {
-		ct.g.SetViewOnTop("statusbar")
+	} else if v == ct.tableviewname {
+		ct.g.SetViewOnTop(ct.statusbarviewname)
 	}
 	return nil
 }
