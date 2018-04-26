@@ -11,12 +11,12 @@ func (ct *Cointop) updateStatusbar(s string) {
 		ct.statusbarview.Clear()
 		currpage := ct.currentDisplayPage()
 		totalpages := ct.totalPages()
-		base := "[q]uit [?]help [c]hart [/]search"
-		fmt.Fprintln(ct.statusbarview, pad.Right(fmt.Sprintf("%v [← →]page %v/%v %s", base, currpage, totalpages, s), ct.maxtablewidth, " "))
+		base := "[q]Quit [?]Help [c]Chart [/]Search"
+		fmt.Fprintln(ct.statusbarview, pad.Right(fmt.Sprintf("%v [← →]Page %v/%v %s", base, currpage, totalpages, s), ct.maxtablewidth, " "))
 	})
 }
 
 func (ct *Cointop) refreshRowLink() {
 	url := ct.rowLink()
-	ct.updateStatusbar(fmt.Sprintf("[o]pen %s", url))
+	ct.updateStatusbar(fmt.Sprintf("[o]Open %s", url))
 }
