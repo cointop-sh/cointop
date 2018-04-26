@@ -13,23 +13,25 @@ import (
 var oneWeek = (time.Hour * 24) * 7
 
 func (ct *Cointop) updateChart() error {
-	maxX := ct.width()
-	if maxX > ct.maxtablewidth {
-		maxX = ct.maxtablewidth
-	}
+	maxX := ct.maxtablewidth - 3
 	coin := ct.selectedCoinName()
 	ct.chartPoints(maxX, coin)
 	if len(ct.chartpoints) != 0 {
 		ct.chartview.Clear()
 	}
+	var body string
 	for i := range ct.chartpoints {
 		var s string
 		for j := range ct.chartpoints[i] {
 			p := ct.chartpoints[i][j]
 			s = fmt.Sprintf("%s%c", s, p.Ch)
 		}
-		fmt.Fprintln(ct.chartview, color.White(s))
+		body = fmt.Sprintf("%s%s\n", body, s)
+
 	}
+	ct.update(func() {
+		fmt.Fprint(ct.chartview, color.White(body))
+	})
 
 	return nil
 }
