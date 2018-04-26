@@ -34,3 +34,9 @@ snap/deploy:
 
 snap/remove:
 	snap remove cointop
+
+brew/remove:
+	brew uninstall cointop
+
+brew/build: brew/remove
+	brew install --build-from-source cointop.rb

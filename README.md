@@ -50,11 +50,16 @@ Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
-### Windows WSL
+### Homebrew (macOS)
 
-You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
+cointop is available via [Homebrew](https://brew.sh/) for macOS:
 
-### Snap
+```bash
+brew tap cointop/cointop https://github.com/miguelmota/cointop
+brew install cointop
+```
+
+### Snap (Linux)
 
 cointop is also available as a [snap](https://snapcraft.io/cointop) for Linux users.
 
@@ -70,6 +75,10 @@ sudo snap run cointop
 
 Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
+### Windows WSL (Windows)
+
+You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
+
 ## Updating
 
 To update make sure to use the `-u` flag.
@@ -78,12 +87,18 @@ To update make sure to use the `-u` flag.
 go get -u github.com/miguelmota/cointop
 ```
 
-### snap
+### Snap
 
 Use the `refresh` command to update snap.
 
 ```bash
 sudo snap refresh cointop --stable
+```
+
+### Homebrew
+
+```bash
+brew uninstall cointop && brew install cointop
 ```
 
 <!--
@@ -346,10 +361,20 @@ Action|Description
 
 ## Development
 
-Build snap
+### Snap
+
+Building snap
 
 ```bash
 $ make snap/build
+```
+
+### Homebrew
+
+Installing from source
+
+```bash
+make brew/build
 ```
 
 ## License
