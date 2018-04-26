@@ -25,6 +25,7 @@ Yes, it's fast.
 - [Shortcuts](#shortcuts)
 - [Config](#config)
 - [FAQ](#faq)
+- [Development](#development)
 - [License](#license)
 
 ## Features
@@ -38,6 +39,7 @@ Yes, it's fast.
 - Save and view favorite coins
 - Color support
 - Help menu
+- Offline cache
 - Works on macOS, Linux, and Windows
 
 ## Installing
@@ -341,6 +343,14 @@ Action|Description
 - Q: How do I show the help menu?
 
   - A: Press <kbd>?</kbd> to toggle the help menu. Press <kbd>q</kbd> to close help menu.
+
+## Development
+
+Build snap
+
+```bash
+$ make snap/build
+```
 
 ## License
 

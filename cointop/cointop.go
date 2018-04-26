@@ -1,6 +1,8 @@
 package cointop
 
 import (
+	"flag"
+	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -60,6 +62,13 @@ type Cointop struct {
 
 // Run runs cointop
 func Run() {
+	var ver bool
+	flag.BoolVar(&ver, "v", false, "Version")
+	flag.Parse()
+	if ver {
+		fmt.Println("cointop version 1.0.0")
+		return
+	}
 	var debug bool
 	if os.Getenv("DEBUG") != "" {
 		debug = true
