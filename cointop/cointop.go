@@ -6,11 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jroimartin/gocui"
 	"github.com/miguelmota/cointop/pkg/api"
+	"github.com/miguelmota/cointop/pkg/cache"
+	"github.com/miguelmota/cointop/pkg/gocui"
 	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/termui"
-	"github.com/patrickmn/go-cache"
 )
 
 // Cointop cointop

@@ -1,6 +1,6 @@
 package cointop
 
-import "github.com/jroimartin/gocui"
+import "github.com/miguelmota/cointop/pkg/gocui"
 
 // update update view
 func (ct *Cointop) update(f func()) {

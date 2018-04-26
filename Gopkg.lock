@@ -14,22 +14,10 @@
   version = "v1.1"
 
 [[projects]]
-  branch = "master"
-  name = "github.com/bradfitz/slice"
-  packages = ["."]
-  revision = "d9036e2120b5ddfa53f3ebccd618c4af275f47da"
-
-[[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
   revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
   version = "v1.6.0"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/jroimartin/gocui"
-  packages = ["."]
-  revision = "c055c87ae801372cd74a0839b972db4f7697ae5f"
 
 [[projects]]
   name = "github.com/mattn/go-colorable"
@@ -53,19 +41,13 @@
   branch = "master"
   name = "github.com/miguelmota/go-coinmarketcap"
   packages = ["."]
-  revision = "824d58bf0ced24a3c5211695d1da4751c179ab64"
+  revision = "42269f499a7031e0affa526258909fa73f2914cd"
 
 [[projects]]
   branch = "master"
   name = "github.com/nsf/termbox-go"
   packages = ["."]
-  revision = "3e24a7b6661e09b87a9f49d693034219f81602fa"
-
-[[projects]]
-  name = "github.com/patrickmn/go-cache"
-  packages = ["."]
-  revision = "a3647f8e31d79543b2d0f0ae2fe5c379d72cedc0"
-  version = "v2.1.0"
+  revision = "7cbfaac9e282b3ea0cefeddc67b2c3ed3aaf97bc"
 
 [[projects]]
   branch = "master"
@@ -80,17 +62,17 @@
     "html",
     "html/atom"
   ]
-  revision = "84348c2dc81a524fe94aaea3e3d9f967135338ef"
+  revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "b126b21c05a91c856b027c16779c12e3bf236954"
+  revision = "bb9c189858d91f42db229b04d45a4c3d23a7662a"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a379741758ab87277a2159f17b7f9741ece58d2f94b1c959191189f9100a6f29"
+  inputs-digest = "f8fa24cf45636d4d6991f0a805aba5b6ad13ce7807be80cc3baf17909e6b855b"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,8 +1,8 @@
 package cointop
 
 import (
-	"github.com/bradfitz/slice"
-	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/cointop/pkg/gocui"
+	"github.com/miguelmota/cointop/pkg/slice"
 )
 
 var colorder = []string{

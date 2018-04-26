@@ -3,7 +3,7 @@ package cointop
 import (
 	"fmt"
 
-	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/cointop/pkg/gocui"
 )
 
 func (ct *Cointop) layout(g *gocui.Gui) error {

@@ -25,30 +25,12 @@
 #   unused-packages = true
 
 
-[[constraint]]
-  branch = "master"
-  name = "github.com/bradfitz/slice"
 
 [[constraint]]
   name = "github.com/fatih/color"
   version = "1.6.0"
 
 [[constraint]]
-  name = "github.com/gizak/termui"
-  version = "2.2.0"
-
-[[constraint]]
-  name = "github.com/jroimartin/gocui"
-  branch = "master"
-
-[[constraint]]
   branch = "master"
   name = "github.com/miguelmota/go-coinmarketcap"
 
-[prune]
-  go-tests = true
-  unused-packages = true
-
-[[constraint]]
-  name = "github.com/patrickmn/go-cache"
-  version = "2.1.0"
