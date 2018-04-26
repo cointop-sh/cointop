@@ -34,7 +34,7 @@
 
 ## Installing
 
-Make sure to have [go](https://golang.org/) (1.4+) installed, then do:
+Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 
 ```bash
 go get -u github.com/miguelmota/cointop
