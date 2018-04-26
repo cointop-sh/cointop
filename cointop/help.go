@@ -70,6 +70,7 @@ func (ct *Cointop) showHelp() error {
 func (ct *Cointop) hideHelp() error {
 	ct.helpvisible = false
 	ct.setViewOnBottom("help")
+	ct.setActiveView("table")
 	ct.update(func() {
 		ct.helpview.Clear()
 		ct.helpview.Frame = false
