@@ -8,14 +8,16 @@ debug:
 	DEBUG=1 go run main.go
 
 # http://macappstore.org/upx
-build: clean
+build/mac: clean
+	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/macos/cointop && upx bin/macos/cointop
+
+build/multiple: clean
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
 	env GOARCH=386 go build -ldflags "-s -w" -o bin/cointop32 && upx bin/cointop32
 
 clean:
 	go clean && \
-	rm -f bin/cointop64 && \
-	rm -f bin/cointop32
+	rm -rf bin/
 
 test:
 	go test ./...
@@ -35,8 +37,15 @@ snap/deploy:
 snap/remove:
 	snap remove cointop
 
+brew/clean: brew/remove
+	brew cleanup --force cointop
+	brew prune
+
 brew/remove:
-	brew uninstall cointop
+	brew uninstall --force cointop
 
 brew/build: brew/remove
 	brew install --build-from-source cointop.rb
+
+brew/audit:
+	brew audit --strict cointop.rb

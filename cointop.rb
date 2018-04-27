@@ -1,20 +1,20 @@
-require "language/go"
-
 class Cointop < Formula
-  desc "An interactive terminal based UI application for tracking cryptocurrencies"
+  desc "Interactive terminal based UI application for tracking cryptocurrencies"
   homepage "https://cointop.sh"
-  url "https://github.com/miguelmota/cointop/archive/0.0.1.tar.gz"
-  sha256 "3b2b039da68c92d597ae4a6a89aab58d9741132efd514bbf5cf1a1a151b16213"
+  url "https://github.com/miguelmota/cointop/archive/1.0.0.tar.gz"
+  sha256 "8ff6988cd18b35dbf85436add19135a587e03702b43744f563f137bb067f6e04"
   revision 1
   head "https://github.com/miguelmota/cointop.git"
   depends_on "go" => :build
 
   def install
     ENV["GOPATH"] = buildpath
-    path = buildpath/"src/github.com/miguelmota/cointop"
-    system "go", "get", "-u", "github.com/miguelmota/cointop"
+    path = buildpath/"src/github.com/miguelmota"
+    #system "go", "get", "-u", "github.com/miguelmota/cointop"
     cd path do
-      system "go", "build", "-o", "#{bin}/cointop"
+      system "git", "clone", "https://github.com/miguelmota/cointop.git"
+      system "mv", "bin/macos/cointop", "#{bin}/cointop"
+      #system "go", "build", "-o", "#{bin}/cointop"
     end
   end
 

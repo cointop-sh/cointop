@@ -66,7 +66,7 @@ func Run() {
 	flag.BoolVar(&ver, "v", false, "Version")
 	flag.Parse()
 	if ver {
-		fmt.Println("cointop version 1.0.0")
+		fmt.Println("1.0.0")
 		return
 	}
 	var debug bool
