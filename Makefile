@@ -49,3 +49,12 @@ brew/build: brew/remove
 
 brew/audit:
 	brew audit --strict cointop.rb
+
+git/rm/large:
+	java -jar bfg.jar --strip-blobs-bigger-than 200K .
+
+git/repack:
+	git reflog expire --expire=now --all
+	git fsck --full --unreachable
+	git repack -A -d
+	git gc --aggressive --prune=now

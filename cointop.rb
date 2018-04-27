@@ -9,12 +9,11 @@ class Cointop < Formula
 
   def install
     ENV["GOPATH"] = buildpath
-    path = buildpath/"src/github.com/miguelmota"
-    #system "go", "get", "-u", "github.com/miguelmota/cointop"
+    mkdir "#{buildpath}/src/github.com/miguelmota/cointop"
+    path = buildpath/"src/github.com/miguelmota/cointop"
     cd path do
-      system "git", "clone", "https://github.com/miguelmota/cointop.git"
-      system "mv", "bin/macos/cointop", "#{bin}/cointop"
-      #system "go", "build", "-o", "#{bin}/cointop"
+      system "git", "clone", "https://github.com/miguelmota/cointop.git", "."
+      system "go", "build", "-o", "#{bin}/cointop"
     end
   end
 

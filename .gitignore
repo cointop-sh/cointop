@@ -19,5 +19,11 @@ prime
 snap
 stage
 *.snap
+
+# bfg
+bfg.jar
 *bfg-report*
 *bfg-report
+
+# builds
+build
