@@ -1,8 +1,6 @@
 package cointop
 
 import (
-	"flag"
-	"fmt"
 	"log"
 	"os"
 	"sync"
@@ -60,15 +58,11 @@ type Cointop struct {
 	helpvisible         bool
 }
 
+// Instance running cointop instance
+var Instance *Cointop
+
 // Run runs cointop
 func Run() {
-	var ver bool
-	flag.BoolVar(&ver, "v", false, "Version")
-	flag.Parse()
-	if ver {
-		fmt.Println("1.0.0")
-		return
-	}
 	var debug bool
 	if os.Getenv("DEBUG") != "" {
 		debug = true
@@ -95,6 +89,7 @@ func Run() {
 		searchfieldviewname: "searchfield",
 		helpviewname:        "help",
 	}
+	Instance = &ct
 	err := ct.setupConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -139,4 +134,11 @@ func (ct *Cointop) quit() error {
 
 func (ct *Cointop) forceQuit() error {
 	return gocui.ErrQuit
+}
+
+// Exit safely exit application
+func Exit() {
+	if Instance != nil {
+		Instance.g.Close()
+	}
 }

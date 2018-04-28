@@ -22,6 +22,9 @@ clean:
 test:
 	go test ./...
 
+cointop/test:
+	go run main.go -test
+
 snap/clean:
 	snapcraft clean
 
