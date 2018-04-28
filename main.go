@@ -3,11 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"time"
 
 	"github.com/miguelmota/cointop/cointop"
 )
 
-var version = "1.0.0"
+var version = "1.0.1"
 
 func main() {
 	var ver bool
@@ -28,6 +29,9 @@ func main() {
 }
 
 func runTest() {
-	// TODO
-	fmt.Println("ok")
+	go func() {
+		cointop.Run()
+	}()
+	time.Sleep(1 * time.Second)
+	cointop.Exit()
 }

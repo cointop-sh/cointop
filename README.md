@@ -359,6 +359,10 @@ Action|Description
 
   - A: Press <kbd>?</kbd> to toggle the help menu. Press <kbd>q</kbd> to close help menu.
 
+- Q: I'm getting the error: `new gocui: termbox: error while reading terminfo data: EOF` when trying to run.
+
+  - A: Try setting the environment variable `TERM=screen-256color`
+
 ## Development
 
 ### Snap
