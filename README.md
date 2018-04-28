@@ -12,7 +12,7 @@ The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and sh
 
 <img src="https://user-images.githubusercontent.com/168240/39320886-44a2142e-493a-11e8-82f7-561043512783.png" width="880" />
 
-Yes, it's fast.
+In action
 
 <img src="https://user-images.githubusercontent.com/168240/39274530-2392ac42-4897-11e8-947a-a31bc45bd511.gif" width="880" />
 
@@ -136,6 +136,7 @@ Key|Action
 <kbd>Space</kbd>|Toggle coin as favorite
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim inspired)
+<kbd>Ctrl</kbd>+<kbd>f</kbd>|Search
 <kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page
 <kbd>Ctrl</kbd>+<kbd>p</kbd>|Go to previous page
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh data
@@ -214,6 +215,7 @@ You can then configure the actions you want for each key:
   c = "toggle_row_chart"
   "ctrl+c" = "quit"
   "ctrl+d" = "page_down"
+  "ctrl+f" = "open_search"
   "ctrl+n" = "next_page"
   "ctrl+p" = "previous_page"
   "ctrl+r" = "refresh"
@@ -362,6 +364,10 @@ Action|Description
 - Q: I'm getting the error: `new gocui: termbox: error while reading terminfo data: EOF` when trying to run.
 
   - A: Try setting the environment variable `TERM=screen-256color`
+
+- Q: Does cointop work inside an emacs shell?
+
+  - A: Yes, but it's slightly buggy.
 
 ## Development
 

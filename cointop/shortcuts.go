@@ -15,6 +15,7 @@ func defaultShortcuts() map[string]string {
 		"space":     "toggle_favorite",
 		"ctrl+c":    "quit",
 		"ctrl+d":    "page_down",
+		"ctrl+f":    "open_search",
 		"ctrl+n":    "next_page",
 		"ctrl+p":    "previous_page",
 		"ctrl+r":    "refresh",
