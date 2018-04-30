@@ -8,7 +8,8 @@ class Cointop < Formula
 
   def install
     ENV["GOPATH"] = buildpath
-    (buildpath/"src/github.com/miguelmota/cointop").install buildpath.children
+    # (buildpath/"src/github.com/miguelmota/cointop").install buildpath.children
+    system "go", "get", "-u", "github.com/miguelmota/cointop"
     cd "src/github.com/miguelmota/cointop" do
       system "go", "build", "-o", "#{bin}/cointop"
       prefix.install_metafiles
