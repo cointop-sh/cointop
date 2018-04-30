@@ -86,6 +86,12 @@ func (ct *Cointop) refreshTable() error {
 		)
 	}
 
+	// highlight last row if current row is out of bounds (can happen when switching views)
+	currentrow := ct.highlightedRowIndex()
+	if len(ct.coins) > currentrow {
+		ct.highlightRow(currentrow)
+	}
+
 	ct.update(func() {
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
