@@ -183,7 +183,8 @@ func (lc *LineChart) calcLabelX() {
 func shortenFloatVal(x float64) string {
 	s := fmt.Sprintf("%.2f", x)
 	if len(s)-3 > 3 {
-		s = fmt.Sprintf("%.2e", x)
+		// don't shorten
+		//s = fmt.Sprintf("%.2e", x)
 	}
 
 	if x < 0 {

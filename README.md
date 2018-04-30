@@ -155,6 +155,7 @@ Key|Action
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
 <kbd>c</kbd>|Toggle [c]hart for highlighted coin
 <kbd>f</kbd>|Toggle show favorites
+<kbd>F</kbd>|Toggle show favorites
 <kbd>g</kbd>|Go to first line of page  (vim inspired)
 <kbd>G</kbd>|Go to last line of page (vim inspired)
 <kbd>h</kbd>|Go to previous page (vim inspired)
@@ -225,6 +226,7 @@ You can then configure the actions you want for each key:
   enter = "toggle_row_chart"
   esc = "quit"
   f = "toggle_show_favorites"
+  F = "toggle_show_favorites"
   F1 = "help"
   g = "move_to_page_first_row"
   h = "previous_page"

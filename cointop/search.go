@@ -8,11 +8,13 @@ import (
 )
 
 func (ct *Cointop) openSearch() error {
+	ct.searchfieldvisible = true
 	ct.setActiveView(ct.searchfieldviewname)
 	return nil
 }
 
 func (ct *Cointop) cancelSearch() error {
+	ct.searchfieldvisible = false
 	ct.setActiveView(ct.tableviewname)
 	return nil
 }

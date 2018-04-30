@@ -68,7 +68,8 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 				return nil
 			}
 			for i := range graphData.MarketCapByAvailableSupply {
-				data = append(data, graphData.MarketCapByAvailableSupply[i][1]/1E9)
+				price := graphData.MarketCapByAvailableSupply[i][1]
+				data = append(data, price/1E9)
 			}
 		} else {
 			graphData, err := ct.api.GetCoinGraphData(coin, start, end)
@@ -76,7 +77,8 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 				return nil
 			}
 			for i := range graphData.PriceUSD {
-				data = append(data, graphData.PriceUSD[i][1])
+				price := graphData.PriceUSD[i][1]
+				data = append(data, price)
 			}
 		}
 

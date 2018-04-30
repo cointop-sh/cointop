@@ -48,6 +48,7 @@ type Cointop struct {
 	config              config // toml config
 	searchfield         *gocui.View
 	searchfieldviewname string
+	searchfieldvisible  bool
 	favorites           map[string]bool
 	filterByFavorites   bool
 	savemux             sync.Mutex
@@ -128,7 +129,7 @@ func Run() {
 }
 
 func (ct *Cointop) quit() error {
-	if ct.helpvisible {
+	if ct.helpvisible || ct.searchfieldvisible {
 		return nil
 	}
 

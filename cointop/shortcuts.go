@@ -34,6 +34,7 @@ func defaultShortcuts() map[string]string {
 		"a":         "sort_column_available_supply",
 		"c":         "toggle_row_chart",
 		"f":         "toggle_show_favorites",
+		"F":         "toggle_show_favorites",
 		"g":         "move_to_page_first_row",
 		"G":         "move_to_page_last_row",
 		"h":         "previous_page",
