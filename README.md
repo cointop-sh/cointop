@@ -61,7 +61,7 @@ brew install cointop
 
 ### Snap (Linux)
 
-cointop is also available as a [snap](https://snapcraft.io/cointop) for Linux users.
+cointop is available as a [snap](https://snapcraft.io/cointop) for Linux users.
 
 ```bash
 sudo snap install cointop --stable
@@ -77,28 +77,30 @@ Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.sna
 
 ### Windows WSL (Windows)
 
+Recommended to install using Go (instructions above).
+
 You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
 
 ## Updating
 
-To update make sure to use the `-u` flag.
+To update make sure to use the `-u` flag if installed via Go.
 
 ```bash
 go get -u github.com/miguelmota/cointop
 ```
 
-### Snap
+### Homebrew (macOS)
+
+```bash
+brew uninstall cointop && brew install cointop
+```
+
+### Snap (Linux)
 
 Use the `refresh` command to update snap.
 
 ```bash
 sudo snap refresh cointop --stable
-```
-
-### Homebrew
-
-```bash
-brew uninstall cointop && brew install cointop
 ```
 
 <!--
@@ -251,6 +253,8 @@ You can then configure the actions you want for each key:
 
 ## List of actions
 
+This are the action keywords you may use in the config file to change what the shortcut keys do.
+
 Action|Description
 ----|------|
 `first_page`|Go to first page
@@ -373,12 +377,20 @@ Action|Description
 
 ## Development
 
+### Go
+
+Running cointop from source
+
+```
+make run
+```
+
 ### Snap
 
 Building snap
 
 ```bash
-$ make snap/build
+make snap/build
 ```
 
 ### Homebrew
