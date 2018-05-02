@@ -407,7 +407,10 @@ Action|Description
 
 - Q: How do I change the chart date range?
 
-  - A: Press <kbd>]</kbd> to cycle to the next date range. Press <kbd>[</kbd> to cycle to the previous date range. Press <kbd>{</kbd> to select the first date range. Press <kbd>}</kbd> to selected the last date range.
+  - A: Press <kbd>]</kbd> to cycle to the next date range.
+    Press <kbd>[</kbd> to cycle to the previous date range.
+    Press <kbd>{</kbd> to select the first date range.
+    Press <kbd>}</kbd> to selected the last date range.
 
 - Q: What chart date ranges are supported?
 
