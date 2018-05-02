@@ -48,6 +48,7 @@ In action
 - Help menu
 - Offline cache
 - Works on macOS, Linux, and Windows
+- It's very lightweight; have it running all day.
 
 ## Installing
 
