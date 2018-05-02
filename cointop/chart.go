@@ -48,9 +48,6 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 	if ct.selectedchartrange == "YTD" {
 		rangeseconds = ct.chartrangesmap["1Y"]
 	}
-	if ct.selectedchartrange == "All Time" {
-		rangeseconds = ct.chartrangesmap["1Y"]
-	}
 
 	now := time.Now()
 	nowseconds := now.Unix()

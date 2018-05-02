@@ -103,8 +103,8 @@ func Run() {
 			"All Time",
 		},
 		chartrangesmap: map[string]time.Duration{
-			"All Time": time.Duration(1 * time.Second),
-			"YTD":      time.Duration(1 * time.Second),
+			"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
+			"YTD":      time.Duration(24 * 7 * 4 * 12 * time.Hour), // this will be calculated
 			"1Y":       time.Duration(24 * 7 * 4 * 12 * time.Hour),
 			"6M":       time.Duration(24 * 7 * 4 * 6 * time.Hour),
 			"3M":       time.Duration(24 * 7 * 4 * 3 * time.Hour),
