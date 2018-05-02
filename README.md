@@ -41,7 +41,7 @@ In action
 - Vim inspired shortcut keys
 - Fast pagination
 - Charts for coins and global market graphs
-- Quick change chart range
+- Quick chart date range change
 - Fuzzy searching for finding coins
 - Save and view favorite coins
 - Color support
@@ -272,10 +272,10 @@ This are the action keywords you may use in the config file to change what the s
 
 Action|Description
 ----|------|
-`first_chart_range`|First chart date range (e.g. 1H)
+`first_chart_range`|Select first chart date range (e.g. 1H)
 `first_page`|Go to first page
 `help`|Show help
-`last_chart_range`|Last chart date range (e.g. All Time)
+`last_chart_range`|Select last chart date range (e.g. All Time)
 `last_page`|Go to last page
 `move_to_page_first_row`|Move to first row on page
 `move_to_page_last_row`|Move to last row on page
@@ -284,13 +284,13 @@ Action|Description
 `move_to_page_visible_middle_row`|Move to middle visible row on page
 `move_up`|Move one row up
 `move_down`|Move one row down
-`next_chart_range`|Next chart date range (e.g. 3D -> 7D)
+`next_chart_range`|Select next chart date range (e.g. 3D -> 7D)
 `next_page`|Go to next page
 `open_link`|Open row link
 `open_search`|Open search field
 `page_down`|Move one row down
 `page_up`|Scroll one page up
-`previous_chart_range`|Previous chart date range (e.g. 7D -> 3D)
+`previous_chart_range`|Select previous chart date range (e.g. 7D -> 3D)
 `previous_page`|Go to previous page
 `quit`|Quit application
 `refresh`|Do a manual refresh on the data
@@ -403,7 +403,7 @@ Action|Description
 
 - Q: How do I display the chart for the highlighted coin?
 
-  - A: Press <kbd>Enter</kbd> to toggle chart for the highlighted coin.
+  - A: Press <kbd>Enter</kbd> to toggle the chart for the highlighted coin.
 
 - Q: How do I change the chart date range?
 
