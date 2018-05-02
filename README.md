@@ -1,6 +1,6 @@
 <h1 align="center">
   <br />
-  <img src="https://user-images.githubusercontent.com/168240/39518803-36f8df50-4db9-11e8-8651-5758e4d48804.png" alt="cointop" width="700" />
+  <img src="https://user-images.githubusercontent.com/168240/39518911-872a37e4-4db9-11e8-9b00-1bfcd79977a8.png" alt="cointop" width="750" />
   <br />
   <br />
   <br />
