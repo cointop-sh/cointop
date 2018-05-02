@@ -1,12 +1,12 @@
+<p align="center">
+  <img alt="" src="https://user-images.githubusercontent.com/168240/39500738-80853e1e-4d6b-11e8-9a7b-2c2921c24447.png" width="600" />
+</p>
+
 # cointop
 
 > Coin tracking for hackers
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/miguelmota/cointop/master/LICENSE.md) [![Build Status](https://travis-ci.org/miguelmota/cointop.svg?branch=master)](https://travis-ci.org/miguelmota/cointop) [![Go Report Card](https://goreportcard.com/badge/github.com/miguelmota/cointop?)](https://goreportcard.com/report/github.com/miguelmota/cointop) [![GoDoc](https://godoc.org/github.com/miguelmota/cointop?status.svg)](https://godoc.org/github.com/miguelmota/cointop)
-
-<p align="center">
-  <img alt="" src="https://user-images.githubusercontent.com/168240/39500738-80853e1e-4d6b-11e8-9a7b-2c2921c24447.png" width="600" />
-</p>
 
 [`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
