@@ -37,7 +37,7 @@ func (ct *Cointop) updateMarketbar() error {
 		}()
 	}
 
-	timeframe := "7 Day"
+	timeframe := ct.selectedchartrange
 	chartname := ct.selectedCoinName()
 	if chartname == "" {
 		chartname = "Global"

@@ -41,6 +41,7 @@ In action
 - Vim inspired shortcut keys
 - Fast pagination
 - Charts for coins and global market graphs
+- Quick change chart range
 - Fuzzy searching for finding coins
 - Save and view favorite coins
 - Color support
@@ -186,6 +187,10 @@ Key|Action
 <kbd>$</kbd>|Go to last page (vim inspired)
 <kbd>?</kbd>|Show help|
 <kbd>/</kbd>|Search (vim inspired)|
+<kbd>]</kbd>|Next chart date range|
+<kbd>[</kbd>|Previous chart date range|
+<kbd>}</kbd>|Last chart date range|
+<kbd>{</kbd>|First chart date range|
 
 ## Config
 
@@ -208,6 +213,10 @@ You can then configure the actions you want for each key:
   7 = "sort_column_7d_change"
   "?" = "help"
   "/" = "open_search"
+  "[" = "previous_chart_range"
+  "]" = "next_chart_range"
+  "{" = "first_chart_range"
+  "}" = "last_chart_range"
   G = "move_to_page_last_row"
   H = "move_to_page_visible_first_row"
   L = "move_to_page_visible_last_row"
@@ -263,8 +272,10 @@ This are the action keywords you may use in the config file to change what the s
 
 Action|Description
 ----|------|
+`first_chart_range`|First chart date range (e.g. 1H)
 `first_page`|Go to first page
 `help`|Show help
+`last_chart_range`|Last chart date range (e.g. All Time)
 `last_page`|Go to last page
 `move_to_page_first_row`|Move to first row on page
 `move_to_page_last_row`|Move to last row on page
@@ -273,14 +284,17 @@ Action|Description
 `move_to_page_visible_middle_row`|Move to middle visible row on page
 `move_up`|Move one row up
 `move_down`|Move one row down
+`next_chart_range`|Next chart date range (e.g. 3D -> 7D)
 `next_page`|Go to next page
 `open_link`|Open row link
 `open_search`|Open search field
 `page_down`|Move one row down
 `page_up`|Scroll one page up
+`previous_chart_range`|Previous chart date range (e.g. 7D -> 3D)
 `previous_page`|Go to previous page
 `quit`|Quit application
 `refresh`|Do a manual refresh on the data
+`save`|Save config
 `sort_column_1h_change`|Sort table by column *1 hour change*
 `sort_column_24h_change`|Sort table by column *24 hour change*
 `sort_column_24h_volume`|Sort table by column *24 hour volume*
@@ -300,7 +314,6 @@ Action|Description
 `toggle_row_chart`|Toggle the chart for the highlighted row
 `toggle_favorite`|Toggle coin as favorite
 `toggle_show_favorites`|Toggle show favorites
-`save`|Save config
 
 ## FAQ
 
@@ -380,6 +393,21 @@ Action|Description
 - Q: Does cointop work inside an emacs shell?
 
   - A: Yes, but it's slightly buggy.
+
+- Q: My shortcut keys are messed or not correct.
+
+  - A: Delete the cointop config directory and rerun cointop.
+    ```bash
+    rm -rf ~/.cointop
+    ```
+
+- Q: How do I display the chart for the highlighted coin?
+
+  - A: Press <kbd>Enter</kbd> to toggle chart for the highlighted coin.
+
+- Q: How do I change the chart date range?
+
+  - A: Press <kbd>]</kbd> to cycle to the next date range. Press <kbd>[</kbd> to cycle to the previous date range. Press <kbd>{</kbd> to select the first date range. Press <kbd>}</kbd> to selected the last date range.
 
 ## Development
 

@@ -41,6 +41,10 @@ func actionsMap() map[string]bool {
 		"open_search":                     true,
 		"toggle_favorite":                 true,
 		"toggle_show_favorites":           true,
+		"previous_chart_range":            true,
+		"next_chart_range":                true,
+		"first_chart_range":               true,
+		"last_chart_range":                true,
 	}
 }
 

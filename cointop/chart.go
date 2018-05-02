@@ -10,8 +10,6 @@ import (
 	"github.com/miguelmota/cointop/pkg/termui"
 )
 
-var oneWeek = (time.Hour * 24) * 7
-
 func (ct *Cointop) updateChart() error {
 	maxX := ct.maxtablewidth - 3
 	coin := ct.selectedCoinName()
@@ -37,22 +35,35 @@ func (ct *Cointop) updateChart() error {
 }
 
 func (ct *Cointop) chartPoints(maxX int, coin string) error {
+	// TODO: not do this (SOC)
+	go ct.updateMarketbar()
+
 	chart := termui.NewLineChart()
 	chart.Height = 10
 	chart.AxesColor = termui.ColorWhite
 	chart.LineColor = termui.ColorCyan
 	chart.Border = false
 
+	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
+	if ct.selectedchartrange == "YTD" {
+		rangeseconds = ct.chartrangesmap["1Y"]
+	}
+	if ct.selectedchartrange == "All Time" {
+		rangeseconds = ct.chartrangesmap["1Y"]
+	}
+
 	now := time.Now()
-	secs := now.Unix()
-	start := secs - int64(oneWeek.Seconds())
-	end := secs
+	nowseconds := now.Unix()
+	start := nowseconds - int64(rangeseconds.Seconds())
+	end := nowseconds
 
 	var data []float64
-	cachekey := strings.ToLower(coin)
-	if cachekey == "" {
-		cachekey = "globaldata"
+
+	keyname := coin
+	if keyname == "" {
+		keyname = "globaldata"
 	}
+	cachekey := strings.ToLower(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.selectedchartrange, " ", "", -1)))
 
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -114,6 +125,55 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 	}
 
 	ct.chartpoints = points
+
+	return nil
+}
+
+func (ct *Cointop) nextChartRange() error {
+	sel := 0
+	max := len(ct.chartranges)
+	for i, k := range ct.chartranges {
+		if k == ct.selectedchartrange {
+			sel = i + 1
+			break
+		}
+	}
+	if sel > max-1 {
+		sel = 0
+	}
+
+	ct.selectedchartrange = ct.chartranges[sel]
+
+	go ct.updateChart()
+	return nil
+}
+
+func (ct *Cointop) prevChartRange() error {
+	sel := 0
+	for i, k := range ct.chartranges {
+		if k == ct.selectedchartrange {
+			sel = i - 1
+			break
+		}
+	}
+	if sel < 0 {
+		sel = len(ct.chartranges) - 1
+	}
+
+	ct.selectedchartrange = ct.chartranges[sel]
+	go ct.updateChart()
+	return nil
+}
+
+func (ct *Cointop) firstChartRange() error {
+	ct.selectedchartrange = ct.chartranges[0]
+	go ct.updateChart()
+	return nil
+}
+
+func (ct *Cointop) lastChartRange() error {
+	ct.selectedchartrange = ct.chartranges[len(ct.chartranges)-1]
+	go ct.updateChart()
 	return nil
 }
 

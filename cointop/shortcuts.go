@@ -57,5 +57,9 @@ func defaultShortcuts() map[string]string {
 		"$":         "last_page",
 		"?":         "help",
 		"/":         "open_search",
+		"]":         "next_chart_range",
+		"[":         "prev_chart_range",
+		"}":         "last_chart_range",
+		"{":         "first_chart_range",
 	}
 }

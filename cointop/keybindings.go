@@ -90,8 +90,20 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 			case "~":
 				key = gocui.KeyCtrlTilde
 			case "[":
+				fallthrough
+			case "lsqrbracket":
+				fallthrough
+			case "leftsqrbracket":
+				fallthrough
+			case "leftsquarebracket":
 				key = gocui.KeyCtrlLsqBracket
 			case "]":
+				fallthrough
+			case "rsqrbracket":
+				fallthrough
+			case "rightsqrbracket":
+				fallthrough
+			case "rightsquarebracket":
 				key = gocui.KeyCtrlRsqBracket
 			case "space":
 				key = gocui.KeyCtrlSpace
@@ -278,6 +290,14 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "quit":
 			fn = ct.keyfn(ct.quit)
 			view = ""
+		case "next_chart_range":
+			fn = ct.keyfn(ct.nextChartRange)
+		case "previous_chart_range":
+			fn = ct.keyfn(ct.prevChartRange)
+		case "first_chart_range":
+			fn = ct.keyfn(ct.firstChartRange)
+		case "last_chart_range":
+			fn = ct.keyfn(ct.lastChartRange)
 		default:
 			fn = ct.keyfn(ct.noop)
 		}

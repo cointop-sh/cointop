@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/miguelmota/cointop/pkg/gocui"
 )
@@ -39,9 +40,10 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.chartview.Frame = false
 		go func() {
 			ct.updateChart()
-			_, found := ct.cache.Get("globaldata")
+			cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
+			_, found := ct.cache.Get(cachekey)
 			if found {
-				ct.cache.Delete("globaldata")
+				ct.cache.Delete(cachekey)
 				ct.updateChart()
 			}
 		}()
