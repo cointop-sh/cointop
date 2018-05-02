@@ -1,8 +1,10 @@
-<p align="center">
-  <img alt="" src="https://user-images.githubusercontent.com/168240/39500738-80853e1e-4d6b-11e8-9a7b-2c2921c24447.png" width="600" />
-</p>
-
-# cointop
+<h1 align="center">
+  <br />
+  <img src="https://user-images.githubusercontent.com/168240/39500738-80853e1e-4d6b-11e8-9a7b-2c2921c24447.png" alt="cointop" width="600" />
+  <br />
+  <br />
+  <br />
+</h1>
 
 > Coin tracking for hackers
 
@@ -12,13 +14,13 @@
 
 The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and shortcut keys are inspired by [`vim`](https://en.wikipedia.org/wiki/Vim_(text_editor)).
 
-<img alt="" src="https://user-images.githubusercontent.com/168240/39320731-e99b928a-4939-11e8-8a62-ff3951353d92.png" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39320731-e99b928a-4939-11e8-8a62-ff3951353d92.png" alt="" width="880" />
 
-<img alt="" src="https://user-images.githubusercontent.com/168240/39320886-44a2142e-493a-11e8-82f7-561043512783.png" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39320886-44a2142e-493a-11e8-82f7-561043512783.png" alt="" width="880" />
 
 In action
 
-<img alt="" src="https://user-images.githubusercontent.com/168240/39274530-2392ac42-4897-11e8-947a-a31bc45bd511.gif" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39274530-2392ac42-4897-11e8-947a-a31bc45bd511.gif" alt="" width="880" />
 
 ## Table of Contents
 
