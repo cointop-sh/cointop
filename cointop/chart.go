@@ -7,6 +7,7 @@ import (
 
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/fcache"
+	"github.com/miguelmota/cointop/pkg/now"
 	"github.com/miguelmota/cointop/pkg/termui"
 )
 
@@ -46,7 +47,7 @@ func (ct *Cointop) chartPoints(maxX int, coin string) error {
 
 	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
 	if ct.selectedchartrange == "YTD" {
-		rangeseconds = ct.chartrangesmap["1Y"]
+		rangeseconds = now.BeginningOfYear().Seconds()
 	}
 
 	now := time.Now()
