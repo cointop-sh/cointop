@@ -411,7 +411,9 @@ Action|Description
 
 - Q: What chart date ranges are supported?
 
-  - A: Supported date ranges are `All Time`, `YTD` (Year-to-date), `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`, `6H`, `1H`.
+  - A: Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`, `6H`, `1H`.
+
+    <sup><sub>YTD = Year-to-date<sub></sup>
 
 ## Development
 
