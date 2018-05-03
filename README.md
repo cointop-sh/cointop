@@ -14,13 +14,13 @@
 
 The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and shortcut keys are inspired by [`vim`](https://en.wikipedia.org/wiki/Vim_(text_editor)).
 
-<img src="https://user-images.githubusercontent.com/168240/39320731-e99b928a-4939-11e8-8a62-ff3951353d92.png" alt="" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39569578-7ce9f3b6-4e7a-11e8-82a9-8a18b91b1bd5.png" alt="" width="880" />
 
-<img src="https://user-images.githubusercontent.com/168240/39320886-44a2142e-493a-11e8-82f7-561043512783.png" alt="" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39569662-bcbdbcc0-4e7a-11e8-8a8f-8ff45868a8ae.png" alt="" width="880" />
 
 In action
 
-<img src="https://user-images.githubusercontent.com/168240/39274530-2392ac42-4897-11e8-947a-a31bc45bd511.gif" alt="" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39569570-75b1547c-4e7a-11e8-8eac-552abaa431f0.gif" alt="" width="880" />
 
 ## Table of Contents
 
