@@ -64,9 +64,7 @@ func (ct *Cointop) refreshTable() error {
 			star = "*"
 		}
 		rank := fmt.Sprintf("%s%v", color.Yellow(star), color.White(fmt.Sprintf("%6v ", coin.Rank)))
-		lastchar := len(name)
-		if lastchar > 20 {
-			lastchar = 20
+		if len(name) > 20 {
 			name = fmt.Sprintf("%s%s", name[0:18], dots)
 		}
 		ct.table.AddRow(

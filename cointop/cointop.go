@@ -32,6 +32,7 @@ type Cointop struct {
 	headerviewname      string
 	tableview           *gocui.View
 	tableviewname       string
+	tablecolumnorder    []string
 	table               *table.Table
 	maxtablewidth       int
 	statusbarview       *gocui.View
@@ -115,9 +116,22 @@ func Run() {
 			"6H":       time.Duration(6 * time.Hour),
 			"1H":       time.Duration(1 * time.Hour),
 		},
-		selectedchartrange:  "7D",
-		headerviewname:      "header",
-		tableviewname:       "table",
+		selectedchartrange: "7D",
+		headerviewname:     "header",
+		tableviewname:      "table",
+		tablecolumnorder: []string{
+			"rank",
+			"name",
+			"symbol",
+			"price",
+			"marketcap",
+			"24hvolume",
+			"1hchange",
+			"7dchange",
+			"totalsupply",
+			"availablesupply",
+			"lastupdated",
+		},
 		statusbarviewname:   "statusbar",
 		searchfieldviewname: "searchfield",
 		helpviewname:        "help",

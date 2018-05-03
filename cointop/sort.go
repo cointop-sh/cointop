@@ -1,28 +1,15 @@
 package cointop
 
 import (
-	"github.com/miguelmota/cointop/pkg/gocui"
-	"github.com/miguelmota/cointop/pkg/slice"
-)
+	"sort"
 
-var colorder = []string{
-	"rank",
-	"name",
-	"symbol",
-	"price",
-	"marketcap",
-	"24hvolume",
-	"1hchange",
-	"7dchange",
-	"totalsupply",
-	"availablesupply",
-	"lastupdated",
-}
+	"github.com/miguelmota/cointop/pkg/gocui"
+)
 
 func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 	ct.sortby = sortby
 	ct.sortdesc = desc
-	slice.Sort(list[:], func(i, j int) bool {
+	sort.Slice(list[:], func(i, j int) bool {
 		if ct.sortdesc {
 			i, j = j, i
 		}
@@ -73,7 +60,7 @@ func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.
 }
 
 func (ct *Cointop) getSortColIndex() int {
-	for i, col := range colorder {
+	for i, col := range ct.tablecolumnorder {
 		if ct.sortby == col {
 			return i
 		}
@@ -96,27 +83,27 @@ func (ct *Cointop) sortDesc() error {
 }
 
 func (ct *Cointop) sortPrevCol() error {
-	nextsortby := colorder[0]
+	nextsortby := ct.tablecolumnorder[0]
 	i := ct.getSortColIndex()
 	k := i - 1
 	if k < 0 {
 		k = 0
 	}
-	nextsortby = colorder[k]
+	nextsortby = ct.tablecolumnorder[k]
 	ct.sort(nextsortby, ct.sortdesc, ct.coins)
 	ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) sortNextCol() error {
-	nextsortby := colorder[0]
-	l := len(colorder)
+	nextsortby := ct.tablecolumnorder[0]
+	l := len(ct.tablecolumnorder)
 	i := ct.getSortColIndex()
 	k := i + 1
 	if k > l-1 {
 		k = l - 1
 	}
-	nextsortby = colorder[k]
+	nextsortby = ct.tablecolumnorder[k]
 	ct.sort(nextsortby, ct.sortdesc, ct.coins)
 	ct.updateTable()
 	return nil
