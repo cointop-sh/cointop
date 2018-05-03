@@ -8,19 +8,19 @@
 
 > Coin tracking for hackers
 
-[![License](http://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/miguelmota/cointop/master/LICENSE.md) [![Build Status](https://travis-ci.org/miguelmota/cointop.svg?branch=master)](https://travis-ci.org/miguelmota/cointop) [![Go Report Card](https://goreportcard.com/badge/github.com/miguelmota/cointop?)](https://goreportcard.com/report/github.com/miguelmota/cointop) [![GoDoc](https://godoc.org/github.com/miguelmota/cointop?status.svg)](https://godoc.org/github.com/miguelmota/cointop) [![Mentioned in Awesome Terminals](https://awesome.re/mentioned-badge.svg)](https://github.com/k4m4/terminals-are-sexy)
+[![License](http://img.shields.io/badge/license-Apache-red.svg)](https://raw.githubusercontent.com/miguelmota/cointop/master/LICENSE.md) [![Build Status](https://travis-ci.org/miguelmota/cointop.svg?branch=master)](https://travis-ci.org/miguelmota/cointop) [![Go Report Card](https://goreportcard.com/badge/github.com/miguelmota/cointop?)](https://goreportcard.com/report/github.com/miguelmota/cointop) [![GoDoc](https://godoc.org/github.com/miguelmota/cointop?status.svg)](https://godoc.org/github.com/miguelmota/cointop) [![Mentioned in Awesome Terminals](https://awesome.re/mentioned-badge.svg)](https://github.com/k4m4/terminals-are-sexy)
 
 [`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
 The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and shortcut keys are inspired by [`vim`](https://en.wikipedia.org/wiki/Vim_(text_editor)).
 
-<img src="https://user-images.githubusercontent.com/168240/39569578-7ce9f3b6-4e7a-11e8-82a9-8a18b91b1bd5.png" alt="" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39569578-7ce9f3b6-4e7a-11e8-82a9-8a18b91b1bd5.png" alt="cointop screenshot" width="880" />
 
-<img src="https://user-images.githubusercontent.com/168240/39569662-bcbdbcc0-4e7a-11e8-8a8f-8ff45868a8ae.png" alt="" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39569662-bcbdbcc0-4e7a-11e8-8a8f-8ff45868a8ae.png" alt="help menu" width="880" />
 
 In action
 
-<img src="https://user-images.githubusercontent.com/168240/39569570-75b1547c-4e7a-11e8-8eac-552abaa431f0.gif" alt="" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39569570-75b1547c-4e7a-11e8-8eac-552abaa431f0.gif" alt="screencast" width="880" />
 
 ## Table of Contents
 
@@ -48,7 +48,7 @@ In action
 - Help menu
 - Offline cache
 - Works on macOS, Linux, and Windows
-- It's very lightweight; have it running all day!
+- It's very lightweight; can be left running for weeks
 
 ## Installing
 
