@@ -18,7 +18,7 @@ The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and sh
 
 <img src="https://user-images.githubusercontent.com/168240/39569662-bcbdbcc0-4e7a-11e8-8a8f-8ff45868a8ae.png" alt="help menu" width="880" />
 
-<img src="https://user-images.githubusercontent.com/168240/39691066-1e29c18e-5191-11e8-87a2-9b1f4e1a1b4f.png" alt="currency convert menu" width="880" />
+<img src="https://user-images.githubusercontent.com/168240/39691066-1e29c18e-5191-11e8-87a2-9b1f4e1a1b4f.png" alt="currency convert menu" width="760" />
 
 In action
 
