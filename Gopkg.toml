@@ -29,8 +29,3 @@
 [[constraint]]
   name = "github.com/fatih/color"
   version = "1.6.0"
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/miguelmota/go-coinmarketcap"
-

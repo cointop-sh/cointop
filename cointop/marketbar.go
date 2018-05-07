@@ -26,7 +26,7 @@ func (ct *Cointop) updateMarketbar() error {
 			ct.debuglog("soft cache hit")
 		}
 	} else {
-		market, err = ct.api.GetGlobalMarketData()
+		market, err = ct.api.GetGlobalMarketData(ct.currencyconversion)
 		if err != nil {
 			return err
 		}

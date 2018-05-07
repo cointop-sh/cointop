@@ -13,7 +13,7 @@ import (
 
 func (ct *Cointop) updateChart() error {
 	maxX := ct.maxtablewidth - 3
-	coin := ct.selectedCoinName()
+	coin := ct.selectedCoinSymbol()
 	ct.chartPoints(maxX, coin)
 	if len(ct.chartpoints) != 0 {
 		ct.chartview.Clear()
@@ -180,6 +180,15 @@ func (ct *Cointop) selectedCoinName() string {
 	coin := ct.selectedcoin
 	if coin != nil {
 		return coin.Name
+	}
+
+	return ""
+}
+
+func (ct *Cointop) selectedCoinSymbol() string {
+	coin := ct.selectedcoin
+	if coin != nil {
+		return coin.Symbol
 	}
 
 	return ""

@@ -23,7 +23,7 @@ func (ct *Cointop) updateCoins() error {
 	// cache miss
 	if allcoinsmap == nil {
 		ct.debuglog("cache miss")
-		allcoinsmap, err = ct.api.GetAllCoinData()
+		allcoinsmap, err = ct.api.GetAllCoinData(ct.currencyconversion)
 		if err != nil {
 			return err
 		}

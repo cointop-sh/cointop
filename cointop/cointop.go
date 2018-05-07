@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/miguelmota/cointop/pkg/api"
-	types "github.com/miguelmota/cointop/pkg/api/types"
+	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/cache"
 	"github.com/miguelmota/cointop/pkg/fcache"
 	"github.com/miguelmota/cointop/pkg/gocui"
@@ -63,6 +63,7 @@ type Cointop struct {
 	helpview            *gocui.View
 	helpviewname        string
 	helpvisible         bool
+	currencyconversion  string
 }
 
 // Instance running cointop instance
@@ -135,6 +136,7 @@ func Run() {
 		statusbarviewname:   "statusbar",
 		searchfieldviewname: "searchfield",
 		helpviewname:        "help",
+		currencyconversion:  "USD",
 	}
 	Instance = &ct
 	err := ct.setupConfig()
@@ -142,7 +144,7 @@ func Run() {
 		log.Fatal(err)
 	}
 
-	allcoinsmap := map[string]types.Coin{}
+	allcoinsmap := map[string]apitypes.Coin{}
 	coinscachekey := "allcoinsmap"
 	fcache.Get(coinscachekey, &allcoinsmap)
 	ct.cache.Set(coinscachekey, allcoinsmap, 10*time.Second)
@@ -152,7 +154,7 @@ func Run() {
 	fcache.Get(chartcachekey, &globaldata)
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 
-	var market types.GlobalMarketData
+	var market apitypes.GlobalMarketData
 	marketcachekey := "market"
 	fcache.Get(marketcachekey, &market)
 	ct.cache.Set(marketcachekey, market, 10*time.Second)

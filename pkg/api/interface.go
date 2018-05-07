@@ -6,10 +6,10 @@ import (
 
 // Interface interface
 type Interface interface {
-	GetAllCoinData() (map[string]types.Coin, error)
+	GetAllCoinData(convert string) (map[string]types.Coin, error)
 	GetCoinGraphData(coin string, start int64, end int64) (types.CoinGraph, error)
 	GetGlobalMarketGraphData(start int64, end int64) (types.MarketGraph, error)
-	GetGlobalMarketData() (types.GlobalMarketData, error)
+	GetGlobalMarketData(convert string) (types.GlobalMarketData, error)
 	//GetCoinData(coin string) (types.Coin, error)
 	//GetAltcoinMarketGraphData(start int64, end int64) (types.MarketGraph, error)
 	//GetCoinPriceUSD(coin string) (float64, error)

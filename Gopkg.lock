@@ -39,18 +39,6 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/miguelmota/go-coinmarketcap"
-  packages = ["."]
-  revision = "42269f499a7031e0affa526258909fa73f2914cd"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/nsf/termbox-go"
-  packages = ["."]
-  revision = "7cbfaac9e282b3ea0cefeddc67b2c3ed3aaf97bc"
-
-[[projects]]
-  branch = "master"
   name = "go4.org"
   packages = ["reflectutil"]
   revision = "9599cf28b011184741f249bd9f9330756b506cbc"

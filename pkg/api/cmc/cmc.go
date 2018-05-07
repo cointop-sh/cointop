@@ -1,10 +1,10 @@
 package api
 
 import (
-	"strings"
+	"strconv"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
-	cmc "github.com/miguelmota/go-coinmarketcap"
+	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	cmc "github.com/miguelmota/cointop/pkg/cmc"
 )
 
 // Service service
@@ -17,37 +17,43 @@ func New() *Service {
 }
 
 // GetAllCoinData gets all coin data
-func (s *Service) GetAllCoinData() (map[string]types.Coin, error) {
-	ret := make(map[string]types.Coin)
-	coins, err := cmc.GetAllCoinData(0)
+func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+	ret := make(map[string]apitypes.Coin)
+	coins, err := cmc.Tickers(&cmc.TickersOptions{
+		Convert: convert,
+	})
 	if err != nil {
 		return ret, err
 	}
 	for _, v := range coins {
-		ret[v.ID] = types.Coin{
-			ID:               v.ID,
+		ret[v.Symbol] = apitypes.Coin{
+			ID:               v.Slug,
 			Name:             v.Name,
 			Symbol:           v.Symbol,
 			Rank:             v.Rank,
-			PriceUSD:         v.PriceUSD,
-			PriceBTC:         v.PriceBTC,
-			USD24HVolume:     v.USD24HVolume,
-			MarketCapUSD:     v.MarketCapUSD,
-			AvailableSupply:  v.AvailableSupply,
+			AvailableSupply:  v.CirculatingSupply,
 			TotalSupply:      v.TotalSupply,
-			PercentChange1H:  v.PercentChange1H,
-			PercentChange24H: v.PercentChange24H,
-			PercentChange7D:  v.PercentChange7D,
-			LastUpdated:      v.LastUpdated,
+			MarketCapUSD:     v.Quotes[convert].MarketCap,
+			PriceUSD:         v.Quotes[convert].Price,
+			PercentChange1H:  v.Quotes[convert].PercentChange1H,
+			PercentChange24H: v.Quotes[convert].PercentChange24H,
+			PercentChange7D:  v.Quotes[convert].PercentChange7D,
+			USD24HVolume:     v.Quotes[convert].Volume24H,
+			PriceBTC:         0,
+			LastUpdated:      strconv.Itoa(v.LastUpdated),
 		}
 	}
 	return ret, nil
 }
 
 // GetCoinGraphData gets coin graph data
-func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (types.CoinGraph, error) {
-	ret := types.CoinGraph{}
-	graphData, err := cmc.GetCoinGraphData(strings.ToLower(coin), start, end)
+func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (apitypes.CoinGraph, error) {
+	ret := apitypes.CoinGraph{}
+	graphData, err := cmc.TickerGraph(&cmc.TickerGraphOptions{
+		Symbol: coin,
+		Start:  start,
+		End:    end,
+	})
 	if err != nil {
 		return ret, err
 	}
@@ -60,9 +66,12 @@ func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (types.C
 }
 
 // GetGlobalMarketGraphData gets global market graph data
-func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (types.MarketGraph, error) {
-	ret := types.MarketGraph{}
-	graphData, err := cmc.GetGlobalMarketGraphData(start, end)
+func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (apitypes.MarketGraph, error) {
+	ret := apitypes.MarketGraph{}
+	graphData, err := cmc.GlobalMarketGraph(&cmc.GlobalMarketGraphOptions{
+		Start: start,
+		End:   end,
+	})
 	if err != nil {
 		return ret, err
 	}
@@ -73,19 +82,21 @@ func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (types.Market
 }
 
 // GetGlobalMarketData gets global market data
-func (s *Service) GetGlobalMarketData() (types.GlobalMarketData, error) {
-	ret := types.GlobalMarketData{}
-	market, err := cmc.GetGlobalMarketData()
+func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData, error) {
+	ret := apitypes.GlobalMarketData{}
+	market, err := cmc.GlobalMarket(&cmc.GlobalMarketOptions{
+		Convert: convert,
+	})
 	if err != nil {
 		return ret, err
 	}
-	ret = types.GlobalMarketData{
-		TotalMarketCapUSD:            market.TotalMarketCapUSD,
-		Total24HVolumeUSD:            market.Total24HVolumeUSD,
+	ret = apitypes.GlobalMarketData{
+		TotalMarketCapUSD:            market.Quotes[convert].TotalMarketCap,
+		Total24HVolumeUSD:            market.Quotes[convert].TotalVolume24H,
 		BitcoinPercentageOfMarketCap: market.BitcoinPercentageOfMarketCap,
 		ActiveCurrencies:             market.ActiveCurrencies,
-		ActiveAssets:                 market.ActiveCurrencies,
-		ActiveMarkets:                market.ActiveAssets,
+		ActiveAssets:                 0,
+		ActiveMarkets:                market.ActiveMarkets,
 	}
 	return ret, nil
 }
