@@ -437,6 +437,10 @@ Action|Description
 
   - A: The supported fiat currencies for conversion are `USD`, `EUR`, `GBP`, `CNY`, `HKD`, `JPY`, `KRW`, `NZD`, `CFH`, `MXN`, `AUD`, `IDR`, `RUB`, and `CAD`. The supported crypto currencies for conversion are `BTC` and `ETH`.
 
+- Q: The data isn't refreshing!
+
+  - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. CoinMarketCap updates prices every 5 minutes.
+
 ## Development
 
 ### Go
