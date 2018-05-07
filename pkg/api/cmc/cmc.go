@@ -55,7 +55,7 @@ func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, e
 func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
 	var wg sync.WaitGroup
 	ret := make(map[string]apitypes.Coin)
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 5; i++ {
 		wg.Add(1)
 		go func(j int) {
 			coins, err := getLimitedCoinData(convert, j)
