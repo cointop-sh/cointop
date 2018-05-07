@@ -2,8 +2,6 @@ all:
 	@echo "no default"
 
 run:
-	go run main.go
-
 debug:
 	DEBUG=1 go run main.go
 
@@ -27,6 +25,7 @@ cointop/test:
 
 snap/clean:
 	snapcraft clean
+	rm cointop_*.snap
 
 snap/stage:
 	snapcraft stage
