@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/anaskhan96/soup"
-	"github.com/coincircle/go-coinmarketcap/types"
+	"github.com/miguelmota/cointop/pkg/cmc/types"
 )
 
 var (
