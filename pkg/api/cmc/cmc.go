@@ -2,6 +2,7 @@ package api
 
 import (
 	"strconv"
+	"sync"
 
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
 	cmc "github.com/miguelmota/cointop/pkg/cmc"
@@ -16,11 +17,15 @@ func New() *Service {
 	return &Service{}
 }
 
-// GetAllCoinData gets all coin data
-func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+// https://api.coinmarketcap.com/v1/ticker/?start=0&limit=0
+
+func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, error) {
 	ret := make(map[string]apitypes.Coin)
+	max := 100
 	coins, err := cmc.Tickers(&cmc.TickersOptions{
 		Convert: convert,
+		Start:   max * offset,
+		Limit:   max,
 	})
 	if err != nil {
 		return ret, err
@@ -43,6 +48,27 @@ func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, erro
 			LastUpdated:      strconv.Itoa(v.LastUpdated),
 		}
 	}
+	return ret, nil
+}
+
+// GetAllCoinData gets all coin data
+func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+	var wg sync.WaitGroup
+	ret := make(map[string]apitypes.Coin)
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go func(j int) {
+			coins, err := getLimitedCoinData(convert, j)
+			if err != nil {
+				return
+			}
+			for k, v := range coins {
+				ret[k] = v
+			}
+			defer wg.Done()
+		}(i)
+	}
+	wg.Wait()
 	return ret, nil
 }
 

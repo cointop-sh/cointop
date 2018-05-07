@@ -142,6 +142,9 @@ func (ct *Cointop) updateTable() error {
 	if end < 0 {
 		end = 0
 	}
+	if start >= end {
+		return nil
+	}
 	if end > 0 {
 		sliced = allcoins[start:end]
 	}

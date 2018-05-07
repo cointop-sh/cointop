@@ -64,6 +64,9 @@ type Cointop struct {
 	helpviewname        string
 	helpvisible         bool
 	currencyconversion  string
+	convertmenuview     *gocui.View
+	convertmenuviewname string
+	convertmenuvisible  bool
 }
 
 // Instance running cointop instance
@@ -136,6 +139,7 @@ func Run() {
 		statusbarviewname:   "statusbar",
 		searchfieldviewname: "searchfield",
 		helpviewname:        "help",
+		convertmenuviewname: "convertmenu",
 		currencyconversion:  "USD",
 	}
 	Instance = &ct
@@ -180,7 +184,7 @@ func Run() {
 }
 
 func (ct *Cointop) quit() error {
-	if ct.helpvisible || ct.searchfieldvisible {
+	if ct.helpvisible || ct.convertmenuvisible || ct.searchfieldvisible {
 		return nil
 	}
 

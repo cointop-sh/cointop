@@ -241,6 +241,9 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "toggle_show_help":
 			fn = ct.keyfn(ct.toggleHelp)
 			view = ""
+		case "show_help":
+			fn = ct.keyfn(ct.showHelp)
+			view = ""
 		case "hide_help":
 			fn = ct.keyfn(ct.hideHelp)
 			view = "help"
@@ -298,6 +301,15 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.keyfn(ct.firstChartRange)
 		case "last_chart_range":
 			fn = ct.keyfn(ct.lastChartRange)
+		case "toggle_show_currency_convert_menu":
+			fn = ct.keyfn(ct.toggleConvertMenu)
+			view = ""
+		case "show_currency_convert_menu":
+			fn = ct.keyfn(ct.showConvertMenu)
+			view = ""
+		case "hide_currency_convert_menu":
+			fn = ct.keyfn(ct.hideConvertMenu)
+			view = "convertmenu"
 		default:
 			fn = ct.keyfn(ct.noop)
 		}
@@ -310,14 +322,27 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.forceQuit), "")
 
 	// searchfield keys
-	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), "searchfield")
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), "searchfield")
+	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), ct.searchfieldviewname)
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), ct.searchfieldviewname)
 
 	// keys to quit help when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
-	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
-	ct.setKeybindingMod('c', gocui.ModNone, ct.keyfn(ct.hideHelp), "help")
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
+	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
+	ct.setKeybindingMod('c', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
+
+	// keys to quit convert menu when open
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
+	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
+
+	// character key press to select option
+	// TODO: use scrolling table
+	keys := ct.sortedSupportedCurrencyConversions()
+	for i, k := range keys {
+		ct.setKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.keyfn(ct.setCurrencyConverstion(k)), ct.convertmenuviewname)
+	}
+
 	return nil
 }
 

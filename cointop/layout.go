@@ -113,12 +113,23 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.helpview.Frame = false
 		ct.helpview.BgColor = gocui.ColorBlack
 		ct.helpview.FgColor = gocui.ColorWhite
+	}
+
+	if v, err := g.SetView(ct.convertmenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		ct.convertmenuview = v
+		ct.convertmenuview.Frame = false
+		ct.convertmenuview.BgColor = gocui.ColorBlack
+		ct.convertmenuview.FgColor = gocui.ColorWhite
 
 		// run only once on init.
 		// this bit of code should be at the bottom
 		ct.g = g
 		g.SetViewOnBottom(ct.searchfieldviewname) // hide
 		g.SetViewOnBottom(ct.helpviewname)        // hide
+		g.SetViewOnBottom(ct.convertmenuviewname) // hide
 		ct.setActiveView(ct.tableviewname)
 		ct.intervalFetchData()
 	}

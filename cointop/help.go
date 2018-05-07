@@ -25,7 +25,7 @@ func (ct *Cointop) updateHelp() {
 
 	header := color.GreenBg(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close help ", ct.maxtablewidth-10, " ")))
 	cnt := 0
-	h := ct.viewHeight("help")
+	h := ct.viewHeight(ct.helpviewname)
 	percol := h - 3
 	cols := make([][]string, percol)
 	for i := range cols {
@@ -63,7 +63,7 @@ func (ct *Cointop) updateHelp() {
 func (ct *Cointop) showHelp() error {
 	ct.helpvisible = true
 	ct.updateHelp()
-	ct.setActiveView("help")
+	ct.setActiveView(ct.helpviewname)
 	return nil
 }
 

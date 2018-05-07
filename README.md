@@ -43,6 +43,7 @@ In action
 - Charts for coins and global market graphs
 - Quick chart date range change
 - Fuzzy searching for finding coins
+- Currency conversion
 - Save and view favorite coins
 - Color support
 - Help menu
@@ -163,7 +164,7 @@ Key|Action
 <kbd>2</kbd>|Sort table by *[2]4 hour change*
 <kbd>7</kbd>|Sort table by *[7] day change*
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
-<kbd>c</kbd>|Toggle [c]hart for highlighted coin
+<kbd>c</kbd>|Show currency convert menu
 <kbd>f</kbd>|Toggle show favorites
 <kbd>F</kbd>|Toggle show favorites
 <kbd>g</kbd>|Go to first line of page  (vim inspired)
@@ -231,7 +232,7 @@ You can then configure the actions you want for each key:
   left = "previous_page"
   right = "next_page"
   up = "move_up"
-  c = "toggle_row_chart"
+  c = "show_currency_convert_menu"
   "ctrl+c" = "quit"
   "ctrl+d" = "page_down"
   "ctrl+f" = "open_search"
@@ -276,6 +277,7 @@ Action|Description
 `first_chart_range`|Select first chart date range (e.g. 1H)
 `first_page`|Go to first page
 `help`|Show help
+`hide_currency_convert_menu`|Hide currency convert menu
 `last_chart_range`|Select last chart date range (e.g. All Time)
 `last_page`|Go to last page
 `move_to_page_first_row`|Move to first row on page
@@ -296,6 +298,8 @@ Action|Description
 `quit`|Quit application
 `refresh`|Do a manual refresh on the data
 `save`|Save config
+`show_currency_convert_menu`|Show currency convert menu
+`show_favorites`|Show favorites
 `sort_column_1h_change`|Sort table by column *1 hour change*
 `sort_column_24h_change`|Sort table by column *24 hour change*
 `sort_column_24h_volume`|Sort table by column *24 hour volume*
@@ -314,6 +318,7 @@ Action|Description
 `sort_right_column`|Sort the column to the right of the highlighted column
 `toggle_row_chart`|Toggle the chart for the highlighted row
 `toggle_favorite`|Toggle coin as favorite
+`toggle_show_currency_convert_menu`|Toggle show currency convert menu
 `toggle_show_favorites`|Toggle show favorites
 
 ## FAQ
@@ -421,6 +426,14 @@ Action|Description
   - A: Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`, `6H`, `1H`.
 
     <sup><sub>YTD = Year-to-date<sub></sup>
+
+- Q: How do I change the fiat currency?
+
+  - A: Press <kbd>c</kbd> to show the currency convert menu, and press the corresponding key to select that as the fiat currency.
+
+- Q: Which currencies can I convert to?
+
+  - A: The supported fiat currencies for conversion are `USD`, `EUR`, `GBP`, `CNY`, `HKD`, `JPY`, `KRW`, `NZD`, `CFH`, `MXN`, `AUD`, `IDR`, `RUB`, and `CAD`. The supported crypto currencies for conversion are `BTC` and `ETH`.
 
 ## Development
 
