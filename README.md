@@ -144,10 +144,10 @@ Key|Action
 <kbd>Page Down</kbd>|Jump page down
 <kbd>Home</kbd>|Go to first line of page
 <kbd>End</kbd>|Go to last line of page
-<kbd>Enter</kbd>|Toggle [c]hart for highlighted coin
+<kbd>Enter</kbd>|Toggle chart for highlighted coin
 <kbd>Esc</kbd>|Quit view
 <kbd>Space</kbd>|Toggle coin as favorite
-<kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
+<kbd>Ctrl</kbd>+<kbd>c</kbd>|Quit application
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim inspired)
 <kbd>Ctrl</kbd>+<kbd>f</kbd>|Search
 <kbd>Ctrl</kbd>+<kbd>n</kbd>|Go to next page
@@ -187,7 +187,7 @@ Key|Action
 <kbd>t</kbd>|Sort table by *[t]otal supply*
 <kbd>u</kbd>|Sort table by *last [u]pdated*
 <kbd>v</kbd>|Sort table by *24 hour [v]olume*
-<kbd>q</kbd>|[q]uit view
+<kbd>q</kbd>|Quit view
 <kbd>$</kbd>|Go to last page (vim inspired)
 <kbd>?</kbd>|Show help|
 <kbd>/</kbd>|Search (vim inspired)|
@@ -289,13 +289,13 @@ Action|Description
 `move_to_page_visible_middle_row`|Move to middle visible row on page
 `move_up`|Move one row up
 `move_down`|Move one row down
-`next_chart_range`|Select next chart date range (e.g. 3D -> 7D)
+`next_chart_range`|Select next chart date range (e.g. 3D → 7D)
 `next_page`|Go to next page
 `open_link`|Open row link
 `open_search`|Open search field
 `page_down`|Move one row down
 `page_up`|Scroll one page up
-`previous_chart_range`|Select previous chart date range (e.g. 7D -> 3D)
+`previous_chart_range`|Select previous chart date range (e.g. 7D → 3D)
 `previous_page`|Go to previous page
 `quit`|Quit application
 `quit_view`|Quit view
@@ -406,6 +406,7 @@ Action|Description
 - Q: My shortcut keys are messed or not correct.
 
   - A: Delete the cointop config directory and rerun cointop.
+
     ```bash
     rm -rf ~/.cointop
     ```
@@ -436,7 +437,9 @@ Action|Description
 
 - Q: Which currencies can I convert to?
 
-  - A: The supported fiat currencies for conversion are `USD`, `EUR`, `GBP`, `CNY`, `HKD`, `JPY`, `KRW`, `NZD`, `CFH`, `MXN`, `AUD`, `IDR`, `RUB`, and `CAD`. The supported crypto currencies for conversion are `BTC` and `ETH`.
+  - A: The supported fiat currencies for conversion are `USD`, `EUR`, `GBP`, `CNY`, `HKD`, `JPY`, `KRW`, `NZD`, `CFH`, `MXN`, `AUD`, `IDR`, `RUB`, and `CAD`.
+
+		The supported crypto currencies for conversion are `BTC` and `ETH`.
 
 - Q: How do I save the selected currency to convert to?
 
