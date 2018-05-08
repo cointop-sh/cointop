@@ -27,7 +27,7 @@ cointop/test:
 
 snap/clean:
 	snapcraft clean
-	rm cointop_*.snap
+	rm -f cointop_*.snap
 
 snap/stage:
 	snapcraft stage
