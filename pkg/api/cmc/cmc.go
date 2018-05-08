@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 
 	apitypes "github.com/miguelmota/cointop/pkg/api/types"
@@ -16,8 +18,6 @@ type Service struct {
 func New() *Service {
 	return &Service{}
 }
-
-// https://api.coinmarketcap.com/v1/ticker/?start=0&limit=0
 
 func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, error) {
 	ret := make(map[string]apitypes.Coin)
@@ -51,8 +51,9 @@ func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, e
 	return ret, nil
 }
 
-// GetAllCoinData gets all coin data
-func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+// GetAllCoinDataV2 gets all coin data
+// V1 is currently better for fetching all the coins at once
+func (s *Service) GetAllCoinDataV2(convert string) (map[string]apitypes.Coin, error) {
 	var wg sync.WaitGroup
 	ret := make(map[string]apitypes.Coin)
 	for i := 0; i < 5; i++ {
@@ -69,6 +70,37 @@ func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, erro
 		}(i)
 	}
 	wg.Wait()
+	return ret, nil
+}
+
+// GetAllCoinData get all coin data
+func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+	ret := make(map[string]apitypes.Coin)
+	coins, err := cmc.V1Tickers(0, convert)
+	if err != nil {
+		return ret, err
+	}
+	for _, v := range coins {
+		priceraw := v.Quotes[convert].Price
+		pricestr := fmt.Sprintf("%.2f", priceraw)
+		price, _ := strconv.ParseFloat(pricestr, 64)
+		ret[v.Symbol] = apitypes.Coin{
+			ID:               strings.ToLower(v.Name),
+			Name:             v.Name,
+			Symbol:           v.Symbol,
+			Rank:             v.Rank,
+			AvailableSupply:  v.AvailableSupply,
+			TotalSupply:      v.TotalSupply,
+			MarketCapUSD:     v.Quotes[convert].MarketCap,
+			PriceUSD:         price,
+			PercentChange1H:  v.PercentChange1H,
+			PercentChange24H: v.PercentChange24H,
+			PercentChange7D:  v.PercentChange7D,
+			USD24HVolume:     v.Quotes[convert].Volume24H,
+			PriceBTC:         0,
+			LastUpdated:      strconv.Itoa(v.LastUpdated),
+		}
+	}
 	return ret, nil
 }
 

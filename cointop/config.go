@@ -15,6 +15,7 @@ var fileperm = os.FileMode(0644)
 type config struct {
 	Shortcuts map[string]interface{}   `toml:"shortcuts"`
 	Favorites map[string][]interface{} `toml:"favorites"`
+	Currency  interface{}              `toml:"currency"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -35,6 +36,10 @@ func (ct *Cointop) setupConfig() error {
 		return err
 	}
 	err = ct.loadFavoritesFromConfig()
+	if err != nil {
+		return err
+	}
+	err = ct.loadCurrencyFromConfig()
 	if err != nil {
 		return err
 	}
@@ -137,9 +142,12 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		"symbols": favorites,
 	}
 
+	var currencyIfc interface{} = ct.currencyconversion
+
 	var inputs = &config{
 		Shortcuts: shortcutsIfcs,
 		Favorites: favoritesIfcs,
+		Currency:  currencyIfc,
 	}
 
 	var b bytes.Buffer
@@ -164,6 +172,13 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 			}
 			ct.shortcutkeys[k] = v
 		}
+	}
+	return nil
+}
+
+func (ct *Cointop) loadCurrencyFromConfig() error {
+	if currency, ok := ct.config.Currency.(string); ok {
+		ct.currencyconversion = strings.ToUpper(currency)
 	}
 	return nil
 }
