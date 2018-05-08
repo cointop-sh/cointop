@@ -20,6 +20,7 @@ func actionsMap() map[string]bool {
 		"page_up":                           true,
 		"previous_page":                     true,
 		"quit":                              true,
+		"quit_view":                         true,
 		"refresh":                           true,
 		"sort_column_1h_change":             true,
 		"sort_column_24h_change":            true,

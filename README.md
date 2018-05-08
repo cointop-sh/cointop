@@ -145,7 +145,7 @@ Key|Action
 <kbd>Home</kbd>|Go to first line of page
 <kbd>End</kbd>|Go to last line of page
 <kbd>Enter</kbd>|Toggle [c]hart for highlighted coin
-<kbd>Esc</kbd>|Quit
+<kbd>Esc</kbd>|Quit view
 <kbd>Space</kbd>|Toggle coin as favorite
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|Alias to quit
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim inspired)
@@ -187,7 +187,7 @@ Key|Action
 <kbd>t</kbd>|Sort table by *[t]otal supply*
 <kbd>u</kbd>|Sort table by *last [u]pdated*
 <kbd>v</kbd>|Sort table by *24 hour [v]olume*
-<kbd>q</kbd>|[q]uit
+<kbd>q</kbd>|[q]uit view
 <kbd>$</kbd>|Go to last page (vim inspired)
 <kbd>?</kbd>|Show help|
 <kbd>/</kbd>|Search (vim inspired)|
@@ -261,7 +261,7 @@ You can then configure the actions you want for each key:
   p = "sort_column_price"
   pagedown = "page_down"
   pageup = "page_up"
-  q = "quit"
+  q = "quit_view"
   r = "sort_column_rank"
   s = "sort_column_symbol"
   space = "toggle_favorite"
@@ -298,6 +298,7 @@ Action|Description
 `previous_chart_range`|Select previous chart date range (e.g. 7D -> 3D)
 `previous_page`|Go to previous page
 `quit`|Quit application
+`quit_view`|Quit view
 `refresh`|Do a manual refresh on the data
 `save`|Save config
 `show_currency_convert_menu`|Show currency convert menu
@@ -444,6 +445,10 @@ Action|Description
 - Q: The data isn't refreshing!
 
   - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind the oinMarketCap updates prices every 5 minutes constant refreshes aren't necessary.
+
+- Q: How do I quit the application?
+
+  - A: Press <kbd>ctrl</kbd>+<kbd>c</kbd> to quit the application.
 
 ## Development
 

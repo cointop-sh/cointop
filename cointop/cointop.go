@@ -184,15 +184,14 @@ func Run() {
 }
 
 func (ct *Cointop) quit() error {
-	if ct.helpvisible || ct.convertmenuvisible || ct.searchfieldvisible {
-		return nil
-	}
-
-	return ct.forceQuit()
+	return gocui.ErrQuit
 }
 
-func (ct *Cointop) forceQuit() error {
-	return gocui.ErrQuit
+func (ct *Cointop) quitView() error {
+	if ct.activeViewName() == ct.tableviewname {
+		return ct.quit()
+	}
+	return nil
 }
 
 // Exit safely exit application

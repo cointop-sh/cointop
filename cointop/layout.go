@@ -150,6 +150,10 @@ func (ct *Cointop) setActiveView(v string) error {
 	return nil
 }
 
+func (ct *Cointop) activeViewName() string {
+	return ct.g.CurrentView().Name()
+}
+
 func (ct *Cointop) setViewOnBottom(v string) error {
 	_, err := ct.g.SetViewOnBottom(v)
 	return err

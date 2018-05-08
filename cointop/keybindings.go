@@ -293,6 +293,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "quit":
 			fn = ct.keyfn(ct.quit)
 			view = ""
+		case "quit_view":
+			fn = ct.keyfn(ct.quitView)
 		case "next_chart_range":
 			fn = ct.keyfn(ct.nextChartRange)
 		case "previous_chart_range":
@@ -318,8 +320,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	}
 
 	// keys to force quit
-	ct.setKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.keyfn(ct.forceQuit), "")
-	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.forceQuit), "")
+	ct.setKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.keyfn(ct.quit), "")
+	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.quit), "")
 
 	// searchfield keys
 	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), ct.searchfieldviewname)
@@ -328,13 +330,10 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	// keys to quit help when open
 	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
 	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
-	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
-	ct.setKeybindingMod('c', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
 
 	// keys to quit convert menu when open
 	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
 	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
-	ct.setKeybindingMod('x', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
 
 	// character key press to select option
 	// TODO: use scrolling table
