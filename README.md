@@ -355,6 +355,10 @@ Action|Description
 
   - A: The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
 
+- Q: How do I exit search?
+
+  - A: Press <kbd>ESC</kbd> to exit search.
+
 - Q: Does this work on the Raspberry Pi?
 
   - A: Yes, cointop works on the Rasperry Pi including the RPi Zero.
@@ -452,6 +456,10 @@ Action|Description
 - Q: How do I quit the application?
 
   - A: Press <kbd>ctrl</kbd>+<kbd>c</kbd> to quit the application.
+
+- Q: How do I quit the open view/window?
+
+  - A: Press <kbd>q</kbd> to quit the open view/window.
 
 ## Development
 
