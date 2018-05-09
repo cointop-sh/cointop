@@ -95,6 +95,12 @@ func (ct *Cointop) pageDown() error {
 	if (oy + sy + sy) > l {
 		k = l - sy
 	}
+	// select last row if next jump is out of bounds
+	if k < 0 {
+		k = 0
+		sy = l
+	}
+
 	if err := ct.tableview.SetOrigin(ox, k); err != nil {
 		return err
 	}
