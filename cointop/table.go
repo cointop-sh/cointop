@@ -9,6 +9,7 @@ import (
 
 	"github.com/miguelmota/cointop/pkg/color"
 	"github.com/miguelmota/cointop/pkg/humanize"
+	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
@@ -69,8 +70,8 @@ func (ct *Cointop) refreshTable() error {
 		}
 		ct.table.AddRow(
 			rank,
-			namecolor(fmt.Sprintf("%.22s", name)),
-			color.White(fmt.Sprintf("%.6s", coin.Symbol)),
+			namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
+			color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
 			colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.Price))),
 			color.White(fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCap))),
 			color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),
