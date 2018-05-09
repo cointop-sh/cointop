@@ -19,7 +19,7 @@ var supportedfiatconversions = map[string]string{
 	"JPY": "Japanese Yen",
 	"KRW": "South Korean Won",
 	"NZD": "New Zealand Dollar",
-	"CFH": "Swiss Franc",
+	//"CFH": "Swiss Franc",
 	"MXN": "Mexican Peso",
 	"AUD": "Australian Dollar",
 	"IDR": "Indonesian Rupiah",

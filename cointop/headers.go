@@ -7,6 +7,25 @@ import (
 	"github.com/miguelmota/cointop/pkg/color"
 )
 
+var currencysymbols = map[string]string{
+	"USD": "$",
+	"EUR": "€",
+	"GBP": "£",
+	"CNY": "¥",
+	"HKD": "$",
+	"JPY": "¥",
+	"KRW": "₩",
+	"NZD": "$",
+	"CFH": "₣",
+	"MXN": "$",
+	"AUD": "$",
+	"IDR": "Rp.",
+	"RUB": "Ꝑ",
+	"CAD": "$",
+	"BTC": "Ƀ",
+	"ETH": "Ξ",
+}
+
 func (ct *Cointop) updateHeaders() {
 	cm := map[string]func(a ...interface{}) string{
 		"rank":            color.Black,
@@ -46,11 +65,12 @@ func (ct *Cointop) updateHeaders() {
 			}
 		}
 	}
+	symbol := currencysymbols[ct.currencyconversion]
 	headers := []string{
 		fmt.Sprintf("%s%s", cm["rank"](sm["rank"]+"[r]ank"), strings.Repeat(" ", 1)),
 		fmt.Sprintf("%s%s", cm["name"](sm["name"]+"[n]ame"), strings.Repeat(" ", 15)),
 		fmt.Sprintf("%s%s", cm["symbol"](sm["symbol"]+"[s]ymbol"), strings.Repeat(" ", 1)),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 1), cm["price"](sm["price"]+"[p]rice")),
+		fmt.Sprintf("%s%s", strings.Repeat(" ", 0), cm["price"](sm["price"]+symbol+"[p]rice")),
 		fmt.Sprintf("%s%s", strings.Repeat(" ", 5), cm["marketcap"](sm["marketcap"]+"[m]arket cap")),
 		fmt.Sprintf("%s%s", strings.Repeat(" ", 3), cm["24hvolume"](sm["24hvolume"]+"24H [v]olume")),
 		fmt.Sprintf("%s%s", strings.Repeat(" ", 4), cm["1hchange"](sm["1hchange"]+"[1]H%")),
