@@ -89,7 +89,16 @@ func (ct *Cointop) updateConvertMenu() {
 		if cnt%percol == 0 {
 			cnt = 0
 		}
-		item := fmt.Sprintf(" [ %1s ] %4s %-34s", string(alphanumericcharacters[i]), key, color.Yellow(currency))
+		shortcut := string(alphanumericcharacters[i])
+		if key == ct.currencyconversion {
+			shortcut = color.YellowBold("*")
+			key = color.WhiteBold(key)
+			currency = color.YellowBold(currency)
+		} else {
+			key = color.White(key)
+			currency = color.Yellow(currency)
+		}
+		item := fmt.Sprintf(" [ %1s ] %4s %-34s", shortcut, key, currency)
 		cols[cnt] = append(cols[cnt], item)
 		cnt = cnt + 1
 	}

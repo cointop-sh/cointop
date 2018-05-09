@@ -167,7 +167,7 @@ Key|Action
 <kbd>7</kbd>|Sort table by *[7] day change*
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
 <kbd>c</kbd>|Show currency convert menu
-<kbd>f</kbd>|Toggle show favorites
+<kbd>f</kbd>|Toggle coin as favorite
 <kbd>F</kbd>|Toggle show favorites
 <kbd>g</kbd>|Go to first line of page  (vim inspired)
 <kbd>G</kbd>|Go to last line of page (vim inspired)
@@ -246,7 +246,7 @@ You can then configure the actions you want for each key:
   end = "move_to_page_last_row"
   enter = "toggle_row_chart"
   esc = "quit"
-  f = "toggle_show_favorites"
+  f = "toggle_favorite"
   F = "toggle_show_favorites"
   F1 = "help"
   g = "move_to_page_first_row"
@@ -365,11 +365,11 @@ Action|Description
 
 - Q: How do I add/remove a favorite?
 
-  - A: Press the <kbd>space</kbd> key to toggle a coin as a favorite.
+  - A: Press the <kbd>f</kbd> key to toggle a coin as a favorite.
 
 - Q: How do I view all my favorites?
 
-  - A: Press <kbd>f</kbd> to toggle view all your favorites.
+  - A: Press <kbd>F</kbd> (shift+f) to toggle view all your favorites.
 
 - Q: How do I save my favorites?
 
