@@ -262,6 +262,7 @@ You can then configure the actions you want for each key:
   pagedown = "page_down"
   pageup = "page_up"
   q = "quit_view"
+	Q = "quit_view"
   r = "sort_column_rank"
   s = "sort_column_symbol"
   space = "toggle_favorite"

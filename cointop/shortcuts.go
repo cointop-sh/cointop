@@ -58,6 +58,7 @@ func defaultShortcuts() map[string]string {
 		"u":         "sort_column_last_updated",
 		"v":         "sort_column_24h_volume",
 		"q":         "quit_view",
+		"Q":         "quit_view",
 		"$":         "last_page",
 		"?":         "help",
 		"/":         "open_search",
