@@ -12,7 +12,6 @@ import (
 
 // Service service
 type Service struct {
-	lock sync.RWMutex
 }
 
 // New new service
@@ -88,19 +87,20 @@ func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, erro
 func (s *Service) GetAllCoinDataV2(convert string) (map[string]apitypes.Coin, error) {
 	var wg sync.WaitGroup
 	ret := make(map[string]apitypes.Coin)
+	var mutex sync.Mutex
 	for i := 0; i < 5; i++ {
 		wg.Add(1)
 		go func(j int) {
-			s.lock.RLock()
-			defer s.lock.RUnlock()
 			defer wg.Done()
 			coins, err := getLimitedCoinData(convert, j)
 			if err != nil {
 				return
 			}
+			mutex.Lock()
 			for k, v := range coins {
 				ret[k] = v
 			}
+			mutex.Unlock()
 		}(i)
 	}
 	wg.Wait()
