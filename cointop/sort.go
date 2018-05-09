@@ -23,11 +23,11 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 		case "symbol":
 			return a.Symbol < b.Symbol
 		case "price":
-			return a.PriceUSD < b.PriceUSD
+			return a.Price < b.Price
 		case "marketcap":
-			return a.MarketCapUSD < b.MarketCapUSD
+			return a.MarketCap < b.MarketCap
 		case "24hvolume":
-			return a.USD24HVolume < b.USD24HVolume
+			return a.Volume24H < b.Volume24H
 		case "1hchange":
 			return a.PercentChange1H < b.PercentChange1H
 		case "24hchange":

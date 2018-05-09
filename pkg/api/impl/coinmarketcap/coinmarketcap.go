@@ -1,4 +1,4 @@
-package api
+package coinmarketcap
 
 import (
 	"fmt"
@@ -12,6 +12,7 @@ import (
 
 // Service service
 type Service struct {
+	lock sync.RWMutex
 }
 
 // New new service
@@ -38,13 +39,44 @@ func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, e
 			Rank:             v.Rank,
 			AvailableSupply:  v.CirculatingSupply,
 			TotalSupply:      v.TotalSupply,
-			MarketCapUSD:     v.Quotes[convert].MarketCap,
-			PriceUSD:         v.Quotes[convert].Price,
+			MarketCap:        v.Quotes[convert].MarketCap,
+			Price:            v.Quotes[convert].Price,
 			PercentChange1H:  v.Quotes[convert].PercentChange1H,
 			PercentChange24H: v.Quotes[convert].PercentChange24H,
 			PercentChange7D:  v.Quotes[convert].PercentChange7D,
-			USD24HVolume:     v.Quotes[convert].Volume24H,
-			PriceBTC:         0,
+			Volume24H:        v.Quotes[convert].Volume24H,
+			LastUpdated:      strconv.Itoa(v.LastUpdated),
+		}
+	}
+	return ret, nil
+}
+
+// GetAllCoinData get all coin data
+func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+	ret := make(map[string]apitypes.Coin)
+	coins, err := cmc.V1Tickers(0, convert)
+	if err != nil {
+		return ret, err
+	}
+	for _, v := range coins {
+		price := v.Quotes[convert].Price
+		if convert != "USD" {
+			pricestr := fmt.Sprintf("%.2f", price)
+			price, _ = strconv.ParseFloat(pricestr, 64)
+		}
+		ret[v.Symbol] = apitypes.Coin{
+			ID:               strings.ToLower(v.Name),
+			Name:             v.Name,
+			Symbol:           v.Symbol,
+			Rank:             v.Rank,
+			AvailableSupply:  v.AvailableSupply,
+			TotalSupply:      v.TotalSupply,
+			MarketCap:        v.Quotes[convert].MarketCap,
+			Price:            price,
+			PercentChange1H:  v.PercentChange1H,
+			PercentChange24H: v.PercentChange24H,
+			PercentChange7D:  v.PercentChange7D,
+			Volume24H:        v.Quotes[convert].Volume24H,
 			LastUpdated:      strconv.Itoa(v.LastUpdated),
 		}
 	}
@@ -59,6 +91,9 @@ func (s *Service) GetAllCoinDataV2(convert string) (map[string]apitypes.Coin, er
 	for i := 0; i < 5; i++ {
 		wg.Add(1)
 		go func(j int) {
+			s.lock.RLock()
+			defer s.lock.RUnlock()
+			defer wg.Done()
 			coins, err := getLimitedCoinData(convert, j)
 			if err != nil {
 				return
@@ -66,41 +101,9 @@ func (s *Service) GetAllCoinDataV2(convert string) (map[string]apitypes.Coin, er
 			for k, v := range coins {
 				ret[k] = v
 			}
-			defer wg.Done()
 		}(i)
 	}
 	wg.Wait()
-	return ret, nil
-}
-
-// GetAllCoinData get all coin data
-func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
-	ret := make(map[string]apitypes.Coin)
-	coins, err := cmc.V1Tickers(0, convert)
-	if err != nil {
-		return ret, err
-	}
-	for _, v := range coins {
-		priceraw := v.Quotes[convert].Price
-		pricestr := fmt.Sprintf("%.2f", priceraw)
-		price, _ := strconv.ParseFloat(pricestr, 64)
-		ret[v.Symbol] = apitypes.Coin{
-			ID:               strings.ToLower(v.Name),
-			Name:             v.Name,
-			Symbol:           v.Symbol,
-			Rank:             v.Rank,
-			AvailableSupply:  v.AvailableSupply,
-			TotalSupply:      v.TotalSupply,
-			MarketCapUSD:     v.Quotes[convert].MarketCap,
-			PriceUSD:         price,
-			PercentChange1H:  v.PercentChange1H,
-			PercentChange24H: v.PercentChange24H,
-			PercentChange7D:  v.PercentChange7D,
-			USD24HVolume:     v.Quotes[convert].Volume24H,
-			PriceBTC:         0,
-			LastUpdated:      strconv.Itoa(v.LastUpdated),
-		}
-	}
 	return ret, nil
 }
 

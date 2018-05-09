@@ -1,13 +1,18 @@
 package cointop
 
 import (
+	"sync"
 	"time"
 
 	types "github.com/miguelmota/cointop/pkg/api/types"
 	"github.com/miguelmota/cointop/pkg/fcache"
 )
 
+var coinslock sync.Mutex
+
 func (ct *Cointop) updateCoins() error {
+	coinslock.Lock()
+	defer coinslock.Unlock()
 	list := []*coin{}
 	cachekey := "allcoinsmap"
 
@@ -43,10 +48,9 @@ func (ct *Cointop) updateCoins() error {
 			Name:             v.Name,
 			Symbol:           v.Symbol,
 			Rank:             v.Rank,
-			PriceUSD:         v.PriceUSD,
-			PriceBTC:         v.PriceBTC,
-			USD24HVolume:     v.USD24HVolume,
-			MarketCapUSD:     v.MarketCapUSD,
+			Price:            v.Price,
+			Volume24H:        v.Volume24H,
+			MarketCap:        v.MarketCap,
 			AvailableSupply:  v.AvailableSupply,
 			TotalSupply:      v.TotalSupply,
 			PercentChange1H:  v.PercentChange1H,
@@ -77,10 +81,9 @@ func (ct *Cointop) updateCoins() error {
 					c.Name = cm.Name
 					c.Symbol = cm.Symbol
 					c.Rank = cm.Rank
-					c.PriceUSD = cm.PriceUSD
-					c.PriceBTC = cm.PriceBTC
-					c.USD24HVolume = cm.USD24HVolume
-					c.MarketCapUSD = cm.MarketCapUSD
+					c.Price = cm.Price
+					c.Volume24H = cm.Volume24H
+					c.MarketCap = cm.MarketCap
 					c.AvailableSupply = cm.AvailableSupply
 					c.TotalSupply = cm.TotalSupply
 					c.PercentChange1H = cm.PercentChange1H

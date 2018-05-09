@@ -5,10 +5,9 @@ type coin struct {
 	Name             string
 	Symbol           string
 	Rank             int
-	PriceUSD         float64
-	PriceBTC         float64
-	USD24HVolume     float64
-	MarketCapUSD     float64
+	Price            float64
+	Volume24H        float64
+	MarketCap        float64
 	AvailableSupply  float64
 	TotalSupply      float64
 	PercentChange1H  float64

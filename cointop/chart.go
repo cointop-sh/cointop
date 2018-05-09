@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/miguelmota/cointop/pkg/color"
@@ -11,7 +12,12 @@ import (
 	"github.com/miguelmota/cointop/pkg/termui"
 )
 
+var chartlock sync.Mutex
+var chartpointslock sync.Mutex
+
 func (ct *Cointop) updateChart() error {
+	chartlock.Lock()
+	defer chartlock.Unlock()
 	maxX := ct.maxtablewidth - 3
 	coin := ct.selectedCoinSymbol()
 	ct.chartPoints(maxX, coin)
@@ -36,6 +42,8 @@ func (ct *Cointop) updateChart() error {
 }
 
 func (ct *Cointop) chartPoints(maxX int, coin string) error {
+	chartpointslock.Lock()
+	defer chartpointslock.Unlock()
 	// TODO: not do this (SOC)
 	go ct.updateMarketbar()
 

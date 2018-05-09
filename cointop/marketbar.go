@@ -48,7 +48,7 @@ func (ct *Cointop) updateMarketbar() error {
 			ct.marketbarview,
 			pad.Right(
 				fmt.Sprintf(
-					"%s [ Chart: %s %s ] Global ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s",
+					"%s [ Chart: %s %s ] Global ▶ Market Cap: $%s • 24H Volume: $%s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s",
 					fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop")),
 					color.Cyan(chartname),
 					timeframe,
