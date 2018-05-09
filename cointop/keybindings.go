@@ -305,10 +305,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.keyfn(ct.lastChartRange)
 		case "toggle_show_currency_convert_menu":
 			fn = ct.keyfn(ct.toggleConvertMenu)
-			view = ""
 		case "show_currency_convert_menu":
 			fn = ct.keyfn(ct.showConvertMenu)
-			view = ""
 		case "hide_currency_convert_menu":
 			fn = ct.keyfn(ct.hideConvertMenu)
 			view = "convertmenu"
