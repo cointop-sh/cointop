@@ -55,12 +55,21 @@ snap/remove:
 flatpak/build:
 	flatpak-builder --force-clean build-dir com.github.miguelmota.Cointop.json
 
-flatpak/run:
+flatpak/run/test:
 	flatpak-builder --run build-dir com.github.miguelmota.Cointop.json cointop
 
 flatpak/repo:
 	flatpak-builder --repo=repo --force-clean build-dir com.github.miguelmota.Cointop.json
 
+# add the repository
+flatpak/add:
+	flatpak --user remote-add --no-gpg-verify cointop-repo repo
+
+flatpak/install:
+	flatpak --user install cointop-repo com.github.miguelmota.Cointop
+
+flatpak/run:
+	flatpak run com.github.miguelmota.Cointop
 
 brew/clean: brew/remove
 	brew cleanup --force cointop
