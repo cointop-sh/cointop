@@ -1,0 +1,9 @@
+[core]
+repo_version=1
+mode=archive-z2
+
+[remote "cointop"]
+gpg-verify=false
+gpg-verify-summary=false
+url=https://cointop.sh/cointop.flatpakrepo
+

@@ -1,0 +1,29 @@
+{
+  "id" : "com.github.miguelmota.Cointop",
+  "runtime" : "org.freedesktop.Platform",
+  "runtime-version" : "1.6",
+  "runtime-commit" : "00f1ad6848905e10452e96aee032d76bd8f9225334fa8129a8ac0a6d25d901ae",
+  "sdk" : "org.freedesktop.Sdk",
+  "sdk-commit" : "5723623299f09eced81c02287cb857447d3b1b6ede806f572b18be8f2a049ca9",
+  "command" : "cointop",
+  "modules" : [
+    {
+      "name" : "cointop",
+      "buildsystem" : "simple",
+      "sources" : [
+        {
+          "url" : "https://github.com/miguelmota/cointop.git",
+          "commit" : "92bf1357f534969098aec2aae0ca5bd1e3759587",
+          "type" : "git"
+        }
+      ],
+      "build-commands" : [
+        "install -D bin/linux/cointop /app/bin/cointop"
+      ]
+    }
+  ],
+  "finish-args" : [
+    "--filesystem=home",
+    "--share=network"
+  ]
+}
