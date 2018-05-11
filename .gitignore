@@ -31,3 +31,5 @@ build
 
 # flatpak
 .flatpak-builder
+build-dir
+#repo
