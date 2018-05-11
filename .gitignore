@@ -28,3 +28,6 @@ bfg.jar
 # builds
 build
 #bin
+
+# flatpak
+.flatpak-builder
