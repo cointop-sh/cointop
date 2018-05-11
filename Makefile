@@ -12,7 +12,7 @@ build/mac: clean/mac
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/macos/cointop && upx bin/macos/cointop
 
 build/linux: clean/linux
-	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/linux/cointop && upx bin/cointop
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o bin/linux/cointop && upx bin/linux/cointop
 
 build/multiple: clean
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
