@@ -1,5 +1,5 @@
 {
-  "app-id": "com.miguelmota.Cointop",
+  "app-id": "com.github.miguelmota.Cointop",
   "runtime": "org.freedesktop.Platform",
   "runtime-version": "1.6",
   "sdk": "org.freedesktop.Sdk",
