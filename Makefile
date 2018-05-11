@@ -11,6 +11,9 @@ debug:
 build/mac: clean
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/macos/cointop && upx bin/macos/cointop
 
+build/linux: clean
+	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/linux/cointop && upx bin/cointop
+
 build/multiple: clean
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
 	env GOARCH=386 go build -ldflags "-s -w" -o bin/cointop32 && upx bin/cointop32
