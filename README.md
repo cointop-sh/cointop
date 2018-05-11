@@ -513,6 +513,14 @@ Running cointop from source
 make run
 ```
 
+### Homebrew
+
+Installing from source
+
+```bash
+make brew/build
+```
+
 ### flatpak
 
 Building flatpak package
@@ -527,14 +535,6 @@ Building snap
 
 ```bash
 make snap/build
-```
-
-### Homebrew
-
-Installing from source
-
-```bash
-make brew/build
 ```
 
 ## License
