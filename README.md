@@ -513,6 +513,14 @@ Running cointop from source
 make run
 ```
 
+### flatpak
+
+Building flatpak package
+
+```bash
+make flatpak/build
+```
+
 ### Snap
 
 Building snap
