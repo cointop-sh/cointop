@@ -9,14 +9,18 @@
       "name": "cointop",
       "buildsystem": "simple",
       "build-commands": [
-        "install -D cointop /app/bin/cointop"
+        "install -D bin/linux/cointop /app/bin/cointop"
       ],
       "sources": [
         {
-          "type": "file",
-          "path": "bin/cointop"
+          "type": "git",
+          "url": "https://github.com/miguelmota/cointop.git"
         }
       ]
     }
+  ],
+  "finish-args": [
+     "--filesystem=home",
+     "--share=network"
   ]
 }
