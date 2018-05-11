@@ -8,16 +8,15 @@
     {
       "name": "cointop",
       "buildsystem": "simple",
+      "build-commands": [
+        "install -D cointop /app/bin/cointop"
+      ],
       "sources": [
         {
-          "type": "git",
-          "url": "https://github.com/miguelmota/cointop.git"
+          "type": "file",
+          "path": "bin/cointop"
         }
-      ],
-      "build-commands": [
-        "./flatpak_install.sh"
       ]
-
     }
   ]
 }
