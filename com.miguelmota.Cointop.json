@@ -1,0 +1,23 @@
+{
+  "app-id": "com.miguelmota.Cointop",
+  "runtime": "org.freedesktop.Platform",
+  "runtime-version": "1.6",
+  "sdk": "org.freedesktop.Sdk",
+  "command": "cointop",
+  "modules": [
+    {
+      "name": "cointop",
+      "buildsystem": "simple",
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/miguelmota/cointop.git"
+        }
+      ],
+      "build-commands": [
+        "./flatpak_install.sh"
+      ]
+
+    }
+  ]
+}
