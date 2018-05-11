@@ -70,7 +70,41 @@ brew tap cointop/cointop https://github.com/miguelmota/cointop
 brew install cointop
 ```
 
-### Snap (Linux)
+### Flatpak (Linux)
+
+cointop is available as a [Flatpak](https://flatpak.org/) package.
+
+First, add the flathub repository (if not done so already)
+
+```bash
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+```
+
+Install the freedesktop runtime (if not done so already)
+
+```bash
+sudo flatpak install flathub org.freedesktop.Platform//1.6 org.freedesktop.Sdk//1.6
+```
+
+Add the cointop flatpak repo
+
+```bash
+flatpak --user remote-add --if-not-exists --no-gpg-verify cointop https://cointop.sh/cointop.flatpakrepo
+```
+
+Install cointop flatpak
+
+```bash
+flatpak --user install cointop com.github.miguelmota.Cointop
+```
+
+Run cointop flatpak
+
+```bash
+flatpak run com.github.miguelmota.Cointop
+```
+
+### Snap (Ubuntu)
 
 cointop is available as a [snap](https://snapcraft.io/cointop) for Linux users.
 
@@ -106,7 +140,14 @@ go get -u github.com/miguelmota/cointop
 brew uninstall cointop && brew install cointop
 ```
 
-### Snap (Linux)
+### Flatpak (Linux)
+
+```bash
+flatpak --user uninstall com.github.miguelmota.Cointop
+flatpak --user install cointop com.github.miguelmota.Cointop
+```
+
+### Snap (Ubuntu)
 
 Use the `refresh` command to update snap.
 

@@ -61,9 +61,11 @@ flatpak/run/test:
 flatpak/repo:
 	flatpak-builder --repo=repo --force-clean build-dir com.github.miguelmota.Cointop.json
 
-# add the repository
 flatpak/add:
 	flatpak --user remote-add --no-gpg-verify cointop-repo repo
+
+flatpak/remove:
+	flatpak --user remote-delete cointop-repo
 
 flatpak/install:
 	flatpak --user install cointop-repo com.github.miguelmota.Cointop
