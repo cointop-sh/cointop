@@ -1,3 +1,3 @@
 #!/bin/bash
 
-go build -o bin/cointop
+/usr/bin/go build -o bin/cointop
