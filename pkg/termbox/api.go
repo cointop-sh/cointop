@@ -2,13 +2,16 @@
 
 package termbox
 
-import "github.com/mattn/go-runewidth"
-import "fmt"
-import "os"
-import "os/signal"
-import "syscall"
-import "runtime"
-import "time"
+import (
+	"fmt"
+	"os"
+	"os/signal"
+	"runtime"
+	"syscall"
+	"time"
+
+	"github.com/mattn/go-runewidth"
+)
 
 // public API
 
@@ -24,11 +27,20 @@ import "time"
 func Init() error {
 	var err error
 
-	out, err = os.OpenFile("/dev/tty", syscall.O_WRONLY, 0)
+	devin := os.Getenv("DEV_IN")
+	if devin == "" {
+		devin = "/dev/tty"
+	}
+	devout := os.Getenv("DEV_OUT")
+	if devout == "" {
+		devout = "/dev/tty"
+	}
+
+	out, err = os.OpenFile(devin, syscall.O_WRONLY, 0)
 	if err != nil {
 		return err
 	}
-	in, err = syscall.Open("/dev/tty", syscall.O_RDONLY, 0)
+	in, err = syscall.Open(devout, syscall.O_RDONLY, 0)
 	if err != nil {
 		return err
 	}

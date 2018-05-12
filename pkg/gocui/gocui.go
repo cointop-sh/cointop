@@ -7,7 +7,7 @@ package gocui
 import (
 	"errors"
 
-	"github.com/nsf/termbox-go"
+	"github.com/miguelmota/cointop/pkg/termbox"
 )
 
 var (

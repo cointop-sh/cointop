@@ -14,7 +14,8 @@
       "sources": [
         {
           "type": "git",
-          "url": "https://github.com/miguelmota/cointop.git"
+          "url": "https://github.com/miguelmota/cointop.git",
+          "commit": "48f0067b8242ea60d5981152977c381a2aa13c6e"
         }
       ]
     }
