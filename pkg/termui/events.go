@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nsf/termbox-go"
+	"github.com/miguelmota/cointop/pkg/termbox"
 )
 
 type Event struct {
@@ -221,6 +221,7 @@ func findMatch(mux map[string]func(Event), path string) string {
 	return pattern
 
 }
+
 // Remove all existing defined Handlers from the map
 func (es *EvtStream) ResetHandlers() {
 	for Path, _ := range es.Handlers {

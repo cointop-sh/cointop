@@ -8,7 +8,7 @@ import (
 	"image"
 	"sync"
 
-	tm "github.com/nsf/termbox-go"
+	tm "github.com/miguelmota/cointop/pkg/termbox"
 )
 
 // Bufferer should be implemented by all renderable components.
