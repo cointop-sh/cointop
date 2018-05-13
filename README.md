@@ -503,6 +503,14 @@ Action|Description
 
   - A: Press <kbd>q</kbd> to quit the open view/window.
 
+- Q: I'm getting the error `open /dev/tty: no such device or address`.
+
+    -A: Usually this error occurs when cointop is running as a daemon or slave which means that there is no terminal allocated, so `/dev/tty` doesn't exist for that process. Try running it with the following environment variables:
+
+    ```bash
+    DEV_IN=/dev/stdout DEV_OUT=/dev/stdin cointop
+    ```
+
 ## Development
 
 ### Go

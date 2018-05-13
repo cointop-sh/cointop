@@ -1,6 +1,7 @@
 package coinmarketcap
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -17,6 +18,20 @@ type Service struct {
 // New new service
 func New() *Service {
 	return &Service{}
+}
+
+// Ping ping API
+func (s *Service) Ping() error {
+	ticker, err := cmc.Ticker(&cmc.TickerOptions{
+		Symbol: "ETH",
+	})
+	if err != nil {
+		return errors.New("failed to ping")
+	}
+	if ticker == nil {
+		return errors.New("failed to ping")
+	}
+	return nil
 }
 
 func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, error) {

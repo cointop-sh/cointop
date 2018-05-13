@@ -69,16 +69,13 @@ type Cointop struct {
 	convertmenuvisible  bool
 }
 
-// Instance running cointop instance
-var Instance *Cointop
-
-// Run runs cointop
-func Run() {
+// New initializes cointop
+func New() *Cointop {
 	var debug bool
 	if os.Getenv("DEBUG") != "" {
 		debug = true
 	}
-	ct := Cointop{
+	ct := &Cointop{
 		api:               api.NewCMC(),
 		refreshticker:     time.NewTicker(1 * time.Minute),
 		sortby:            "rank",
@@ -142,7 +139,6 @@ func Run() {
 		convertmenuviewname: "convertmenu",
 		currencyconversion:  "USD",
 	}
-	Instance = &ct
 	err := ct.setupConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -162,7 +158,15 @@ func Run() {
 	marketcachekey := "market"
 	fcache.Get(marketcachekey, &market)
 	ct.cache.Set(marketcachekey, market, 10*time.Second)
+	err = ct.api.Ping()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return ct
+}
 
+// Run runs cointop
+func (ct *Cointop) Run() {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)
@@ -195,8 +199,10 @@ func (ct *Cointop) quitView() error {
 }
 
 // Exit safely exit application
-func Exit() {
-	if Instance != nil {
-		Instance.g.Close()
+func (ct *Cointop) Exit() {
+	if ct.g != nil {
+		ct.g.Close()
+	} else {
+		os.Exit(0)
 	}
 }
