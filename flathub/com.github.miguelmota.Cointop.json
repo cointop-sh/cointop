@@ -55,7 +55,7 @@
         {
           "type": "git",
           "url": "https://github.com/miguelmota/cointop.git",
-          "commit": "7beea7d97b66c13432f16f93757c58e75e472496",
+          "commit": "1eafc9d8a6d0ef0378e4869075585ed0dea29c96",
           "dest": "go/src/github.com/miguelmota/cointop"
         }
       ]
