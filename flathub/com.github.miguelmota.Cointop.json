@@ -1,5 +1,5 @@
 {
-  "app-id": "org.flatpak.Hello",
+  "app-id": "com.github.miguelmota.Cointop",
   "runtime": "org.freedesktop.Platform",
   "runtime-version": "1.6",
   "sdk": "org.freedesktop.Sdk",
@@ -7,6 +7,10 @@
     "org.freedesktop.Sdk.Extension.golang"
   ],
   "command": "cointop",
+  "cleanup": [
+    "/go",
+    "/bin/scripts"
+  ],
   "modules": [
     {
       "name": "scripts",
@@ -47,7 +51,7 @@
           "type": "git",
           "only-arches": ["x86_64", "i386"],
           "url": "https://github.com/miguelmota/cointop.git",
-          "commit": "70748c8e665e2608cdf88af91a180bcfd97dfcb1",
+          "commit": "ab90056cf7ff5ac0134c9ac4dc2e38c120f41142",
           "dest": "go/src/github.com/miguelmota/cointop"
         }
       ]
@@ -55,7 +59,6 @@
 
   ],
   "finish-args": [
-    "--filesystem=host",
     "--share=network"
   ]
 }
