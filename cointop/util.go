@@ -31,6 +31,11 @@ func userHomeDir() string {
 			home = os.Getenv("USERPROFILE")
 		}
 		return home
+	} else if runtime.GOOS == "linux" {
+		home := os.Getenv("XDG_CONFIG_HOME")
+		if home != "" {
+			return home
+		}
 	}
 	return os.Getenv("HOME")
 }
