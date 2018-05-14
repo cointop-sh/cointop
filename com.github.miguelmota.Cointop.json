@@ -1,27 +1,60 @@
 {
-  "app-id": "com.github.miguelmota.Cointop",
+  "app-id": "org.flatpak.Hello",
   "runtime": "org.freedesktop.Platform",
   "runtime-version": "1.6",
   "sdk": "org.freedesktop.Sdk",
+  "sdk-extensions": [
+    "org.freedesktop.Sdk.Extension.golang"
+  ],
   "command": "cointop",
   "modules": [
     {
-      "name": "cointop",
+      "name": "scripts",
+      "sources": [
+        {
+          "type": "script",
+          "commands": [
+            ". /usr/lib/sdk/golang/enable.sh;  export GOPATH=/app/go"
+            ],
+            "dest-filename": "my_enable.sh"
+        },
+        {
+          "type": "script",
+          "commands": [
+            ". /app/bin/scripts/my_enable.sh; cd /app/go/src/$1; go build"
+            ],
+            "dest-filename": "build.sh"
+        }
+      ],
       "buildsystem": "simple",
       "build-commands": [
-        "install -D bin/linux/cointop /app/bin/cointop"
+        "mkdir -p /app/go/{src,pkg,bin} # make go workspace",
+        "install -d /app/bin/scripts",
+        "cp *.sh /app/bin/scripts/"
+      ]
+    },
+    {
+      "name": "hello",
+      "buildsystem": "simple",
+      "build-commands": [
+        "cp -rpv go/* /app/go/",
+        "/app/bin/scripts/build.sh github.com/miguelmota/cointop -o x",
+        "ls /app/go/src/github.com/miguelmota/cointop",
+        "install -D /app/go/src/github.com/miguelmota/cointop/x /app/bin/cointop"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/miguelmota/cointop.git",
-          "commit": "48f0067b8242ea60d5981152977c381a2aa13c6e"
+          "commit": "70748c8e665e2608cdf88af91a180bcfd97dfcb1",
+          "dest": "go/src/github.com/miguelmota/cointop"
         }
       ]
     }
+
   ],
   "finish-args": [
-     "--filesystem=home",
-     "--share=network"
+    "--filesystem=host",
+    "--share=network"
   ]
 }

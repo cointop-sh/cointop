@@ -86,6 +86,12 @@ Install the freedesktop runtime (if not done so already)
 sudo flatpak install flathub org.freedesktop.Platform//1.6 org.freedesktop.Sdk//1.6
 ```
 
+Install golang extension
+
+```bash
+sudo flatpak install flathub org.freedesktop.Sdk.Extension.golang
+```
+
 Add the cointop flatpak repo
 
 ```bash
