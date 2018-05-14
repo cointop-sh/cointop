@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Cointop
-Exec=com.github.miguelmota.Cointop
+Exec=cointop
 Type=Application
 Icon=com.github.miguelmota.Cointop
 Terminal=true
