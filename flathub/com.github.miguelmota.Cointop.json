@@ -43,15 +43,19 @@
       "build-commands": [
         "cp -rpv go/* /app/go/",
         "/app/bin/scripts/build.sh github.com/miguelmota/cointop",
-        "ls /app/go/src/github.com/miguelmota/cointop",
-        "install -D /app/go/src/github.com/miguelmota/cointop/x /app/bin/cointop"
+        "install -D /app/go/src/github.com/miguelmota/cointop/x /app/bin/cointop",
+        "mkdir -p /app/share/icons/hicolor/64x64/apps",
+        "mkdir -p /app/share/icons/hicolor/128x128/apps",
+        "mkdir -p /app/share/applications",
+        "cp /app/go/src/github.com/miguelmota/cointop/assets/icon_64x64.png /app/share/icons/hicolor/64x64/apps/com.github.miguelmota.Cointop.png",
+        "cp /app/go/src/github.com/miguelmota/cointop/assets/icon_128x128.png /app/share/icons/hicolor/128x128/apps/com.github.miguelmota.Cointop.png",
+        "cp /app/go/src/github.com/miguelmota/cointop/flathub/com.github.miguelmota.Cointop.desktop /app/share/applications/com.github.miguelmota.Cointop.desktop"
       ],
       "sources": [
         {
           "type": "git",
-          "only-arches": ["x86_64", "i386"],
           "url": "https://github.com/miguelmota/cointop.git",
-          "commit": "ab90056cf7ff5ac0134c9ac4dc2e38c120f41142",
+          "commit": "7beea7d97b66c13432f16f93757c58e75e472496",
           "dest": "go/src/github.com/miguelmota/cointop"
         }
       ]
