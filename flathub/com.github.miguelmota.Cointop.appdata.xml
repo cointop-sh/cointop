@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>com.github.miguelmota.Cointop.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>Apache 2.0</project_license>
+  <name>Cointop</name>
+  <summary>Terminal based application for tracking cryptocurrencies</summary>
+  <description>
+    <p>
+    Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://user-images.githubusercontent.com/168240/39569578-7ce9f3b6-4e7a-11e8-82a9-8a18b91b1bd5.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://cointop.sh/</url>
+  <releases>
+    <release version="0.0.4" date="2018-05-11"/>
+  </releases>
+  <content_rating type="oars-1.0">
+    <content_attribute id="violence-cartoon">none</content_attribute>
+    <content_attribute id="violence-fantasy">none</content_attribute>
+    <content_attribute id="violence-realistic">none</content_attribute>
+    <content_attribute id="violence-bloodshed">none</content_attribute>
+    <content_attribute id="violence-sexual">none</content_attribute>
+    <content_attribute id="drugs-alcohol">none</content_attribute>
+    <content_attribute id="drugs-narcotics">none</content_attribute>
+    <content_attribute id="drugs-tobacco">none</content_attribute>
+    <content_attribute id="sex-nudity">none</content_attribute>
+    <content_attribute id="sex-themes">none</content_attribute>
+    <content_attribute id="language-profanity">none</content_attribute>
+    <content_attribute id="language-humor">none</content_attribute>
+    <content_attribute id="language-discrimination">none</content_attribute>
+    <content_attribute id="social-chat">none</content_attribute>
+    <content_attribute id="social-info">none</content_attribute>
+    <content_attribute id="social-audio">none</content_attribute>
+    <content_attribute id="social-location">none</content_attribute>
+    <content_attribute id="social-contacts">none</content_attribute>
+    <content_attribute id="money-purchasing">none</content_attribute>
+    <content_attribute id="money-gambling">none</content_attribute>
+  </content_rating>
+</component>

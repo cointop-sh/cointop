@@ -45,6 +45,7 @@
       "sources": [
         {
           "type": "git",
+          "only-arches": ["x86_64", "i386"],
           "url": "https://github.com/miguelmota/cointop.git",
           "commit": "70748c8e665e2608cdf88af91a180bcfd97dfcb1",
           "dest": "go/src/github.com/miguelmota/cointop"
