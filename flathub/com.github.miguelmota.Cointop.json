@@ -47,15 +47,17 @@
         "mkdir -p /app/share/icons/hicolor/64x64/apps",
         "mkdir -p /app/share/icons/hicolor/128x128/apps",
         "mkdir -p /app/share/applications",
+        "mkdir -p /app/share/metainfo",
         "cp /app/go/src/github.com/miguelmota/cointop/assets/icon_64x64.png /app/share/icons/hicolor/64x64/apps/com.github.miguelmota.Cointop.png",
         "cp /app/go/src/github.com/miguelmota/cointop/assets/icon_128x128.png /app/share/icons/hicolor/128x128/apps/com.github.miguelmota.Cointop.png",
+        "cp /app/go/src/github.com/miguelmota/cointop/flathub/com.github.miguelmota.Cointop.appdata.xml /app/share/metainfo/com.github.miguelmota.Cointop.appdata.xml",
         "cp /app/go/src/github.com/miguelmota/cointop/flathub/com.github.miguelmota.Cointop.desktop /app/share/applications/com.github.miguelmota.Cointop.desktop"
       ],
       "sources": [
         {
           "type": "git",
           "url": "https://github.com/miguelmota/cointop.git",
-          "commit": "1eafc9d8a6d0ef0378e4869075585ed0dea29c96",
+          "commit": "a10b019c49024bd2c40a7ed7fd7e38b35e2bc15a",
           "dest": "go/src/github.com/miguelmota/cointop"
         }
       ]
