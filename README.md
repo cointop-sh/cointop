@@ -80,28 +80,10 @@ First, add the flathub repository (if not done so already)
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
-Install the freedesktop runtime (if not done so already)
-
-```bash
-sudo flatpak install flathub org.freedesktop.Platform//1.6 org.freedesktop.Sdk//1.6
-```
-
-Install golang extension
-
-```bash
-sudo flatpak install flathub org.freedesktop.Sdk.Extension.golang
-```
-
-Add the cointop flatpak repo
-
-```bash
-flatpak --user remote-add --if-not-exists --no-gpg-verify cointop https://cointop.sh/cointop.flatpakrepo
-```
-
 Install cointop flatpak
 
 ```bash
-flatpak --user install cointop com.github.miguelmota.Cointop
+sudo flatpak install cointop com.github.miguelmota.Cointop
 ```
 
 Run cointop flatpak
@@ -537,11 +519,24 @@ make brew/build
 
 ### flatpak
 
+Install the freedesktop runtime (if not done so already)
+
+```bash
+sudo flatpak install flathub org.freedesktop.Platform//1.6 org.freedesktop.Sdk//1.6
+```
+
+Install golang extension
+
+```bash
+sudo flatpak install flathub org.freedesktop.Sdk.Extension.golang
+```
+
 Building flatpak package
 
 ```bash
 make flatpak/build
 ```
+
 
 ### Snap
 
