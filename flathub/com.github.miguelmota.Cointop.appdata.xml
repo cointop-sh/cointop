@@ -41,4 +41,7 @@
     <content_attribute id="money-purchasing">none</content_attribute>
     <content_attribute id="money-gambling">none</content_attribute>
   </content_rating>
+  <categories>
+    <category>Utility</category>
+  </categories>
 </component>
