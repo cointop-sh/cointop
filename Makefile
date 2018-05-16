@@ -86,6 +86,9 @@ brew/build: brew/remove
 brew/audit:
 	brew audit --strict cointop.rb
 
+brew/test:
+	brew test cointop.rb
+
 git/rm/large:
 	java -jar bfg.jar --strip-blobs-bigger-than 200K .
 
