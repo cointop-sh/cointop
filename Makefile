@@ -78,7 +78,10 @@ rpm/deps:
 	sudo dnf install dnf-plugins-core
 
 rpm/build:
-	rpmbuild -ba cointop.spec
+	rpmbuild -ba ~/rpmbuild/SPECS/cointop.spec
+
+rpm/lint:
+	rpmlint ~/rpmbuild/SPECS/cointop.spec
 
 copr/install:
 	sudo dnf install copr-cli
