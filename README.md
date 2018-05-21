@@ -92,6 +92,24 @@ Run cointop flatpak
 flatpak run com.github.miguelmota.Cointop
 ```
 
+<!--
+### Copr (Fedora)
+
+cointop is available as a [copr](https://copr.fedorainfracloud.org/) package.
+
+First, enable the respository
+
+```bash
+sudo dnf copr enable miguelmota/cointop
+```
+
+Install cointop
+
+````bash
+sudo dnf install cointop
+````
+-->
+
 ### Snap (Ubuntu)
 
 cointop is available as a [snap](https://snapcraft.io/cointop) for Linux users.
