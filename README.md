@@ -61,13 +61,32 @@ Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
+Run
+
+```bash
+cointop
+```
+
 ### Homebrew (macOS)
 
 cointop is available via [Homebrew](https://brew.sh/) for macOS:
 
+Install brew tap
+
 ```bash
 brew tap cointop/cointop https://github.com/miguelmota/cointop
+```
+
+Install cointop
+
+```bash
 brew install cointop
+```
+
+Run
+
+```bash
+cointop
 ```
 
 ### Flatpak (Linux)
@@ -109,6 +128,12 @@ Install cointop
 ````bash
 sudo dnf install cointop
 ````
+
+Run
+
+```bash
+cointop
+```
 
 cointop copr [project page](https://copr.fedorainfracloud.org/coprs/miguelmota/cointop/).
 
@@ -161,6 +186,12 @@ flatpak --user uninstall com.github.miguelmota.Cointop
 flatpak --user install cointop com.github.miguelmota.Cointop
 ```
 
+### Copr (Fedora)
+
+```bash
+sudo dnf update cointop
+```
+
 ### Snap (Ubuntu)
 
 Use the `refresh` command to update snap.
@@ -168,14 +199,6 @@ Use the `refresh` command to update snap.
 ```bash
 sudo snap refresh cointop --stable
 ```
-
-<!--
-#### Alternatively (without go)
-
-```
-sudo curl -s "https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh?$(date +%s)" | bash
-```
--->
 
 ## Usage
 
