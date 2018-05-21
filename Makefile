@@ -88,8 +88,6 @@ copr/build:
 	rm -rf ~/rpmbuild/SRPMS/cointop-*.rpm
 	copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
 
-copr/publish:
-
 brew/clean: brew/remove
 	brew cleanup --force cointop
 	brew prune
