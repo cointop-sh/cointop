@@ -97,3 +97,7 @@ git/repack:
 	git fsck --full --unreachable
 	git repack -A -d
 	git gc --aggressive --prune=now
+
+release:
+	rm -rf dist
+	goreleaser

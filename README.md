@@ -132,6 +132,10 @@ Recommended to install using Go (instructions above).
 
 You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
 
+### Binaries
+
+You can find pre-built binaries on the [releases](https://github.com/miguelmota/cointop/releases) page.
+
 ## Updating
 
 To update make sure to use the `-u` flag if installed via Go.
