@@ -566,7 +566,7 @@ Installing from source
 make brew/build
 ```
 
-### flatpak
+### Flatpak
 
 Install the freedesktop runtime (if not done so already)
 
@@ -586,6 +586,23 @@ Building flatpak package
 make flatpak/build
 ```
 
+### Copr
+
+Install dependencies
+
+```bash
+sudo dnf install rpm-build
+sudo dnf install dnf-plugins-core
+sudo dnf install copr-cli
+```
+
+Build package
+
+```bash
+cp ./rpm/cointop.spec ~/rpmbuild/spec/
+rpmbuild -ba ~/rpmbuild/SPECS/cointop.spec
+copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
+```
 
 ### Snap
 
