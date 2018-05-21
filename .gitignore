@@ -34,3 +34,6 @@ bin
 .flatpak-builder
 build-dir
 #repo
+# do not ignore .flathub
+# do not ignore .rpm
+# do not ignore .copr

@@ -92,7 +92,8 @@ Run cointop flatpak
 flatpak run com.github.miguelmota.Cointop
 ```
 
-<!--
+cointop flathub [project page](https://flathub.org/apps/details/com.github.miguelmota.Cointop)
+
 ### Copr (Fedora)
 
 cointop is available as a [copr](https://copr.fedorainfracloud.org/) package.
@@ -108,7 +109,8 @@ Install cointop
 ````bash
 sudo dnf install cointop
 ````
--->
+
+cointop copr [project page](https://copr.fedorainfracloud.org/coprs/miguelmota/cointop/).
 
 ### Snap (Ubuntu)
 
@@ -123,6 +125,8 @@ Running snap:
 ```bash
 sudo snap run cointop
 ```
+
+cointop snapcraft [project page](https://snapcraft.io/cointop).
 
 Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 

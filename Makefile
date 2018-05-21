@@ -73,6 +73,23 @@ flatpak/install:
 flatpak/run:
 	flatpak run com.github.miguelmota.Cointop
 
+rpm/deps:
+	sudo dnf install copr-cli
+	sudo dnf install rpm-build
+	sudo dnf install dnf-plugins-core
+
+rpm/build:
+	rpmbuild -ba cointop.spec
+
+copr/create-project:
+	copr-cli create cointop --chroot fedora-rawhide-x86_64
+
+copr/build:
+	rm -rf ~/rpmbuild/SRPMS/cointop-*.rpm
+	copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
+
+copr/publish:
+
 brew/clean: brew/remove
 	brew cleanup --force cointop
 	brew prune
