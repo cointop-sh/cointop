@@ -71,14 +71,6 @@ cointop
 
 cointop is available via [Homebrew](https://brew.sh/) for macOS:
 
-Install brew tap
-
-```bash
-brew tap cointop/cointop https://github.com/miguelmota/cointop
-```
-
-Install cointop
-
 ```bash
 brew install cointop
 ```

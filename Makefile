@@ -109,6 +109,12 @@ brew/audit:
 brew/test:
 	brew test cointop.rb
 
+brew/tap:
+	brew tap cointop/cointop https://github.com/miguelmota/cointop
+
+brew/untap:
+	brew untap cointop/cointop
+
 git/rm/large:
 	java -jar bfg.jar --strip-blobs-bigger-than 200K .
 
