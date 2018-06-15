@@ -22,6 +22,7 @@ var currencysymbols = map[string]string{
 	"IDR": "Rp.",
 	"RUB": "Ꝑ",
 	"CAD": "$",
+	"MYR": "RM",
 	"BTC": "Ƀ",
 	"ETH": "Ξ",
 }
