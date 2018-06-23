@@ -609,6 +609,10 @@ Building snap
 make snap/build
 ```
 
+## Deployment
+
+See this [wiki](https://github.com/miguelmota/cointop/wiki/Deployment).
+
 ## License
 
 Released under the [Apache 2.0](./LICENSE.md) license.
