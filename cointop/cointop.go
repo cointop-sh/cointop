@@ -42,7 +42,6 @@ type Cointop struct {
 	api                 api.Interface
 	allcoins            []*coin
 	coins               []*coin
-	allcoinssymbolmap   map[string]*coin
 	allcoinsslugmap     map[string]*coin
 	page                int
 	perpage             int
@@ -56,6 +55,8 @@ type Cointop struct {
 	searchfield         *gocui.View
 	searchfieldviewname string
 	searchfieldvisible  bool
+	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
+	favoritesbysymbol   map[string]bool
 	favorites           map[string]bool
 	filterByFavorites   bool
 	savemux             sync.Mutex
@@ -77,16 +78,18 @@ func New() *Cointop {
 		debug = true
 	}
 	ct := &Cointop{
-		api:               api.NewCMC(),
-		refreshticker:     time.NewTicker(1 * time.Minute),
-		sortby:            "rank",
-		sortdesc:          false,
-		page:              0,
-		perpage:           100,
-		forcerefresh:      make(chan bool),
-		maxtablewidth:     175,
-		actionsmap:        actionsMap(),
-		shortcutkeys:      defaultShortcuts(),
+		api:           api.NewCMC(),
+		refreshticker: time.NewTicker(1 * time.Minute),
+		sortby:        "rank",
+		sortdesc:      false,
+		page:          0,
+		perpage:       100,
+		forcerefresh:  make(chan bool),
+		maxtablewidth: 175,
+		actionsmap:    actionsMap(),
+		shortcutkeys:  defaultShortcuts(),
+		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
+		favoritesbysymbol: map[string]bool{},
 		favorites:         map[string]bool{},
 		cache:             cache.New(1*time.Minute, 2*time.Minute),
 		debug:             debug,
@@ -149,6 +152,18 @@ func New() *Cointop {
 	coinscachekey := "allcoinsslugmap"
 	fcache.Get(coinscachekey, &allcoinsslugmap)
 	ct.cache.Set(coinscachekey, allcoinsslugmap, 10*time.Second)
+
+	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
+	// Here we're doing a lookup based on symbol and setting the favorite to the coin name instead of coin symbol.
+	for i := range allcoinsslugmap {
+		coin := allcoinsslugmap[i]
+		for k := range ct.favoritesbysymbol {
+			if coin.Symbol == k {
+				ct.favorites[coin.Name] = true
+				delete(ct.favoritesbysymbol, k)
+			}
+		}
+	}
 
 	var globaldata []float64
 	chartcachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))

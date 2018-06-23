@@ -5,12 +5,12 @@ func (ct *Cointop) toggleFavorite() error {
 	if coin == nil {
 		return nil
 	}
-	_, ok := ct.favorites[coin.Symbol]
+	_, ok := ct.favorites[coin.Name]
 	if ok {
-		delete(ct.favorites, coin.Symbol)
+		delete(ct.favorites, coin.Name)
 		coin.Favorite = false
 	} else {
-		ct.favorites[coin.Symbol] = true
+		ct.favorites[coin.Name] = true
 		coin.Favorite = true
 	}
 	ct.updateTable()

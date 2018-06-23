@@ -105,7 +105,7 @@ func (ct *Cointop) updateTable() error {
 
 	for i := range ct.allcoinsslugmap {
 		v := ct.allcoinsslugmap[i]
-		if ct.favorites[v.Symbol] {
+		if ct.favorites[v.Name] {
 			v.Favorite = true
 		}
 	}
@@ -198,4 +198,15 @@ func (ct *Cointop) allCoins() []*coin {
 	}
 
 	return ct.allcoins
+}
+
+func (ct *Cointop) coinBySymbol(symbol string) *coin {
+	for i := range ct.allcoins {
+		coin := ct.allcoins[i]
+		if coin.Symbol == symbol {
+			return coin
+		}
+	}
+
+	return nil
 }

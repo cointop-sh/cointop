@@ -48,11 +48,19 @@ func (ct *Cointop) setupConfig() error {
 
 func (ct *Cointop) loadFavoritesFromConfig() error {
 	for k, arr := range ct.config.Favorites {
+		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
 		if k == "symbols" {
 			for _, ifc := range arr {
 				v, ok := ifc.(string)
 				if ok {
-					ct.favorites[strings.ToUpper(v)] = true
+					ct.favoritesbysymbol[strings.ToUpper(v)] = true
+				}
+			}
+		} else if k == "names" {
+			for _, ifc := range arr {
+				v, ok := ifc.(string)
+				if ok {
+					ct.favorites[v] = true
 				}
 			}
 		}
@@ -134,12 +142,15 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	var favorites []interface{}
 	for k, ok := range ct.favorites {
 		if ok {
-			var i interface{} = strings.ToUpper(k)
+			var i interface{} = k
 			favorites = append(favorites, i)
 		}
 	}
+	var favoritesbysymbol []interface{}
 	favoritesIfcs := map[string][]interface{}{
-		"symbols": favorites,
+		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
+		"symbols": favoritesbysymbol,
+		"names":   favorites,
 	}
 
 	var currencyIfc interface{} = ct.currencyconversion

@@ -15,7 +15,6 @@ func (ct *Cointop) refreshAll() error {
 	defer ct.refreshmux.Unlock()
 	ct.setRefreshStatus()
 	ct.cache.Delete("allcoinsslugmap")
-	ct.cache.Delete("allcoinssymbolmap")
 	ct.cache.Delete("market")
 	ct.updateCoins()
 	ct.updateTable()

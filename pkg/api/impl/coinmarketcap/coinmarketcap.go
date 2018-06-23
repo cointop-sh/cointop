@@ -46,7 +46,7 @@ func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, e
 		return ret, err
 	}
 	for _, v := range coins {
-		ret[v.Symbol] = apitypes.Coin{
+		ret[v.Name] = apitypes.Coin{
 			ID:               v.Slug,
 			Name:             v.Name,
 			Symbol:           v.Symbol,
@@ -79,7 +79,7 @@ func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, erro
 			pricestr = fmt.Sprintf("%.5f", price)
 		}
 		price, _ = strconv.ParseFloat(pricestr, 64)
-		ret[v.Symbol] = apitypes.Coin{
+		ret[v.Name] = apitypes.Coin{
 			ID:               strings.ToLower(v.Name),
 			Name:             v.Name,
 			Symbol:           v.Symbol,
