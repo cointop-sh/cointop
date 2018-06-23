@@ -76,9 +76,12 @@ flatpak/install:
 flatpak/run:
 	flatpak run com.github.miguelmota.Cointop
 
-rpm/deps:
-	sudo dnf install rpm-build
-	sudo dnf install dnf-plugins-core
+rpm/install/deps:
+	sudo dnf install -y rpm-build
+	sudo dnf install -y dnf-plugins-core
+
+rpm/spec/cp:
+	cp .rpm/cointop.spec ~/rpmbuild/spec/
 
 rpm/build:
 	rpmbuild -ba ~/rpmbuild/SPECS/cointop.spec
@@ -86,8 +89,11 @@ rpm/build:
 rpm/lint:
 	rpmlint ~/rpmbuild/SPECS/cointop.spec
 
-copr/install:
-	sudo dnf install copr-cli
+rpm/dirs:
+	mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+
+copr/install/cli:
+	sudo dnf install -y copr-cli
 
 copr/create-project:
 	copr-cli create cointop --chroot fedora-rawhide-x86_64

@@ -587,17 +587,17 @@ make flatpak/build
 Install dependencies
 
 ```bash
-sudo dnf install rpm-build
-sudo dnf install dnf-plugins-core
-sudo dnf install copr-cli
+make copr/install/cli
+make rpm/install/deps
+make rpm/dirs
 ```
 
 Build package
 
 ```bash
-cp ./rpm/cointop.spec ~/rpmbuild/spec/
-rpmbuild -ba ~/rpmbuild/SPECS/cointop.spec
-copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
+make rpm/spec/cp
+make rpm/build
+make copr/build
 ```
 
 ### Snap
