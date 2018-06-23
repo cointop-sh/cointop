@@ -1,8 +1,8 @@
-%global commit      cf0ad3b8a1cd8bc11d2eb59c3790785d6509fdf8
+%global commit      cbf81aa5e31ab334714c6cf93541170e659b710a
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:           cointop
-Version:        1.0.5
+Version:        1.0.6
 Release:        6%{?dist}
 Summary:        Terminal based application for tracking cryptocurrencies
 License:        Apache-2.0
