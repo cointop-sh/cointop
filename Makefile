@@ -52,7 +52,7 @@ snap/deploy:
 snap/remove:
 	snap remove cointop
 
-snap/build-and-deploy: snap/build snap/deploy snap/remove
+snap/build-and-deploy: snap/build snap/deploy snap/clean
 	@echo "done"
 
 flatpak/build:
