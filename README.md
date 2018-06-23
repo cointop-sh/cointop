@@ -178,8 +178,8 @@ brew uninstall cointop && brew install cointop
 ### Flatpak (Linux)
 
 ```bash
-flatpak --user uninstall com.github.miguelmota.Cointop
-flatpak --user install cointop com.github.miguelmota.Cointop
+sudo flatpak uninstall com.github.miguelmota.Cointop
+sudo flatpak install flathub com.github.miguelmota.Cointop
 ```
 
 ### Copr (Fedora)
