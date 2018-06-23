@@ -55,6 +55,10 @@ In action
 
 ## Installing
 
+There are multiple ways you can install cointop depending on the platform you're on.
+
+## From source (always latest)
+
 Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 
 ```bash
@@ -94,7 +98,7 @@ sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub
 Install cointop flatpak
 
 ```bash
-sudo flatpak install cointop com.github.miguelmota.Cointop
+sudo flatpak install flathub com.github.miguelmota.Cointop
 ```
 
 Run cointop flatpak

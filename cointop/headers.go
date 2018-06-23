@@ -17,6 +17,7 @@ var currencysymbols = map[string]string{
 	"KRW": "₩",
 	"NZD": "$",
 	"CFH": "₣",
+	"NOK": "kr",
 	"MXN": "$",
 	"AUD": "$",
 	"IDR": "Rp.",

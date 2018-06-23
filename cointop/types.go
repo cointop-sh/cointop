@@ -3,6 +3,7 @@ package cointop
 type coin struct {
 	ID               string
 	Name             string
+	Slug             string
 	Symbol           string
 	Rank             int
 	Price            float64

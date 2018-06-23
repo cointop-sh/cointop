@@ -103,8 +103,8 @@ func (ct *Cointop) refreshTable() error {
 func (ct *Cointop) updateTable() error {
 	sliced := []*coin{}
 
-	for i := range ct.allcoinsmap {
-		v := ct.allcoinsmap[i]
+	for i := range ct.allcoinsslugmap {
+		v := ct.allcoinsslugmap[i]
 		if ct.favorites[v.Symbol] {
 			v.Favorite = true
 		}

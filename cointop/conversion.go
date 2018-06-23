@@ -20,11 +20,12 @@ var supportedfiatconversions = map[string]string{
 	"KRW": "South Korean Won",
 	"NZD": "New Zealand Dollar",
 	"CFH": "Swiss Franc",
+	"NOK": "Norwegian Krone",
 	"MXN": "Mexican Peso",
 	"AUD": "Australian Dollar",
 	"IDR": "Indonesian Rupiah",
 	"RUB": "Russian Ruble",
-	"CAD": "Canadian dollar",
+	"CAD": "Canadian Dollar",
 	"MYR": "Malaysian Ringgit",
 }
 

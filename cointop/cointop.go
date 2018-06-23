@@ -42,7 +42,8 @@ type Cointop struct {
 	api                 api.Interface
 	allcoins            []*coin
 	coins               []*coin
-	allcoinsmap         map[string]*coin
+	allcoinssymbolmap   map[string]*coin
+	allcoinsslugmap     map[string]*coin
 	page                int
 	perpage             int
 	refreshmux          sync.Mutex
@@ -144,10 +145,10 @@ func New() *Cointop {
 		log.Fatal(err)
 	}
 
-	allcoinsmap := map[string]apitypes.Coin{}
-	coinscachekey := "allcoinsmap"
-	fcache.Get(coinscachekey, &allcoinsmap)
-	ct.cache.Set(coinscachekey, allcoinsmap, 10*time.Second)
+	allcoinsslugmap := map[string]apitypes.Coin{}
+	coinscachekey := "allcoinsslugmap"
+	fcache.Get(coinscachekey, &allcoinsslugmap)
+	ct.cache.Set(coinscachekey, allcoinsslugmap, 10*time.Second)
 
 	var globaldata []float64
 	chartcachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))

@@ -74,9 +74,9 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		go func() {
 			ct.updateCoins()
 			ct.updateTable()
-			_, found := ct.cache.Get("allcoinsmap")
+			_, found := ct.cache.Get("allcoinsslugmap")
 			if found {
-				ct.cache.Delete("allcoinsmap")
+				ct.cache.Delete("allcoinsslugmap")
 				ct.updateCoins()
 				ct.updateTable()
 			}

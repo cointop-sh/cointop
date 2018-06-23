@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"os"
 	"runtime"
+	"strings"
 
 	"github.com/miguelmota/cointop/pkg/open"
 )
@@ -38,4 +39,9 @@ func userHomeDir() string {
 		}
 	}
 	return os.Getenv("HOME")
+}
+
+func (ct *Cointop) slugify(s string) string {
+	s = strings.ToLower(s)
+	return s
 }

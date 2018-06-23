@@ -14,36 +14,36 @@ func (ct *Cointop) updateCoins() error {
 	coinslock.Lock()
 	defer coinslock.Unlock()
 	list := []*coin{}
-	cachekey := "allcoinsmap"
+	cachekey := "allcoinsslugmap"
 
 	var err error
-	var allcoinsmap map[string]types.Coin
+	var allcoinsslugmap map[string]types.Coin
 	cached, found := ct.cache.Get(cachekey)
 	if found {
 		// cache hit
-		allcoinsmap, _ = cached.(map[string]types.Coin)
+		allcoinsslugmap, _ = cached.(map[string]types.Coin)
 		ct.debuglog("soft cache hit")
 	}
 
 	// cache miss
-	if allcoinsmap == nil {
+	if allcoinsslugmap == nil {
 		ct.debuglog("cache miss")
-		allcoinsmap, err = ct.api.GetAllCoinData(ct.currencyconversion)
+		allcoinsslugmap, err = ct.api.GetAllCoinData(ct.currencyconversion)
 		if err != nil {
 			return err
 		}
-		ct.cache.Set(cachekey, allcoinsmap, 10*time.Second)
+		ct.cache.Set(cachekey, allcoinsslugmap, 10*time.Second)
 		go func() {
-			_ = fcache.Set(cachekey, allcoinsmap, 24*time.Hour)
+			_ = fcache.Set(cachekey, allcoinsslugmap, 24*time.Hour)
 		}()
 	}
 
-	if len(ct.allcoinsmap) == 0 {
-		ct.allcoinsmap = map[string]*coin{}
+	if len(ct.allcoinsslugmap) == 0 {
+		ct.allcoinsslugmap = map[string]*coin{}
 	}
-	for k, v := range allcoinsmap {
-		last := ct.allcoinsmap[k]
-		ct.allcoinsmap[k] = &coin{
+	for k, v := range allcoinsslugmap {
+		last := ct.allcoinsslugmap[k]
+		ct.allcoinsslugmap[k] = &coin{
 			ID:               v.ID,
 			Name:             v.Name,
 			Symbol:           v.Symbol,
@@ -59,20 +59,20 @@ func (ct *Cointop) updateCoins() error {
 			LastUpdated:      v.LastUpdated,
 		}
 		if last != nil {
-			ct.allcoinsmap[k].Favorite = last.Favorite
+			ct.allcoinsslugmap[k].Favorite = last.Favorite
 		}
 	}
 	if len(ct.allcoins) == 0 {
-		for i := range ct.allcoinsmap {
-			coin := ct.allcoinsmap[i]
+		for i := range ct.allcoinsslugmap {
+			coin := ct.allcoinsslugmap[i]
 			list = append(list, coin)
 		}
 		ct.allcoins = list
 		ct.sort(ct.sortby, ct.sortdesc, ct.allcoins)
 	} else {
 		// update list in place without changing order
-		for i := range ct.allcoinsmap {
-			cm := ct.allcoinsmap[i]
+		for i := range ct.allcoinsslugmap {
+			cm := ct.allcoinsslugmap[i]
 			for k := range ct.allcoins {
 				c := ct.allcoins[k]
 				if c.ID == cm.ID {
