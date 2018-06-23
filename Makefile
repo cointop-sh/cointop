@@ -52,6 +52,9 @@ snap/deploy:
 snap/remove:
 	snap remove cointop
 
+snap/build-and-deploy: snap/build snap/deploy snap/remove
+	@echo "done"
+
 flatpak/build:
 	flatpak-builder --force-clean build-dir com.github.miguelmota.Cointop.json
 
