@@ -595,7 +595,7 @@ make rpm/dirs
 Build package
 
 ```bash
-make rpm/spec/cp
+make rpm/cp/specs
 make rpm/build
 make copr/build
 ```

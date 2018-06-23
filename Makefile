@@ -80,8 +80,8 @@ rpm/install/deps:
 	sudo dnf install -y rpm-build
 	sudo dnf install -y dnf-plugins-core
 
-rpm/spec/cp:
-	cp .rpm/cointop.spec ~/rpmbuild/spec/
+rpm/cp/specs:
+	cp .rpm/cointop.spec ~/rpmbuild/SPECS/
 
 rpm/build:
 	rpmbuild -ba ~/rpmbuild/SPECS/cointop.spec
