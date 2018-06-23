@@ -541,7 +541,7 @@ Action|Description
     -A: Usually this error occurs when cointop is running as a daemon or slave which means that there is no terminal allocated, so `/dev/tty` doesn't exist for that process. Try running it with the following environment variables:
 
     ```bash
-    DEV_IN=/dev/stdout DEV_OUT=/dev/stdin cointop
+    DEV_IN=/dev/stdout DEV_OUT=/dev/stdout cointop
     ```
 
 ## Development
