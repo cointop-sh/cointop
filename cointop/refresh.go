@@ -26,7 +26,6 @@ func (ct *Cointop) refreshAll() error {
 func (ct *Cointop) setRefreshStatus() {
 	go func() {
 		ct.loadingTicks("refreshing", 900)
-		ct.updateStatusbar("")
 		ct.rowChanged()
 	}()
 }
