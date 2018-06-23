@@ -92,6 +92,9 @@ rpm/lint:
 rpm/dirs:
 	mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
+rpm/download:
+	wget https://github.com/miguelmota/cointop/archive/1.0.6.tar.gz -O ~/rpmbuild/SOURCES/1.0.6.tar.gz
+
 copr/install/cli:
 	sudo dnf install -y copr-cli
 
@@ -99,8 +102,8 @@ copr/create-project:
 	copr-cli create cointop --chroot fedora-rawhide-x86_64
 
 copr/build:
-	rm -rf ~/rpmbuild/SRPMS/cointop-*.rpm
 	copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
+	rm -rf ~/rpmbuild/SRPMS/cointop-*.rpm
 
 brew/clean: brew/remove
 	brew cleanup --force cointop

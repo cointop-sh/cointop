@@ -596,6 +596,7 @@ Build package
 
 ```bash
 make rpm/cp/specs
+make rpm/download
 make rpm/build
 make copr/build
 ```
