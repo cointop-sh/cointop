@@ -8,25 +8,39 @@ import (
 	"github.com/miguelmota/cointop/pkg/pad"
 )
 
-//var supportedfiatconversions = []string{"AUD", "BRL", "CAD", "CHF", "CLP", "CNY", "CZK", "DKK", "EUR", "GBP", "HKD", "HUF", "IDR", "ILS", "INR", "JPY", "KRW", "MXN", "MYR", "NOK", "NZD", "PHP", "PKR", "PLN", "RUB", "SEK", "SGD", "THB", "TRY", "TWD", "ZAR"}
-
 var supportedfiatconversions = map[string]string{
-	"USD": "US Dollar",
+	"AUD": "Australian Dollar",
+	"BRL": "Brazilian Real",
+	"CAD": "Canadian Dollar",
+	"CFH": "Swiss Franc",
+	"CLP": "Chilean Peso",
+	"CNY": "Chinese Yuan",
+	"CZK": "Czech Koruna",
+	"DKK": "Danish Krone",
 	"EUR": "Euro",
 	"GBP": "British Pound",
-	"CNY": "Chinese Yuan",
 	"HKD": "Hong Kong Dollar",
+	"HUF": "Hungarian Forint",
+	"IDR": "Indonesian Rupiah",
+	"ILS": "Israeli New Shekel",
+	"INR": "Indian Rupee",
 	"JPY": "Japanese Yen",
 	"KRW": "South Korean Won",
-	"NZD": "New Zealand Dollar",
-	"CFH": "Swiss Franc",
-	"NOK": "Norwegian Krone",
 	"MXN": "Mexican Peso",
-	"AUD": "Australian Dollar",
-	"IDR": "Indonesian Rupiah",
-	"RUB": "Russian Ruble",
-	"CAD": "Canadian Dollar",
 	"MYR": "Malaysian Ringgit",
+	"NOK": "Norwegian Krone",
+	"NZD": "New Zealand Dollar",
+	"PLN": "Polish złoty",
+	"PHP": "Philippine Piso",
+	"PKR": "Pakistani Rupe",
+	"RUB": "Russian Ruble",
+	"SEK": "Swedish Krona",
+	"SGD": "Singapore Dollar",
+	"THB": "Thai Baht",
+	"TRY": "Turkish lira",
+	"TWD": "New Taiwan Dollar",
+	"USD": "US Dollar",
+	"ZAR": "South African Rand",
 }
 
 var supportedcryptoconversion = map[string]string{
