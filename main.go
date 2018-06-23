@@ -7,15 +7,14 @@ import (
 	"github.com/miguelmota/cointop/cointop"
 )
 
-var version = "1.0.1"
-
 func main() {
-	var ver, test bool
-	flag.BoolVar(&ver, "v", false, "Version")
+	var v, ver, test bool
+	flag.BoolVar(&v, "v", false, "Version")
+	flag.BoolVar(&ver, "version", false, "Version")
 	flag.BoolVar(&test, "test", false, "Run test")
 	flag.Parse()
-	if ver {
-		fmt.Println(version)
+	if v || ver {
+		fmt.Printf("cointop v%s", cointop.Version())
 	} else if test {
 		doTest()
 	} else {
