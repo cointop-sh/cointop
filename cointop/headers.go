@@ -7,43 +7,6 @@ import (
 	"github.com/miguelmota/cointop/pkg/color"
 )
 
-var currencysymbols = map[string]string{
-	"AUD": "$",
-	"BRL": "R$",
-	"BTC": "Ƀ",
-	"CAD": "$",
-	"CFH": "₣",
-	"CLP": "$",
-	"CNY": "¥",
-	"CZK": "Kč",
-	"DKK": "Kr",
-	"EUR": "€",
-	"ETH": "Ξ",
-	"GBP": "£",
-	"HKD": "$",
-	"HUF": "Ft",
-	"IDR": "Rp.",
-	"ILS": "₪",
-	"INR": "₹",
-	"JPY": "¥",
-	"KRW": "₩",
-	"MXN": "$",
-	"MYR": "RM",
-	"NOK": "kr",
-	"NZD": "$",
-	"PLN": "zł",
-	"PHP": "₱",
-	"PKR": "₨",
-	"RUB": "Ꝑ",
-	"SEK": "kr",
-	"SGD": "S$",
-	"THB": "฿",
-	"TRY": "₺",
-	"TWD": "NT$",
-	"USD": "$",
-	"ZAR": "R",
-}
-
 func (ct *Cointop) updateHeaders() {
 	cm := map[string]func(a ...interface{}) string{
 		"rank":            color.Black,

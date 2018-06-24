@@ -12,7 +12,10 @@ func (ct *Cointop) updateStatusbar(s string) {
 		currpage := ct.currentDisplayPage()
 		totalpages := ct.totalPages()
 		base := fmt.Sprintf("%sQuit %sHelp %sChart %sRange %sSearch %sConvert %sFavorite %sSave", "[Q]", "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", "[F]", "[CTRL-S]")
-		fmt.Fprintln(ct.statusbarview, pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxtablewidth, " "))
+		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxtablewidth, " ")
+		v := fmt.Sprintf("v%s", ct.version())
+		str = str[:len(str)-len(v)+2] + v
+		fmt.Fprintln(ct.statusbarview, str)
 	})
 }
 

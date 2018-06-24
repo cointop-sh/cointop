@@ -23,10 +23,10 @@ func (ct *Cointop) updateHelp() {
 	}
 	sort.Strings(keys)
 
-	header := color.GreenBg(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close help ", ct.maxtablewidth-10, " ")))
+	header := color.GreenBg(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxtablewidth-10, " ")))
 	cnt := 0
 	h := ct.viewHeight(ct.helpviewname)
-	percol := h - 3
+	percol := h - 6
 	cols := make([][]string, percol)
 	for i := range cols {
 		cols[i] = make([]string, 20)
@@ -50,8 +50,11 @@ func (ct *Cointop) updateHelp() {
 		}
 		body = fmt.Sprintf("%s%s\n", body, row)
 	}
+	body = fmt.Sprintf("%s\n", body)
 
-	content := fmt.Sprintf("%s%s", header, body)
+	infoline := " List of keyboard shortcuts\n\n"
+	versionline := pad.Left(fmt.Sprintf("v%s", ct.version()), ct.maxtablewidth-5, " ")
+	content := header + infoline + body + versionline
 
 	ct.update(func() {
 		ct.helpview.Clear()

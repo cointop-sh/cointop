@@ -73,7 +73,7 @@ cointop
 
 ### Homebrew (macOS)
 
-cointop is available via [Homebrew](https://brew.sh/) for macOS:
+cointop is available via [Homebrew](https://formulae.brew.sh/formula/cointop) for macOS:
 
 ```bash
 brew install cointop
@@ -87,9 +87,9 @@ cointop
 
 ### Flatpak (Linux)
 
-cointop is available as a [Flatpak](https://flatpak.org/) package.
+cointop is available as a [Flatpak](https://flatpak.org/) package via the [Flathub](https://flathub.org/apps/details/com.github.miguelmota.Cointop) registry.
 
-First, add the flathub repository (if not done so already)
+Add the flathub repository (if not done so already)
 
 ```bash
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo

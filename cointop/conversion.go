@@ -48,6 +48,43 @@ var supportedcryptoconversion = map[string]string{
 	"ETH": "Ethereum",
 }
 
+var currencysymbols = map[string]string{
+	"AUD": "$",
+	"BRL": "R$",
+	"BTC": "Ƀ",
+	"CAD": "$",
+	"CFH": "₣",
+	"CLP": "$",
+	"CNY": "¥",
+	"CZK": "Kč",
+	"DKK": "Kr",
+	"EUR": "€",
+	"ETH": "Ξ",
+	"GBP": "£",
+	"HKD": "$",
+	"HUF": "Ft",
+	"IDR": "Rp.",
+	"ILS": "₪",
+	"INR": "₹",
+	"JPY": "¥",
+	"KRW": "₩",
+	"MXN": "$",
+	"MYR": "RM",
+	"NOK": "kr",
+	"NZD": "$",
+	"PLN": "zł",
+	"PHP": "₱",
+	"PKR": "₨",
+	"RUB": "Ꝑ",
+	"SEK": "kr",
+	"SGD": "S$",
+	"THB": "฿",
+	"TRY": "₺",
+	"TWD": "NT$",
+	"USD": "$",
+	"ZAR": "R",
+}
+
 var alphanumericcharacters = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
 
 func (ct *Cointop) supportedCurrencyConversions() map[string]string {
