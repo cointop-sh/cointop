@@ -526,7 +526,7 @@ Action|Description
 
 - Q: The data isn't refreshing!
 
-  - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind the oinMarketCap updates prices every 5 minutes constant refreshes aren't necessary.
+  - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind the CoinMarketCap updates prices every 5 minutes constant refreshes aren't necessary.
 
 - Q: How do I quit the application?
 
