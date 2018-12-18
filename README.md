@@ -65,7 +65,9 @@ Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
 go get -u github.com/miguelmota/cointop
 ```
 
-Run
+Make sure `$GOPATH/bin` is added to the `$PATH` variable.
+
+Now you can run cointop:
 
 ```bash
 cointop
@@ -526,7 +528,7 @@ Action|Description
 
 - Q: The data isn't refreshing!
 
-  - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind the CoinMarketCap updates prices every 5 minutes constant refreshes aren't necessary.
+  - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind that CoinMarketCap updates prices every 5 minutes so constant refreshes aren't necessary.
 
 - Q: How do I quit the application?
 
