@@ -8,58 +8,75 @@ import (
 )
 
 func (ct *Cointop) updateHeaders() {
-	cm := map[string]func(a ...interface{}) string{
-		"rank":            color.Black,
-		"name":            color.Black,
-		"symbol":          color.Black,
-		"price":           color.Black,
-		"marketcap":       color.Black,
-		"24hvolume":       color.Black,
-		"1hchange":        color.Black,
-		"24hchange":       color.Black,
-		"7dchange":        color.Black,
-		"totalsupply":     color.Black,
-		"availablesupply": color.Black,
-		"lastupdated":     color.Black,
+	var cols []string
+
+	type t struct {
+		colorfn     func(a ...interface{}) string
+		displaytext string
+		padleft     int
+		padright    int
+		arrow       string
 	}
-	sm := map[string]string{
-		"rank":            " ",
-		"name":            " ",
-		"symbol":          " ",
-		"price":           " ",
-		"marketcap":       " ",
-		"24hvolume":       " ",
-		"1hchange":        " ",
-		"24hchange":       " ",
-		"7dchange":        " ",
-		"totalsupply":     " ",
-		"availablesupply": " ",
-		"lastupdated":     " ",
+
+	cm := map[string]*t{
+		"rank":            &t{color.Black, "[r]ank", 0, 1, " "},
+		"name":            &t{color.Black, "[n]ame", 0, 11, " "},
+		"symbol":          &t{color.Black, "[s]ymbol", 4, 0, " "},
+		"price":           &t{color.Black, "[p]rice", 2, 0, " "},
+		"holdings":        &t{color.Black, "[h]oldings", 5, 0, " "},
+		"balance":         &t{color.Black, "[b]alance", 5, 0, " "},
+		"marketcap":       &t{color.Black, "[m]arket cap", 5, 0, " "},
+		"24hvolume":       &t{color.Black, "24H [v]olume", 3, 0, " "},
+		"1hchange":        &t{color.Black, "[1]H%", 5, 0, " "},
+		"24hchange":       &t{color.Black, "[2]4H%", 3, 0, " "},
+		"7dchange":        &t{color.Black, "[7]D%", 4, 0, " "},
+		"totalsupply":     &t{color.Black, "[t]otal supply", 7, 0, " "},
+		"availablesupply": &t{color.Black, "[a]vailable supply", 0, 0, " "},
+		"lastupdated":     &t{color.Black, "last [u]pdated", 3, 0, " "},
 	}
+
 	for k := range cm {
+		cm[k].arrow = " "
 		if ct.sortby == k {
-			cm[k] = color.CyanBg
+			cm[k].colorfn = color.CyanBg
 			if ct.sortdesc {
-				sm[k] = "▼"
+				cm[k].arrow = "▼"
 			} else {
-				sm[k] = "▲"
+				cm[k].arrow = "▲"
 			}
 		}
 	}
+
 	symbol := currencysymbols[ct.currencyconversion]
-	headers := []string{
-		fmt.Sprintf("%s%s", cm["rank"](sm["rank"]+"[r]ank"), strings.Repeat(" ", 1)),
-		fmt.Sprintf("%s%s", cm["name"](sm["name"]+"[n]ame"), strings.Repeat(" ", 15)),
-		fmt.Sprintf("%s%s", cm["symbol"](sm["symbol"]+"[s]ymbol"), strings.Repeat(" ", 1)),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 0), cm["price"](sm["price"]+symbol+"[p]rice")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 5), cm["marketcap"](sm["marketcap"]+"[m]arket cap")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 3), cm["24hvolume"](sm["24hvolume"]+"24H [v]olume")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 4), cm["1hchange"](sm["1hchange"]+"[1]H%")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 3), cm["24hchange"](sm["24hchange"]+"[2]4H%")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 3), cm["7dchange"](sm["7dchange"]+"[7]DH%")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 6), cm["totalsupply"](sm["totalsupply"]+"[t]otal supply")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 1), cm["availablesupply"](sm["availablesupply"]+"[a]vailable supply")),
-		fmt.Sprintf("%s%s", strings.Repeat(" ", 4), cm["lastupdated"](sm["lastupdated"]+"last [u]pdated")),
+
+	if ct.portfoliovisible {
+		cols = []string{"rank", "name", "symbol", "price",
+			"holdings", "balance", "24hchange", "lastupdated"}
+	} else {
+		cols = []string{"rank", "name", "symbol", "price",
+			"marketcap", "24hvolume", "1hchange", "24hchange",
+			"7dchange", "totalsupply", "availablesupply", "lastupdated"}
+	}
+
+	var headers []string
+	for _, v := range cols {
+		s, ok := cm[v]
+		if !ok {
+			continue
+		}
+		var str string
+		d := s.arrow + s.displaytext
+		if v == "price" || v == "balance" {
+			d = s.arrow + symbol + s.displaytext
+		}
+
+		str = fmt.Sprintf(
+			"%s%s%s",
+			strings.Repeat(" ", s.padleft),
+			s.colorfn(d),
+			strings.Repeat(" ", s.padright),
+		)
+		headers = append(headers, str)
 	}
 
 	ct.update(func() {

@@ -75,7 +75,7 @@ func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, erro
 	for _, v := range coins {
 		price := v.Quotes[convert].Price
 		pricestr := fmt.Sprintf("%.2f", price)
-		if convert == "ETH" || convert == "BTC" {
+		if convert == "ETH" || convert == "BTC" || price < 1 {
 			pricestr = fmt.Sprintf("%.5f", price)
 		}
 		price, _ = strconv.ParseFloat(pricestr, 64)

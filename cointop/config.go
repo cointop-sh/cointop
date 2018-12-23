@@ -13,9 +13,11 @@ import (
 var fileperm = os.FileMode(0644)
 
 type config struct {
-	Shortcuts map[string]interface{}   `toml:"shortcuts"`
-	Favorites map[string][]interface{} `toml:"favorites"`
-	Currency  interface{}              `toml:"currency"`
+	Shortcuts   map[string]interface{}   `toml:"shortcuts"`
+	Favorites   map[string][]interface{} `toml:"favorites"`
+	Portfolio   map[string]interface{}   `toml:"portfolio"`
+	Currency    interface{}              `toml:"currency"`
+	DefaultView interface{}              `toml:"defaultView"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -39,31 +41,17 @@ func (ct *Cointop) setupConfig() error {
 	if err != nil {
 		return err
 	}
+	err = ct.loadPortfolioFromConfig()
+	if err != nil {
+		return err
+	}
 	err = ct.loadCurrencyFromConfig()
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func (ct *Cointop) loadFavoritesFromConfig() error {
-	for k, arr := range ct.config.Favorites {
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
-		if k == "symbols" {
-			for _, ifc := range arr {
-				v, ok := ifc.(string)
-				if ok {
-					ct.favoritesbysymbol[strings.ToUpper(v)] = true
-				}
-			}
-		} else if k == "names" {
-			for _, ifc := range arr {
-				v, ok := ifc.(string)
-				if ok {
-					ct.favorites[v] = true
-				}
-			}
-		}
+	err = ct.loadDefaultViewFromConfig()
+	if err != nil {
+		return err
 	}
 	return nil
 }
@@ -153,11 +141,19 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		"names":   favorites,
 	}
 
+	portfolioIfc := map[string]interface{}{}
+	for name := range ct.portfolio.Entries {
+		entry := ct.portfolio.Entries[name]
+		var i interface{} = entry.Holdings
+		portfolioIfc[entry.Coin] = i
+	}
+
 	var currencyIfc interface{} = ct.currencyconversion
 
 	var inputs = &config{
 		Shortcuts: shortcutsIfcs,
 		Favorites: favoritesIfcs,
+		Portfolio: portfolioIfc,
 		Currency:  currencyIfc,
 	}
 
@@ -173,8 +169,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 func (ct *Cointop) loadShortcutsFromConfig() error {
 	for k, ifc := range ct.config.Shortcuts {
-		v, ok := ifc.(string)
-		if ok {
+		if v, ok := ifc.(string); ok {
 			if !ct.actionExists(v) {
 				continue
 			}
@@ -190,6 +185,60 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 func (ct *Cointop) loadCurrencyFromConfig() error {
 	if currency, ok := ct.config.Currency.(string); ok {
 		ct.currencyconversion = strings.ToUpper(currency)
+	}
+	return nil
+}
+
+func (ct *Cointop) loadDefaultViewFromConfig() error {
+	if defaultView, ok := ct.config.DefaultView.(string); ok {
+		switch defaultView {
+		case "portfolio":
+			ct.portfoliovisible = true
+		case "favorites":
+			ct.filterByFavorites = true
+		case "default":
+			fallthrough
+		default:
+			ct.portfoliovisible = false
+			ct.filterByFavorites = false
+		}
+	}
+	return nil
+}
+
+func (ct *Cointop) loadFavoritesFromConfig() error {
+	for k, arr := range ct.config.Favorites {
+		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
+		if k == "symbols" {
+			for _, ifc := range arr {
+				if v, ok := ifc.(string); ok {
+					ct.favoritesbysymbol[strings.ToUpper(v)] = true
+				}
+			}
+		} else if k == "names" {
+			for _, ifc := range arr {
+				if v, ok := ifc.(string); ok {
+					ct.favorites[v] = true
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func (ct *Cointop) loadPortfolioFromConfig() error {
+	for name, holdingsIfc := range ct.config.Portfolio {
+		var holdings float64
+		var ok bool
+		if holdings, ok = holdingsIfc.(float64); !ok {
+			if holdingsInt, ok := holdingsIfc.(int64); ok {
+				holdings = float64(holdingsInt)
+			}
+		}
+		ct.portfolio.Entries[strings.ToLower(name)] = &portfolioEntry{
+			Coin:     name,
+			Holdings: holdings,
+		}
 	}
 	return nil
 }

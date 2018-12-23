@@ -242,12 +242,14 @@ Key|Action
 <kbd>2</kbd>|Sort table by *[2]4 hour change*
 <kbd>7</kbd>|Sort table by *[7] day change*
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
+<kbd>b</kbd>|Sort table by *[b]alance*
 <kbd>c</kbd>|Show currency convert menu
 <kbd>f</kbd>|Toggle coin as favorite
 <kbd>F</kbd>|Toggle show favorites
 <kbd>g</kbd>|Go to first line of page  (vim inspired)
 <kbd>G</kbd>|Go to last line of page (vim inspired)
 <kbd>h</kbd>|Go to previous page (vim inspired)
+<kbd>h</kbd>|Sort table by *[h]oldings* (portfolio view only)
 <kbd>H</kbd>|Go to top of table window (vim inspired)
 <kbd>j</kbd>|Move down (vim inspired)
 <kbd>k</kbd>|Move up (vim inspired)
@@ -258,6 +260,7 @@ Key|Action
 <kbd>n</kbd>|Sort table by *[n]ame*
 <kbd>o</kbd>|[o]pen link to highlighted coin on [CoinMarketCap](https://coinmarketcap.com/)
 <kbd>p</kbd>|Sort table by *[p]rice*
+<kbd>P</kbd>|Toggle show portfolio
 <kbd>r</kbd>|Sort table by *[r]ank*
 <kbd>s</kbd>|Sort table by *[s]ymbol*
 <kbd>t</kbd>|Sort table by *[t]otal supply*
@@ -285,6 +288,9 @@ You can then configure the actions you want for each key:
 (default `~/.cointop/config`)
 
 ```toml
+currency = "USD"
+defaultView = "default"
+
 [shortcuts]
   "$" = "last_page"
   0 = "first_page"
@@ -297,10 +303,13 @@ You can then configure the actions you want for each key:
   "]" = "next_chart_range"
   "{" = "first_chart_range"
   "}" = "last_chart_range"
+  C = "show_currency_convert_menu"
   G = "move_to_page_last_row"
   H = "move_to_page_visible_first_row"
   L = "move_to_page_visible_last_row"
   M = "move_to_page_visible_middle_row"
+  O = "open_link"
+  P = "toggle_portfolio"
   a = "sort_column_available_supply"
   "alt+down" = "sort_column_desc"
   "alt+left" = "sort_left_column"
@@ -311,6 +320,7 @@ You can then configure the actions you want for each key:
   right = "next_page"
   up = "move_up"
   c = "show_currency_convert_menu"
+  b = "sort_column_balance"
   "ctrl+c" = "quit"
   "ctrl+d" = "page_down"
   "ctrl+f" = "open_search"
@@ -386,7 +396,9 @@ Action|Description
 `sort_column_7d_change`|Sort table by column *7 day change*
 `sort_column_asc`|Sort highlighted column by ascending order
 `sort_column_available_supply`|Sort table by column *available supply*
+`sort_column_balance`|Sort table by column *balance*
 `sort_column_desc`|Sort highlighted column by descending order
+`sort_column_holdings`|Sort table by column *holdings*
 `sort_column_last_updated`|Sort table by column *last updated*
 `sort_column_market_cap`|Sort table by column *market cap*
 `sort_column_name`|Sort table by column *name*
@@ -400,8 +412,12 @@ Action|Description
 `toggle_favorite`|Toggle coin as favorite
 `toggle_show_currency_convert_menu`|Toggle show currency convert menu
 `toggle_show_favorites`|Toggle show favorites
+`toggle_portfolio`|Toggle portfolio view
+`toggle_show_portfolio`|Toggle show portfolio view
 
 ## FAQ
+
+Frequently asked questions:
 
 - Q: Where is the data from?
 
@@ -424,9 +440,13 @@ Action|Description
     export PATH=$PATH:$GOPATH/bin
     ```
 
-- Q: What is the size of the binary?
+- Q: Where is the config file located?
 
-  - A: The executable is only ~1.9MB in size.
+  - A: The default configuration file is located under `~/.cointop/config`
+
+- Q: What format is the configuration file in?
+
+  - A: The configuration file is in [TOML](https://en.wikipedia.org/wiki/TOML) format.
 
 - Q: How do I search?
 
@@ -451,6 +471,14 @@ Action|Description
 - Q: How do I save my favorites?
 
   - A: Press <kbd>ctrl</kbd>+<kbd>s</kbd> to save your favorites.
+
+- Q: What does the yellow asterisk in the row mean?
+
+  - A: The yellow asterisk or star means that you've selected that coin to be a favorite.
+
+- Q: How do I view all my portfolio?
+
+  - A: Press <kbd>P</kbd> (shift+p) to toggle view your portfolio.
 
 - Q: I'm getting question marks or weird symbols instead of the correct characters.
 
@@ -526,6 +554,10 @@ Action|Description
 
   - A: Press <kbd>ctrl</kbd>+<kbd>s</kbd> to save the selected currency to convert to.
 
+- Q: What does saving do?
+
+  - A: The save command (<kbd>ctrl</kbd>+<kbd>s</kbd>) saves your selected currency, selected favorite coins, and portfolio coins to the cointop config file.
+
 - Q: The data isn't refreshing!
 
   - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind that CoinMarketCap updates prices every 5 minutes so constant refreshes aren't necessary.
@@ -538,6 +570,18 @@ Action|Description
 
   - A: Press <kbd>q</kbd> to quit the open view/window.
 
+- Q: How do I set the favorites view to be the default view?
+
+  - A: In `~/.cointop/config`, set `defaultView = "favorites"`
+
+- Q: How do I set the portfolio view to be the default view?
+
+  - A: In `~/.cointop/config`, set `defaultView = "portfolio"`
+
+- Q: How do I set the table view to be the default view?
+
+  - A: In `~/.cointop/config`, set `defaultView = "default"`
+
 - Q: I'm getting the error `open /dev/tty: no such device or address`.
 
     -A: Usually this error occurs when cointop is running as a daemon or slave which means that there is no terminal allocated, so `/dev/tty` doesn't exist for that process. Try running it with the following environment variables:
@@ -545,6 +589,10 @@ Action|Description
     ```bash
     DEV_IN=/dev/stdout DEV_OUT=/dev/stdout cointop
     ```
+
+- Q: What is the size of the binary?
+
+  - A: The executable is only ~2MB in size.
 
 ## Development
 

@@ -24,6 +24,10 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 			return a.Symbol < b.Symbol
 		case "price":
 			return a.Price < b.Price
+		case "holdings":
+			return a.Holdings < b.Holdings
+		case "balance":
+			return a.Balance < b.Balance
 		case "marketcap":
 			return a.MarketCap < b.MarketCap
 		case "24hvolume":
@@ -47,15 +51,19 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 	ct.updateHeaders()
 }
 
+func (ct *Cointop) sortToggle(sortby string, desc bool) error {
+	if ct.sortby == sortby {
+		desc = !ct.sortdesc
+	}
+
+	ct.sort(sortby, desc, ct.coins)
+	ct.updateTable()
+	return nil
+}
+
 func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		if ct.sortby == sortby {
-			desc = !desc
-		}
-
-		ct.sort(sortby, desc, ct.coins)
-		ct.updateTable()
-		return nil
+		return ct.sortToggle(sortby, desc)
 	}
 }
 

@@ -35,6 +35,8 @@ type Cointop struct {
 	tablecolumnorder    []string
 	table               *table.Table
 	maxtablewidth       int
+	portfoliovisible    bool
+	visible             bool
 	statusbarview       *gocui.View
 	statusbarviewname   string
 	sortdesc            bool
@@ -69,6 +71,18 @@ type Cointop struct {
 	convertmenuview     *gocui.View
 	convertmenuviewname string
 	convertmenuvisible  bool
+	portfolio           *portfolio
+}
+
+// PortfolioEntry is portfolio entry
+type portfolioEntry struct {
+	Coin     string
+	Holdings float64
+}
+
+// Portfolio is portfolio structure
+type portfolio struct {
+	Entries map[string]*portfolioEntry
 }
 
 // New initializes cointop
@@ -81,14 +95,13 @@ func New() *Cointop {
 		api:           api.NewCMC(),
 		refreshticker: time.NewTicker(1 * time.Minute),
 		sortby:        "rank",
-		sortdesc:      false,
 		page:          0,
 		perpage:       100,
 		forcerefresh:  make(chan bool),
 		maxtablewidth: 175,
 		actionsmap:    actionsMap(),
 		shortcutkeys:  defaultShortcuts(),
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
+		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 		favoritesbysymbol: map[string]bool{},
 		favorites:         map[string]bool{},
 		cache:             cache.New(1*time.Minute, 2*time.Minute),
@@ -142,6 +155,9 @@ func New() *Cointop {
 		helpviewname:        "help",
 		convertmenuviewname: "convertmenu",
 		currencyconversion:  "USD",
+		portfolio: &portfolio{
+			Entries: make(map[string]*portfolioEntry, 0),
+		},
 	}
 	err := ct.setupConfig()
 	if err != nil {
@@ -200,25 +216,5 @@ func (ct *Cointop) Run() {
 	}
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Fatalf("main loop: %v", err)
-	}
-}
-
-func (ct *Cointop) quit() error {
-	return gocui.ErrQuit
-}
-
-func (ct *Cointop) quitView() error {
-	if ct.activeViewName() == ct.tableviewname {
-		return ct.quit()
-	}
-	return nil
-}
-
-// Exit safely exit application
-func (ct *Cointop) Exit() {
-	if ct.g != nil {
-		ct.g.Close()
-	} else {
-		os.Exit(0)
 	}
 }

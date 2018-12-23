@@ -201,6 +201,9 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 
 func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	for k, v := range ct.shortcutkeys {
+		if k == "" {
+			continue
+		}
 		v = strings.TrimSpace(strings.ToLower(v))
 		var fn func(g *gocui.Gui, v *gocui.View) error
 		key, mod := ct.parseKeys(k)
@@ -211,7 +214,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "move_down":
 			fn = ct.keyfn(ct.cursorDown)
 		case "previous_page":
-			fn = ct.keyfn(ct.prevPage)
+			fn = ct.handleHkey()
 		case "next_page":
 			fn = ct.keyfn(ct.nextPage)
 		case "page_down":
@@ -268,7 +271,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "move_to_page_visible_middle_row":
 			fn = ct.keyfn(ct.navigatePageMiddleLine)
 		case "sort_column_name":
-			fn = ct.sortfn("name", true)
+			fn = ct.sortfn("name", false)
 		case "sort_column_price":
 			fn = ct.sortfn("price", true)
 		case "sort_column_rank":
@@ -279,6 +282,10 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.sortfn("lastupdated", true)
 		case "sort_column_24h_volume":
 			fn = ct.sortfn("24hvolume", true)
+		case "sort_column_balance":
+			fn = ct.sortfn("balance", true)
+		case "sort_column_holdings":
+			fn = ct.sortfn("holdings", true)
 		case "last_page":
 			fn = ct.keyfn(ct.lastPage)
 		case "open_search":
@@ -310,6 +317,10 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "hide_currency_convert_menu":
 			fn = ct.keyfn(ct.hideConvertMenu)
 			view = "convertmenu"
+		case "toggle_portfolio":
+			fn = ct.keyfn(ct.togglePortfolio)
+		case "toggle_show_portfolio":
+			fn = ct.keyfn(ct.toggleShowPortfolio)
 		default:
 			fn = ct.keyfn(ct.noop)
 		}
@@ -357,6 +368,17 @@ func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callbac
 func (ct *Cointop) keyfn(fn func() error) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
 		return fn()
+	}
+}
+
+func (ct *Cointop) handleHkey() func(g *gocui.Gui, v *gocui.View) error {
+	return func(g *gocui.Gui, v *gocui.View) error {
+		if ct.portfoliovisible {
+			ct.sortToggle("holdings", true)
+		} else {
+			ct.prevPage()
+		}
+		return nil
 	}
 }
 

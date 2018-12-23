@@ -11,7 +11,7 @@ func (ct *Cointop) updateStatusbar(s string) {
 		ct.statusbarview.Clear()
 		currpage := ct.currentDisplayPage()
 		totalpages := ct.totalPages()
-		base := fmt.Sprintf("%sQuit %sHelp %sChart %sRange %sSearch %sConvert %sFavorite %sSave", "[Q]", "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", "[F]", "[CTRL-S]")
+		base := fmt.Sprintf("%sQuit %sHelp %sChart %sRange %sSearch %sConvert %sFavorites %sPortfolio %sSave", "[Q]", "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", "[F]", "[P]", "[CTRL-S]")
 		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxtablewidth, " ")
 		v := fmt.Sprintf("v%s", ct.version())
 		str = str[:len(str)-len(v)+2] + v
@@ -20,6 +20,6 @@ func (ct *Cointop) updateStatusbar(s string) {
 }
 
 func (ct *Cointop) refreshRowLink() {
-	url := ct.rowLink()
+	url := ct.rowLinkShort()
 	ct.updateStatusbar(fmt.Sprintf("%sOpen %s", "[O]", url))
 }

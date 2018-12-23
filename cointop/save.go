@@ -1,8 +1,12 @@
 package cointop
 
+import "log"
+
 func (ct *Cointop) save() error {
 	ct.setSavingStatus()
-	ct.saveConfig()
+	if err := ct.saveConfig(); err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }
 

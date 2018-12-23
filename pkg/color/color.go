@@ -2,6 +2,9 @@ package color
 
 import "github.com/fatih/color"
 
+// Color struct
+type Color color.Color
+
 var (
 	// Black color
 	Black = color.New(color.FgBlack).SprintFunc()
