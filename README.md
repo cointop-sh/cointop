@@ -224,8 +224,8 @@ $ cointop
 
 - To add a coin to your portfolio, press <kbd>e</kbd> on the highlighted coin
 - To edit the holdings of coin in your portfolio, press <kbd>e</kbd> on the highlighted coin
-- To view your portfolio, press <kbd>P</kbd>
-- To exit out of the portfolio view press, <kbd>P</kbd> again or <kbd>q</kbd>
+- To view your portfolio, press <kbd>P</kbd> (Shift+p)
+- To exit out of the portfolio view press, <kbd>P</kbd> (Shift+p) again or <kbd>q</kbd>
 
 ## Shortcuts
 
