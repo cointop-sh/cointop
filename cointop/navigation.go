@@ -212,6 +212,9 @@ func (ct *Cointop) navigatePageLastLine() error {
 }
 
 func (ct *Cointop) prevPage() error {
+	if ct.isFirstPage() {
+		return nil
+	}
 	ct.setPage(ct.page - 1)
 	ct.updateTable()
 	ct.rowChanged()
@@ -230,6 +233,10 @@ func (ct *Cointop) firstPage() error {
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
+}
+
+func (ct *Cointop) isFirstPage() bool {
+	return ct.page == 0
 }
 
 func (ct *Cointop) lastPage() error {

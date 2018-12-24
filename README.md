@@ -29,7 +29,7 @@ In action
 - [Features](#features)
 - [Installing](#install)
 - [Updating](#updating)
-- [Usage](#usage)
+- [Getting started](#getting-started)
 - [Shortcuts](#shortcuts)
 - [Config](#config)
 - [FAQ](#faq)
@@ -47,11 +47,12 @@ In action
 - Fuzzy searching for finding coins
 - Currency conversion
 - Save and view favorite coins
+- Portfolio tracking of holdings
 - Color support
 - Help menu
 - Offline cache
 - Works on macOS, Linux, and Windows
-- It's very lightweight; can be left running for weeks
+- It's very lightweight; can be left running indefinitely
 
 ## Installing
 
@@ -198,13 +199,33 @@ Use the `refresh` command to update snap.
 sudo snap refresh cointop --stable
 ```
 
-## Usage
+## Getting started
 
 Just run the `cointop` command to get started:
 
 ```bash
 $ cointop
 ```
+
+### Navigation
+
+- Easiest way to navigate up and down is using the arrow keys <kbd>↑</kbd> and <kbd>↓</kbd>
+- To go the next and previous pages, use <kbd>→</kbd> and <kbd>←</kbd>
+- To go to the top and bottom of the page, use <kbd>g</kbd> and <kbd>G</kbd>
+- Check out the rest of [shortcut](#shortcuts) keys for vim-inspired navigation
+
+### Favorites
+
+- To toggle a coin as a favorite, press <kbd>Space</kbd> on the highlighted coin
+- To view all your favorite coins, press <kbd>F<kbd>
+- To exit out of the favorites view, press <kbd>F</kbd> again or <kbd>q</kbd>
+
+### Portfolio
+
+- To add a coin to your portfolio, press <kbd>e</kbd> on the highlighted coin
+- To edit the holdings of coin in your portfolio, press <kbd>e</kbd> on the highlighted coin
+- To view your portfolio, press <kbd>P<kbd>
+- To exit out of the portfolio view press, <kbd>P</kbd> again or <kbd>q</kbd>
 
 ## Shortcuts
 
@@ -244,6 +265,9 @@ Key|Action
 <kbd>a</kbd>|Sort table by *[a]vailable supply*
 <kbd>b</kbd>|Sort table by *[b]alance*
 <kbd>c</kbd>|Show currency convert menu
+<kbd>C</kbd>|Show currency convert menu
+<kbd>e</kbd>|Show portfolio edit holdings menu
+<kbd>E</kbd>|Show portfolio edit holdings menu
 <kbd>f</kbd>|Toggle coin as favorite
 <kbd>F</kbd>|Toggle show favorites
 <kbd>g</kbd>|Go to first line of page  (vim inspired)
@@ -304,6 +328,7 @@ defaultView = "default"
   "{" = "first_chart_range"
   "}" = "last_chart_range"
   C = "show_currency_convert_menu"
+  E = "show_portfolio_edit_menu"
   G = "move_to_page_last_row"
   H = "move_to_page_visible_first_row"
   L = "move_to_page_visible_last_row"
@@ -329,6 +354,7 @@ defaultView = "default"
   "ctrl+r" = "refresh"
   "ctrl+s" = "save"
   "ctrl+u" = "page_up"
+  e = "show_portfolio_edit_menu"
   end = "move_to_page_last_row"
   enter = "toggle_row_chart"
   esc = "quit"
@@ -414,6 +440,7 @@ Action|Description
 `toggle_show_favorites`|Toggle show favorites
 `toggle_portfolio`|Toggle portfolio view
 `toggle_show_portfolio`|Toggle show portfolio view
+`show_portfolio_edit_menu`|Show portfolio edit holdings menu
 
 ## FAQ
 
@@ -476,7 +503,19 @@ Frequently asked questions:
 
   - A: The yellow asterisk or star means that you've selected that coin to be a favorite.
 
-- Q: How do I view all my portfolio?
+- Q: How do I add a coin to my portfolio?
+
+  - Press <kbd>e</kbd> on the highlighted coin to enter holdings and add to your portfolio.
+
+- Q: How do I edit the holdings of a coin in my portfolio?
+
+  - Press <kbd>e</kbd> on the highlighted coin to edit the holdings.
+
+- Q: How do I remove a coin in my portfolio?
+
+  - Press <kbd>e</kbd> on the highlighted coin to edit the holdings and set the value to any empty string (blank value). Set it to `0` if you want to keep the coin without a value.
+
+- Q: How do I view my portfolio?
 
   - A: Press <kbd>P</kbd> (shift+p) to toggle view your portfolio.
 

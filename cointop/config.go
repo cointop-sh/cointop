@@ -143,18 +143,23 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	portfolioIfc := map[string]interface{}{}
 	for name := range ct.portfolio.Entries {
-		entry := ct.portfolio.Entries[name]
+		entry, ok := ct.portfolio.Entries[name]
+		if !ok || entry.Coin == "" {
+			continue
+		}
 		var i interface{} = entry.Holdings
 		portfolioIfc[entry.Coin] = i
 	}
 
 	var currencyIfc interface{} = ct.currencyconversion
+	var defaultViewIfc interface{} = ct.defaultView
 
 	var inputs = &config{
-		Shortcuts: shortcutsIfcs,
-		Favorites: favoritesIfcs,
-		Portfolio: portfolioIfc,
-		Currency:  currencyIfc,
+		Shortcuts:   shortcutsIfcs,
+		Favorites:   favoritesIfcs,
+		Portfolio:   portfolioIfc,
+		Currency:    currencyIfc,
+		DefaultView: defaultViewIfc,
 	}
 
 	var b bytes.Buffer
@@ -191,6 +196,7 @@ func (ct *Cointop) loadCurrencyFromConfig() error {
 
 func (ct *Cointop) loadDefaultViewFromConfig() error {
 	if defaultView, ok := ct.config.DefaultView.(string); ok {
+		defaultView = strings.ToLower(defaultView)
 		switch defaultView {
 		case "portfolio":
 			ct.portfoliovisible = true
@@ -201,7 +207,9 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 		default:
 			ct.portfoliovisible = false
 			ct.filterByFavorites = false
+			defaultView = "default"
 		}
+		ct.defaultView = defaultView
 	}
 	return nil
 }
@@ -235,10 +243,8 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				holdings = float64(holdingsInt)
 			}
 		}
-		ct.portfolio.Entries[strings.ToLower(name)] = &portfolioEntry{
-			Coin:     name,
-			Holdings: holdings,
-		}
+
+		ct.setPortfolioEntry(name, holdings)
 	}
 	return nil
 }

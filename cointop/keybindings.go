@@ -214,7 +214,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "move_down":
 			fn = ct.keyfn(ct.cursorDown)
 		case "previous_page":
-			fn = ct.handleHkey()
+			fn = ct.handleHkey(key)
 		case "next_page":
 			fn = ct.keyfn(ct.nextPage)
 		case "page_down":
@@ -321,6 +321,8 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.keyfn(ct.togglePortfolio)
 		case "toggle_show_portfolio":
 			fn = ct.keyfn(ct.toggleShowPortfolio)
+		case "show_portfolio_edit_menu":
+			fn = ct.keyfn(ct.togglePortfolioUpdateMenu)
 		default:
 			fn = ct.keyfn(ct.noop)
 		}
@@ -339,6 +341,13 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	// keys to quit help when open
 	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
 	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.helpviewname)
+
+	// keys to quit portfolio update menu when open
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.inputviewname)
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.inputviewname)
+
+	// keys to update portfolio holdings
+	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.setPortfolioHoldings), ct.inputviewname)
 
 	// keys to quit convert menu when open
 	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.convertmenuviewname)
@@ -371,9 +380,9 @@ func (ct *Cointop) keyfn(fn func() error) func(g *gocui.Gui, v *gocui.View) erro
 	}
 }
 
-func (ct *Cointop) handleHkey() func(g *gocui.Gui, v *gocui.View) error {
+func (ct *Cointop) handleHkey(key interface{}) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		if ct.portfoliovisible {
+		if k, ok := key.(rune); ok && k == 'h' && ct.portfoliovisible {
 			ct.sortToggle("holdings", true)
 		} else {
 			ct.prevPage()

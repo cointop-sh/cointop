@@ -54,7 +54,7 @@ func (ct *Cointop) refreshTable() error {
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
 				color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
 				colorprice(fmt.Sprintf("%13s", humanize.Commaf(coin.Price))),
-				color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.Holdings))),
+				color.White(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
 				colorbalance(fmt.Sprintf("%15s", humanize.Commaf(coin.Balance))),
 				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
 				color.White(pad.Right(fmt.Sprintf("%17s", lastUpdated), 80, " ")),
@@ -170,24 +170,15 @@ func (ct *Cointop) updateTable() error {
 
 	if ct.portfoliovisible {
 		for i := range ct.allcoins {
-			if len(ct.portfolio.Entries) == 0 {
+			if ct.portfolioEntriesCount() == 0 {
 				break
 			}
 			coin := ct.allcoins[i]
-			var p *portfolioEntry
-			var ok bool
-			if p, ok = ct.portfolio.Entries[strings.ToLower(coin.Name)]; !ok {
-				// NOTE: if not found then try the symbol
-				if p, ok = ct.portfolio.Entries[strings.ToLower(coin.Symbol)]; !ok {
-					continue
-				}
+			p, isNew := ct.portfolioEntry(coin)
+			if isNew {
+				continue
 			}
-			holdingsstr := fmt.Sprintf("%.2f", p.Holdings)
-			if ct.currencyconversion == "ETH" || ct.currencyconversion == "BTC" {
-				holdingsstr = fmt.Sprintf("%.5f", p.Holdings)
-			}
-			holdings, _ := strconv.ParseFloat(holdingsstr, 64)
-			coin.Holdings = holdings
+			coin.Holdings = p.Holdings
 
 			balance := coin.Price * p.Holdings
 			balancestr := fmt.Sprintf("%.2f", balance)
@@ -292,6 +283,17 @@ func (ct *Cointop) allCoins() []*coin {
 		for i := range ct.allcoins {
 			coin := ct.allcoins[i]
 			if coin.Favorite {
+				list = append(list, coin)
+			}
+		}
+		return list
+	}
+
+	if ct.portfoliovisible {
+		var list []*coin
+		for i := range ct.allcoins {
+			coin := ct.allcoins[i]
+			if ct.portfolioEntryExists(coin) {
 				list = append(list, coin)
 			}
 		}

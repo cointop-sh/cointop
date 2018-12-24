@@ -58,20 +58,26 @@ type Cointop struct {
 	searchfieldviewname string
 	searchfieldvisible  bool
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
-	favoritesbysymbol   map[string]bool
-	favorites           map[string]bool
-	filterByFavorites   bool
-	savemux             sync.Mutex
-	cache               *cache.Cache
-	debug               bool
-	helpview            *gocui.View
-	helpviewname        string
-	helpvisible         bool
-	currencyconversion  string
-	convertmenuview     *gocui.View
-	convertmenuviewname string
-	convertmenuvisible  bool
-	portfolio           *portfolio
+	favoritesbysymbol           map[string]bool
+	favorites                   map[string]bool
+	filterByFavorites           bool
+	savemux                     sync.Mutex
+	cache                       *cache.Cache
+	debug                       bool
+	helpview                    *gocui.View
+	helpviewname                string
+	helpvisible                 bool
+	currencyconversion          string
+	convertmenuview             *gocui.View
+	convertmenuviewname         string
+	convertmenuvisible          bool
+	portfolio                   *portfolio
+	portfolioupdatemenuview     *gocui.View
+	portfolioupdatemenuviewname string
+	portfolioupdatemenuvisible  bool
+	inputview                   *gocui.View
+	inputviewname               string
+	defaultView                 string
 }
 
 // PortfolioEntry is portfolio entry
@@ -142,6 +148,8 @@ func New() *Cointop {
 			"name",
 			"symbol",
 			"price",
+			"holdings",
+			"balance",
 			"marketcap",
 			"24hvolume",
 			"1hchange",
@@ -158,6 +166,8 @@ func New() *Cointop {
 		portfolio: &portfolio{
 			Entries: make(map[string]*portfolioEntry, 0),
 		},
+		portfolioupdatemenuviewname: "portfolioupdatemenu",
+		inputviewname:               "input",
 	}
 	err := ct.setupConfig()
 	if err != nil {

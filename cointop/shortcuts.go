@@ -38,6 +38,8 @@ func defaultShortcuts() map[string]string {
 		"b":         "sort_column_balance",
 		"c":         "show_currency_convert_menu",
 		"C":         "show_currency_convert_menu",
+		"e":         "show_portfolio_edit_menu",
+		"E":         "show_portfolio_edit_menu",
 		"f":         "toggle_favorite",
 		"F":         "toggle_show_favorites",
 		"g":         "move_to_page_first_row",

@@ -115,6 +115,28 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.helpview.FgColor = gocui.ColorWhite
 	}
 
+	if v, err := g.SetView(ct.portfolioupdatemenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		ct.portfolioupdatemenuview = v
+		ct.portfolioupdatemenuview.Frame = false
+		ct.portfolioupdatemenuview.BgColor = gocui.ColorBlack
+		ct.portfolioupdatemenuview.FgColor = gocui.ColorWhite
+	}
+
+	if v, err := g.SetView(ct.inputviewname, 3, 6, 30, 8); err != nil {
+		if err != gocui.ErrUnknownView {
+			return err
+		}
+		ct.inputview = v
+		ct.inputview.Frame = true
+		ct.inputview.Editable = true
+		ct.inputview.Wrap = true
+		ct.inputview.BgColor = gocui.ColorBlack
+		ct.inputview.FgColor = gocui.ColorWhite
+	}
+
 	if v, err := g.SetView(ct.convertmenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
@@ -127,9 +149,11 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		// run only once on init.
 		// this bit of code should be at the bottom
 		ct.g = g
-		g.SetViewOnBottom(ct.searchfieldviewname) // hide
-		g.SetViewOnBottom(ct.helpviewname)        // hide
-		g.SetViewOnBottom(ct.convertmenuviewname) // hide
+		g.SetViewOnBottom(ct.searchfieldviewname)         // hide
+		g.SetViewOnBottom(ct.helpviewname)                // hide
+		g.SetViewOnBottom(ct.convertmenuviewname)         // hide
+		g.SetViewOnBottom(ct.portfolioupdatemenuviewname) // hide
+		g.SetViewOnBottom(ct.inputviewname)               // hide
 		ct.setActiveView(ct.tableviewname)
 		ct.intervalFetchData()
 	}
@@ -146,6 +170,10 @@ func (ct *Cointop) setActiveView(v string) error {
 		fmt.Fprintf(ct.searchfield, "%s", "/")
 	} else if v == ct.tableviewname {
 		ct.g.SetViewOnTop(ct.statusbarviewname)
+	}
+	if v == ct.portfolioupdatemenuviewname {
+		ct.g.SetViewOnTop(ct.inputviewname)
+		ct.g.SetCurrentView(ct.inputviewname)
 	}
 	return nil
 }

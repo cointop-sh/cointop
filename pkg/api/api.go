@@ -11,4 +11,5 @@ func NewCMC() Interface {
 
 // NewCC new CryptoCompare API
 func NewCC() {
+	// TODO
 }
