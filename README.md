@@ -211,20 +211,20 @@ $ cointop
 
 - Easiest way to navigate up and down is using the arrow keys <kbd>↑</kbd> and <kbd>↓</kbd>, respectively
 - To go the next and previous pages, use <kbd>→</kbd> and <kbd>←</kbd>, respectively
-- To go to the top and bottom of the page, use <kbd>g</kbd> and <kbd>G</kbd> (<kbd>Shift</kbd>+<kbd>g</kbd>), respectively
+- To go to the top and bottom of the page, use <kbd>g</kbd> and <kbd>G</kbd> (Shift+g), respectively
 - Check out the rest of [shortcut](#shortcuts) keys for vim-inspired navigation
 
 ### Favorites
 
 - To toggle a coin as a favorite, press <kbd>Space</kbd> on the highlighted coin
-- To view all your favorite coins, press <kbd>F</kbd> (<kbd>Shift</kbd>+<kbd>f</kbd>)
-- To exit out of the favorites view, press <kbd>F</kbd> (<kbd>Shift</kbd>+<kbd>f</kbd>) again or <kbd>q</kbd>
+- To view all your favorite coins, press <kbd>F</kbd> (Shift+f)
+- To exit out of the favorites view, press <kbd>F</kbd> (Shift+f) again or <kbd>q</kbd>
 
 ### Portfolio
 
 - To add a coin to your portfolio, press <kbd>e</kbd> on the highlighted coin
 - To edit the holdings of coin in your portfolio, press <kbd>e</kbd> on the highlighted coin
-- To view your portfolio, press <kbd>P<kbd>
+- To view your portfolio, press <kbd>P</kbd>
 - To exit out of the portfolio view press, <kbd>P</kbd> again or <kbd>q</kbd>
 
 ## Shortcuts
@@ -493,7 +493,7 @@ Frequently asked questions:
 
 - Q: How do I view all my favorites?
 
-  - A: Press <kbd>F</kbd> (<kbd>Shift</kbd>+<kbd>f</kbd>) to toggle view all your favorites.
+  - A: Press <kbd>F</kbd> (Shift+f) to toggle view all your favorites.
 
 - Q: How do I save my favorites?
 
@@ -517,7 +517,7 @@ Frequently asked questions:
 
 - Q: How do I view my portfolio?
 
-  - A: Press <kbd>P</kbd> (<kbd>Shift</kbd>+<kbd>p</kbd>) to toggle view your portfolio.
+  - A: Press <kbd>P</kbd> (Shift+p) to toggle view your portfolio.
 
 - Q: I'm getting question marks or weird symbols instead of the correct characters.
 
