@@ -239,6 +239,14 @@ $ cointop
 - To view your portfolio, press <kbd>P</kbd> (Shift+p)
 - To exit out of the portfolio view press, <kbd>P</kbd> (Shift+p) again or <kbd>q</kbd>
 
+### Search
+
+- To search for coins, press <kbd>/</kbd> then enter the search query and hit <kbd>Enter</kbd>
+
+### Changing currency
+
+- To change the currency, press <kbd>c</kbd> then enter the character next to the desired currency
+
 ## Shortcuts
 
 List of default shortcut keys:
