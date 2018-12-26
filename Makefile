@@ -93,7 +93,7 @@ rpm/dirs:
 	mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
 rpm/download:
-	wget https://github.com/miguelmota/cointop/archive/1.0.6.tar.gz -O ~/rpmbuild/SOURCES/1.0.6.tar.gz
+	wget https://github.com/miguelmota/cointop/archive/$(VERSION).tar.gz -O ~/rpmbuild/SOURCES/$(VERSION).tar.gz
 
 copr/install/cli:
 	sudo dnf install -y copr-cli
