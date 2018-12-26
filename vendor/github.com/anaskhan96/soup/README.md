@@ -11,22 +11,24 @@ Exported variables and functions implemented till now :
 ```go
 var Headers map[string]string // Set headers as a map of key-value pairs, an alternative to calling Header() individually
 var Cookies map[string]string // Set cookies as a map of key-value  pairs, an alternative to calling Cookie() individually
-func Get(string) (string,error) // Takes the url as an argument, returns HTML string
-func GetWithClient(string, *http.Client) // Takes the url and a custom HTTP client as arguments, returns HTML string
-func Header(string, string) // Takes key,value pair to set as headers for the HTTP request made in Get()
-func Cookie(string, string) // Takes key, value pair to set as cookies to be sent with the HTTP request in Get()
-func HTMLParse(string) Root // Takes the HTML string as an argument, returns a pointer to the DOM constructed
-func Find([]string) Root // Element tag,(attribute key-value pair) as argument, pointer to first occurence returned
-func FindAll([]string) []Root // Same as Find(), but pointers to all occurrences returned
-func FindStrict([]string) Root //  Element tag,(attribute key-value pair) as argument, pointer to first occurence returned with exact matching values
-func FindAllStrict([]string) []Root // Same as FindStrict(), but pointers to all occurrences returned
-func FindNextSibling() Root // Pointer to the next sibling of the Element in the DOM returned
-func FindNextElementSibling() Root // Pointer to the next element sibling of the Element in the DOM returned
-func FindPrevSibling() Root // Pointer to the previous sibling of the Element in the DOM returned
-func FindPrevElementSibling() Root // Pointer to the previous element sibling of the Element in the DOM returned
-func Attrs() map[string]string // Map returned with all the attributes of the Element as lookup to their respective values
-func Text() string // Full text inside a non-nested tag returned
-func SetDebug(bool) // Sets the debug mode to true or false; false by default
+func Get(string) (string,error){} // Takes the url as an argument, returns HTML string
+func GetWithClient(string, *http.Client){} // Takes the url and a custom HTTP client as arguments, returns HTML string
+func Header(string, string){} // Takes key,value pair to set as headers for the HTTP request made in Get()
+func Cookie(string, string){} // Takes key, value pair to set as cookies to be sent with the HTTP request in Get()
+func HTMLParse(string) Root {} // Takes the HTML string as an argument, returns a pointer to the DOM constructed
+func Find([]string) Root {} // Element tag,(attribute key-value pair) as argument, pointer to first occurence returned
+func FindAll([]string) []Root {} // Same as Find(), but pointers to all occurrences returned
+func FindStrict([]string) Root {} //  Element tag,(attribute key-value pair) as argument, pointer to first occurence returned with exact matching values
+func FindAllStrict([]string) []Root {} // Same as FindStrict(), but pointers to all occurrences returned
+func FindNextSibling() Root {} // Pointer to the next sibling of the Element in the DOM returned
+func FindNextElementSibling() Root {} // Pointer to the next element sibling of the Element in the DOM returned
+func FindPrevSibling() Root {} // Pointer to the previous sibling of the Element in the DOM returned
+func FindPrevElementSibling() Root {} // Pointer to the previous element sibling of the Element in the DOM returned
+func Children() []Root {} // Find all direct children of this DOM element
+func Attrs() map[string]string {} // Map returned with all the attributes of the Element as lookup to their respective values
+func Text() string {} // Full text inside a non-nested tag returned, first half returned in a non-nested one
+func FullText() string {} // Full text inside a nested/non-nested tag returned
+func SetDebug(bool) {} // Sets the debug mode to true or false; false by default
 ```
 
 `Root` is a struct, containing three fields :

@@ -60,7 +60,7 @@ There are multiple ways you can install cointop depending on the platform you're
 
 ### From source (always latest)
 
-Make sure to have [go](https://golang.org/) (1.9+) installed, then do:
+Make sure to have [go](https://golang.org/) (1.10+) installed, then do:
 
 ```bash
 go get -u github.com/miguelmota/cointop
@@ -126,7 +126,7 @@ Install cointop
 
 ````bash
 sudo dnf install cointop
-````
+```
 
 Run
 
@@ -135,6 +135,16 @@ cointop
 ```
 
 cointop copr [project page](https://copr.fedorainfracloud.org/coprs/miguelmota/cointop/).
+
+### AUR (Arch Linux)
+
+cointop is available as an [AUR](https://aur.archlinux.org/packages/cointop) package.
+
+```bash
+git clone https://aur.archlinux.org/cointop.git
+cd cointop
+makepkg -si
+```
 
 ### Snap (Ubuntu)
 
@@ -641,8 +651,14 @@ Frequently asked questions:
 
 Running cointop from source
 
-```
+```bash
 make run
+```
+
+### Update vendor dependencies
+
+```bash
+make deps
 ```
 
 ### Homebrew
