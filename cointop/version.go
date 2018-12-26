@@ -1,6 +1,6 @@
 package cointop
 
-const version = "1.0.6"
+const version = "1.0.7"
 
 func (ct *Cointop) version() string {
 	return version
