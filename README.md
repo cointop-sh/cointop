@@ -651,8 +651,14 @@ Frequently asked questions:
 
 Running cointop from source
 
-```
+```bash
 make run
+```
+
+### Update vendor dependencies
+
+```bash
+make deps
 ```
 
 ### Homebrew

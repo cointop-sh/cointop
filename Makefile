@@ -4,6 +4,9 @@ aul:
 run:
 	go run main.go
 
+deps:
+	GO111MODULE=on go mod vendor
+
 debug:
 	DEBUG=1 go run main.go
 
