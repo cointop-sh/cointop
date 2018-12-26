@@ -222,6 +222,8 @@ $ cointop
 
 ### Portfolio
 
+<img src="https://user-images.githubusercontent.com/168240/50439364-a78ade00-08a6-11e9-992b-af63ef21100d.png" alt="portfolio screenshot" width="880" />
+
 - To add a coin to your portfolio, press <kbd>e</kbd> on the highlighted coin
 - To edit the holdings of coin in your portfolio, press <kbd>e</kbd> on the highlighted coin
 - To view your portfolio, press <kbd>P</kbd> (Shift+p)
