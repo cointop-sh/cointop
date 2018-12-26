@@ -1,0 +1,28 @@
+# github.com/BurntSushi/toml v0.3.1
+github.com/BurntSushi/toml
+# github.com/anaskhan96/soup v1.1.1
+github.com/anaskhan96/soup
+# github.com/fatih/color v1.7.0
+github.com/fatih/color
+# github.com/mattn/go-colorable v0.0.9
+github.com/mattn/go-colorable
+# github.com/mattn/go-isatty v0.0.4
+github.com/mattn/go-isatty
+# github.com/mattn/go-runewidth v0.0.4
+github.com/mattn/go-runewidth
+# golang.org/x/net v0.0.0-20181220203305-927f97764cc3
+golang.org/x/net/html
+golang.org/x/net/html/atom
+# golang.org/x/sys v0.0.0-20181221143128-b4a75ba826a6
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.0
+golang.org/x/text/language
+golang.org/x/text/message
+golang.org/x/text/internal/tag
+golang.org/x/text/feature/plural
+golang.org/x/text/internal/format
+golang.org/x/text/internal/number
+golang.org/x/text/message/catalog
+golang.org/x/text/internal/catmsg
+golang.org/x/text/internal
+golang.org/x/text/internal/stringset
