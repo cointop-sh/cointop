@@ -3,7 +3,6 @@ package cointop
 import (
 	"fmt"
 	"math"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -140,6 +139,7 @@ func (ct *Cointop) refreshTable() error {
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
 		ct.rowChanged()
+		go ct.updateChart()
 	})
 
 	return nil
@@ -169,35 +169,7 @@ func (ct *Cointop) updateTable() error {
 	}
 
 	if ct.portfoliovisible {
-		for i := range ct.allcoins {
-			if ct.portfolioEntriesCount() == 0 {
-				break
-			}
-			coin := ct.allcoins[i]
-			p, isNew := ct.portfolioEntry(coin)
-			if isNew {
-				continue
-			}
-			coin.Holdings = p.Holdings
-
-			balance := coin.Price * p.Holdings
-			balancestr := fmt.Sprintf("%.2f", balance)
-			if ct.currencyconversion == "ETH" || ct.currencyconversion == "BTC" {
-				balancestr = fmt.Sprintf("%.5f", balance)
-			}
-			balance, _ = strconv.ParseFloat(balancestr, 64)
-			coin.Balance = balance
-			sliced = append(sliced, coin)
-		}
-
-		sort.Slice(sliced, func(i, j int) bool {
-			return sliced[i].Balance > sliced[j].Balance
-		})
-
-		for i, coin := range sliced {
-			coin.Rank = i + 1
-		}
-
+		sliced = ct.getPortfolioSlice()
 		ct.coins = sliced
 		ct.sort(ct.sortby, ct.sortdesc, ct.coins)
 		ct.refreshTable()

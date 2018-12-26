@@ -47,8 +47,6 @@ func (ct *Cointop) updateHeaders() {
 		}
 	}
 
-	symbol := currencysymbols[ct.currencyconversion]
-
 	if ct.portfoliovisible {
 		cols = []string{"rank", "name", "symbol", "price",
 			"holdings", "balance", "24hchange", "lastupdated"}
@@ -67,7 +65,7 @@ func (ct *Cointop) updateHeaders() {
 		var str string
 		d := s.arrow + s.displaytext
 		if v == "price" || v == "balance" {
-			d = s.arrow + symbol + s.displaytext
+			d = s.arrow + ct.currencySymbol() + s.displaytext
 		}
 
 		str = fmt.Sprintf(

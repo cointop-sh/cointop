@@ -201,3 +201,7 @@ func (ct *Cointop) setCurrencyConverstion(convert string) func() error {
 		return nil
 	}
 }
+
+func (ct *Cointop) currencySymbol() string {
+	return currencysymbols[ct.currencyconversion]
+}

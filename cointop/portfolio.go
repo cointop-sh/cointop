@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -47,7 +48,7 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 		mode = "Add"
 		submitText = "Add"
 	}
-	header := color.GreenBg(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxtablewidth-15, " ")))
+	header := color.GreenBg(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxtablewidth-26, " ")))
 	label := fmt.Sprintf(" Enter holdings for %s %s", color.Yellow(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
@@ -168,6 +169,48 @@ func (ct *Cointop) portfolioEntryExists(c *coin) bool {
 
 func (ct *Cointop) portfolioEntriesCount() int {
 	return len(ct.portfolio.Entries)
+}
+
+func (ct *Cointop) getPortfolioSlice() []*coin {
+	sliced := []*coin{}
+	for i := range ct.allcoins {
+		if ct.portfolioEntriesCount() == 0 {
+			break
+		}
+		coin := ct.allcoins[i]
+		p, isNew := ct.portfolioEntry(coin)
+		if isNew {
+			continue
+		}
+		coin.Holdings = p.Holdings
+		balance := coin.Price * p.Holdings
+		balancestr := fmt.Sprintf("%.2f", balance)
+		if ct.currencyconversion == "ETH" || ct.currencyconversion == "BTC" {
+			balancestr = fmt.Sprintf("%.5f", balance)
+		}
+		balance, _ = strconv.ParseFloat(balancestr, 64)
+		coin.Balance = balance
+		sliced = append(sliced, coin)
+	}
+
+	sort.Slice(sliced, func(i, j int) bool {
+		return sliced[i].Balance > sliced[j].Balance
+	})
+
+	for i, coin := range sliced {
+		coin.Rank = i + 1
+	}
+
+	return sliced
+}
+
+func (ct *Cointop) getPortfolioTotal() float64 {
+	portfolio := ct.getPortfolioSlice()
+	var total float64
+	for _, p := range portfolio {
+		total += p.Balance
+	}
+	return total
 }
 
 func normalizeFloatstring(input string) string {

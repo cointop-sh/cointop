@@ -18,8 +18,7 @@ func (ct *Cointop) refreshAll() error {
 	ct.cache.Delete("market")
 	ct.updateCoins()
 	ct.updateTable()
-	ct.updateMarketbar()
-	ct.updateChart()
+	go ct.updateChart()
 	return nil
 }
 
