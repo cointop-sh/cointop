@@ -19,8 +19,10 @@ func (ct *Cointop) updateMarketbar() error {
 
 	if ct.portfoliovisible {
 		total := ct.getPortfolioTotal()
+		totalstr := humanize.Commaf(total)
 		if !(ct.currencyconversion == "BTC" || ct.currencyconversion == "ETH" || total < 1) {
 			total = math.Round(total*1e2) / 1e2
+			totalstr = humanize.Commaf2(total)
 		}
 
 		timeframe := ct.selectedchartrange
@@ -33,12 +35,32 @@ func (ct *Cointop) updateMarketbar() error {
 			charttitle = fmt.Sprintf("Portfolio - %s", color.Cyan(chartname))
 		}
 
+		var percentChange24H float64
+		for _, p := range ct.getPortfolioSlice() {
+			n := ((p.Balance / total) * p.PercentChange24H)
+			if math.IsNaN(n) {
+				continue
+			}
+			percentChange24H += n
+		}
+
+		color24h := color.White
+		arrow := ""
+		if percentChange24H > 0 {
+			color24h = color.Green
+			arrow = "▲"
+		}
+		if percentChange24H < 0 {
+			color24h = color.Red
+			arrow = "▼"
+		}
+
 		content = fmt.Sprintf(
-			"[ Chart: %s %s ] Current Portfolio Value: %s%s",
+			"[ Chart: %s %s ] Total Portfolio Value: %s • 24H: %s",
 			charttitle,
 			timeframe,
-			ct.currencySymbol(),
-			humanize.Commaf(total),
+			color.Cyan(fmt.Sprintf("%s%s", ct.currencySymbol(), totalstr)),
+			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
 		)
 	} else {
 		var market types.GlobalMarketData

@@ -23,6 +23,11 @@ func (ct *Cointop) doSearch() error {
 	ct.searchfield.Rewind()
 	b := make([]byte, 100)
 	n, err := ct.searchfield.Read(b)
+
+	// TODO: do this a better way (SoC)
+	ct.filterByFavorites = false
+	ct.portfoliovisible = false
+
 	defer ct.setActiveView(ct.tableviewname)
 	if err != nil {
 		return nil

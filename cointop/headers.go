@@ -32,6 +32,7 @@ func (ct *Cointop) updateHeaders() {
 		"7dchange":        &t{color.Black, "[7]D%", 4, 0, " "},
 		"totalsupply":     &t{color.Black, "[t]otal supply", 7, 0, " "},
 		"availablesupply": &t{color.Black, "[a]vailable supply", 0, 0, " "},
+		"percentholdings": &t{color.Black, "%holdings", 2, 0, " "},
 		"lastupdated":     &t{color.Black, "last [u]pdated", 3, 0, " "},
 	}
 
@@ -49,7 +50,7 @@ func (ct *Cointop) updateHeaders() {
 
 	if ct.portfoliovisible {
 		cols = []string{"rank", "name", "symbol", "price",
-			"holdings", "balance", "24hchange", "lastupdated"}
+			"holdings", "balance", "24hchange", "percentholdings", "lastupdated"}
 	} else {
 		cols = []string{"rank", "name", "symbol", "price",
 			"marketcap", "24hvolume", "1hchange", "24hchange",

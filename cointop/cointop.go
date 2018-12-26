@@ -17,6 +17,8 @@ import (
 	"github.com/miguelmota/cointop/pkg/termui"
 )
 
+// TODO: clean up and optimize codebase
+
 // Cointop cointop
 type Cointop struct {
 	g                   *gocui.Gui
@@ -156,6 +158,7 @@ func New() *Cointop {
 			"7dchange",
 			"totalsupply",
 			"availablesupply",
+			"percentholdings",
 			"lastupdated",
 		},
 		statusbarviewname:   "statusbar",

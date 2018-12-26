@@ -27,6 +27,10 @@ func (ct *Cointop) refreshTable() error {
 		ct.table.AddCol("")
 		ct.table.AddCol("")
 		ct.table.AddCol("")
+		ct.table.AddCol("")
+
+		total := ct.getPortfolioTotal()
+
 		for _, coin := range ct.coins {
 			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
@@ -48,6 +52,11 @@ func (ct *Cointop) refreshTable() error {
 				name = fmt.Sprintf("%s%s", name[0:18], dots)
 			}
 
+			percentHoldings := (coin.Balance / total) * 1e2
+			if math.IsNaN(percentHoldings) {
+				percentHoldings = 0
+			}
+
 			ct.table.AddRow(
 				rank,
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
@@ -56,6 +65,7 @@ func (ct *Cointop) refreshTable() error {
 				color.White(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
 				colorbalance(fmt.Sprintf("%15s", humanize.Commaf(coin.Balance))),
 				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
+				color.White(fmt.Sprintf("%10.2f%%", percentHoldings)),
 				color.White(pad.Right(fmt.Sprintf("%17s", lastUpdated), 80, " ")),
 			)
 		}
@@ -111,10 +121,17 @@ func (ct *Cointop) refreshTable() error {
 			if len(name) > 20 {
 				name = fmt.Sprintf("%s%s", name[0:18], dots)
 			}
+
+			symbolpadding := 5
+			// NOTE: this is to adjust padding by 1 because when all name rows are
+			// yellow it messes the spacing (need to debug)
+			if ct.filterByFavorites {
+				symbolpadding = 6
+			}
 			ct.table.AddRow(
 				rank,
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
+				color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
 				colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.Price))),
 				color.White(fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCap))),
 				color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),

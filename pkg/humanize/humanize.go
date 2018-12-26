@@ -4,6 +4,9 @@ import (
 	"bytes"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 // Commaf produces a string form of the given number in base 10 with
@@ -37,4 +40,10 @@ func Commaf(v float64) string {
 		buf.WriteString(parts[1])
 	}
 	return buf.String()
+}
+
+// Commaf2 ...
+func Commaf2(v float64) string {
+	p := message.NewPrinter(language.English)
+	return p.Sprintf("%.2f", v)
 }

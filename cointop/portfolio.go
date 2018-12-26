@@ -62,6 +62,12 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 }
 
 func (ct *Cointop) showPortfolioUpdateMenu() error {
+	coin := ct.highlightedRowCoin()
+	if coin == nil {
+		ct.togglePortfolio()
+		return nil
+	}
+
 	ct.portfolioupdatemenuvisible = true
 	ct.updatePortfolioUpdateMenu()
 	ct.setActiveView(ct.portfolioupdatemenuviewname)
