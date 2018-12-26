@@ -2,65 +2,103 @@
 
 
 [[projects]]
+  digest = "1:289dd4d7abfb3ad2b5f728fbe9b1d5c1bf7d265a3eb9ef92869af1f7baba4c7a"
   name = "github.com/BurntSushi/toml"
   packages = ["."]
+  pruneopts = ""
   revision = "b26d9c308763d68093482582cea63d69be07a0f0"
   version = "v0.3.0"
 
 [[projects]]
+  digest = "1:c742448be99f29f5233ab05bd50eea54ab53f438a3465afa8b247791f0cd885b"
   name = "github.com/anaskhan96/soup"
   packages = ["."]
+  pruneopts = ""
   revision = "cd07662ec9300d16d2ece1c24b0b29ad89f65ff4"
   version = "v1.1"
 
 [[projects]]
+  digest = "1:d7d69c103aba5ea229451115b28ca06d061e3861b2f44bcd0100cbc65659c4d9"
   name = "github.com/fatih/color"
   packages = ["."]
+  pruneopts = ""
   revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
   version = "v1.6.0"
 
 [[projects]]
+  digest = "1:9ea83adf8e96d6304f394d40436f2eb44c1dc3250d223b74088cc253a6cd0a1c"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
+  pruneopts = ""
   revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
   version = "v0.0.9"
 
 [[projects]]
+  digest = "1:78229b46ddb7434f881390029bd1af7661294af31f6802e0e1bedaad4ab0af3c"
   name = "github.com/mattn/go-isatty"
   packages = ["."]
+  pruneopts = ""
   revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
   version = "v0.0.3"
 
 [[projects]]
+  digest = "1:81e673df85e765593a863f67cba4544cf40e8919590f04d67664940786c2b61a"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
+  pruneopts = ""
   revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
   version = "v0.0.2"
 
 [[projects]]
   branch = "master"
-  name = "go4.org"
-  packages = ["reflectutil"]
-  revision = "9599cf28b011184741f249bd9f9330756b506cbc"
-
-[[projects]]
-  branch = "master"
+  digest = "1:80ec738f420f13c23460cc92cd893d3e403588c60682afebbd4515eca5e19578"
   name = "golang.org/x/net"
   packages = [
     "html",
-    "html/atom"
+    "html/atom",
   ]
+  pruneopts = ""
   revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
 
 [[projects]]
   branch = "master"
+  digest = "1:ba4898d0f47bb5a26d7e1842bc1b29799441fbcc76aed65ba45d5b6918e35130"
   name = "golang.org/x/sys"
   packages = ["unix"]
+  pruneopts = ""
   revision = "bb9c189858d91f42db229b04d45a4c3d23a7662a"
+
+[[projects]]
+  digest = "1:5acd3512b047305d49e8763eef7ba423901e85d5dd2fd1e71778a0ea8de10bd4"
+  name = "golang.org/x/text"
+  packages = [
+    "feature/plural",
+    "internal",
+    "internal/catmsg",
+    "internal/format",
+    "internal/gen",
+    "internal/number",
+    "internal/stringset",
+    "internal/tag",
+    "language",
+    "message",
+    "message/catalog",
+    "unicode/cldr",
+  ]
+  pruneopts = ""
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f8fa24cf45636d4d6991f0a805aba5b6ad13ce7807be80cc3baf17909e6b855b"
+  input-imports = [
+    "github.com/BurntSushi/toml",
+    "github.com/anaskhan96/soup",
+    "github.com/fatih/color",
+    "github.com/mattn/go-runewidth",
+    "golang.org/x/text/language",
+    "golang.org/x/text/message",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
