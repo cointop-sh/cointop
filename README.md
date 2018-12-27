@@ -124,7 +124,7 @@ sudo dnf copr enable miguelmota/cointop
 
 Install cointop
 
-````bash
+```bash
 sudo dnf install cointop
 ```
 
