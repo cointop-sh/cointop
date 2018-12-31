@@ -74,6 +74,17 @@ Now you can run cointop:
 cointop
 ```
 
+### Binary (all platforms)
+
+You can download the binary from the [releases](https://github.com/miguelmota/cointop/releases) page
+
+```bash
+# replace x.x.x with the latest version
+wget https://github.com/miguelmota/cointop/releases/download/x.x.x/cointop_x.x.x_linux_amd64.tar.gz
+tar -xvzf cointop_x.x.x_linux_amd64.tar.gz cointop
+./cointop
+```
+
 ### Homebrew (macOS)
 
 cointop is available via [Homebrew](https://formulae.brew.sh/formula/cointop) for macOS:
@@ -302,7 +313,7 @@ Key|Action
 <kbd>m</kbd>|Sort table by *[m]arket cap*
 <kbd>M</kbd> (Shift+m)|Go to middle of visible table window (vim inspired)
 <kbd>n</kbd>|Sort table by *[n]ame*
-<kbd>o</kbd>|[o]pen link to highlighted coin on [CoinMarketCap](https://coinmarketcap.com/)
+<kbd>o</kbd>|[o]pen link to highlighted coin (visits the API's coin page)
 <kbd>p</kbd>|Sort table by *[p]rice*
 <kbd>P</kbd> (Shift+p)|Toggle show portfolio
 <kbd>r</kbd>|Sort table by *[r]ank*
@@ -468,15 +479,23 @@ Frequently asked questions:
 
 - Q: Where is the data from?
 
-  - A: The data is from [Coin Market Cap](https://coinmarketcap.com/).
+  - A: Currently, the data is from [CoinMarketCap](https://coinmarketcap.com/).
 
 - Q: What coins does this support?
 
-  - A: This supports any coin listed on [Coin Market Cap](https://coinmarketcap.com/).
+  - A: This supports any coin supported by the API being used to fetch coin information.
+
+- Q: Will you be supporting more coin API's in the future?
+
+  - A: Yes supporting more coin API's is planned.
 
 - Q: How often is the data polled?
 
   - A: Data gets polled once every minute by default. You can press <kbd>Ctrl</kbd>+<kbd>r</kbd> to force refresh.
+
+- Q: I ran cointop for the first time and don't see any data?
+
+  - A: Running cointop for the first time will fetch the data and populate the cache which may take a few seconds.
 
 - Q: I installed cointop without errors but the command is not found.
 
@@ -619,7 +638,7 @@ Frequently asked questions:
 
 - Q: The data isn't refreshing!
 
-  - A: The CoinMarketCap API has rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind that CoinMarketCap updates prices every 5 minutes so constant refreshes aren't necessary.
+  - A: The coin APIs have rate limits, so make sure to keep manual refreshes to a minimum. If you've hit the rate limit then wait about half an hour to be able to fetch the data again. Keep in mind that some coin APIs, such as CoinMarketCap, update prices every 5 minutes so constant refreshes aren't necessary.
 
 - Q: How do I quit the application?
 
@@ -641,6 +660,10 @@ Frequently asked questions:
 
   - A: In `~/.cointop/config`, set `defaultView = "default"`
 
+- Q: How can use a different config file other than the default?
+
+  - A: Run `cointop -config="/path/to/config/file"` to use the specified file as the config.
+
 - Q: I'm getting the error `open /dev/tty: no such device or address`.
 
     -A: Usually this error occurs when cointop is running as a daemon or slave which means that there is no terminal allocated, so `/dev/tty` doesn't exist for that process. Try running it with the following environment variables:
@@ -649,9 +672,21 @@ Frequently asked questions:
     DEV_IN=/dev/stdout DEV_OUT=/dev/stdout cointop
     ```
 
+- Q: I can only view the first page, why isn't the pagination is working?
+
+  - A: Sometimes the coin APIs will make updates and break things. If you see this problem please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
+
+- Q: How can I delete the cache?
+
+  - A: Run `cointop -clean` to delete the cache files. Cointop will generate new cache files after fetching data.
+
+- Q: How can I reset cointop?
+
+  - A: Run `cointop -reset` to delete the config files and cache. Cointop will generate a new config when starting up.
+
 - Q: What is the size of the binary?
 
-  - A: The executable is only ~2MB in size.
+  - A: The executable binary is ~6MB in size. Packed with [UPX](https://upx.github.io/) it's ~2.5MB
 
 ## Development
 

@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -56,6 +57,7 @@ type Cointop struct {
 	actionsmap          map[string]bool
 	shortcutkeys        map[string]string
 	config              config // toml config
+	configFilepath      string
 	searchfield         *gocui.View
 	searchfieldviewname string
 	searchfieldvisible  bool
@@ -93,12 +95,25 @@ type portfolio struct {
 	Entries map[string]*portfolioEntry
 }
 
-// New initializes cointop
-func New() *Cointop {
+// Config config options
+type Config struct {
+	ConfigFilepath string
+}
+
+// NewCointop initializes cointop
+func NewCointop(config *Config) *Cointop {
 	var debug bool
 	if os.Getenv("DEBUG") != "" {
 		debug = true
 	}
+
+	configFilepath := "~/.cointop/config"
+	if config != nil {
+		if config.ConfigFilepath != "" {
+			configFilepath = config.ConfigFilepath
+		}
+	}
+
 	ct := &Cointop{
 		api:           api.NewCMC(),
 		refreshticker: time.NewTicker(1 * time.Minute),
@@ -114,6 +129,7 @@ func New() *Cointop {
 		favorites:         map[string]bool{},
 		cache:             cache.New(1*time.Minute, 2*time.Minute),
 		debug:             debug,
+		configFilepath:    configFilepath,
 		marketbarviewname: "market",
 		chartviewname:     "chart",
 		chartranges: []string{
@@ -230,4 +246,44 @@ func (ct *Cointop) Run() {
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		log.Fatalf("main loop: %v", err)
 	}
+}
+
+// Clean ...
+func Clean() {
+	tmpPath := "/tmp"
+	if _, err := os.Stat(tmpPath); !os.IsNotExist(err) {
+		files, err := ioutil.ReadDir(tmpPath)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		for _, f := range files {
+			if strings.HasPrefix(f.Name(), "fcache.") {
+				file := fmt.Sprintf("%s/%s", tmpPath, f.Name())
+				fmt.Printf("removing %s\n", file)
+				if err := os.Remove(file); err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
+	}
+
+	fmt.Println("cointop cache has been cleaned")
+}
+
+// Reset ...
+func Reset() {
+	Clean()
+
+	homedir := userHomeDir()
+	// default config path
+	configPath := fmt.Sprintf("%s%s", homedir, "/.cointop")
+	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
+		fmt.Printf("removing %s\n", configPath)
+		if err := os.RemoveAll(configPath); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	fmt.Println("cointop has been reset")
 }

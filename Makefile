@@ -39,6 +39,15 @@ test:
 cointop/test:
 	go run main.go -test
 
+cointop/version:
+	go run main.go -version
+
+cointop/clean:
+	go run main.go -clean
+
+cointop/reset:
+	go run main.go -reset
+
 snap/clean:
 	snapcraft clean
 	rm -f cointop_*.snap

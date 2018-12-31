@@ -13,3 +13,8 @@ func NewCMC() Interface {
 func NewCC() {
 	// TODO
 }
+
+// NewCG new CoinGecko API
+func NewCG() {
+	// TODO
+}

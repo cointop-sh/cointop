@@ -2,7 +2,6 @@ package cointop
 
 import (
 	"bytes"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -21,11 +20,7 @@ type config struct {
 }
 
 func (ct *Cointop) setupConfig() error {
-	err := ct.makeConfigDir()
-	if err != nil {
-		return err
-	}
-	err = ct.makeConfigFile()
+	err := ct.createConfigIfNotExists()
 	if err != nil {
 		return err
 	}
@@ -56,13 +51,26 @@ func (ct *Cointop) setupConfig() error {
 	return nil
 }
 
+func (ct *Cointop) createConfigIfNotExists() error {
+	err := ct.makeConfigDir()
+	if err != nil {
+		return err
+	}
+	err = ct.makeConfigFile()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (ct *Cointop) configDirPath() string {
-	homedir := userHomeDir()
-	return fmt.Sprintf("%s%s", homedir, "/.cointop")
+	path := normalizePath(ct.configFilepath)
+	parts := strings.Split(path, "/")
+	return strings.Join(parts[0:len(parts)-1], "/")
 }
 
 func (ct *Cointop) configPath() string {
-	return fmt.Sprintf("%v%v", ct.configDirPath(), "/config")
+	return normalizePath(ct.configFilepath)
 }
 
 func (ct *Cointop) makeConfigDir() error {

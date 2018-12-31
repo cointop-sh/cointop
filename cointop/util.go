@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -39,6 +40,15 @@ func userHomeDir() string {
 		}
 	}
 	return os.Getenv("HOME")
+}
+
+func normalizePath(path string) string {
+	// expand tilde
+	if strings.HasPrefix(path, "~/") {
+		path = filepath.Join(userHomeDir(), path[2:])
+	}
+
+	return path
 }
 
 func (ct *Cointop) slugify(s string) string {
