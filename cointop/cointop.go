@@ -100,6 +100,8 @@ type Config struct {
 	ConfigFilepath string
 }
 
+var defaultConfigPath = "~/.cointop/config"
+
 // NewCointop initializes cointop
 func NewCointop(config *Config) *Cointop {
 	var debug bool
@@ -107,7 +109,7 @@ func NewCointop(config *Config) *Cointop {
 		debug = true
 	}
 
-	configFilepath := "~/.cointop/config"
+	configFilepath := defaultConfigPath
 	if config != nil {
 		if config.ConfigFilepath != "" {
 			configFilepath = config.ConfigFilepath
@@ -275,9 +277,8 @@ func Clean() {
 func Reset() {
 	Clean()
 
-	homedir := userHomeDir()
 	// default config path
-	configPath := fmt.Sprintf("%s%s", homedir, "/.cointop")
+	configPath := fmt.Sprintf("%s%s", userHomeDir(), "/.cointop")
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
 		fmt.Printf("removing %s\n", configPath)
 		if err := os.RemoveAll(configPath); err != nil {

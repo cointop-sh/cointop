@@ -414,6 +414,12 @@ defaultView = "default"
   v = "sort_column_24h_volume"
 ```
 
+You may specify a different config file to use by using the `-config` flag:
+
+```bash
+cointop -config="/path/to/config"
+```
+
 ## List of actions
 
 This are the action keywords you may use in the config file to change what the shortcut keys do.
