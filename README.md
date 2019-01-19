@@ -1,10 +1,12 @@
-<h1 align="center">
+<h3 align="center">
   <br />
-  <img src="https://user-images.githubusercontent.com/168240/39561871-51cda852-4e5d-11e8-926b-7692d43143e8.png" alt="cointop" width="400" />
+  <img src="https://user-images.githubusercontent.com/168240/39561871-51cda852-4e5d-11e8-926b-7692d43143e8.png" alt="logo" width="400" />
   <br />
   <br />
   <br />
-</h1>
+</h3>
+
+# cointop
 
 > Coin tracking for hackers
 
@@ -83,6 +85,9 @@ You can download the binary from the [releases](https://github.com/miguelmota/co
 wget https://github.com/miguelmota/cointop/releases/download/x.x.x/cointop_x.x.x_linux_amd64.tar.gz
 tar -xvzf cointop_x.x.x_linux_amd64.tar.gz cointop
 ./cointop
+
+# optionally move to bin path
+sudo mv cointop /usr/local/bin/cointop
 ```
 
 ### Homebrew (macOS)
@@ -485,7 +490,7 @@ Frequently asked questions:
 
 - Q: Where is the data from?
 
-  - A: Currently, the data is from [CoinMarketCap](https://coinmarketcap.com/).
+  - A: Currently the data is from [CoinMarketCap](https://coinmarketcap.com/).
 
 - Q: What coins does this support?
 
@@ -493,7 +498,7 @@ Frequently asked questions:
 
 - Q: Will you be supporting more coin API's in the future?
 
-  - A: Yes supporting more coin API's is planned.
+  - A: Yes supporting more coin APIs is planned.
 
 - Q: How often is the data polled?
 
