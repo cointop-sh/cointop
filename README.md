@@ -29,7 +29,7 @@ In action
 ## Table of Contents
 
 - [Features](#features)
-- [Installing](#install)
+- [Installing](#installing)
 - [Updating](#updating)
 - [Getting started](#getting-started)
 - [Shortcuts](#shortcuts)
