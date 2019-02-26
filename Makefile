@@ -53,7 +53,7 @@ snap/clean:
 	rm -f cointop_*.snap
 
 snap/stage:
-	snapcraft stage
+	GO111MODULE=off snapcraft stage
 
 snap/build: snap/clean snap/stage
 	snapcraft snap
