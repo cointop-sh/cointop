@@ -60,7 +60,7 @@ In action
 
 There are multiple ways you can install cointop depending on the platform you're on.
 
-### From source (always latest)
+### From source (always latest and recommeded)
 
 Make sure to have [go](https://golang.org/) (1.10+) installed, then do:
 
@@ -507,6 +507,10 @@ Frequently asked questions:
 - Q: I ran cointop for the first time and don't see any data?
 
   - A: Running cointop for the first time will fetch the data and populate the cache which may take a few seconds.
+
+- Q: I'm no longer seeing any data!
+
+  - A: Run `cointop --clean` to delete the cache and then rerun cointop. If you're still not seeing any data, then please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
 
 - Q: I installed cointop without errors but the command is not found.
 

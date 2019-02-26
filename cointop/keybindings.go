@@ -3,7 +3,7 @@ package cointop
 import (
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/gocui"
+	"github.com/jroimartin/gocui"
 )
 
 func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {

@@ -8,7 +8,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/open"
+	"github.com/miguelmota/cointop/cointop/common/open"
 )
 
 func (ct *Cointop) openLink() error {

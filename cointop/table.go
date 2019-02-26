@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/miguelmota/cointop/cointop/common/color"
+	"github.com/miguelmota/cointop/cointop/common/humanize"
+	"github.com/miguelmota/cointop/cointop/common/pad"
+	"github.com/miguelmota/cointop/cointop/common/table"
 )
 
 func (ct *Cointop) refreshTable() error {

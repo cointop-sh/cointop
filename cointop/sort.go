@@ -3,7 +3,7 @@ package cointop
 import (
 	"sort"
 
-	"github.com/miguelmota/cointop/pkg/gocui"
+	"github.com/jroimartin/gocui"
 )
 
 func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {

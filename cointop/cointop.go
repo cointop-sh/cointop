@@ -9,13 +9,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/api"
-	apitypes "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/cache"
-	"github.com/miguelmota/cointop/pkg/fcache"
-	"github.com/miguelmota/cointop/pkg/gocui"
-	"github.com/miguelmota/cointop/pkg/table"
-	"github.com/miguelmota/cointop/pkg/termui"
+	"github.com/gizak/termui"
+	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/cointop/cointop/common/api"
+	"github.com/miguelmota/cointop/cointop/common/api/types"
+	"github.com/miguelmota/cointop/cointop/common/filecache"
+	"github.com/miguelmota/cointop/cointop/common/table"
+	"github.com/patrickmn/go-cache"
 )
 
 // TODO: clean up and optimize codebase
@@ -195,9 +195,9 @@ func NewCointop(config *Config) *Cointop {
 		log.Fatal(err)
 	}
 
-	allcoinsslugmap := map[string]apitypes.Coin{}
+	allcoinsslugmap := map[string]types.Coin{}
 	coinscachekey := "allcoinsslugmap"
-	fcache.Get(coinscachekey, &allcoinsslugmap)
+	filecache.Get(coinscachekey, &allcoinsslugmap)
 	ct.cache.Set(coinscachekey, allcoinsslugmap, 10*time.Second)
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
@@ -214,12 +214,12 @@ func NewCointop(config *Config) *Cointop {
 
 	var globaldata []float64
 	chartcachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
-	fcache.Get(chartcachekey, &globaldata)
+	filecache.Get(chartcachekey, &globaldata)
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 
-	var market apitypes.GlobalMarketData
+	var market types.GlobalMarketData
 	marketcachekey := "market"
-	fcache.Get(marketcachekey, &market)
+	filecache.Get(marketcachekey, &market)
 	ct.cache.Set(marketcachekey, market, 10*time.Second)
 	err = ct.api.Ping()
 	if err != nil {

@@ -3,7 +3,7 @@ package cointop
 import (
 	"fmt"
 
-	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
 func (ct *Cointop) updateStatusbar(s string) {

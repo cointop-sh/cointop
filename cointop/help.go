@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/cointop/common/color"
+	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
 func (ct *Cointop) toggleHelp() error {

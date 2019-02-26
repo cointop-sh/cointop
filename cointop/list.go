@@ -4,8 +4,8 @@ import (
 	"sync"
 	"time"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/fcache"
+	types "github.com/miguelmota/cointop/cointop/common/api/types"
+	"github.com/miguelmota/cointop/cointop/common/filecache"
 )
 
 var coinslock sync.Mutex
@@ -34,7 +34,7 @@ func (ct *Cointop) updateCoins() error {
 		}
 		ct.cache.Set(cachekey, allcoinsslugmap, 10*time.Second)
 		go func() {
-			_ = fcache.Set(cachekey, allcoinsslugmap, 24*time.Hour)
+			filecache.Set(cachekey, allcoinsslugmap, 24*time.Hour)
 		}()
 	}
 

@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/levenshtein"
+	"github.com/miguelmota/cointop/cointop/common/levenshtein"
 )
 
 func (ct *Cointop) openSearch() error {

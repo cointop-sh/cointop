@@ -3,7 +3,7 @@ package cointop
 import (
 	"os"
 
-	"github.com/miguelmota/cointop/pkg/gocui"
+	"github.com/jroimartin/gocui"
 )
 
 func (ct *Cointop) quit() error {

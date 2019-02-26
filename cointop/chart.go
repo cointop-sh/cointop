@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/fcache"
-	"github.com/miguelmota/cointop/pkg/now"
-	"github.com/miguelmota/cointop/pkg/termui"
+	"github.com/gizak/termui"
+	"github.com/miguelmota/cointop/cointop/common/color"
+	"github.com/miguelmota/cointop/cointop/common/filecache"
+	"github.com/miguelmota/cointop/cointop/common/timeutil"
 )
 
 var chartlock sync.Mutex
@@ -67,7 +67,7 @@ func (ct *Cointop) chartPoints(coin string) error {
 
 	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
 	if ct.selectedchartrange == "YTD" {
-		ytd := time.Now().Unix() - int64(now.BeginningOfYear().Unix())
+		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
 
@@ -114,7 +114,7 @@ func (ct *Cointop) chartPoints(coin string) error {
 
 		ct.cache.Set(cachekey, data, 10*time.Second)
 		go func() {
-			_ = fcache.Set(cachekey, data, 24*time.Hour)
+			filecache.Set(cachekey, data, 24*time.Hour)
 		}()
 	}
 
@@ -163,7 +163,7 @@ func (ct *Cointop) portfolioChart() error {
 
 	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
 	if ct.selectedchartrange == "YTD" {
-		ytd := time.Now().Unix() - int64(now.BeginningOfYear().Unix())
+		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
 
@@ -196,7 +196,7 @@ func (ct *Cointop) portfolioChart() error {
 			graphData, _ = cached.([]float64)
 			ct.debuglog("soft cache hit")
 		} else {
-			_ = fcache.Get(cachekey, &graphData)
+			filecache.Get(cachekey, &graphData)
 
 			if len(graphData) == 0 {
 				time.Sleep(2 * time.Second)
@@ -212,7 +212,7 @@ func (ct *Cointop) portfolioChart() error {
 
 			ct.cache.Set(cachekey, graphData, 10*time.Second)
 			go func() {
-				_ = fcache.Set(cachekey, graphData, 24*time.Hour)
+				filecache.Set(cachekey, graphData, 24*time.Hour)
 			}()
 		}
 

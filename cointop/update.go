@@ -1,7 +1,7 @@
 package cointop
 
 import (
-	"github.com/miguelmota/cointop/pkg/gocui"
+	"github.com/jroimartin/gocui"
 )
 
 // update update view

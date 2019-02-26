@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/gocui"
+	"github.com/jroimartin/gocui"
 )
 
 // layout sets initial layout

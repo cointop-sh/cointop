@@ -5,11 +5,11 @@ import (
 	"math"
 	"time"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/fcache"
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/pad"
+	types "github.com/miguelmota/cointop/cointop/common/api/types"
+	"github.com/miguelmota/cointop/cointop/common/color"
+	"github.com/miguelmota/cointop/cointop/common/filecache"
+	"github.com/miguelmota/cointop/cointop/common/humanize"
+	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
 func (ct *Cointop) updateMarketbar() error {
@@ -82,7 +82,7 @@ func (ct *Cointop) updateMarketbar() error {
 
 			ct.cache.Set(cachekey, market, 10*time.Second)
 			go func() {
-				_ = fcache.Set(cachekey, market, 24*time.Hour)
+				filecache.Set(cachekey, market, 24*time.Hour)
 			}()
 		}
 
