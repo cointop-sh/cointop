@@ -35,6 +35,7 @@ In action
 - [Shortcuts](#shortcuts)
 - [Config](#config)
 - [FAQ](#faq)
+- [Mentioned in](#mentioned-in)
 - [Development](#development)
 - [License](#license)
 
@@ -703,6 +704,14 @@ Frequently asked questions:
 
   - A: The executable binary is ~6MB in size. Packed with [UPX](https://upx.github.io/) it's ~2.5MB
 
+## Mentioned in
+
+Cointop has been mentioned in:
+
+- [Ubuntu Twitter](https://twitter.com/ubuntu/status/985947962311311360?lang=en)
+- [Ubuntu Podcast](https://ubuntupodcast.org/2018/04/12/s11e06-six-feet-over-it/)
+- [Terminals Are Sexy](https://github.com/k4m4/terminals-are-sexy#tools-and-plugins)
+
 ## Development
 
 ### Go
@@ -774,7 +783,7 @@ Building snap
 make snap/build
 ```
 
-## Deployment
+### Deployment
 
 See this [wiki](https://github.com/miguelmota/cointop/wiki/Deployment).
 
