@@ -704,6 +704,10 @@ Frequently asked questions:
 
   - A: The executable binary is ~6MB in size. Packed with [UPX](https://upx.github.io/) it's ~2.5MB
 
+- Q: How does cointop differ from [rate.sx](https://rate.sx/)?
+
+  - A: *rate.sx* is great for one-off queries or fetching data for bash scripts because it doesn't require installing anything. Cointop differs in that it is interactive and also supports more currencies.
+
 ## Mentioned in
 
 Cointop has been mentioned in:
