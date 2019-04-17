@@ -2,10 +2,8 @@ package cointop
 
 import (
 	"sync"
-	"time"
 
 	types "github.com/miguelmota/cointop/cointop/common/api/types"
-	"github.com/miguelmota/cointop/cointop/common/filecache"
 )
 
 var coinslock sync.Mutex
@@ -13,10 +11,8 @@ var coinslock sync.Mutex
 func (ct *Cointop) updateCoins() error {
 	coinslock.Lock()
 	defer coinslock.Unlock()
-	list := []*coin{}
 	cachekey := "allcoinsslugmap"
 
-	var err error
 	var allcoinsslugmap map[string]types.Coin
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -28,16 +24,34 @@ func (ct *Cointop) updateCoins() error {
 	// cache miss
 	if allcoinsslugmap == nil {
 		ct.debuglog("cache miss")
-		allcoinsslugmap, err = ct.api.GetAllCoinData(ct.currencyconversion)
+		ch, err := ct.api.GetAllCoinData(ct.currencyconversion)
 		if err != nil {
 			return err
 		}
-		ct.cache.Set(cachekey, allcoinsslugmap, 10*time.Second)
-		go func() {
-			filecache.Set(cachekey, allcoinsslugmap, 24*time.Hour)
-		}()
+
+		for {
+			coins, ok := <-ch
+			if !ok {
+				break
+			}
+			ct.updateCoinsMap(coins, true)
+			ct.updateTable()
+		}
+
+		/*
+			ct.cache.Set(cachekey, allcoinsslugmap, 10*time.Second)
+			go func() {
+				filecache.Set(cachekey, allcoinsslugmap, 24*time.Hour)
+			}()
+		*/
+	} else {
+		ct.updateCoinsMap(allcoinsslugmap, false)
 	}
 
+	return nil
+}
+
+func (ct *Cointop) updateCoinsMap(allcoinsslugmap map[string]types.Coin, b bool) {
 	if len(ct.allcoinsslugmap) == 0 {
 		ct.allcoinsslugmap = map[string]*coin{}
 	}
@@ -61,15 +75,17 @@ func (ct *Cointop) updateCoins() error {
 		if last != nil {
 			ct.allcoinsslugmap[k].Favorite = last.Favorite
 		}
-	}
-	if len(ct.allcoins) == 0 {
-		for i := range ct.allcoinsslugmap {
-			coin := ct.allcoinsslugmap[i]
-			list = append(list, coin)
+
+		if b {
+			ct.allcoins = append(ct.allcoins, ct.allcoinsslugmap[k])
 		}
-		ct.allcoins = list
-		ct.sort(ct.sortby, ct.sortdesc, ct.allcoins)
-	} else {
+	}
+
+	//if len(ct.allcoins) == 0 {
+	if b {
+		//ct.sort(ct.sortby, ct.sortdesc, ct.allcoins)
+	}
+	if !b {
 		// update list in place without changing order
 		for i := range ct.allcoinsslugmap {
 			cm := ct.allcoinsslugmap[i]
@@ -95,5 +111,4 @@ func (ct *Cointop) updateCoins() error {
 			}
 		}
 	}
-	return nil
 }

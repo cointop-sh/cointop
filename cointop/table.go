@@ -83,6 +83,9 @@ func (ct *Cointop) refreshTable() error {
 		ct.table.AddCol("")
 		ct.table.AddCol("")
 		for _, coin := range ct.coins {
+			if coin == nil {
+				continue
+			}
 			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
 			namecolor := color.White

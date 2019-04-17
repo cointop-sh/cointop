@@ -7,7 +7,7 @@ import (
 // Interface interface
 type Interface interface {
 	Ping() error
-	GetAllCoinData(convert string) (map[string]types.Coin, error)
+	GetAllCoinData(convert string) (chan map[string]types.Coin, error)
 	GetCoinGraphData(coin string, start int64, end int64) (types.CoinGraph, error)
 	GetGlobalMarketGraphData(start int64, end int64) (types.MarketGraph, error)
 	GetGlobalMarketData(convert string) (types.GlobalMarketData, error)

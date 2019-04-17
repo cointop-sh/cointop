@@ -15,6 +15,12 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 		}
 		a := list[i]
 		b := list[j]
+		if a == nil {
+			return true
+		}
+		if b == nil {
+			return false
+		}
 		switch sortby {
 		case "rank":
 			return a.Rank < b.Rank

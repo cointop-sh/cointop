@@ -517,6 +517,10 @@ Frequently asked questions:
 
   - A: Run `cointop --clean` to delete the cache and then rerun cointop. If you're still not seeing any data, then please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
 
+- Q: How do I add my CoinMarketCap Pro API Key?
+
+  - A: Export the environment variable `CMC_PRO_API_KEY` containing the API key.
+
 - Q: I installed cointop without errors but the command is not found.
 
   - A: Make sure your `GOPATH` and `PATH` is set correctly.

@@ -10,8 +10,10 @@ import (
 	"strconv"
 	"strings"
 
+	"sort"
+
 	"github.com/anaskhan96/soup"
-	"github.com/miguelmota/cointop/cointop/common/cmc/types"
+	"github.com/miguelmota/go-coinmarketcap/v2/types"
 )
 
 var (
@@ -25,7 +27,7 @@ var (
 // Interface interface
 type Interface interface {
 	Listings() ([]*types.Listing, error)
-	Tickers(options *TickersOptions) (map[string]*types.Ticker, error)
+	Tickers(options *TickersOptions) ([]*types.Ticker, error)
 	Ticker(options *TickerOptions) (*types.Ticker, error)
 	TickerGraph(options *TickerGraphOptions) (*types.TickerGraph, error)
 	GlobalMarket(options *GlobalMarketOptions) (*types.GlobalMarket, error)
@@ -59,15 +61,21 @@ type TickersOptions struct {
 	Start   int
 	Limit   int
 	Convert string
+	Sort    string
 }
 
 // tickerMedia tickers response media
 type tickersMedia struct {
-	Data map[string]*types.Ticker `json:"data"`
+	Data     map[string]*types.Ticker `json:"data,omitempty"`
+	Metadata struct {
+		Timestamp           int64
+		NumCryptoCurrencies int    `json:"num_cryptocurrencies,omitempty"`
+		Error               string `json:",omitempty"`
+	}
 }
 
 // Tickers gets ticker information on coins
-func Tickers(options *TickersOptions) (map[string]*types.Ticker, error) {
+func Tickers(options *TickersOptions) ([]*types.Ticker, error) {
 	var params []string
 	if options.Start >= 0 {
 		params = append(params, fmt.Sprintf("start=%v", options.Start))
@@ -78,6 +86,9 @@ func Tickers(options *TickersOptions) (map[string]*types.Ticker, error) {
 	if options.Convert != "" {
 		params = append(params, fmt.Sprintf("convert=%v", options.Convert))
 	}
+	if options.Sort != "" {
+		params = append(params, fmt.Sprintf("sort=%v", options.Sort))
+	}
 	url := fmt.Sprintf("%s/ticker?%s", baseURL, strings.Join(params, "&"))
 	resp, err := makeReq(url)
 	var body tickersMedia
@@ -85,11 +96,20 @@ func Tickers(options *TickersOptions) (map[string]*types.Ticker, error) {
 	if err != nil {
 		return nil, err
 	}
-	tickers := make(map[string]*types.Ticker)
 	data := body.Data
+	var tickers []*types.Ticker
 	for _, v := range data {
-		tickers[strings.ToUpper(string(v.Symbol))] = v
+		tickers = append(tickers, v)
 	}
+
+	if body.Metadata.Error != "" {
+		return nil, errors.New(body.Metadata.Error)
+	}
+
+	sort.Slice(tickers, func(i, j int) bool {
+		return tickers[i].Rank < tickers[j].Rank
+	})
+
 	return tickers, nil
 }
 
@@ -269,13 +289,14 @@ type PriceOptions struct {
 
 // Price gets price of a cryptocurrency
 func Price(options *PriceOptions) (float64, error) {
-	coins, err := Tickers(&TickersOptions{
+	coin, err := Ticker(&TickerOptions{
 		Convert: options.Convert,
+		Symbol:  options.Symbol,
 	})
 	if err != nil {
 		return 0, err
 	}
-	coin := coins[options.Symbol]
+
 	if coin == nil {
 		return 0, errors.New("coin not found")
 	}
@@ -285,25 +306,30 @@ func Price(options *PriceOptions) (float64, error) {
 // CoinID gets the ID for the cryptocurrency
 func CoinID(symbol string) (int, error) {
 	symbol = strings.ToUpper(strings.TrimSpace(symbol))
-	coins, err := Tickers(&TickersOptions{})
+	listings, err := Listings()
 	if err != nil {
 		return 0, err
 	}
-	coin := coins[symbol]
-	if coin == nil {
-		return 0, errors.New("coin not found")
+
+	for _, l := range listings {
+		if l.Symbol == symbol {
+			return l.ID, nil
+		}
 	}
-	return coin.ID, nil
+	//returns error as default
+	return 0, errors.New("coin not found")
 }
 
 // CoinSlug gets the slug for the cryptocurrency
 func CoinSlug(symbol string) (string, error) {
 	symbol = strings.ToUpper(strings.TrimSpace(symbol))
-	coins, err := Tickers(&TickersOptions{})
+	coin, err := Ticker(&TickerOptions{
+		Symbol: symbol,
+	})
 	if err != nil {
 		return "", err
 	}
-	coin := coins[symbol]
+
 	if coin == nil {
 		return "", errors.New("coin not found")
 	}

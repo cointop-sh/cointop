@@ -3,183 +3,117 @@ package coinmarketcap
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
 	"time"
 
 	apitypes "github.com/miguelmota/cointop/cointop/common/api/types"
-	cmc "github.com/miguelmota/cointop/cointop/common/cmc"
+	cmc "github.com/miguelmota/go-coinmarketcap/pro/v1"
+	cmcv2 "github.com/miguelmota/go-coinmarketcap/v2"
 )
 
 // Service service
 type Service struct {
+	client *cmc.Client
 }
 
 // New new service
 func New() *Service {
-	return &Service{}
+	client := cmc.NewClient(&cmc.Config{
+		ProAPIKey: os.Getenv("CMC_PRO_API_KEY"),
+	})
+	return &Service{
+		client: client,
+	}
 }
 
 // Ping ping API
 func (s *Service) Ping() error {
-	ticker, err := cmc.Ticker(&cmc.TickerOptions{
-		Symbol: "ETH",
+	info, err := s.client.Cryptocurrency.Info(&cmc.InfoOptions{
+		Symbol: "BTC",
 	})
 	if err != nil {
 		return errors.New("failed to ping")
 	}
-	if ticker == nil {
+	if info == nil {
 		return errors.New("failed to ping")
 	}
 	return nil
 }
 
-func getLimitedCoinDataV2(convert string, offset int) (map[string]apitypes.Coin, error) {
+func (s *Service) getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, error) {
 	ret := make(map[string]apitypes.Coin)
 	max := 100
-	coins, err := cmc.Tickers(&cmc.TickersOptions{
-		Convert: convert,
-		Start:   max * offset,
-		Limit:   max,
-	})
-	if err != nil {
-		return ret, err
-	}
-	for _, v := range coins {
-		ret[v.Name] = apitypes.Coin{
-			ID:               v.Slug,
-			Name:             v.Name,
-			Symbol:           v.Symbol,
-			Rank:             v.Rank,
-			AvailableSupply:  v.CirculatingSupply,
-			TotalSupply:      v.TotalSupply,
-			MarketCap:        v.Quotes[convert].MarketCap,
-			Price:            v.Quotes[convert].Price,
-			PercentChange1H:  v.Quotes[convert].PercentChange1H,
-			PercentChange24H: v.Quotes[convert].PercentChange24H,
-			PercentChange7D:  v.Quotes[convert].PercentChange7D,
-			Volume24H:        formatVolume(v.Quotes[convert].Volume24H),
-			LastUpdated:      strconv.Itoa(v.LastUpdated),
-		}
-	}
-	return ret, nil
-}
 
-func getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, error) {
-	ret := make(map[string]apitypes.Coin)
-	max := 100
-	coins, err := cmc.Tickers(&cmc.TickersOptions{
+	listings, err := s.client.Cryptocurrency.LatestListings(&cmc.ListingOptions{
+		Limit:   max,
 		Convert: convert,
 		Start:   max * offset,
-		Limit:   max,
 	})
 	if err != nil {
-		return ret, err
+		return nil, err
 	}
-	for _, v := range coins {
-		price := formatPrice(v.Quotes[convert].Price, convert)
+	for _, v := range listings {
+		price := formatPrice(v.Quote[convert].Price, convert)
+		lastUpdated, err := time.Parse(time.RFC3339, v.LastUpdated)
+		if err != nil {
+			return nil, err
+		}
 		ret[v.Name] = apitypes.Coin{
 			ID:               strings.ToLower(v.Name),
 			Name:             v.Name,
 			Symbol:           v.Symbol,
-			Rank:             v.Rank,
+			Rank:             int(v.CMCRank),
 			AvailableSupply:  v.CirculatingSupply,
 			TotalSupply:      v.TotalSupply,
-			MarketCap:        v.Quotes[convert].MarketCap,
+			MarketCap:        float64(int(v.Quote[convert].MarketCap)),
 			Price:            price,
-			PercentChange1H:  v.Quotes[convert].PercentChange1H,
-			PercentChange24H: v.Quotes[convert].PercentChange24H,
-			PercentChange7D:  v.Quotes[convert].PercentChange7D,
-			Volume24H:        formatVolume(v.Quotes[convert].Volume24H),
-			LastUpdated:      strconv.Itoa(v.LastUpdated),
+			PercentChange1H:  v.Quote[convert].PercentChange1H,
+			PercentChange24H: v.Quote[convert].PercentChange24H,
+			PercentChange7D:  v.Quote[convert].PercentChange7D,
+			Volume24H:        formatVolume(v.Quote[convert].Volume24H),
+			LastUpdated:      strconv.Itoa(int(lastUpdated.Unix())),
 		}
 	}
-	return ret, nil
-}
-
-// GetAllCoinData1 get all coin data
-func (s *Service) GetAllCoinData1(convert string) (map[string]apitypes.Coin, error) {
-	ret := make(map[string]apitypes.Coin)
-	coins, err := cmc.V1Tickers(0, convert)
-	if err != nil {
-		return ret, err
-	}
-	for _, v := range coins {
-		price := formatPrice(v.Quotes[convert].Price, convert)
-		ret[v.Name] = apitypes.Coin{
-			ID:               strings.ToLower(v.Name),
-			Name:             v.Name,
-			Symbol:           v.Symbol,
-			Rank:             v.Rank,
-			AvailableSupply:  v.AvailableSupply,
-			TotalSupply:      v.TotalSupply,
-			MarketCap:        v.Quotes[convert].MarketCap,
-			Price:            price,
-			PercentChange1H:  v.PercentChange1H,
-			PercentChange24H: v.PercentChange24H,
-			PercentChange7D:  v.PercentChange7D,
-			Volume24H:        formatVolume(v.Quotes[convert].Volume24H),
-			LastUpdated:      strconv.Itoa(v.LastUpdated),
-		}
-	}
-	return ret, nil
-}
-
-// GetAllCoinDataV2 gets all coin data
-// V1 is currently better for fetching all the coins at once
-func (s *Service) GetAllCoinDataV2(convert string) (map[string]apitypes.Coin, error) {
-	var wg sync.WaitGroup
-	ret := make(map[string]apitypes.Coin)
-	var mutex sync.Mutex
-	for i := 0; i < 5; i++ {
-		wg.Add(1)
-		go func(j int) {
-			defer wg.Done()
-			coins, err := getLimitedCoinDataV2(convert, j)
-			if err != nil {
-				return
-			}
-			mutex.Lock()
-			for k, v := range coins {
-				ret[k] = v
-			}
-			mutex.Unlock()
-		}(i)
-	}
-	wg.Wait()
 	return ret, nil
 }
 
 // GetAllCoinData gets all coin data. Need to paginate through all pages
-func (s *Service) GetAllCoinData(convert string) (map[string]apitypes.Coin, error) {
+func (s *Service) GetAllCoinData(convert string) (chan map[string]apitypes.Coin, error) {
 	var wg sync.WaitGroup
-	ret := make(map[string]apitypes.Coin)
-	var mutex sync.Mutex
-	for i := 0; i < 17; i++ {
-		time.Sleep(500 * time.Millisecond)
-		wg.Add(1)
-		go func(j int) {
-			defer wg.Done()
-			coins, err := getLimitedCoinData(convert, j)
-			if err != nil {
-				return
-			}
-			mutex.Lock()
-			for k, v := range coins {
-				ret[k] = v
-			}
-			mutex.Unlock()
-		}(i)
-	}
-	wg.Wait()
-	return ret, nil
+	ch := make(chan map[string]apitypes.Coin)
+	go func() {
+		var mutex sync.Mutex
+		maxPages := 15
+		for i := 0; i < maxPages; i++ {
+			time.Sleep(time.Duration(i) * time.Second)
+			wg.Add(1)
+			go func(j int) {
+				defer wg.Done()
+				coins, err := s.getLimitedCoinData(convert, j)
+				if err != nil {
+					return
+				}
+				mutex.Lock()
+				defer mutex.Unlock()
+				ret := make(map[string]apitypes.Coin)
+				for k, v := range coins {
+					ret[k] = v
+				}
+				ch <- ret
+			}(i)
+		}
+		wg.Wait()
+	}()
+	return ch, nil
 }
 
 // GetCoinGraphData gets coin graph data
 func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (apitypes.CoinGraph, error) {
 	ret := apitypes.CoinGraph{}
-	graphData, err := cmc.TickerGraph(&cmc.TickerGraphOptions{
+	graphData, err := cmcv2.TickerGraph(&cmcv2.TickerGraphOptions{
 		Symbol: coin,
 		Start:  start,
 		End:    end,
@@ -198,7 +132,7 @@ func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (apitype
 // GetGlobalMarketGraphData gets global market graph data
 func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (apitypes.MarketGraph, error) {
 	ret := apitypes.MarketGraph{}
-	graphData, err := cmc.GlobalMarketGraph(&cmc.GlobalMarketGraphOptions{
+	graphData, err := cmcv2.GlobalMarketGraph(&cmcv2.GlobalMarketGraphOptions{
 		Start: start,
 		End:   end,
 	})
@@ -214,19 +148,20 @@ func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (apitypes.Mar
 // GetGlobalMarketData gets global market data
 func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData, error) {
 	ret := apitypes.GlobalMarketData{}
-	market, err := cmc.GlobalMarket(&cmc.GlobalMarketOptions{
+	market, err := s.client.GlobalMetrics.LatestQuotes(&cmc.QuoteOptions{
 		Convert: convert,
 	})
+
 	if err != nil {
 		return ret, err
 	}
 	ret = apitypes.GlobalMarketData{
-		TotalMarketCapUSD:            market.Quotes[convert].TotalMarketCap,
-		Total24HVolumeUSD:            market.Quotes[convert].TotalVolume24H,
-		BitcoinPercentageOfMarketCap: market.BitcoinPercentageOfMarketCap,
-		ActiveCurrencies:             market.ActiveCurrencies,
+		TotalMarketCapUSD:            market.Quote[convert].TotalMarketCap,
+		Total24HVolumeUSD:            market.Quote[convert].TotalVolume24H,
+		BitcoinPercentageOfMarketCap: market.BTCDominance,
+		ActiveCurrencies:             int(market.ActiveCryptocurrencies),
 		ActiveAssets:                 0,
-		ActiveMarkets:                market.ActiveMarkets,
+		ActiveMarkets:                int(market.ActiveMarketPairs),
 	}
 	return ret, nil
 }

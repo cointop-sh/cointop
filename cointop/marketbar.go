@@ -67,6 +67,7 @@ func (ct *Cointop) updateMarketbar() error {
 		var err error
 		cachekey := "market"
 		cached, found := ct.cache.Get(cachekey)
+
 		if found {
 			// cache hit
 			var ok bool
@@ -93,14 +94,12 @@ func (ct *Cointop) updateMarketbar() error {
 		}
 
 		content = fmt.Sprintf(
-			"[ Chart: %s %s ] Global ▶ Market Cap: $%s • 24H Volume: $%s • BTC Dominance: %.2f%% • Active Currencies: %s • Active Markets: %s",
+			"[ Chart: %s %s ] Global ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
 			color.Cyan(chartname),
 			timeframe,
-			humanize.Commaf(market.TotalMarketCapUSD),
-			humanize.Commaf(market.Total24HVolumeUSD),
+			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.TotalMarketCapUSD)),
+			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.Total24HVolumeUSD)),
 			market.BitcoinPercentageOfMarketCap,
-			humanize.Commaf(float64(market.ActiveCurrencies)),
-			humanize.Commaf(float64(market.ActiveMarkets)),
 		)
 	}
 
