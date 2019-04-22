@@ -1,5 +1,9 @@
-aul:
-	@echo "no default"
+VERSION = $$(git describe --abbrev=0 --tags)
+
+all: build
+
+version:
+	@echo $(VERSION)
 
 run:
 	go run main.go
@@ -119,6 +123,8 @@ copr/create-project:
 copr/build:
 	copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
 	rm -rf ~/rpmbuild/SRPMS/cointop-*.rpm
+
+copr/deploy: rpm/dirs rpm/cp/specs rpm/download rpm/build copr/build
 
 brew/clean: brew/remove
 	brew cleanup --force cointop
