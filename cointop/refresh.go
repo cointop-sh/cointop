@@ -6,7 +6,10 @@ import (
 )
 
 func (ct *Cointop) refresh() error {
-	ct.forcerefresh <- true
+	go func() {
+		<-ct.limiter
+		ct.forcerefresh <- true
+	}()
 	return nil
 }
 
@@ -16,8 +19,10 @@ func (ct *Cointop) refreshAll() error {
 	ct.setRefreshStatus()
 	ct.cache.Delete("allcoinsslugmap")
 	ct.cache.Delete("market")
-	ct.updateCoins()
-	ct.updateTable()
+	go func() {
+		ct.updateCoins()
+		ct.updateTable()
+	}()
 	go ct.updateChart()
 	return nil
 }

@@ -9,19 +9,19 @@ func (ct *Cointop) currentDisplayPage() int {
 }
 
 func (ct *Cointop) totalPages() int {
-	return (ct.getListCount() / ct.perpage) + 1
+	return ct.getListCount() / ct.perpage
+}
+
+func (ct *Cointop) totalPagesDisplay() int {
+	return ct.totalPages() + 1
 }
 
 func (ct *Cointop) totalPerPage() int {
 	return ct.perpage
 }
 
-func (ct *Cointop) getListCount() int {
-	return len(ct.allCoins())
-}
-
 func (ct *Cointop) setPage(page int) int {
-	if (page*ct.perpage) <= ct.getListCount() && page >= 0 {
+	if (page*ct.perpage) < ct.getListCount() && page >= 0 {
 		ct.page = page
 	}
 	return ct.page

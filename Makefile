@@ -10,6 +10,9 @@ deps:
 debug:
 	DEBUG=1 go run main.go
 
+build:
+	@go build main.go
+
 # http://macappstore.org/upx
 build/mac: clean/mac
 	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/macos/cointop && upx bin/macos/cointop

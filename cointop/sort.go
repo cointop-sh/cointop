@@ -2,11 +2,22 @@ package cointop
 
 import (
 	"sort"
+	"sync"
 
 	"github.com/jroimartin/gocui"
 )
 
-func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
+var sortlock sync.Mutex
+
+func (ct *Cointop) sort(sortby string, desc bool, list []*coin, renderHeaders bool) {
+	sortlock.Lock()
+	defer sortlock.Unlock()
+	if list == nil {
+		return
+	}
+	if len(list) < 2 {
+		return
+	}
 	ct.sortby = sortby
 	ct.sortdesc = desc
 	sort.Slice(list[:], func(i, j int) bool {
@@ -54,7 +65,10 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*coin) {
 			return a.Rank < b.Rank
 		}
 	})
-	ct.updateHeaders()
+
+	if renderHeaders {
+		ct.updateHeaders()
+	}
 }
 
 func (ct *Cointop) sortToggle(sortby string, desc bool) error {
@@ -62,7 +76,7 @@ func (ct *Cointop) sortToggle(sortby string, desc bool) error {
 		desc = !ct.sortdesc
 	}
 
-	ct.sort(sortby, desc, ct.coins)
+	ct.sort(sortby, desc, ct.coins, true)
 	ct.updateTable()
 	return nil
 }
@@ -84,14 +98,12 @@ func (ct *Cointop) getSortColIndex() int {
 
 func (ct *Cointop) sortAsc() error {
 	ct.sortdesc = false
-	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
 	ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) sortDesc() error {
 	ct.sortdesc = true
-	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
 	ct.updateTable()
 	return nil
 }
@@ -104,7 +116,7 @@ func (ct *Cointop) sortPrevCol() error {
 		k = 0
 	}
 	nextsortby = ct.tablecolumnorder[k]
-	ct.sort(nextsortby, ct.sortdesc, ct.coins)
+	ct.sort(nextsortby, ct.sortdesc, ct.coins, true)
 	ct.updateTable()
 	return nil
 }
@@ -118,7 +130,7 @@ func (ct *Cointop) sortNextCol() error {
 		k = l - 1
 	}
 	nextsortby = ct.tablecolumnorder[k]
-	ct.sort(nextsortby, ct.sortdesc, ct.coins)
+	ct.sort(nextsortby, ct.sortdesc, ct.coins, true)
 	ct.updateTable()
 	return nil
 }

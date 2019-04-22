@@ -2,17 +2,21 @@ package cointop
 
 import (
 	"sync"
+	"time"
 
 	types "github.com/miguelmota/cointop/cointop/common/api/types"
+	"github.com/miguelmota/cointop/cointop/common/filecache"
 )
 
 var coinslock sync.Mutex
+var updatecoinsmux sync.Mutex
 
 func (ct *Cointop) updateCoins() error {
 	coinslock.Lock()
 	defer coinslock.Unlock()
 	cachekey := "allcoinsslugmap"
 
+	var err error
 	var allcoinsslugmap map[string]types.Coin
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -24,37 +28,31 @@ func (ct *Cointop) updateCoins() error {
 	// cache miss
 	if allcoinsslugmap == nil {
 		ct.debuglog("cache miss")
-		ch, err := ct.api.GetAllCoinData(ct.currencyconversion)
+		ch := make(chan map[string]types.Coin)
+		err = ct.api.GetAllCoinData(ct.currencyconversion, ch)
 		if err != nil {
 			return err
 		}
 
-		for {
-			coins, ok := <-ch
-			if !ok {
-				break
+		for coins := range ch {
+			allcoinsslugmap := make(map[string]types.Coin)
+			for _, c := range coins {
+				allcoinsslugmap[c.Name] = c
 			}
-			ct.updateCoinsMap(coins, true)
-			ct.updateTable()
+			go ct.processCoinsMap(allcoinsslugmap)
+			ct.cache.Set(cachekey, ct.allcoinsslugmap, 10*time.Second)
+			filecache.Set(cachekey, ct.allcoinsslugmap, 24*time.Hour)
 		}
-
-		/*
-			ct.cache.Set(cachekey, allcoinsslugmap, 10*time.Second)
-			go func() {
-				filecache.Set(cachekey, allcoinsslugmap, 24*time.Hour)
-			}()
-		*/
 	} else {
-		ct.updateCoinsMap(allcoinsslugmap, false)
+		ct.processCoinsMap(allcoinsslugmap)
 	}
 
 	return nil
 }
 
-func (ct *Cointop) updateCoinsMap(allcoinsslugmap map[string]types.Coin, b bool) {
-	if len(ct.allcoinsslugmap) == 0 {
-		ct.allcoinsslugmap = map[string]*coin{}
-	}
+func (ct *Cointop) processCoinsMap(allcoinsslugmap map[string]types.Coin) {
+	updatecoinsmux.Lock()
+	defer updatecoinsmux.Unlock()
 	for k, v := range allcoinsslugmap {
 		last := ct.allcoinsslugmap[k]
 		ct.allcoinsslugmap[k] = &coin{
@@ -75,17 +73,15 @@ func (ct *Cointop) updateCoinsMap(allcoinsslugmap map[string]types.Coin, b bool)
 		if last != nil {
 			ct.allcoinsslugmap[k].Favorite = last.Favorite
 		}
-
-		if b {
-			ct.allcoins = append(ct.allcoins, ct.allcoinsslugmap[k])
+	}
+	if len(ct.allcoins) < len(ct.allcoinsslugmap) {
+		list := []*coin{}
+		for k := range allcoinsslugmap {
+			coin := ct.allcoinsslugmap[k]
+			list = append(list, coin)
 		}
-	}
-
-	//if len(ct.allcoins) == 0 {
-	if b {
-		//ct.sort(ct.sortby, ct.sortdesc, ct.allcoins)
-	}
-	if !b {
+		ct.allcoins = append(ct.allcoins, list...)
+	} else {
 		// update list in place without changing order
 		for i := range ct.allcoinsslugmap {
 			cm := ct.allcoinsslugmap[i]
@@ -111,4 +107,10 @@ func (ct *Cointop) updateCoinsMap(allcoinsslugmap map[string]types.Coin, b bool)
 			}
 		}
 	}
+
+	ct.updateTable()
+}
+
+func (ct *Cointop) getListCount() int {
+	return len(ct.allCoins())
 }

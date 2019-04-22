@@ -136,7 +136,7 @@ func (ct *Cointop) refreshTable() error {
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
 				color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
 				colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.Price))),
-				color.White(fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCap))),
+				color.White(fmt.Sprintf("%18s", humanize.Commaf(coin.MarketCap))),
 				color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),
 				color1h(fmt.Sprintf("%8.2f%%", coin.PercentChange1H)),
 				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
@@ -158,7 +158,9 @@ func (ct *Cointop) refreshTable() error {
 	ct.update(func() {
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
-		ct.rowChanged()
+		go ct.rowChanged()
+		go ct.updateHeaders()
+		go ct.updateMarketbar()
 		go ct.updateChart()
 	})
 
@@ -183,16 +185,14 @@ func (ct *Cointop) updateTable() error {
 			}
 		}
 		ct.coins = sliced
-		ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-		ct.refreshTable()
+		go ct.refreshTable()
 		return nil
 	}
 
 	if ct.portfoliovisible {
 		sliced = ct.getPortfolioSlice()
 		ct.coins = sliced
-		ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-		ct.refreshTable()
+		go ct.refreshTable()
 		return nil
 	}
 
@@ -223,8 +223,9 @@ func (ct *Cointop) updateTable() error {
 		sliced = allcoins[start:end]
 	}
 	ct.coins = sliced
-	ct.sort(ct.sortby, ct.sortdesc, ct.coins)
-	ct.refreshTable()
+
+	ct.sort(ct.sortby, ct.sortdesc, ct.coins, true)
+	go ct.refreshTable()
 	return nil
 }
 

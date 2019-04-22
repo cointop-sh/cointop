@@ -3,7 +3,6 @@ package cointop
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"strings"
 	"sync"
@@ -16,6 +15,7 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/table"
 	"github.com/patrickmn/go-cache"
+	log "github.com/sirupsen/logrus"
 )
 
 // TODO: clean up and optimize codebase
@@ -82,6 +82,8 @@ type Cointop struct {
 	inputview                   *gocui.View
 	inputviewname               string
 	defaultView                 string
+	apiKeys                     *apiKeys
+	limiter                     <-chan time.Time
 }
 
 // PortfolioEntry is portfolio entry
@@ -98,6 +100,11 @@ type portfolio struct {
 // Config config options
 type Config struct {
 	ConfigFilepath string
+}
+
+// apiKeys is api keys structure
+type apiKeys struct {
+	cmc string
 }
 
 var defaultConfigPath = "~/.cointop/config"
@@ -117,18 +124,19 @@ func NewCointop(config *Config) *Cointop {
 	}
 
 	ct := &Cointop{
-		api:           api.NewCMC(),
-		refreshticker: time.NewTicker(1 * time.Minute),
-		sortby:        "rank",
-		page:          0,
-		perpage:       100,
-		forcerefresh:  make(chan bool),
-		maxtablewidth: 175,
-		actionsmap:    actionsMap(),
-		shortcutkeys:  defaultShortcuts(),
+		allcoinsslugmap: make(map[string]*coin),
+		allcoins:        []*coin{},
+		refreshticker:   time.NewTicker(1 * time.Minute),
+		sortby:          "rank",
+		page:            0,
+		perpage:         100,
+		forcerefresh:    make(chan bool),
+		maxtablewidth:   175,
+		actionsmap:      actionsMap(),
+		shortcutkeys:    defaultShortcuts(),
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		favoritesbysymbol: map[string]bool{},
-		favorites:         map[string]bool{},
+		favoritesbysymbol: make(map[string]bool),
+		favorites:         make(map[string]bool),
 		cache:             cache.New(1*time.Minute, 2*time.Minute),
 		debug:             debug,
 		configFilepath:    configFilepath,
@@ -189,21 +197,36 @@ func NewCointop(config *Config) *Cointop {
 		},
 		portfolioupdatemenuviewname: "portfolioupdatemenu",
 		inputviewname:               "input",
+		apiKeys:                     new(apiKeys),
+		limiter:                     time.Tick(2 * time.Second),
 	}
+
 	err := ct.setupConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	allcoinsslugmap := map[string]types.Coin{}
+	ct.api = api.NewCMC(ct.apiKeys.cmc)
+
 	coinscachekey := "allcoinsslugmap"
-	filecache.Get(coinscachekey, &allcoinsslugmap)
-	ct.cache.Set(coinscachekey, allcoinsslugmap, 10*time.Second)
+	filecache.Get(coinscachekey, &ct.allcoinsslugmap)
+
+	for k := range ct.allcoinsslugmap {
+		ct.allcoins = append(ct.allcoins, ct.allcoinsslugmap[k])
+	}
+	if len(ct.allcoins) > 1 {
+		max := len(ct.allcoins)
+		if max > 100 {
+			max = 100
+		}
+		ct.sort(ct.sortby, ct.sortdesc, ct.allcoins, false)
+		ct.coins = ct.allcoins[0:max]
+	}
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 	// Here we're doing a lookup based on symbol and setting the favorite to the coin name instead of coin symbol.
-	for i := range allcoinsslugmap {
-		coin := allcoinsslugmap[i]
+	for i := range ct.allcoinsslugmap {
+		coin := ct.allcoinsslugmap[i]
 		for k := range ct.favoritesbysymbol {
 			if coin.Symbol == k {
 				ct.favorites[coin.Name] = true

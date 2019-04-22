@@ -14,13 +14,13 @@ func (ct *Cointop) toggleFavorite() error {
 		ct.favorites[coin.Name] = true
 		coin.Favorite = true
 	}
-	ct.updateTable()
+	go ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) toggleShowFavorites() error {
 	ct.portfoliovisible = false
 	ct.filterByFavorites = !ct.filterByFavorites
-	ct.updateTable()
+	go ct.updateTable()
 	return nil
 }

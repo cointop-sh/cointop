@@ -354,7 +354,7 @@ You can then configure the actions you want for each key:
 
 ```toml
 currency = "USD"
-defaultView = "default"
+defaultView = ""
 
 [shortcuts]
   "$" = "last_page"
@@ -422,6 +422,13 @@ defaultView = "default"
   t = "sort_column_total_supply"
   u = "sort_column_last_updated"
   v = "sort_column_24h_volume"
+
+[favorites]
+
+[portfolio]
+
+[coinmarketcap]
+  pro_api_key = ""
 ```
 
 You may specify a different config file to use by using the `-config` flag:
@@ -519,7 +526,14 @@ Frequently asked questions:
 
 - Q: How do I add my CoinMarketCap Pro API Key?
 
-  - A: Export the environment variable `CMC_PRO_API_KEY` containing the API key.
+  - A: Add the API key in the cointop config file:
+
+    ```toml
+    [coinmarketcap]
+      pro_api_key = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+    ```
+
+    Alternatively, you can export the environment variable `CMC_PRO_API_KEY` containing the API key.
 
 - Q: I installed cointop without errors but the command is not found.
 

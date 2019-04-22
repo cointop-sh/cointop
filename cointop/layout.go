@@ -71,15 +71,13 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview.Highlight = true
 		ct.tableview.SelBgColor = gocui.ColorCyan
 		ct.tableview.SelFgColor = gocui.ColorBlack
+		_, found := ct.cache.Get("allcoinsslugmap")
+		if found {
+			ct.cache.Delete("allcoinsslugmap")
+		}
 		go func() {
 			ct.updateCoins()
 			ct.updateTable()
-			_, found := ct.cache.Get("allcoinsslugmap")
-			if found {
-				ct.cache.Delete("allcoinsslugmap")
-				ct.updateCoins()
-				ct.updateTable()
-			}
 		}()
 	}
 

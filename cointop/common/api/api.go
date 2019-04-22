@@ -5,8 +5,8 @@ import (
 )
 
 // NewCMC new CoinMarketCap API
-func NewCMC() Interface {
-	return cmc.New()
+func NewCMC(apiKey string) Interface {
+	return cmc.New(apiKey)
 }
 
 // NewCC new CryptoCompare API

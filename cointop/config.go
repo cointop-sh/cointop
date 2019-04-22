@@ -12,11 +12,12 @@ import (
 var fileperm = os.FileMode(0644)
 
 type config struct {
-	Shortcuts   map[string]interface{}   `toml:"shortcuts"`
-	Favorites   map[string][]interface{} `toml:"favorites"`
-	Portfolio   map[string]interface{}   `toml:"portfolio"`
-	Currency    interface{}              `toml:"currency"`
-	DefaultView interface{}              `toml:"defaultView"`
+	Shortcuts     map[string]interface{}   `toml:"shortcuts"`
+	Favorites     map[string][]interface{} `toml:"favorites"`
+	Portfolio     map[string]interface{}   `toml:"portfolio"`
+	Currency      interface{}              `toml:"currency"`
+	DefaultView   interface{}              `toml:"defaultView"`
+	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -45,6 +46,10 @@ func (ct *Cointop) setupConfig() error {
 		return err
 	}
 	err = ct.loadDefaultViewFromConfig()
+	if err != nil {
+		return err
+	}
+	err = ct.loadAPIKeysFromConfig()
 	if err != nil {
 		return err
 	}
@@ -162,13 +167,17 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	var currencyIfc interface{} = ct.currencyconversion
 	var defaultViewIfc interface{} = ct.defaultView
+	cmcIfc := map[string]interface{}{
+		"pro_api_key": ct.apiKeys.cmc,
+	}
 
 	var inputs = &config{
-		Shortcuts:   shortcutsIfcs,
-		Favorites:   favoritesIfcs,
-		Portfolio:   portfolioIfc,
-		Currency:    currencyIfc,
-		DefaultView: defaultViewIfc,
+		Shortcuts:     shortcutsIfcs,
+		Favorites:     favoritesIfcs,
+		Portfolio:     portfolioIfc,
+		Currency:      currencyIfc,
+		DefaultView:   defaultViewIfc,
+		CoinMarketCap: cmcIfc,
 	}
 
 	var b bytes.Buffer
@@ -219,6 +228,16 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 			defaultView = "default"
 		}
 		ct.defaultView = defaultView
+	}
+	return nil
+}
+
+func (ct *Cointop) loadAPIKeysFromConfig() error {
+	for key, value := range ct.config.CoinMarketCap {
+		k := strings.TrimSpace(strings.ToLower(key))
+		if k == "pro_api_key" {
+			ct.apiKeys.cmc = value.(string)
+		}
 	}
 	return nil
 }

@@ -8,7 +8,7 @@ import (
 
 func (ct *Cointop) updateStatusbar(s string) {
 	currpage := ct.currentDisplayPage()
-	totalpages := ct.totalPages()
+	totalpages := ct.totalPagesDisplay()
 	var quitText string
 	var favoritesText string
 	var portfolioText string

@@ -1,12 +1,10 @@
 package coinmarketcap
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	apitypes "github.com/miguelmota/cointop/cointop/common/api/types"
@@ -20,9 +18,12 @@ type Service struct {
 }
 
 // New new service
-func New() *Service {
+func New(apiKey string) *Service {
+	if apiKey == "" {
+		apiKey = os.Getenv("CMC_PRO_API_KEY")
+	}
 	client := cmc.NewClient(&cmc.Config{
-		ProAPIKey: os.Getenv("CMC_PRO_API_KEY"),
+		ProAPIKey: apiKey,
 	})
 	return &Service{
 		client: client,
@@ -31,15 +32,18 @@ func New() *Service {
 
 // Ping ping API
 func (s *Service) Ping() error {
-	info, err := s.client.Cryptocurrency.Info(&cmc.InfoOptions{
-		Symbol: "BTC",
-	})
-	if err != nil {
-		return errors.New("failed to ping")
-	}
-	if info == nil {
-		return errors.New("failed to ping")
-	}
+	// TODO: notify in statusbar of failed ping (instead of fatal to make it work offline)
+	/*
+		info, err := s.client.Cryptocurrency.Info(&cmc.InfoOptions{
+			Symbol: "BTC",
+		})
+		if err != nil {
+			return errors.New("failed to ping")
+		}
+		if info == nil {
+			return errors.New("failed to ping")
+		}
+	*/
 	return nil
 }
 
@@ -81,33 +85,26 @@ func (s *Service) getLimitedCoinData(convert string, offset int) (map[string]api
 }
 
 // GetAllCoinData gets all coin data. Need to paginate through all pages
-func (s *Service) GetAllCoinData(convert string) (chan map[string]apitypes.Coin, error) {
-	var wg sync.WaitGroup
-	ch := make(chan map[string]apitypes.Coin)
+func (s *Service) GetAllCoinData(convert string, ch chan map[string]apitypes.Coin) error {
 	go func() {
-		var mutex sync.Mutex
-		maxPages := 15
+		maxPages := 10
+		defer close(ch)
 		for i := 0; i < maxPages; i++ {
-			time.Sleep(time.Duration(i) * time.Second)
-			wg.Add(1)
-			go func(j int) {
-				defer wg.Done()
-				coins, err := s.getLimitedCoinData(convert, j)
-				if err != nil {
-					return
-				}
-				mutex.Lock()
-				defer mutex.Unlock()
-				ret := make(map[string]apitypes.Coin)
-				for k, v := range coins {
-					ret[k] = v
-				}
-				ch <- ret
-			}(i)
+			if i > 0 {
+				time.Sleep(1 * time.Second)
+			}
+			coins, err := s.getLimitedCoinData(convert, i)
+			if err != nil {
+				return
+			}
+			ret := make(map[string]apitypes.Coin)
+			for k, v := range coins {
+				ret[k] = v
+			}
+			ch <- ret
 		}
-		wg.Wait()
 	}()
-	return ch, nil
+	return nil
 }
 
 // GetCoinGraphData gets coin graph data

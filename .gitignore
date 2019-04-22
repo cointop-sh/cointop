@@ -29,6 +29,8 @@ bfg.jar
 build
 dist
 bin
+main
+!main.go
 
 # flatpak
 .flatpak-builder

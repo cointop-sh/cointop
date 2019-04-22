@@ -1,7 +1,7 @@
 package cointop
 
 // TODO: make dynamic based on git tag
-const version = "1.1.3"
+const version = "1.1.4"
 
 func (ct *Cointop) version() string {
 	return version

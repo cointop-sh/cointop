@@ -1,6 +1,8 @@
 package cointop
 
-import "log"
+import (
+	log "github.com/sirupsen/logrus"
+)
 
 func (ct *Cointop) debuglog(s string) {
 	if ct.debug {

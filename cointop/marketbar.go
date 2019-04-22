@@ -78,7 +78,7 @@ func (ct *Cointop) updateMarketbar() error {
 		} else {
 			market, err = ct.api.GetGlobalMarketData(ct.currencyconversion)
 			if err != nil {
-				return err
+				filecache.Get(cachekey, &market)
 			}
 
 			ct.cache.Set(cachekey, market, 10*time.Second)
