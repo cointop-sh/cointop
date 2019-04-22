@@ -3,7 +3,6 @@ module github.com/miguelmota/cointop
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/anaskhan96/soup v1.1.1 // indirect
-	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.7.0
 	github.com/gizak/termui v2.3.0+incompatible
 	github.com/jroimartin/gocui v0.4.0
