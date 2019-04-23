@@ -10,13 +10,14 @@ import (
 // Run ...
 func Run() {
 	var v, ver, test, clean, reset bool
-	var config string
+	var config, cmcAPIKey string
 	flag.BoolVar(&v, "v", false, "Version")
 	flag.BoolVar(&ver, "version", false, "Version")
 	flag.BoolVar(&test, "test", false, "Run test")
 	flag.BoolVar(&clean, "clean", false, "Clean cache")
 	flag.BoolVar(&reset, "reset", false, "Reset config")
 	flag.StringVar(&config, "config", "", "Config filepath")
+	flag.StringVar(&cmcAPIKey, "coinmarketcap-api-key", "", "CoinMarketCap API key")
 	flag.Parse()
 	if v || ver {
 		fmt.Printf("cointop v%s", cointop.Version())
@@ -28,11 +29,14 @@ func Run() {
 		cointop.Reset()
 	} else {
 		cointop.NewCointop(&cointop.Config{
-			ConfigFilepath: config,
+			ConfigFilepath:      config,
+			CoinMarketCapAPIKey: cmcAPIKey,
 		}).Run()
 	}
 }
 
 func doTest() {
-	cointop.NewCointop(nil).Exit()
+	cointop.NewCointop(&cointop.Config{
+		NoPrompts: true,
+	}).Exit()
 }

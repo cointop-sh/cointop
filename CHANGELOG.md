@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.6] - 2019-04-23
+### Added
+- Prompt for CoinMarketCap Pro API Key
+
+## [1.1.5] - 2019-04-22
+### Fixed
+- Release archive to contain latest source code
+
 ## [1.1.4] - 2019-04-21
 ### Changed
 - CoinMarketCap legacy V2 API to Pro V1 API

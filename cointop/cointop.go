@@ -99,7 +99,9 @@ type portfolio struct {
 
 // Config config options
 type Config struct {
-	ConfigFilepath string
+	ConfigFilepath      string
+	CoinMarketCapAPIKey string
+	NoPrompts           bool
 }
 
 // apiKeys is api keys structure
@@ -204,6 +206,28 @@ func NewCointop(config *Config) *Cointop {
 	err := ct.setupConfig()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// prompt for CoinMarketCap api key if not found
+	if config.CoinMarketCapAPIKey != "" {
+		ct.apiKeys.cmc = config.CoinMarketCapAPIKey
+		if err := ct.saveConfig(); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if ct.apiKeys.cmc == "" {
+		apiKey := os.Getenv("CMC_PRO_API_KEY")
+		if apiKey == "" {
+			if !config.NoPrompts {
+				ct.apiKeys.cmc = ct.readAPIKeyFromStdin("CoinMarketCap Pro")
+			}
+		} else {
+			ct.apiKeys.cmc = apiKey
+		}
+		if err := ct.saveConfig(); err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	ct.api = api.NewCMC(ct.apiKeys.cmc)

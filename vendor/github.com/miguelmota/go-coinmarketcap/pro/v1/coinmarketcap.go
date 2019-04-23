@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 )
@@ -246,10 +245,6 @@ func NewClient(cfg *Config) *Client {
 
 	if cfg.ProAPIKey == "" {
 		cfg.ProAPIKey = os.Getenv("CMC_PRO_API_KEY")
-	}
-
-	if cfg.ProAPIKey == "" {
-		log.Fatal("Pro API Key is required")
 	}
 
 	c := &Client{
