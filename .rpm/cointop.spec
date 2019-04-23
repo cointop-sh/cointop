@@ -1,8 +1,9 @@
-%global commit      cbf81aa5e31ab334714c6cf93541170e659b710a
+%define version     1.1.5
+%global commit      4cc578ed3665800aa73b0824582b3265805e435c
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:           cointop
-Version:        1.0.6
+Version:        %{version}
 Release:        6%{?dist}
 Summary:        Terminal based application for tracking cryptocurrencies
 License:        Apache-2.0
@@ -10,7 +11,7 @@ URL:            https://cointop.sh
 Source0:        https://github.com/miguelmota/%{cointop}/archive/%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  golang >= 1.9-10
+BuildRequires:  golang >= 1.10
 
 %description
 cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
@@ -23,7 +24,7 @@ mkdir -p ./_build/src/github.com/miguelmota
 ln -s $(pwd) ./_build/src/github.com/miguelmota/%{name}
 
 export GOPATH=$(pwd)/_build:%{gopath}
-go build -ldflags=-linkmode=external -o x .
+go build -ldflags="-linkmode=external -compressdwarf=false" -o x .
 
 %install
 install -d %{buildroot}%{_bindir}

@@ -1,9 +1,13 @@
 VERSION = $$(git describe --abbrev=0 --tags)
+COMMIT_REV = $$(git rev-list -n 1 $(VERSION))
 
 all: build
 
 version:
 	@echo $(VERSION)
+
+commit_rev:
+	@echo $(COMMIT_REV)
 
 run:
 	go run main.go
@@ -109,6 +113,7 @@ rpm/lint:
 	rpmlint ~/rpmbuild/SPECS/cointop.spec
 
 rpm/dirs:
+	chmod -R a+rwx ~/rpmbuild
 	mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
 
 rpm/download:
