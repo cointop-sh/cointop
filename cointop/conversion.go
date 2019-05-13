@@ -8,7 +8,7 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
-var supportedfiatconversions = map[string]string{
+var fiatCurrencyNames = map[string]string{
 	"AUD": "Australian Dollar",
 	"BRL": "Brazilian Real",
 	"CAD": "Canadian Dollar",
@@ -43,12 +43,12 @@ var supportedfiatconversions = map[string]string{
 	"ZAR": "South African Rand",
 }
 
-var supportedcryptoconversion = map[string]string{
+var cryptocurrencyNames = map[string]string{
 	"BTC": "Bitcoin",
 	"ETH": "Ethereum",
 }
 
-var currencysymbols = map[string]string{
+var currencySymbol = map[string]string{
 	"AUD": "$",
 	"BRL": "R$",
 	"BTC": "Ƀ",
@@ -89,21 +89,24 @@ var alphanumericcharacters = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8',
 
 func (ct *Cointop) supportedCurrencyConversions() map[string]string {
 	all := map[string]string{}
-	for k, v := range supportedfiatconversions {
-		all[k] = v
+	for _, symbol := range ct.api.SupportedCurrencies() {
+		if v, ok := fiatCurrencyNames[symbol]; ok {
+			all[symbol] = v
+		}
+		if v, ok := cryptocurrencyNames[symbol]; ok {
+			all[symbol] = v
+		}
 	}
-	for k, v := range supportedcryptoconversion {
-		all[k] = v
-	}
+
 	return all
 }
 
 func (ct *Cointop) supportedFiatCurrencyConversions() map[string]string {
-	return supportedfiatconversions
+	return fiatCurrencyNames
 }
 
 func (ct *Cointop) supportedCryptoCurrencyConversions() map[string]string {
-	return supportedfiatconversions
+	return cryptocurrencyNames
 }
 
 func (ct *Cointop) sortedSupportedCurrencyConversions() []string {
@@ -203,5 +206,10 @@ func (ct *Cointop) setCurrencyConverstion(convert string) func() error {
 }
 
 func (ct *Cointop) currencySymbol() string {
-	return currencysymbols[ct.currencyconversion]
+	symbol, ok := currencySymbol[ct.currencyconversion]
+	if ok {
+		return symbol
+	}
+
+	return "$"
 }

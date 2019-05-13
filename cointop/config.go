@@ -18,41 +18,38 @@ type config struct {
 	Currency      interface{}              `toml:"currency"`
 	DefaultView   interface{}              `toml:"defaultView"`
 	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
+	API           interface{}              `toml:"api"`
 }
 
 func (ct *Cointop) setupConfig() error {
-	err := ct.createConfigIfNotExists()
-	if err != nil {
+	if err := ct.createConfigIfNotExists(); err != nil {
 		return err
 	}
-	err = ct.parseConfig()
-	if err != nil {
+	if err := ct.parseConfig(); err != nil {
 		return err
 	}
-	err = ct.loadShortcutsFromConfig()
-	if err != nil {
+	if err := ct.loadShortcutsFromConfig(); err != nil {
 		return err
 	}
-	err = ct.loadFavoritesFromConfig()
-	if err != nil {
+	if err := ct.loadFavoritesFromConfig(); err != nil {
 		return err
 	}
-	err = ct.loadPortfolioFromConfig()
-	if err != nil {
+	if err := ct.loadPortfolioFromConfig(); err != nil {
 		return err
 	}
-	err = ct.loadCurrencyFromConfig()
-	if err != nil {
+	if err := ct.loadCurrencyFromConfig(); err != nil {
 		return err
 	}
-	err = ct.loadDefaultViewFromConfig()
-	if err != nil {
+	if err := ct.loadDefaultViewFromConfig(); err != nil {
 		return err
 	}
-	err = ct.loadAPIKeysFromConfig()
-	if err != nil {
+	if err := ct.loadAPIKeysFromConfig(); err != nil {
 		return err
 	}
+	if err := ct.loadAPIChoiceFromConfig(); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -170,6 +167,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
 	}
+	var apiChoiceIfc interface{} = ct.apiChoice
 
 	var inputs = &config{
 		Shortcuts:     shortcutsIfcs,
@@ -178,6 +176,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		Currency:      currencyIfc,
 		DefaultView:   defaultViewIfc,
 		CoinMarketCap: cmcIfc,
+		API:           apiChoiceIfc,
 	}
 
 	var b bytes.Buffer
@@ -238,6 +237,15 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 		if k == "pro_api_key" {
 			ct.apiKeys.cmc = value.(string)
 		}
+	}
+	return nil
+}
+
+func (ct *Cointop) loadAPIChoiceFromConfig() error {
+	apiChoice, ok := ct.config.API.(string)
+	if ok {
+		apiChoice = strings.TrimSpace(strings.ToLower(apiChoice))
+		ct.apiChoice = apiChoice
 	}
 	return nil
 }

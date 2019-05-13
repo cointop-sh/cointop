@@ -1,12 +1,13 @@
 package api
 
 import (
+	cg "github.com/miguelmota/cointop/cointop/common/api/impl/coingecko"
 	cmc "github.com/miguelmota/cointop/cointop/common/api/impl/coinmarketcap"
 )
 
 // NewCMC new CoinMarketCap API
 func NewCMC(apiKey string) Interface {
-	return cmc.New(apiKey)
+	return cmc.NewCMC(apiKey)
 }
 
 // NewCC new CryptoCompare API
@@ -15,6 +16,6 @@ func NewCC() {
 }
 
 // NewCG new CoinGecko API
-func NewCG() {
-	// TODO
+func NewCG() Interface {
+	return cg.NewCoinGecko()
 }

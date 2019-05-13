@@ -24,8 +24,9 @@ func (ct *Cointop) updateChart() error {
 			return err
 		}
 	} else {
-		coin := ct.selectedCoinSymbol()
-		ct.chartPoints(coin)
+		symbol := ct.selectedCoinSymbol()
+		name := ct.selectedCoinName()
+		ct.chartPoints(symbol, name)
 	}
 
 	if len(ct.chartpoints) != 0 {
@@ -52,7 +53,7 @@ func (ct *Cointop) updateChart() error {
 	return nil
 }
 
-func (ct *Cointop) chartPoints(coin string) error {
+func (ct *Cointop) chartPoints(symbol string, name string) error {
 	maxX := ct.maxtablewidth - 3
 	chartpointslock.Lock()
 	defer chartpointslock.Unlock()
@@ -78,11 +79,11 @@ func (ct *Cointop) chartPoints(coin string) error {
 
 	var data []float64
 
-	keyname := coin
+	keyname := symbol
 	if keyname == "" {
 		keyname = "globaldata"
 	}
-	cachekey := strings.ToLower(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.selectedchartrange, " ", "", -1)))
+	cachekey := ct.cacheKey(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.selectedchartrange, " ", "", -1)))
 
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -92,7 +93,7 @@ func (ct *Cointop) chartPoints(coin string) error {
 	}
 
 	if len(data) == 0 {
-		if coin == "" {
+		if symbol == "" {
 			graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
 			if err != nil {
 				return nil
@@ -102,7 +103,7 @@ func (ct *Cointop) chartPoints(coin string) error {
 				data = append(data, price/1E9)
 			}
 		} else {
-			graphData, err := ct.api.GetCoinGraphData(coin, start, end)
+			graphData, err := ct.api.GetCoinGraphData(symbol, name, start, end)
 			if err != nil {
 				return nil
 			}
@@ -188,8 +189,7 @@ func (ct *Cointop) portfolioChart() error {
 		}
 
 		var graphData []float64
-		coin := p.Symbol
-		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", coin, strings.Replace(ct.selectedchartrange, " ", "", -1)))
+		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", p.Symbol, strings.Replace(ct.selectedchartrange, " ", "", -1)))
 		cached, found := ct.cache.Get(cachekey)
 		if found {
 			// cache hit
@@ -200,7 +200,7 @@ func (ct *Cointop) portfolioChart() error {
 
 			if len(graphData) == 0 {
 				time.Sleep(2 * time.Second)
-				apiGraphData, err := ct.api.GetCoinGraphData(coin, start, end)
+				apiGraphData, err := ct.api.GetCoinGraphData(p.Symbol, p.Name, start, end)
 				if err != nil {
 					return err
 				}

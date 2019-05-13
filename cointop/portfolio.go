@@ -126,7 +126,7 @@ func (ct *Cointop) setPortfolioHoldings() error {
 	return nil
 }
 
-func (ct *Cointop) portfolioEntry(c *coin) (*portfolioEntry, bool) {
+func (ct *Cointop) portfolioEntry(c *Coin) (*portfolioEntry, bool) {
 	if c == nil {
 		return &portfolioEntry{}, true
 	}
@@ -168,7 +168,7 @@ func (ct *Cointop) removePortfolioEntry(coin string) {
 	delete(ct.portfolio.Entries, strings.ToLower(coin))
 }
 
-func (ct *Cointop) portfolioEntryExists(c *coin) bool {
+func (ct *Cointop) portfolioEntryExists(c *Coin) bool {
 	_, isNew := ct.portfolioEntry(c)
 	return !isNew
 }
@@ -177,8 +177,8 @@ func (ct *Cointop) portfolioEntriesCount() int {
 	return len(ct.portfolio.Entries)
 }
 
-func (ct *Cointop) getPortfolioSlice() []*coin {
-	sliced := []*coin{}
+func (ct *Cointop) getPortfolioSlice() []*Coin {
+	sliced := []*Coin{}
 	for i := range ct.allcoins {
 		if ct.portfolioEntriesCount() == 0 {
 			break

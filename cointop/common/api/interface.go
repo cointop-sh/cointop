@@ -7,12 +7,14 @@ import (
 // Interface interface
 type Interface interface {
 	Ping() error
-	GetAllCoinData(convert string, ch chan map[string]types.Coin) error
-	GetCoinGraphData(coin string, start int64, end int64) (types.CoinGraph, error)
+	GetAllCoinData(convert string, ch chan []types.Coin) error
+	GetCoinGraphData(symbol string, name string, start int64, end int64) (types.CoinGraph, error)
 	GetGlobalMarketGraphData(start int64, end int64) (types.MarketGraph, error)
 	GetGlobalMarketData(convert string) (types.GlobalMarketData, error)
 	//GetCoinData(coin string) (types.Coin, error)
 	//GetAltcoinMarketGraphData(start int64, end int64) (types.MarketGraph, error)
 	//GetCoinPriceUSD(coin string) (float64, error)
 	//GetCoinMarkets(coin string) ([]types.Market, error)
+	CoinLink(name string) string
+	SupportedCurrencies() []string
 }

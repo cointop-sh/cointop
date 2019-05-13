@@ -9,7 +9,7 @@ import (
 
 var sortlock sync.Mutex
 
-func (ct *Cointop) sort(sortby string, desc bool, list []*coin, renderHeaders bool) {
+func (ct *Cointop) sort(sortby string, desc bool, list []*Coin, renderHeaders bool) {
 	sortlock.Lock()
 	defer sortlock.Unlock()
 	if list == nil {

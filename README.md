@@ -355,6 +355,7 @@ You can then configure the actions you want for each key:
 ```toml
 currency = "USD"
 defaultView = ""
+api = "coingecko"
 
 [shortcuts]
   "$" = "last_page"
@@ -502,11 +503,33 @@ Frequently asked questions:
 
 - Q: Where is the data from?
 
-  - A: Currently the data is from [CoinMarketCap](https://coinmarketcap.com/).
+  - A: By default, the data is from [CoinGecko](https://www.coingecko.com/). Data from [CoinMarketCap](https://coinmarketcap.com/) is another option.
+
+- Q: What APIs does it support?
+
+  - A: APIs currently supported are [CoinMarketCap](https://coinmarketcap.com/) and [CoinGecko](https://www.coingecko.com/).
 
 - Q: What coins does this support?
 
   - A: This supports any coin supported by the API being used to fetch coin information.
+
+- Q: How do I set the API to use?
+
+  - A: You can use the `--api` flag, eg. `--api coingecko`. You can also set the API choice in the config file.
+
+    ```toml
+    api = "coingecko"
+    ```
+
+    Options are: `coinmarketcap`, `coingecko`
+
+- Q: Where is the config file located?
+
+  - A: The default configuration file is located under `~/.cointop/config`
+
+- Q: What format is the configuration file in?
+
+  - A: The configuration file is in [TOML](https://en.wikipedia.org/wiki/TOML) format.
 
 - Q: Will you be supporting more coin API's in the future?
 
@@ -557,14 +580,6 @@ Frequently asked questions:
     export GOPATH=$HOME/go
     export PATH=$PATH:$GOPATH/bin
     ```
-
-- Q: Where is the config file located?
-
-  - A: The default configuration file is located under `~/.cointop/config`
-
-- Q: What format is the configuration file in?
-
-  - A: The configuration file is in [TOML](https://en.wikipedia.org/wiki/TOML) format.
 
 - Q: How do I search?
 
@@ -679,6 +694,8 @@ Frequently asked questions:
   - A: The supported fiat currencies for conversion are `AUD`, `BRL`, `CAD`, `CFH`, `CLP`, `CNY`, `CZK`, `DKK`, `EUR`, `GBP`, `HKD`, `HUF`, `IDR`, `ILS`, `INR`, `JPY`, `KRW`, `MXN`, `MYR`, `NOK`, `NZD`, `PLN`, `PHP`, `PKR`, `RUB`, `SEK`, `SGD`, `THB`, `TRY`, `TWD`, `USD`, and `ZAR`.
 
     The supported crypto currencies for conversion are `BTC` and `ETH`.
+
+    Please note that some APIs may have limited support for certain conversion formats.
 
 - Q: How do I save the selected currency to convert to?
 

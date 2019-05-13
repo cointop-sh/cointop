@@ -14,11 +14,12 @@ var updatecoinsmux sync.Mutex
 func (ct *Cointop) updateCoins() error {
 	coinslock.Lock()
 	defer coinslock.Unlock()
-	cachekey := "allcoinsslugmap"
+	cachekey := ct.cacheKey("allcoinsslugmap")
 
 	var err error
 	var allcoinsslugmap map[string]types.Coin
 	cached, found := ct.cache.Get(cachekey)
+	_ = cached
 	if found {
 		// cache hit
 		allcoinsslugmap, _ = cached.(map[string]types.Coin)
@@ -28,18 +29,14 @@ func (ct *Cointop) updateCoins() error {
 	// cache miss
 	if allcoinsslugmap == nil {
 		ct.debuglog("cache miss")
-		ch := make(chan map[string]types.Coin)
+		ch := make(chan []types.Coin)
 		err = ct.api.GetAllCoinData(ct.currencyconversion, ch)
 		if err != nil {
 			return err
 		}
 
 		for coins := range ch {
-			allcoinsslugmap := make(map[string]types.Coin)
-			for _, c := range coins {
-				allcoinsslugmap[c.Name] = c
-			}
-			go ct.processCoinsMap(allcoinsslugmap)
+			go ct.processCoins(coins)
 			ct.cache.Set(cachekey, ct.allcoinsslugmap, 10*time.Second)
 			filecache.Set(cachekey, ct.allcoinsslugmap, 24*time.Hour)
 		}
@@ -50,12 +47,22 @@ func (ct *Cointop) updateCoins() error {
 	return nil
 }
 
-func (ct *Cointop) processCoinsMap(allcoinsslugmap map[string]types.Coin) {
+func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
+	var coins []types.Coin
+	for _, v := range coinsMap {
+		coins = append(coins, v)
+	}
+
+	ct.processCoins(coins)
+}
+
+func (ct *Cointop) processCoins(coins []types.Coin) {
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
-	for k, v := range allcoinsslugmap {
+	for _, v := range coins {
+		k := v.Name
 		last := ct.allcoinsslugmap[k]
-		ct.allcoinsslugmap[k] = &coin{
+		ct.allcoinsslugmap[k] = &Coin{
 			ID:               v.ID,
 			Name:             v.Name,
 			Symbol:           v.Symbol,
@@ -75,8 +82,9 @@ func (ct *Cointop) processCoinsMap(allcoinsslugmap map[string]types.Coin) {
 		}
 	}
 	if len(ct.allcoins) < len(ct.allcoinsslugmap) {
-		list := []*coin{}
-		for k := range allcoinsslugmap {
+		list := []*Coin{}
+		for _, v := range coins {
+			k := v.Name
 			coin := ct.allcoinsslugmap[k]
 			list = append(list, coin)
 		}
@@ -108,7 +116,10 @@ func (ct *Cointop) processCoinsMap(allcoinsslugmap map[string]types.Coin) {
 		}
 	}
 
-	ct.updateTable()
+	time.AfterFunc(10*time.Millisecond, func() {
+		ct.sort(ct.sortby, ct.sortdesc, ct.coins, true)
+		ct.updateTable()
+	})
 }
 
 func (ct *Cointop) getListCount() int {

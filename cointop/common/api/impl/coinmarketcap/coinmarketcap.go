@@ -1,24 +1,30 @@
 package coinmarketcap
 
 import (
+	"errors"
 	"fmt"
 	"os"
-	"strconv"
-	"strings"
 	"time"
 
 	apitypes "github.com/miguelmota/cointop/cointop/common/api/types"
+	util "github.com/miguelmota/cointop/cointop/common/api/util"
 	cmc "github.com/miguelmota/go-coinmarketcap/pro/v1"
 	cmcv2 "github.com/miguelmota/go-coinmarketcap/v2"
 )
+
+// ErrQuoteNotFound is the error for when a quote is not found
+var ErrQuoteNotFound = errors.New("Quote not found")
+
+// ErrPingFailed is the error for when pinging the API fails
+var ErrPingFailed = errors.New("Failed to ping")
 
 // Service service
 type Service struct {
 	client *cmc.Client
 }
 
-// New new service
-func New(apiKey string) *Service {
+// NewCMC new service
+func NewCMC(apiKey string) *Service {
 	if apiKey == "" {
 		apiKey = os.Getenv("CMC_PRO_API_KEY")
 	}
@@ -32,23 +38,20 @@ func New(apiKey string) *Service {
 
 // Ping ping API
 func (s *Service) Ping() error {
-	// TODO: notify in statusbar of failed ping (instead of fatal to make it work offline)
-	/*
-		info, err := s.client.Cryptocurrency.Info(&cmc.InfoOptions{
-			Symbol: "BTC",
-		})
-		if err != nil {
-			return errors.New("failed to ping")
-		}
-		if info == nil {
-			return errors.New("failed to ping")
-		}
-	*/
+	info, err := s.client.Cryptocurrency.Info(&cmc.InfoOptions{
+		Symbol: "BTC",
+	})
+	if err != nil {
+		return ErrPingFailed
+	}
+	if info == nil {
+		return ErrPingFailed
+	}
 	return nil
 }
 
-func (s *Service) getLimitedCoinData(convert string, offset int) (map[string]apitypes.Coin, error) {
-	ret := make(map[string]apitypes.Coin)
+func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coin, error) {
+	var ret []apitypes.Coin
 	max := 100
 
 	listings, err := s.client.Cryptocurrency.LatestListings(&cmc.ListingOptions{
@@ -60,32 +63,32 @@ func (s *Service) getLimitedCoinData(convert string, offset int) (map[string]api
 		return nil, err
 	}
 	for _, v := range listings {
-		price := formatPrice(v.Quote[convert].Price, convert)
-		lastUpdated, err := time.Parse(time.RFC3339, v.LastUpdated)
-		if err != nil {
-			return nil, err
+		quote, ok := v.Quote[convert]
+		if !ok {
+			return nil, ErrQuoteNotFound
 		}
-		ret[v.Name] = apitypes.Coin{
-			ID:               strings.ToLower(v.Name),
-			Name:             v.Name,
-			Symbol:           v.Symbol,
-			Rank:             int(v.CMCRank),
-			AvailableSupply:  v.CirculatingSupply,
-			TotalSupply:      v.TotalSupply,
-			MarketCap:        float64(int(v.Quote[convert].MarketCap)),
-			Price:            price,
-			PercentChange1H:  v.Quote[convert].PercentChange1H,
-			PercentChange24H: v.Quote[convert].PercentChange24H,
-			PercentChange7D:  v.Quote[convert].PercentChange7D,
-			Volume24H:        formatVolume(v.Quote[convert].Volume24H),
-			LastUpdated:      strconv.Itoa(int(lastUpdated.Unix())),
-		}
+
+		ret = append(ret, apitypes.Coin{
+			ID:               util.FormatID(v.Name),
+			Name:             util.FormatName(v.Name),
+			Symbol:           util.FormatSymbol(v.Symbol),
+			Rank:             util.FormatRank(v.CMCRank),
+			AvailableSupply:  util.FormatSupply(v.CirculatingSupply),
+			TotalSupply:      util.FormatSupply(v.TotalSupply),
+			MarketCap:        util.FormatMarketCap(quote.MarketCap),
+			Price:            util.FormatPrice(v.Quote[convert].Price, convert),
+			PercentChange1H:  util.FormatPercentChange(quote.PercentChange1H),
+			PercentChange24H: util.FormatPercentChange(quote.PercentChange24H),
+			PercentChange7D:  util.FormatPercentChange(quote.PercentChange7D),
+			Volume24H:        util.FormatVolume(v.Quote[convert].Volume24H),
+			LastUpdated:      util.FormatLastUpdated(v.LastUpdated),
+		})
 	}
 	return ret, nil
 }
 
 // GetAllCoinData gets all coin data. Need to paginate through all pages
-func (s *Service) GetAllCoinData(convert string, ch chan map[string]apitypes.Coin) error {
+func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error {
 	go func() {
 		maxPages := 10
 		defer close(ch)
@@ -93,25 +96,23 @@ func (s *Service) GetAllCoinData(convert string, ch chan map[string]apitypes.Coi
 			if i > 0 {
 				time.Sleep(1 * time.Second)
 			}
+
 			coins, err := s.getLimitedCoinData(convert, i)
 			if err != nil {
 				return
 			}
-			ret := make(map[string]apitypes.Coin)
-			for k, v := range coins {
-				ret[k] = v
-			}
-			ch <- ret
+
+			ch <- coins
 		}
 	}()
 	return nil
 }
 
 // GetCoinGraphData gets coin graph data
-func (s *Service) GetCoinGraphData(coin string, start int64, end int64) (apitypes.CoinGraph, error) {
+func (s *Service) GetCoinGraphData(symbol string, name string, start int64, end int64) (apitypes.CoinGraph, error) {
 	ret := apitypes.CoinGraph{}
 	graphData, err := cmcv2.TickerGraph(&cmcv2.TickerGraphOptions{
-		Symbol: coin,
+		Symbol: symbol,
 		Start:  start,
 		End:    end,
 	})
@@ -163,15 +164,48 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 	return ret, nil
 }
 
-func formatPrice(price float64, convert string) float64 {
-	pricestr := fmt.Sprintf("%.2f", price)
-	if convert == "ETH" || convert == "BTC" || price < 1 {
-		pricestr = fmt.Sprintf("%.5f", price)
-	}
-	price, _ = strconv.ParseFloat(pricestr, 64)
-	return price
+// CoinLink returns the URL link for the coin
+func (s *Service) CoinLink(name string) string {
+	slug := util.NameToSlug(name)
+	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
 }
 
-func formatVolume(volume float64) float64 {
-	return float64(int64(volume))
+// SupportedCurrencies returns a list of supported currencies
+func (s *Service) SupportedCurrencies() []string {
+	return []string{
+		"BTC",
+		"ETH",
+		"AUD",
+		"BRL",
+		"CAD",
+		"CFH",
+		"CLP",
+		"CNY",
+		"CZK",
+		"DKK",
+		"EUR",
+		"GBP",
+		"HKD",
+		"HUF",
+		"IDR",
+		"ILS",
+		"INR",
+		"JPY",
+		"KRW",
+		"MXN",
+		"MYR",
+		"NOK",
+		"NZD",
+		"PLN",
+		"PHP",
+		"PKR",
+		"RUB",
+		"SEK",
+		"SGD",
+		"THB",
+		"TRY",
+		"TWD",
+		"USD",
+		"ZAR",
+	}
 }

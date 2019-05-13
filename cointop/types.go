@@ -1,6 +1,7 @@
 package cointop
 
-type coin struct {
+// Coin is the row structure
+type Coin struct {
 	ID               string
 	Name             string
 	Slug             string

@@ -1,6 +1,7 @@
 package cointop
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -20,9 +21,13 @@ import (
 
 // TODO: clean up and optimize codebase
 
+// ErrInvalidAPIChoice is error for invalid API choice
+var ErrInvalidAPIChoice = errors.New("Invalid API choice")
+
 // Cointop cointop
 type Cointop struct {
 	g                   *gocui.Gui
+	apiChoice           string
 	marketbarviewname   string
 	marketbarview       *gocui.View
 	chartview           *gocui.View
@@ -45,15 +50,15 @@ type Cointop struct {
 	sortdesc            bool
 	sortby              string
 	api                 api.Interface
-	allcoins            []*coin
-	coins               []*coin
-	allcoinsslugmap     map[string]*coin
+	allcoins            []*Coin
+	coins               []*Coin
+	allcoinsslugmap     map[string]*Coin
 	page                int
 	perpage             int
 	refreshmux          sync.Mutex
 	refreshticker       *time.Ticker
 	forcerefresh        chan bool
-	selectedcoin        *coin
+	selectedcoin        *Coin
 	actionsmap          map[string]bool
 	shortcutkeys        map[string]string
 	config              config // toml config
@@ -61,8 +66,10 @@ type Cointop struct {
 	searchfield         *gocui.View
 	searchfieldviewname string
 	searchfieldvisible  bool
+
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
-	favoritesbysymbol           map[string]bool
+	favoritesbysymbol map[string]bool
+
 	favorites                   map[string]bool
 	filterByFavorites           bool
 	savemux                     sync.Mutex
@@ -86,6 +93,12 @@ type Cointop struct {
 	limiter                     <-chan time.Time
 }
 
+// CoinMarketCap is API choice
+var CoinMarketCap = "coinmarketcap"
+
+// CoinGecko is API choice
+var CoinGecko = "coingecko"
+
 // PortfolioEntry is portfolio entry
 type portfolioEntry struct {
 	Coin     string
@@ -99,6 +112,7 @@ type portfolio struct {
 
 // Config config options
 type Config struct {
+	APIChoice           string
 	ConfigFilepath      string
 	CoinMarketCapAPIKey string
 	NoPrompts           bool
@@ -126,8 +140,9 @@ func NewCointop(config *Config) *Cointop {
 	}
 
 	ct := &Cointop{
-		allcoinsslugmap: make(map[string]*coin),
-		allcoins:        []*coin{},
+		apiChoice:       CoinGecko,
+		allcoinsslugmap: make(map[string]*Coin),
+		allcoins:        []*Coin{},
 		refreshticker:   time.NewTicker(1 * time.Minute),
 		sortby:          "rank",
 		page:            0,
@@ -216,7 +231,14 @@ func NewCointop(config *Config) *Cointop {
 		}
 	}
 
-	if ct.apiKeys.cmc == "" {
+	if config.APIChoice != "" {
+		ct.apiChoice = config.APIChoice
+		if err := ct.saveConfig(); err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if ct.apiChoice == CoinMarketCap && ct.apiKeys.cmc == "" {
 		apiKey := os.Getenv("CMC_PRO_API_KEY")
 		if apiKey == "" {
 			if !config.NoPrompts {
@@ -230,9 +252,19 @@ func NewCointop(config *Config) *Cointop {
 		}
 	}
 
-	ct.api = api.NewCMC(ct.apiKeys.cmc)
+	if ct.apiChoice == CoinGecko {
+		ct.selectedchartrange = "1Y"
+	}
 
-	coinscachekey := "allcoinsslugmap"
+	if ct.apiChoice == CoinMarketCap {
+		ct.api = api.NewCMC(ct.apiKeys.cmc)
+	} else if ct.apiChoice == CoinGecko {
+		ct.api = api.NewCG()
+	} else {
+		log.Fatal(ErrInvalidAPIChoice)
+	}
+
+	coinscachekey := ct.cacheKey("allcoinsslugmap")
 	filecache.Get(coinscachekey, &ct.allcoinsslugmap)
 
 	for k := range ct.allcoinsslugmap {
@@ -260,18 +292,21 @@ func NewCointop(config *Config) *Cointop {
 	}
 
 	var globaldata []float64
-	chartcachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
+	chartcachekey := ct.cacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
 	filecache.Get(chartcachekey, &globaldata)
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 
 	var market types.GlobalMarketData
-	marketcachekey := "market"
+	marketcachekey := ct.cacheKey("market")
 	filecache.Get(marketcachekey, &market)
 	ct.cache.Set(marketcachekey, market, 10*time.Second)
-	err = ct.api.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	// TODO: notify offline status in status bar
+	/*
+		if err := ct.api.Ping(); err != nil {
+			log.Fatal(err)
+		}
+	*/
 	return ct
 }
 

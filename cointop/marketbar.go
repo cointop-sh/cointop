@@ -65,7 +65,7 @@ func (ct *Cointop) updateMarketbar() error {
 	} else {
 		var market types.GlobalMarketData
 		var err error
-		cachekey := "market"
+		cachekey := ct.cacheKey("market")
 		cached, found := ct.cache.Get(cachekey)
 
 		if found {

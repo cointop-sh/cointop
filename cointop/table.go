@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"math"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -168,7 +169,7 @@ func (ct *Cointop) refreshTable() error {
 }
 
 func (ct *Cointop) updateTable() error {
-	sliced := []*coin{}
+	sliced := []*Coin{}
 
 	for i := range ct.allcoinsslugmap {
 		v := ct.allcoinsslugmap[i]
@@ -242,7 +243,7 @@ func (ct *Cointop) highlightedRowIndex() int {
 	return idx
 }
 
-func (ct *Cointop) highlightedRowCoin() *coin {
+func (ct *Cointop) highlightedRowCoin() *Coin {
 	idx := ct.highlightedRowIndex()
 	if len(ct.coins) == 0 {
 		return nil
@@ -255,24 +256,35 @@ func (ct *Cointop) rowLink() string {
 	if coin == nil {
 		return ""
 	}
-	slug := strings.ToLower(strings.Replace(coin.Name, " ", "-", -1))
-	// TODO: dynamic
-	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
+
+	return ct.api.CoinLink(coin.Name)
 }
 
 func (ct *Cointop) rowLinkShort() string {
-	coin := ct.highlightedRowCoin()
-	if coin == nil {
-		return ""
+	link := ct.rowLink()
+	if link != "" {
+		u, err := url.Parse(link)
+		if err != nil {
+			return ""
+		}
+
+		host := u.Hostname()
+		host = strings.Replace(host, "www.", "", -1)
+		path := u.EscapedPath()
+		parts := strings.Split(path, "/")
+		if len(parts) > 0 {
+			path = parts[len(parts)-1]
+		}
+
+		return fmt.Sprintf("http://%s/.../%s", host, path)
 	}
-	// TODO: dynamic
-	slug := strings.ToLower(strings.Replace(coin.Name, " ", "-", -1))
-	return fmt.Sprintf("http://coinmarketcap.com/.../%s", slug)
+
+	return ""
 }
 
-func (ct *Cointop) allCoins() []*coin {
+func (ct *Cointop) allCoins() []*Coin {
 	if ct.filterByFavorites {
-		var list []*coin
+		var list []*Coin
 		for i := range ct.allcoins {
 			coin := ct.allcoins[i]
 			if coin.Favorite {
@@ -283,7 +295,7 @@ func (ct *Cointop) allCoins() []*coin {
 	}
 
 	if ct.portfoliovisible {
-		var list []*coin
+		var list []*Coin
 		for i := range ct.allcoins {
 			coin := ct.allcoins[i]
 			if ct.portfolioEntryExists(coin) {
@@ -296,7 +308,7 @@ func (ct *Cointop) allCoins() []*coin {
 	return ct.allcoins
 }
 
-func (ct *Cointop) coinBySymbol(symbol string) *coin {
+func (ct *Cointop) coinBySymbol(symbol string) *Coin {
 	for i := range ct.allcoins {
 		coin := ct.allcoins[i]
 		if coin.Symbol == symbol {
