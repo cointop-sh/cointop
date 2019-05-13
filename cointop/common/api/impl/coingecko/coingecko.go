@@ -204,6 +204,7 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 		ActiveAssets:                 0,
 		ActiveMarkets:                int(market.Markets),
 	}
+
 	return ret, nil
 }
 

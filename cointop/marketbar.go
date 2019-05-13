@@ -75,7 +75,9 @@ func (ct *Cointop) updateMarketbar() error {
 			if ok {
 				ct.debuglog("soft cache hit")
 			}
-		} else {
+		}
+
+		if market.TotalMarketCapUSD == 0 {
 			market, err = ct.api.GetGlobalMarketData(ct.currencyconversion)
 			if err != nil {
 				filecache.Get(cachekey, &market)

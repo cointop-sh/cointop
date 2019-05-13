@@ -18,7 +18,7 @@ func Run() {
 	flag.BoolVar(&reset, "reset", false, "Reset config")
 	flag.StringVar(&config, "config", "", "Config filepath")
 	flag.StringVar(&cmcAPIKey, "coinmarketcap-api-key", "", "CoinMarketCap API key")
-	flag.StringVar(&apiChoice, "api", cointop.CoinMarketCap, "API choice")
+	flag.StringVar(&apiChoice, "api", cointop.CoinGecko, "API choice")
 	flag.Parse()
 	if v || ver {
 		fmt.Printf("cointop v%s", cointop.Version())
