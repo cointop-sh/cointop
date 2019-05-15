@@ -46,7 +46,7 @@ In action
 ## Features
 
 - Quick sort shortcuts
-- Custom key bindings config
+- Custom key bindings configuration
 - Vim inspired shortcut keys
 - Fast pagination
 - Charts for coins and global market graphs
@@ -55,9 +55,10 @@ In action
 - Currency conversion
 - Save and view favorite coins
 - Portfolio tracking of holdings
-- Color support
+- 256-color support
 - Help menu
 - Offline cache
+- Supports multiple coin stat APIs
 - Works on macOS, Linux, and Windows
 - It's very lightweight; can be left running indefinitely
 
@@ -755,7 +756,12 @@ Frequently asked questions:
 
 - Q: What is the size of the binary?
 
-  - A: The executable binary is ~6MB in size. Packed with [UPX](https://upx.github.io/) it's ~2.5MB
+  - A: The Go build size is ~8MB but packed with UPX it's only a ~3MB executable binary.
+
+- Q: How much memory does cointop use?
+
+  -A: Cointop uses ~15MB of memory so you can run it on a Raspberry Pi Zero if you wanted to (one reason why cointop was built using Go instead of Node.js or Python).
+
 
 - Q: How does cointop differ from [rate.sx](https://rate.sx/)?
 
