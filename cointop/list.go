@@ -37,8 +37,6 @@ func (ct *Cointop) updateCoins() error {
 
 		for coins := range ch {
 			go ct.processCoins(coins)
-			ct.cache.Set(cachekey, ct.allcoinsslugmap, 10*time.Second)
-			filecache.Set(cachekey, ct.allcoinsslugmap, 24*time.Hour)
 		}
 	} else {
 		ct.processCoinsMap(allcoinsslugmap)
@@ -59,6 +57,11 @@ func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 func (ct *Cointop) processCoins(coins []types.Coin) {
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
+
+	cachekey := ct.cacheKey("allcoinsslugmap")
+	ct.cache.Set(cachekey, ct.allcoinsslugmap, 10*time.Second)
+	filecache.Set(cachekey, ct.allcoinsslugmap, 24*time.Hour)
+
 	for _, v := range coins {
 		k := v.Name
 		last := ct.allcoinsslugmap[k]
