@@ -19,8 +19,8 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.marketbarview = v
 		ct.marketbarview.Frame = false
-		ct.marketbarview.BgColor = gocui.ColorBlack
-		ct.marketbarview.FgColor = gocui.ColorWhite
+		ct.marketbarview.BgColor = gocui.ColorDefault
+		ct.marketbarview.FgColor = gocui.ColorDefault
 		go func() {
 			ct.updateMarketbar()
 			_, found := ct.cache.Get(ct.marketbarviewname)
@@ -32,12 +32,13 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	topOffset = topOffset + 1
-	if v, err := g.SetView(ct.chartviewname, 0, topOffset, maxX, topOffset+chartHeight); err != nil {
+	if v, err := g.SetView(ct.chartviewname, 0, topOffset, maxX, topOffset+chartHeight+1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
 		ct.chartview = v
 		ct.chartview.Frame = false
+		ct.chartview.BgColor = gocui.ColorDefault
 		go func() {
 			ct.updateChart()
 			cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))

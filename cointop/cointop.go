@@ -313,6 +313,8 @@ func NewCointop(config *Config) *Cointop {
 // Run runs cointop
 func (ct *Cointop) Run() {
 	g, err := gocui.NewGui(gocui.Output256)
+	g.BgColor = gocui.ColorDefault
+
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)
 	}

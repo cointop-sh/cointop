@@ -66,6 +66,9 @@ func (ct *Cointop) chartPoints(symbol string, name string) error {
 	chart.LineColor = termui.ColorCyan
 	chart.Border = false
 
+	// NOTE: empty list means don't show x-axis labels
+	chart.DataLabels = []string{""} 
+
 	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
 	if ct.selectedchartrange == "YTD" {
 		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())

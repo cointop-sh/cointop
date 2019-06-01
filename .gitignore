@@ -25,6 +25,10 @@ bfg.jar
 *bfg-report*
 *bfg-report
 
+# vim
+*.swp
+*.swo
+
 # builds
 build
 dist
