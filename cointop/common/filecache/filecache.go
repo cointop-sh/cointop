@@ -17,8 +17,17 @@ import (
 
 const cachedir = "/tmp"
 
+var muts = make(map[string]*sync.Mutex)
+
 // Set writes item to cache
 func Set(key string, data interface{}, expire time.Duration) error {
+	if _, ok := muts[key]; !ok {
+		muts[key] = new(sync.Mutex)
+	}
+
+	muts[key].Lock()
+	defer muts[key].Unlock()
+
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
 	file := fmt.Sprintf("fcache.%s.%v", key, strconv.FormatInt(time.Now().Add(expire).Unix(), 10))
 	fpath := filepath.Join(cachedir, file)
