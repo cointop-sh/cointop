@@ -78,6 +78,8 @@ snap/remove:
 snap/build-and-deploy: snap/build snap/deploy snap/clean
 	@echo "done"
 
+snap: snap/build-and-deploy
+
 flatpak/build:
 	flatpak-builder --force-clean build-dir com.github.miguelmota.Cointop.json
 
