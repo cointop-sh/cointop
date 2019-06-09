@@ -36,7 +36,13 @@ In action
 - [Installing](#installing)
 - [Updating](#updating)
 - [Getting started](#getting-started)
+  - [Navigation](#navigation)
+  - [Favorites](#favorites)
+  - [Portfolio](#portfolio)
+  - [Search](#search)
+  - [Base Currency](#base-currency)
 - [Shortcuts](#shortcuts)
+- [Themes](#themes)
 - [Config](#config)
 - [FAQ](#faq)
 - [Mentioned in](#mentioned-in)
@@ -57,6 +63,7 @@ In action
 - Save and view favorite coins
 - Portfolio tracking of holdings
 - 256-color support
+- Custom colorschemes
 - Help menu
 - Offline cache
 - Supports multiple coin stat APIs
@@ -266,7 +273,7 @@ $ cointop
 
 - To search for coins, press <kbd>/</kbd> then enter the search query and hit <kbd>Enter</kbd>
 
-### Changing currency
+### Base Currency
 
 - To change the currency, press <kbd>c</kbd> then enter the character next to the desired currency
 
@@ -341,6 +348,34 @@ Key|Action
 <kbd>[</kbd>|Previous chart date range|
 <kbd>}</kbd>|Last chart date range|
 <kbd>{</kbd>|First chart date range|
+
+## Themes
+
+cointop supports custom themes (colorschemes).
+
+<img src="https://user-images.githubusercontent.com/168240/59164231-165b9c80-8abf-11e9-98cf-915ee37407ff.gif" alt="cointop colorschemes" width="880" />
+
+To use standard themes, clone the [colors](https://github.com/cointop-sh/colors) repository into config directory:
+
+
+```bash
+$ cd ~/.cointop
+$ git clone git@github.com:cointop-sh/colors.git
+```
+
+Then edit your config `~/.cointop/config.toml` and set the colorscheme:
+
+```toml
+colorscheme = "<COLORSCHEME_NAME>"
+```
+
+For example, if you have `matrix.toml` in `colors/` then the `colorscheme` property should be set to:
+
+```toml
+colorscheme = "matrix"
+```
+
+To create your own colorscheme, simply copy an existing colorscheme, rename it, and customize the colors.
 
 ## Config
 
@@ -525,6 +560,16 @@ Frequently asked questions:
 
     Options are: `coinmarketcap`, `coingecko`
 
+- Q: How do I change the theme (colorscheme)?
+
+  - A: You can use the `--colorscheme` flag, eg. `--colorscheme matrix`. You can also set the colorscheme choice in the config file.
+
+    ```toml
+    colorscheme = "<COLORSCHEME_NAME>"
+    ```
+
+    For more instructions, visit the [colors](https://github.com/cointop-sh/colors) repository.
+
 - Q: Where is the config file located?
 
   - A: The default configuration file is located under `~/.cointop/config.toml`
@@ -610,6 +655,10 @@ Frequently asked questions:
 - Q: What does the yellow asterisk in the row mean?
 
   - A: The yellow asterisk or star means that you've selected that coin to be a favorite.
+
+- Q: My favorites aren't being saved?
+
+  - A: Try running cointop with `--clean` flag to clear the cache which might be causing the problem.
 
 - Q: How do I add a coin to my portfolio?
 
@@ -861,4 +910,4 @@ Thank you for tips! 🙏
 
 ## License
 
-Released under the [Apache 2.0](./LICENSE.md) license.
+Released under the [Apache 2.0](./LICENSE) license.
