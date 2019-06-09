@@ -6,6 +6,8 @@ import "github.com/fatih/color"
 type Color color.Color
 
 var (
+	// Bold color
+	Bold = color.New(color.Bold).SprintFunc()
 	// Black color
 	Black = color.New(color.FgBlack).SprintFunc()
 	// BlackBg color

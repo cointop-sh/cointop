@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miguelmota/cointop/cointop/common/color"
 	"github.com/miguelmota/cointop/cointop/common/humanize"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 	"github.com/miguelmota/cointop/cointop/common/table"
@@ -35,20 +34,18 @@ func (ct *Cointop) refreshTable() error {
 		for _, coin := range ct.coins {
 			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
-			namecolor := color.White
-			colorprice := color.White
-			colorbalance := color.Cyan
-			color24h := color.White
+			colorbalance := ct.colorscheme.TableColumnPrice
+			color24h := ct.colorscheme.TableColumnChange
 			if coin.PercentChange24H > 0 {
-				color24h = color.Green
+				color24h = ct.colorscheme.TableColumnChangeUp
 			}
 			if coin.PercentChange24H < 0 {
-				color24h = color.Red
+				color24h = ct.colorscheme.TableColumnChangeDown
 			}
 			name := coin.Name
 			dots := "..."
 			star := " "
-			rank := fmt.Sprintf("%s%v", color.Yellow(star), color.White(fmt.Sprintf("%6v ", coin.Rank)))
+			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
 			if len(name) > 20 {
 				name = fmt.Sprintf("%s%s", name[0:18], dots)
 			}
@@ -60,14 +57,14 @@ func (ct *Cointop) refreshTable() error {
 
 			ct.table.AddRow(
 				rank,
-				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				ct.colorscheme.RowText(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
-				colorprice(fmt.Sprintf("%13s", humanize.Commaf(coin.Price))),
-				color.White(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
+				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
+				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
+				ct.colorscheme.TableRow(fmt.Sprintf("%13s", humanize.Commaf(coin.Price))),
+				ct.colorscheme.TableRow(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
 				colorbalance(fmt.Sprintf("%15s", humanize.Commaf(coin.Balance))),
 				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
-				color.White(fmt.Sprintf("%10.2f%%", percentHoldings)),
-				color.White(pad.Right(fmt.Sprintf("%17s", lastUpdated), 80, " ")),
+				ct.colorscheme.TableRow(fmt.Sprintf("%10.2f%%", percentHoldings)),
+				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%17s", lastUpdated), 80, " ")),
 			)
 		}
 	} else {
@@ -89,39 +86,38 @@ func (ct *Cointop) refreshTable() error {
 			}
 			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
-			namecolor := color.White
-			colorprice := color.Cyan
-			color1h := color.White
-			color24h := color.White
-			color7d := color.White
+			namecolor := ct.colorscheme.TableRow
+			color1h := ct.colorscheme.TableColumnChange
+			color24h := ct.colorscheme.TableColumnChange
+			color7d := ct.colorscheme.TableColumnChange
 			if coin.Favorite {
-				namecolor = color.Yellow
+				namecolor = ct.colorscheme.TableRowFavorite
 			}
 			if coin.PercentChange1H > 0 {
-				color1h = color.Green
+				color1h = ct.colorscheme.TableColumnChangeUp
 			}
 			if coin.PercentChange1H < 0 {
-				color1h = color.Red
+				color1h = ct.colorscheme.TableColumnChangeDown
 			}
 			if coin.PercentChange24H > 0 {
-				color24h = color.Green
+				color24h = ct.colorscheme.TableColumnChangeUp
 			}
 			if coin.PercentChange24H < 0 {
-				color24h = color.Red
+				color24h = ct.colorscheme.TableColumnChangeDown
 			}
 			if coin.PercentChange7D > 0 {
-				color7d = color.Green
+				color7d = ct.colorscheme.TableColumnChangeUp
 			}
 			if coin.PercentChange7D < 0 {
-				color7d = color.Red
+				color7d = ct.colorscheme.TableColumnChangeDown
 			}
 			name := coin.Name
 			dots := "..."
-			star := " "
+			star := ct.colorscheme.TableRow(" ")
 			if coin.Favorite {
-				star = "*"
+				star = ct.colorscheme.TableRowFavorite("*")
 			}
-			rank := fmt.Sprintf("%s%v", color.Yellow(star), color.White(fmt.Sprintf("%6v ", coin.Rank)))
+			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
 			if len(name) > 20 {
 				name = fmt.Sprintf("%s%s", name[0:18], dots)
 			}
@@ -135,16 +131,16 @@ func (ct *Cointop) refreshTable() error {
 			ct.table.AddRow(
 				rank,
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				ct.colorscheme.RowText(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
-				colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.Price))),
-				color.White(fmt.Sprintf("%18s", humanize.Commaf(coin.MarketCap))),
-				color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),
+				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
+				ct.colorscheme.TableColumnPrice(fmt.Sprintf("%12s", humanize.Commaf(coin.Price))),
+				ct.colorscheme.TableRow(fmt.Sprintf("%18s", humanize.Commaf(coin.MarketCap))),
+				ct.colorscheme.TableRow(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),
 				color1h(fmt.Sprintf("%8.2f%%", coin.PercentChange1H)),
 				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
 				color7d(fmt.Sprintf("%8.2f%%", coin.PercentChange7D)),
-				color.White(fmt.Sprintf("%21s", humanize.Commaf(coin.TotalSupply))),
-				color.White(fmt.Sprintf("%18s", humanize.Commaf(coin.AvailableSupply))),
-				color.White(fmt.Sprintf("%18s", lastUpdated)),
+				ct.colorscheme.TableRow(fmt.Sprintf("%21s", humanize.Commaf(coin.TotalSupply))),
+				ct.colorscheme.TableRow(fmt.Sprintf("%18s", humanize.Commaf(coin.AvailableSupply))),
+				ct.colorscheme.TableRow(fmt.Sprintf("%18s", lastUpdated)),
 				// TODO: add %percent of cap
 			)
 		}

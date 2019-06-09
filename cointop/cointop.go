@@ -315,16 +315,16 @@ func NewCointop(config *Config) *Cointop {
 // Run runs cointop
 func (ct *Cointop) Run() {
 	g, err := gocui.NewGui(gocui.Output256)
-	g.BgColor = gocui.ColorDefault
-
 	if err != nil {
 		log.Fatalf("new gocui: %v", err)
 	}
+
+	g.FgColor = ct.colorscheme.BaseFg()
+	g.BgColor = ct.colorscheme.BaseBg()
 	ct.g = g
 	defer g.Close()
 	g.InputEsc = true
-	//g.BgColor = gocui.ColorBlack
-	g.FgColor = gocui.ColorWhite
+
 	g.Mouse = true
 	g.Highlight = true
 	g.SetManagerFunc(ct.layout)

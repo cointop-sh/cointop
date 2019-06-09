@@ -63,10 +63,21 @@ func (ct *Cointop) createConfigIfNotExists() error {
 	if err != nil {
 		return err
 	}
+
+	// NOTE: legacy support for default path
+	path := ct.configPath()
+	oldConfigPath := strings.Replace(path, "cointop/config.toml", "cointop/config", 1)
+	if _, err := os.Stat(oldConfigPath); err == nil {
+		path = oldConfigPath
+		ct.configFilepath = oldConfigPath
+		return nil
+	}
+
 	err = ct.makeConfigFile()
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -92,14 +103,6 @@ func (ct *Cointop) makeConfigDir() error {
 func (ct *Cointop) makeConfigFile() error {
 	path := ct.configPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		// NOTE: legacy support for default path
-		oldConfigPath := strings.Replace(path, "cointop/config.toml", "cointop/config", 1)
-		if _, err := os.Stat(oldConfigPath); err == nil {
-			path = oldConfigPath
-			ct.configFilepath = oldConfigPath
-			return nil
-		}
-
 		fo, err := os.Create(path)
 		if err != nil {
 			return err
@@ -177,19 +180,22 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	var currencyIfc interface{} = ct.currencyconversion
 	var defaultViewIfc interface{} = ct.defaultView
+	var colorschemeIfc interface{} = ct.colorschemename
+
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
 	}
 	var apiChoiceIfc interface{} = ct.apiChoice
 
 	var inputs = &config{
-		Shortcuts:     shortcutsIfcs,
-		Favorites:     favoritesIfcs,
-		Portfolio:     portfolioIfc,
+		API:           apiChoiceIfc,
+		ColorScheme:   colorschemeIfc,
+		CoinMarketCap: cmcIfc,
 		Currency:      currencyIfc,
 		DefaultView:   defaultViewIfc,
-		CoinMarketCap: cmcIfc,
-		API:           apiChoiceIfc,
+		Favorites:     favoritesIfcs,
+		Shortcuts:     shortcutsIfcs,
+		Portfolio:     portfolioIfc,
 	}
 
 	var b bytes.Buffer
@@ -262,7 +268,7 @@ func (ct *Cointop) loadColorSchemeFromConfig() error {
 	var colors map[string]interface{}
 	if ct.colorschemename == "" {
 		ct.colorschemename = "cointop"
-		if _, err := toml.Decode(CointopColorscheme, &colors); err != nil {
+		if _, err := toml.Decode(DefaultColors, &colors); err != nil {
 			return err
 		}
 	} else {

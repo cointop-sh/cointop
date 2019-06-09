@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gizak/termui"
-	"github.com/miguelmota/cointop/cointop/common/color"
 	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/timeutil"
 )
@@ -47,7 +46,7 @@ func (ct *Cointop) updateChart() error {
 		}
 	}
 	ct.update(func() {
-		fmt.Fprint(ct.chartview, color.White(body))
+		fmt.Fprint(ct.chartview, ct.colorscheme.Chart(body))
 	})
 
 	return nil
@@ -62,12 +61,10 @@ func (ct *Cointop) chartPoints(symbol string, name string) error {
 
 	chart := termui.NewLineChart()
 	chart.Height = 10
-	chart.AxesColor = termui.ColorWhite
-	chart.LineColor = termui.ColorCyan
 	chart.Border = false
 
 	// NOTE: empty list means don't show x-axis labels
-	chart.DataLabels = []string{""} 
+	chart.DataLabels = []string{""}
 
 	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
 	if ct.selectedchartrange == "YTD" {
@@ -161,9 +158,10 @@ func (ct *Cointop) portfolioChart() error {
 
 	chart := termui.NewLineChart()
 	chart.Height = 10
-	chart.AxesColor = termui.ColorWhite
-	chart.LineColor = termui.ColorCyan
 	chart.Border = false
+
+	// NOTE: empty list means don't show x-axis labels
+	chart.DataLabels = []string{""}
 
 	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
 	if ct.selectedchartrange == "YTD" {

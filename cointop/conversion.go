@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/miguelmota/cointop/cointop/common/color"
+	color "github.com/miguelmota/cointop/cointop/common/color"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
@@ -128,7 +128,7 @@ func (ct *Cointop) toggleConvertMenu() error {
 }
 
 func (ct *Cointop) updateConvertMenu() {
-	header := color.GreenBg(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxtablewidth-20, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxtablewidth-20, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
 	cnt := 0
 	h := ct.viewHeight(ct.convertmenuviewname)
@@ -147,12 +147,12 @@ func (ct *Cointop) updateConvertMenu() {
 		}
 		shortcut := string(alphanumericcharacters[i])
 		if key == ct.currencyconversion {
-			shortcut = color.YellowBold("*")
-			key = color.WhiteBold(key)
-			currency = color.YellowBold(currency)
+			shortcut = ct.colorscheme.MenuLabelActive(color.Bold("*"))
+			key = ct.colorscheme.Menu(color.Bold(key))
+			currency = ct.colorscheme.MenuLabelActive(color.Bold(currency))
 		} else {
-			key = color.White(key)
-			currency = color.Yellow(currency)
+			key = ct.colorscheme.Menu(key)
+			currency = ct.colorscheme.MenuLabel(currency)
 		}
 		item := fmt.Sprintf(" [ %1s ] %4s %-34s", shortcut, key, currency)
 		cols[cnt] = append(cols[cnt], item)

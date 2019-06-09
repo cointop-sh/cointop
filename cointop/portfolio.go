@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/miguelmota/cointop/cointop/common/color"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
@@ -48,8 +47,8 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 		mode = "Add"
 		submitText = "Add"
 	}
-	header := color.GreenBg(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxtablewidth-26, " ")))
-	label := fmt.Sprintf(" Enter holdings for %s %s", color.Yellow(coin.Name), current)
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxtablewidth-26, " ")))
+	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
 	ct.update(func() {

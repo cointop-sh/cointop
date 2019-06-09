@@ -19,8 +19,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.marketbarview = v
 		ct.marketbarview.Frame = false
-		ct.marketbarview.BgColor = gocui.ColorDefault
-		ct.marketbarview.FgColor = gocui.ColorDefault
+		ct.colorscheme.SetViewColor(ct.marketbarview, "marketbar")
 		go func() {
 			ct.updateMarketbar()
 			_, found := ct.cache.Get(ct.marketbarviewname)
@@ -38,7 +37,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.chartview = v
 		ct.chartview.Frame = false
-		ct.chartview.BgColor = gocui.ColorDefault
+		ct.colorscheme.SetViewColor(ct.chartview, "chart")
 		go func() {
 			ct.updateChart()
 			cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
@@ -57,8 +56,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.headersview = v
 		ct.headersview.Frame = false
-		ct.headersview.FgColor = gocui.ColorBlack
-		ct.headersview.BgColor = gocui.ColorGreen
+		ct.colorscheme.SetViewColor(ct.headersview, "table_header")
 		go ct.updateHeaders()
 	}
 
@@ -70,8 +68,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.tableview = v
 		ct.tableview.Frame = false
 		ct.tableview.Highlight = true
-		ct.tableview.SelBgColor = gocui.ColorCyan
-		ct.tableview.SelFgColor = gocui.ColorBlack
+		ct.colorscheme.SetViewActiveColor(ct.tableview, "table_row_active")
 		_, found := ct.cache.Get("allcoinsslugmap")
 		if found {
 			ct.cache.Delete("allcoinsslugmap")
@@ -88,8 +85,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.statusbarview = v
 		ct.statusbarview.Frame = false
-		ct.statusbarview.BgColor = gocui.ColorCyan
-		ct.statusbarview.FgColor = gocui.ColorBlack
+		ct.colorscheme.SetViewColor(ct.statusbarview, "statusbar")
 		go ct.updateStatusbar("")
 	}
 
@@ -101,7 +97,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.searchfield.Editable = true
 		ct.searchfield.Wrap = true
 		ct.searchfield.Frame = false
-		ct.searchfield.FgColor = gocui.ColorWhite
+		ct.colorscheme.SetViewColor(ct.searchfield, "searchbar")
 	}
 
 	if v, err := g.SetView(ct.helpviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
@@ -110,8 +106,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.helpview = v
 		ct.helpview.Frame = false
-		ct.helpview.BgColor = gocui.ColorBlack
-		ct.helpview.FgColor = gocui.ColorWhite
+		ct.colorscheme.SetViewColor(ct.helpview, "menu")
 	}
 
 	if v, err := g.SetView(ct.portfolioupdatemenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
@@ -120,8 +115,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.portfolioupdatemenuview = v
 		ct.portfolioupdatemenuview.Frame = false
-		ct.portfolioupdatemenuview.BgColor = gocui.ColorBlack
-		ct.portfolioupdatemenuview.FgColor = gocui.ColorWhite
+		ct.colorscheme.SetViewColor(ct.portfolioupdatemenuview, "menu")
 	}
 
 	if v, err := g.SetView(ct.inputviewname, 3, 6, 30, 8); err != nil {
@@ -132,8 +126,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.inputview.Frame = true
 		ct.inputview.Editable = true
 		ct.inputview.Wrap = true
-		ct.inputview.BgColor = gocui.ColorBlack
-		ct.inputview.FgColor = gocui.ColorWhite
+		ct.colorscheme.SetViewColor(ct.inputview, "menu")
 	}
 
 	if v, err := g.SetView(ct.convertmenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
@@ -142,8 +135,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		ct.convertmenuview = v
 		ct.convertmenuview.Frame = false
-		ct.convertmenuview.BgColor = gocui.ColorBlack
-		ct.convertmenuview.FgColor = gocui.ColorWhite
+		ct.colorscheme.SetViewColor(ct.convertmenuview, "menu")
 
 		// run only once on init.
 		// this bit of code should be at the bottom

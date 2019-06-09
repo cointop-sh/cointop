@@ -14,7 +14,10 @@ import (
 
 func (ct *Cointop) updateMarketbar() error {
 	maxX := ct.width()
-	logo := fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
+	logo := "❯❯❯cointop"
+	if ct.colorschemename == "cointop" {
+		logo = fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
+	}
 	var content string
 
 	if ct.portfoliovisible {
@@ -30,9 +33,9 @@ func (ct *Cointop) updateMarketbar() error {
 		var charttitle string
 		if chartname == "" {
 			chartname = "Portfolio"
-			charttitle = color.Cyan(chartname)
+			charttitle = ct.colorscheme.MarketBarLabelActive(chartname)
 		} else {
-			charttitle = fmt.Sprintf("Portfolio - %s", color.Cyan(chartname))
+			charttitle = fmt.Sprintf("Portfolio - %s", ct.colorscheme.MarketBarLabelActive(chartname))
 		}
 
 		var percentChange24H float64
@@ -44,14 +47,14 @@ func (ct *Cointop) updateMarketbar() error {
 			percentChange24H += n
 		}
 
-		color24h := color.White
+		color24h := ct.colorscheme.MarketbarSprintf()
 		arrow := ""
 		if percentChange24H > 0 {
-			color24h = color.Green
+			color24h = ct.colorscheme.MarketbarChangeUpSprintf()
 			arrow = "▲"
 		}
 		if percentChange24H < 0 {
-			color24h = color.Red
+			color24h = ct.colorscheme.MarketbarChangeDownSprintf()
 			arrow = "▼"
 		}
 
@@ -59,7 +62,7 @@ func (ct *Cointop) updateMarketbar() error {
 			"[ Chart: %s %s ] Total Portfolio Value: %s • 24H: %s",
 			charttitle,
 			timeframe,
-			color.Cyan(fmt.Sprintf("%s%s", ct.currencySymbol(), totalstr)),
+			ct.colorscheme.MarketBarLabelActive(fmt.Sprintf("%s%s", ct.currencySymbol(), totalstr)),
 			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
 		)
 	} else {
@@ -97,7 +100,7 @@ func (ct *Cointop) updateMarketbar() error {
 
 		content = fmt.Sprintf(
 			"[ Chart: %s %s ] Global ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
-			color.Cyan(chartname),
+			ct.colorscheme.MarketBarLabelActive(chartname),
 			timeframe,
 			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.TotalMarketCapUSD)),
 			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.Total24HVolumeUSD)),
@@ -107,6 +110,7 @@ func (ct *Cointop) updateMarketbar() error {
 
 	content = fmt.Sprintf("%s %s", logo, content)
 	content = pad.Right(content, maxX, " ")
+	content = ct.colorscheme.Marketbar(content)
 
 	ct.update(func() {
 		ct.marketbarview.Clear()

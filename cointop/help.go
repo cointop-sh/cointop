@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/miguelmota/cointop/cointop/common/color"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
@@ -23,7 +22,7 @@ func (ct *Cointop) updateHelp() {
 	}
 	sort.Strings(keys)
 
-	header := color.GreenBg(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxtablewidth-10, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxtablewidth-10, " ")))
 	cnt := 0
 	h := ct.viewHeight(ct.helpviewname)
 	percol := h - 6
@@ -36,7 +35,7 @@ func (ct *Cointop) updateHelp() {
 		if cnt%percol == 0 {
 			cnt = 0
 		}
-		item := fmt.Sprintf("%10s %-40s", k, color.Yellow(v))
+		item := fmt.Sprintf("%10s %-40s", k, ct.colorscheme.MenuLabel(v))
 		cols[cnt] = append(cols[cnt], item)
 		cnt = cnt + 1
 	}
