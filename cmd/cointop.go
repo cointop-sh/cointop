@@ -10,7 +10,7 @@ import (
 // Run ...
 func Run() {
 	var v, ver, test, clean, reset bool
-	var config, cmcAPIKey, apiChoice string
+	var config, cmcAPIKey, apiChoice, colorscheme string
 	flag.BoolVar(&v, "v", false, "Version")
 	flag.BoolVar(&ver, "version", false, "Version")
 	flag.BoolVar(&test, "test", false, "Run test")
@@ -19,6 +19,7 @@ func Run() {
 	flag.StringVar(&config, "config", "", "Config filepath")
 	flag.StringVar(&cmcAPIKey, "coinmarketcap-api-key", "", "CoinMarketCap API key")
 	flag.StringVar(&apiChoice, "api", cointop.CoinGecko, "API choice")
+	flag.StringVar(&colorscheme, "colorscheme", "", "Colorscheme name")
 	flag.Parse()
 	if v || ver {
 		fmt.Printf("cointop v%s", cointop.Version())
@@ -33,6 +34,7 @@ func Run() {
 			ConfigFilepath:      config,
 			CoinMarketCapAPIKey: cmcAPIKey,
 			APIChoice:           apiChoice,
+			Colorscheme:         colorscheme,
 		}).Run()
 	}
 }

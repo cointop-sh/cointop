@@ -20,7 +20,7 @@ type config struct {
 	DefaultView   interface{}              `toml:"defaultView"`
 	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
 	API           interface{}              `toml:"api"`
-	ColorScheme   interface{}              `toml:"colorscheme"`
+	Colorscheme   interface{}              `toml:"colorscheme"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -51,7 +51,7 @@ func (ct *Cointop) setupConfig() error {
 	if err := ct.loadAPIChoiceFromConfig(); err != nil {
 		return err
 	}
-	if err := ct.loadColorSchemeFromConfig(); err != nil {
+	if err := ct.loadColorschemeFromConfig(); err != nil {
 		return err
 	}
 
@@ -189,7 +189,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	var inputs = &config{
 		API:           apiChoiceIfc,
-		ColorScheme:   colorschemeIfc,
+		Colorscheme:   colorschemeIfc,
 		CoinMarketCap: cmcIfc,
 		Currency:      currencyIfc,
 		DefaultView:   defaultViewIfc,
@@ -260,27 +260,42 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 	return nil
 }
 
-func (ct *Cointop) loadColorSchemeFromConfig() error {
-	if colorscheme, ok := ct.config.ColorScheme.(string); ok {
+func (ct *Cointop) loadColorschemeFromConfig() error {
+	if colorscheme, ok := ct.config.Colorscheme.(string); ok {
 		ct.colorschemename = colorscheme
 	}
 
+	return nil
+}
+
+func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 	var colors map[string]interface{}
 	if ct.colorschemename == "" {
-		ct.colorschemename = "cointop"
+		ct.colorschemename = defaultColorscheme
 		if _, err := toml.Decode(DefaultColors, &colors); err != nil {
-			return err
+			return nil, err
 		}
 	} else {
 		path := normalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemename))
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
+			if ct.colorschemename == "cointop" {
+				if _, err := toml.Decode(DefaultColors, &colors); err != nil {
+					return nil, err
+				}
+
+				return colors, nil
+			}
+
+			return nil, fmt.Errorf("The colorscheme file %q was not found.\n\nFor help and colorschemes, please visit: https://github.com/cointop-sh/colors", path)
+		}
+
 		if _, err := toml.DecodeFile(path, &colors); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	ct.colorscheme = NewColorScheme(colors)
-
-	return nil
+	return colors, nil
 }
 
 func (ct *Cointop) loadAPIChoiceFromConfig() error {

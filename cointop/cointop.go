@@ -29,7 +29,7 @@ type Cointop struct {
 	g                   *gocui.Gui
 	apiChoice           string
 	colorschemename     string
-	colorscheme         *ColorScheme
+	colorscheme         *Colorscheme
 	marketbarviewname   string
 	marketbarview       *gocui.View
 	chartview           *gocui.View
@@ -115,6 +115,7 @@ type portfolio struct {
 // Config config options
 type Config struct {
 	APIChoice           string
+	Colorscheme         string
 	ConfigFilepath      string
 	CoinMarketCapAPIKey string
 	NoPrompts           bool
@@ -126,6 +127,7 @@ type apiKeys struct {
 }
 
 var defaultConfigPath = "~/.cointop/config.toml"
+var defaultColorscheme = "cointop"
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) *Cointop {
@@ -232,6 +234,16 @@ func NewCointop(config *Config) *Cointop {
 			log.Fatal(err)
 		}
 	}
+
+	if config.Colorscheme != "" {
+		ct.colorschemename = config.Colorscheme
+	}
+
+	colors, err := ct.getColorschemeColors()
+	if err != nil {
+		log.Fatal(err)
+	}
+	ct.colorscheme = NewColorscheme(colors)
 
 	if config.APIChoice != "" {
 		ct.apiChoice = config.APIChoice
