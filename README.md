@@ -42,7 +42,7 @@ In action
   - [Search](#search)
   - [Base Currency](#base-currency)
 - [Shortcuts](#shortcuts)
-- [Themes](#themes)
+- [Colorschemes](#colorschemes)
 - [Config](#config)
 - [FAQ](#faq)
 - [Mentioned in](#mentioned-in)
@@ -349,13 +349,13 @@ Key|Action
 <kbd>}</kbd>|Last chart date range|
 <kbd>{</kbd>|First chart date range|
 
-## Themes
+## Colorschemes
 
-cointop supports custom themes (colorschemes).
+cointop supports custom colorschemes (themes).
 
 <img src="https://user-images.githubusercontent.com/168240/59164231-165b9c80-8abf-11e9-98cf-915ee37407ff.gif" alt="cointop colorschemes" width="880" />
 
-To use standard themes, clone the [colors](https://github.com/cointop-sh/colors) repository into config directory:
+To use standard colorschemes, clone the [colors](https://github.com/cointop-sh/colors) repository into the config directory:
 
 
 ```bash
@@ -363,13 +363,13 @@ $ cd ~/.cointop
 $ git clone git@github.com:cointop-sh/colors.git
 ```
 
-Then edit your config `~/.cointop/config.toml` and set the colorscheme:
+Then edit your config `~/.cointop/config.toml` and set the colorscheme you want to use:
 
 ```toml
-colorscheme = "<COLORSCHEME_NAME>"
+colorscheme = "<colorscheme>"
 ```
 
-For example, if you have `matrix.toml` in `colors/` then the `colorscheme` property should be set to:
+For example, if you have `matrix.toml` in `~/.cointop/colors/` then the `colorscheme` property should be set to:
 
 ```toml
 colorscheme = "matrix"
@@ -393,6 +393,7 @@ You can then configure the actions you want for each key:
 currency = "USD"
 defaultView = ""
 api = "coingecko"
+colorscheme = "cointop"
 
 [shortcuts]
   "$" = "last_page"
@@ -560,15 +561,19 @@ Frequently asked questions:
 
     Options are: `coinmarketcap`, `coingecko`
 
-- Q: How do I change the theme (colorscheme)?
+- Q: How do I change the colorscheme (theme)?
 
   - A: You can use the `--colorscheme` flag, eg. `--colorscheme matrix`. You can also set the colorscheme choice in the config file.
 
     ```toml
-    colorscheme = "<COLORSCHEME_NAME>"
+    colorscheme = "<colorscheme>"
     ```
 
     For more instructions, visit the [colors](https://github.com/cointop-sh/colors) repository.
+
+- Q: How do I create a custom colorscheme?
+
+  - A: Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
 
 - Q: Where is the config file located?
 
