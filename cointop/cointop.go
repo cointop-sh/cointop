@@ -28,6 +28,8 @@ var ErrInvalidAPIChoice = errors.New("Invalid API choice")
 type Cointop struct {
 	g                   *gocui.Gui
 	apiChoice           string
+	colorschemename     string
+	colorscheme         *ColorScheme
 	marketbarviewname   string
 	marketbarview       *gocui.View
 	chartview           *gocui.View
@@ -123,7 +125,7 @@ type apiKeys struct {
 	cmc string
 }
 
-var defaultConfigPath = "~/.cointop/config"
+var defaultConfigPath = "~/.cointop/config.toml"
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) *Cointop {

@@ -61,7 +61,7 @@ func (ct *Cointop) refreshTable() error {
 			ct.table.AddRow(
 				rank,
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
+				ct.colorscheme.RowText(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
 				colorprice(fmt.Sprintf("%13s", humanize.Commaf(coin.Price))),
 				color.White(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
 				colorbalance(fmt.Sprintf("%15s", humanize.Commaf(coin.Balance))),
@@ -135,7 +135,7 @@ func (ct *Cointop) refreshTable() error {
 			ct.table.AddRow(
 				rank,
 				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				color.White(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
+				ct.colorscheme.RowText(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
 				colorprice(fmt.Sprintf("%12s", humanize.Commaf(coin.Price))),
 				color.White(fmt.Sprintf("%18s", humanize.Commaf(coin.MarketCap))),
 				color.White(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),

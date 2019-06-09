@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -19,6 +20,7 @@ type config struct {
 	DefaultView   interface{}              `toml:"defaultView"`
 	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
 	API           interface{}              `toml:"api"`
+	ColorScheme   interface{}              `toml:"colorscheme"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -47,6 +49,9 @@ func (ct *Cointop) setupConfig() error {
 		return err
 	}
 	if err := ct.loadAPIChoiceFromConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadColorSchemeFromConfig(); err != nil {
 		return err
 	}
 
@@ -87,6 +92,14 @@ func (ct *Cointop) makeConfigDir() error {
 func (ct *Cointop) makeConfigFile() error {
 	path := ct.configPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
+		// NOTE: legacy support for default path
+		oldConfigPath := strings.Replace(path, "cointop/config.toml", "cointop/config", 1)
+		if _, err := os.Stat(oldConfigPath); err == nil {
+			path = oldConfigPath
+			ct.configFilepath = oldConfigPath
+			return nil
+		}
+
 		fo, err := os.Create(path)
 		if err != nil {
 			return err
@@ -238,6 +251,29 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 			ct.apiKeys.cmc = value.(string)
 		}
 	}
+	return nil
+}
+
+func (ct *Cointop) loadColorSchemeFromConfig() error {
+	if colorscheme, ok := ct.config.ColorScheme.(string); ok {
+		ct.colorschemename = colorscheme
+	}
+
+	var colors map[string]interface{}
+	if ct.colorschemename == "" {
+		ct.colorschemename = "cointop"
+		if _, err := toml.Decode(CointopColorscheme, &colors); err != nil {
+			return err
+		}
+	} else {
+		path := normalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemename))
+		if _, err := toml.DecodeFile(path, &colors); err != nil {
+			return err
+		}
+	}
+
+	ct.colorscheme = NewColorScheme(colors)
+
 	return nil
 }
 

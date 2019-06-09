@@ -347,12 +347,12 @@ Key|Action
 The first time you run cointop, it'll create a config file in:
 
 ```
-~/.cointop/config
+~/.cointop/config.toml
 ```
 
 You can then configure the actions you want for each key:
 
-(default `~/.cointop/config`)
+(default `~/.cointop/config.toml`)
 
 ```toml
 currency = "USD"
@@ -527,7 +527,7 @@ Frequently asked questions:
 
 - Q: Where is the config file located?
 
-  - A: The default configuration file is located under `~/.cointop/config`
+  - A: The default configuration file is located under `~/.cointop/config.toml`
 
 - Q: What format is the configuration file in?
 
@@ -721,15 +721,15 @@ Frequently asked questions:
 
 - Q: How do I set the favorites view to be the default view?
 
-  - A: In `~/.cointop/config`, set `defaultView = "favorites"`
+  - A: In `~/.cointop/config.toml`, set `defaultView = "favorites"`
 
 - Q: How do I set the portfolio view to be the default view?
 
-  - A: In `~/.cointop/config`, set `defaultView = "portfolio"`
+  - A: In `~/.cointop/config.toml`, set `defaultView = "portfolio"`
 
 - Q: How do I set the table view to be the default view?
 
-  - A: In `~/.cointop/config`, set `defaultView = "default"`
+  - A: In `~/.cointop/config.toml`, set `defaultView = "default"`
 
 - Q: How can use a different config file other than the default?
 
