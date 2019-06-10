@@ -1,8 +1,9 @@
 package cointop
 
 import (
-	"github.com/fatih/color"
-	"github.com/jroimartin/gocui"
+	fcolor "github.com/fatih/color"
+	gocui "github.com/jroimartin/gocui"
+	xtermcolor "github.com/tomnomnom/xtermcolor"
 )
 
 // colorschemeColors ..
@@ -20,29 +21,29 @@ type Colorscheme struct {
 	cache  colorCache
 }
 
-var fgcolorschemeColorsMap = map[string]color.Attribute{
-	"black":   color.FgBlack,
-	"blue":    color.FgBlue,
-	"cyan":    color.FgCyan,
-	"green":   color.FgGreen,
-	"magenta": color.FgMagenta,
-	"red":     color.FgRed,
-	"white":   color.FgWhite,
-	"yellow":  color.FgYellow,
+var fgcolorschemeColorsMap = map[string]fcolor.Attribute{
+	"black":   fcolor.FgBlack,
+	"blue":    fcolor.FgBlue,
+	"cyan":    fcolor.FgCyan,
+	"green":   fcolor.FgGreen,
+	"magenta": fcolor.FgMagenta,
+	"red":     fcolor.FgRed,
+	"white":   fcolor.FgWhite,
+	"yellow":  fcolor.FgYellow,
 }
 
-var bgcolorschemeColorsMap = map[string]color.Attribute{
-	"black":   color.BgBlack,
-	"blue":    color.BgBlue,
-	"cyan":    color.BgCyan,
-	"green":   color.BgGreen,
-	"magenta": color.BgMagenta,
-	"red":     color.BgRed,
-	"white":   color.BgWhite,
-	"yellow":  color.BgYellow,
+var bgcolorschemeColorsMap = map[string]fcolor.Attribute{
+	"black":   fcolor.BgBlack,
+	"blue":    fcolor.BgBlue,
+	"cyan":    fcolor.BgCyan,
+	"green":   fcolor.BgGreen,
+	"magenta": fcolor.BgMagenta,
+	"red":     fcolor.BgRed,
+	"white":   fcolor.BgWhite,
+	"yellow":  fcolor.BgYellow,
 }
 
-var gocuicolorschemeColorsMap = map[string]gocui.Attribute{
+var gocuiColorschemeColorsMap = map[string]gocui.Attribute{
 	"black":   gocui.ColorBlack,
 	"blue":    gocui.ColorBlue,
 	"cyan":    gocui.ColorCyan,
@@ -241,29 +242,29 @@ func (c *Colorscheme) toSprintf(name string) ISprintf {
 		return cached
 	}
 
-	var colors []color.Attribute
+	var attrs []fcolor.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.toFgAttr(v); ok {
-			colors = append(colors, fg)
+			attrs = append(attrs, fg)
 		}
 	}
 	if v, ok := c.colors[name+"_bg"].(string); ok {
 		if bg, ok := c.toBgAttr(v); ok {
-			colors = append(colors, bg)
+			attrs = append(attrs, bg)
 		}
 	}
 	if v, ok := c.colors[name+"_bold"].(bool); ok {
 		if bold, ok := c.toBoldAttr(v); ok {
-			colors = append(colors, bold)
+			attrs = append(attrs, bold)
 		}
 	}
 	if v, ok := c.colors[name+"_underline"].(bool); ok {
 		if underline, ok := c.toUnderlineAttr(v); ok {
-			colors = append(colors, underline)
+			attrs = append(attrs, underline)
 		}
 	}
 
-	c.cache[name] = color.New(colors...).SprintFunc()
+	c.cache[name] = fcolor.New(attrs...).SprintFunc()
 	return c.cache[name]
 }
 
@@ -291,25 +292,55 @@ func (c *Colorscheme) gocuiBgColor(name string) gocui.Attribute {
 	return gocui.ColorDefault
 }
 
-func (c *Colorscheme) toFgAttr(k string) (color.Attribute, bool) {
-	attr, ok := fgcolorschemeColorsMap[k]
-	return attr, ok
+func (c *Colorscheme) toFgAttr(v string) (fcolor.Attribute, bool) {
+	if attr, ok := fgcolorschemeColorsMap[v]; ok {
+		return attr, true
+	}
+
+	if code, ok := hexToAnsi(v); ok {
+		return fcolor.Attribute(code), true
+	}
+
+	return 0, false
 }
 
-func (c *Colorscheme) toBgAttr(k string) (color.Attribute, bool) {
-	attr, ok := bgcolorschemeColorsMap[k]
-	return attr, ok
+func (c *Colorscheme) toBgAttr(v string) (fcolor.Attribute, bool) {
+	if attr, ok := bgcolorschemeColorsMap[v]; ok {
+		return attr, true
+	}
+
+	if code, ok := hexToAnsi(v); ok {
+		return fcolor.Attribute(code), true
+	}
+
+	return 0, false
 }
 
-func (c *Colorscheme) toBoldAttr(v bool) (color.Attribute, bool) {
-	return color.Bold, v
+func (c *Colorscheme) toBoldAttr(v bool) (fcolor.Attribute, bool) {
+	return fcolor.Bold, v
 }
 
-func (c *Colorscheme) toUnderlineAttr(v bool) (color.Attribute, bool) {
-	return color.Underline, v
+func (c *Colorscheme) toUnderlineAttr(v bool) (fcolor.Attribute, bool) {
+	return fcolor.Underline, v
 }
 
-func (c *Colorscheme) toGocuiAttr(k string) (gocui.Attribute, bool) {
-	attr, ok := gocuicolorschemeColorsMap[k]
-	return attr, ok
+func (c *Colorscheme) toGocuiAttr(v string) (gocui.Attribute, bool) {
+	if attr, ok := gocuiColorschemeColorsMap[v]; ok {
+		return attr, true
+	}
+
+	if code, ok := hexToAnsi(v); ok {
+		return gocui.Attribute(code), true
+	}
+
+	return 0, false
+}
+
+func hexToAnsi(h string) (uint8, bool) {
+	code, err := xtermcolor.FromHexStr(h)
+	if err != nil {
+		return 0, false
+	}
+
+	return code, true
 }
