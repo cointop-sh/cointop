@@ -15,6 +15,8 @@ run:
 deps:
 	GO111MODULE=on go mod vendor
 
+vendor: deps
+
 debug:
 	DEBUG=1 go run main.go
 

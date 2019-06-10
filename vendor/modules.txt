@@ -2,8 +2,6 @@
 github.com/BurntSushi/toml
 # github.com/anaskhan96/soup v1.1.1
 github.com/anaskhan96/soup
-# github.com/davecgh/go-spew v1.1.1
-github.com/davecgh/go-spew/spew
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
 # github.com/gizak/termui v2.3.0+incompatible
@@ -32,10 +30,8 @@ github.com/nsf/termbox-go
 github.com/patrickmn/go-cache
 # github.com/sirupsen/logrus v1.4.1
 github.com/sirupsen/logrus
-# github.com/superoo7/go-gecko v0.0.0-20190508102000-07de9a7cf28c
-github.com/superoo7/go-gecko/v3
-github.com/superoo7/go-gecko/v3/types
-github.com/superoo7/go-gecko/format
+# github.com/tomnomnom/xtermcolor v0.0.0-20160428124646-b78803f00a7e
+github.com/tomnomnom/xtermcolor
 # golang.org/x/net v0.0.0-20190415214537-1da14a5a36f2
 golang.org/x/net/html
 golang.org/x/net/html/atom

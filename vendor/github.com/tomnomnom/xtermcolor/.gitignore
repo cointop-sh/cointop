@@ -1,0 +1,4 @@
+*.swp
+examples/examples
+cmd/xtermcolor/xtermcolor
+xtermcolor
