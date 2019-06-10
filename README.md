@@ -369,13 +369,21 @@ Then edit your config `~/.cointop/config.toml` and set the colorscheme you want 
 colorscheme = "<colorscheme>"
 ```
 
+The colorscheme name is the name of the colorscheme TOML file.
+
 For example, if you have `matrix.toml` in `~/.cointop/colors/` then the `colorscheme` property should be set to:
 
 ```toml
 colorscheme = "matrix"
 ```
 
-To create your own colorscheme, simply copy an existing colorscheme, rename it, and customize the colors.
+Alternatively, you can run cointop with the `--colorscheme` flag to set the colorscheme:
+
+```bash
+$ cointop --colorscheme matrix
+```
+
+To create your own colorscheme; simply copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml), rename it, and customize the colors.
 
 ## Config
 
