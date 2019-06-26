@@ -809,6 +809,22 @@ Frequently asked questions:
 
   - A: Sometimes the coin APIs will make updates and break things. If you see this problem please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
 
+- Q: How can run cointop with just the table?
+
+  - A: Run cointop with the `--only-table` flag.
+
+- Q: How can I hide the top marketbar?
+
+  - A: Run cointop with the `--hide-marketbar` flag.
+
+- Q: How can I hide the chart?
+
+  - A: Run cointop with the `--hide-chart` flag.
+
+- Q: How can I hide the bottom statusbar?
+
+  - A: Run cointop with the `--hide-statusbar` flag.
+
 - Q: How can I delete the cache?
 
   - A: Run `cointop -clean` to delete the cache files. Cointop will generate new cache files after fetching data.

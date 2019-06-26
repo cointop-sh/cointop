@@ -1,6 +1,8 @@
 package cointop
 
 import (
+	"strconv"
+
 	fcolor "github.com/fatih/color"
 	gocui "github.com/jroimartin/gocui"
 	xtermcolor "github.com/tomnomnom/xtermcolor"
@@ -337,6 +339,17 @@ func (c *Colorscheme) toGocuiAttr(v string) (gocui.Attribute, bool) {
 }
 
 func hexToAnsi(h string) (uint8, bool) {
+	if h == "" {
+		return 0, false
+	}
+
+	n, err := strconv.Atoi(h)
+	if err == nil {
+		if n <= 255 {
+			return uint8(n), true
+		}
+	}
+
 	code, err := xtermcolor.FromHexStr(h)
 	if err != nil {
 		return 0, false
@@ -344,3 +357,5 @@ func hexToAnsi(h string) (uint8, bool) {
 
 	return code, true
 }
+
+// gocui can use xterm colors

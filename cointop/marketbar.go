@@ -13,6 +13,10 @@ import (
 )
 
 func (ct *Cointop) updateMarketbar() error {
+	if ct.marketbarview == nil {
+		return nil
+	}
+
 	maxX := ct.width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemename == "cointop" {
@@ -58,10 +62,18 @@ func (ct *Cointop) updateMarketbar() error {
 			arrow = "▼"
 		}
 
+		chartInfo := ""
+		if !ct.hideChart {
+			chartInfo = fmt.Sprintf(
+				"[ Chart: %s %s ] ",
+				charttitle,
+				timeframe,
+			)
+		}
+
 		content = fmt.Sprintf(
-			"[ Chart: %s %s ] Total Portfolio Value: %s • 24H: %s",
-			charttitle,
-			timeframe,
+			"%sTotal Portfolio Value: %s • 24H: %s",
+			chartInfo,
 			ct.colorscheme.MarketBarLabelActive(fmt.Sprintf("%s%s", ct.currencySymbol(), totalstr)),
 			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
 		)
@@ -98,10 +110,18 @@ func (ct *Cointop) updateMarketbar() error {
 			chartname = "Global"
 		}
 
+		chartInfo := ""
+		if !ct.hideChart {
+			chartInfo = fmt.Sprintf(
+				"[ Chart: %s %s ] ",
+				ct.colorscheme.MarketBarLabelActive(chartname),
+				timeframe,
+			)
+		}
+
 		content = fmt.Sprintf(
-			"[ Chart: %s %s ] Global ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
-			ct.colorscheme.MarketBarLabelActive(chartname),
-			timeframe,
+			"%sGlobal ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
+			chartInfo,
 			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.TotalMarketCapUSD)),
 			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.Total24HVolumeUSD)),
 			market.BitcoinPercentageOfMarketCap,

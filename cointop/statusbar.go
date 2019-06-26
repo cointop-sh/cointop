@@ -6,7 +6,11 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
-func (ct *Cointop) updateStatusbar(s string) {
+func (ct *Cointop) updateStatusbar(s string) error {
+	if ct.statusbarview == nil {
+		return nil
+	}
+
 	currpage := ct.currentDisplayPage()
 	totalpages := ct.totalPagesDisplay()
 	var quitText string
@@ -36,6 +40,8 @@ func (ct *Cointop) updateStatusbar(s string) {
 		str = str[:len(str)-len(v)+2] + v
 		fmt.Fprintln(ct.statusbarview, str)
 	})
+
+	return nil
 }
 
 func (ct *Cointop) refreshRowLink() {

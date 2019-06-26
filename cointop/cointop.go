@@ -93,6 +93,10 @@ type Cointop struct {
 	defaultView                 string
 	apiKeys                     *apiKeys
 	limiter                     <-chan time.Time
+	hideMarketbar               bool
+	hideChart                   bool
+	hideStatusbar               bool
+	onlyTable                   bool
 }
 
 // CoinMarketCap is API choice
@@ -119,6 +123,10 @@ type Config struct {
 	ConfigFilepath      string
 	CoinMarketCapAPIKey string
 	NoPrompts           bool
+	HideMarketbar       bool
+	HideChart           bool
+	HideStatusbar       bool
+	OnlyTable           bool
 }
 
 // apiKeys is api keys structure
@@ -220,6 +228,10 @@ func NewCointop(config *Config) *Cointop {
 		inputviewname:               "input",
 		apiKeys:                     new(apiKeys),
 		limiter:                     time.Tick(2 * time.Second),
+		hideMarketbar:               config.HideMarketbar,
+		hideChart:                   config.HideChart,
+		hideStatusbar:               config.HideStatusbar,
+		onlyTable:                   config.OnlyTable,
 	}
 
 	err := ct.setupConfig()

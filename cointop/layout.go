@@ -10,43 +10,69 @@ import (
 // layout sets initial layout
 func (ct *Cointop) layout(g *gocui.Gui) error {
 	maxX, maxY := ct.size()
-	chartHeight := 10
 	topOffset := 0
 
-	if v, err := g.SetView(ct.marketbarviewname, 0, topOffset, maxX, 2); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		ct.marketbarview = v
-		ct.marketbarview.Frame = false
-		ct.colorscheme.SetViewColor(ct.marketbarview, "marketbar")
-		go func() {
-			ct.updateMarketbar()
-			_, found := ct.cache.Get(ct.marketbarviewname)
-			if found {
-				ct.cache.Delete(ct.marketbarviewname)
-				ct.updateMarketbar()
-			}
-		}()
+	marketbarHeight := 1
+	chartHeight := 10
+	statusbarHeight := 1
+
+	if ct.onlyTable {
+		ct.hideMarketbar = true
+		ct.hideChart = true
+		ct.hideStatusbar = true
 	}
 
-	topOffset = topOffset + 1
-	if v, err := g.SetView(ct.chartviewname, 0, topOffset, maxX, topOffset+chartHeight+1); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
-		}
-		ct.chartview = v
-		ct.chartview.Frame = false
-		ct.colorscheme.SetViewColor(ct.chartview, "chart")
-		go func() {
-			ct.updateChart()
-			cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
-			_, found := ct.cache.Get(cachekey)
-			if found {
-				ct.cache.Delete(cachekey)
-				ct.updateChart()
+	if ct.hideMarketbar {
+		marketbarHeight = 0
+	}
+
+	if ct.hideChart {
+		chartHeight = 0
+	}
+
+	if ct.hideStatusbar {
+		statusbarHeight = 0
+	}
+
+	if !ct.hideMarketbar {
+		if v, err := g.SetView(ct.marketbarviewname, 0, topOffset, maxX, 2); err != nil {
+			if err != gocui.ErrUnknownView {
+				return err
 			}
-		}()
+			ct.marketbarview = v
+			ct.marketbarview.Frame = false
+			ct.colorscheme.SetViewColor(ct.marketbarview, "marketbar")
+			go func() {
+				ct.updateMarketbar()
+				_, found := ct.cache.Get(ct.marketbarviewname)
+				if found {
+					ct.cache.Delete(ct.marketbarviewname)
+					ct.updateMarketbar()
+				}
+			}()
+		}
+	}
+
+	topOffset = topOffset + marketbarHeight
+
+	if !ct.hideChart {
+		if v, err := g.SetView(ct.chartviewname, 0, topOffset, maxX, topOffset+chartHeight+marketbarHeight); err != nil {
+			if err != gocui.ErrUnknownView {
+				return err
+			}
+			ct.chartview = v
+			ct.chartview.Frame = false
+			ct.colorscheme.SetViewColor(ct.chartview, "chart")
+			go func() {
+				ct.updateChart()
+				cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
+				_, found := ct.cache.Get(cachekey)
+				if found {
+					ct.cache.Delete(cachekey)
+					ct.updateChart()
+				}
+			}()
+		}
 	}
 
 	topOffset = topOffset + chartHeight
@@ -61,7 +87,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	topOffset = topOffset + 1
-	if v, err := g.SetView(ct.tableviewname, 0, topOffset, ct.maxtablewidth, maxY-1); err != nil {
+	if v, err := g.SetView(ct.tableviewname, 0, topOffset, ct.maxtablewidth, maxY-statusbarHeight); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -79,14 +105,16 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}()
 	}
 
-	if v, err := g.SetView(ct.statusbarviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
-		if err != gocui.ErrUnknownView {
-			return err
+	if !ct.hideStatusbar {
+		if v, err := g.SetView(ct.statusbarviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
+			if err != gocui.ErrUnknownView {
+				return err
+			}
+			ct.statusbarview = v
+			ct.statusbarview.Frame = false
+			ct.colorscheme.SetViewColor(ct.statusbarview, "statusbar")
+			go ct.updateStatusbar("")
 		}
-		ct.statusbarview = v
-		ct.statusbarview.Frame = false
-		ct.colorscheme.SetViewColor(ct.statusbarview, "statusbar")
-		go ct.updateStatusbar("")
 	}
 
 	if v, err := g.SetView(ct.searchfieldviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
@@ -100,7 +128,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.colorscheme.SetViewColor(ct.searchfield, "searchbar")
 	}
 
-	if v, err := g.SetView(ct.helpviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
+	if v, err := g.SetView(ct.helpviewname, 1, 1, ct.maxtablewidth-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -109,7 +137,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.colorscheme.SetViewColor(ct.helpview, "menu")
 	}
 
-	if v, err := g.SetView(ct.portfolioupdatemenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
+	if v, err := g.SetView(ct.portfolioupdatemenuviewname, 1, 1, ct.maxtablewidth-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
@@ -129,7 +157,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.colorscheme.SetViewColor(ct.inputview, "menu")
 	}
 
-	if v, err := g.SetView(ct.convertmenuviewname, 1, 1, ct.maxtablewidth-2, maxY-1); err != nil {
+	if v, err := g.SetView(ct.convertmenuviewname, 1, 1, ct.maxtablewidth-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}

@@ -9,7 +9,7 @@ version:
 commit_rev:
 	@echo $(COMMIT_REV)
 
-run:
+start:
 	go run main.go
 
 deps:

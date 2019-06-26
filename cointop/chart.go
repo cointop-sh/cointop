@@ -15,6 +15,10 @@ var chartlock sync.Mutex
 var chartpointslock sync.Mutex
 
 func (ct *Cointop) updateChart() error {
+	if ct.chartview == nil {
+		return nil
+	}
+
 	chartlock.Lock()
 	defer chartlock.Unlock()
 
