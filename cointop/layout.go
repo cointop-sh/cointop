@@ -12,6 +12,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	maxX, maxY := ct.size()
 	topOffset := 0
 
+	headerHeight := 1
 	marketbarHeight := 1
 	chartHeight := 10
 	statusbarHeight := 1
@@ -86,7 +87,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		go ct.updateHeaders()
 	}
 
-	topOffset = topOffset + 1
+	topOffset = topOffset + headerHeight
 	if v, err := g.SetView(ct.tableviewname, 0, topOffset, ct.maxtablewidth, maxY-statusbarHeight); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
