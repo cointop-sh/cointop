@@ -481,7 +481,7 @@ colorscheme = "cointop"
 You may specify a different config file to use by using the `-config` flag:
 
 ```bash
-cointop -config="/path/to/config"
+cointop -config="/path/to/config.toml"
 ```
 
 ## List of actions
@@ -795,7 +795,7 @@ Frequently asked questions:
 
 - Q: How can use a different config file other than the default?
 
-  - A: Run `cointop -config="/path/to/config/file"` to use the specified file as the config.
+  - A: Run `cointop -config="/path/to/config.toml"` to use the specified file as the config.
 
 - Q: I'm getting the error `open /dev/tty: no such device or address`.
 
@@ -812,6 +812,8 @@ Frequently asked questions:
 - Q: How can run cointop with just the table?
 
   - A: Run cointop with the `--only-table` flag.
+
+    <img width="880" alt="table view only" src="https://user-images.githubusercontent.com/168240/60208658-b0387e80-980d-11e9-8819-8039fb11218f.png" />
 
 - Q: How can I hide the top marketbar?
 
