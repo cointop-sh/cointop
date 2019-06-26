@@ -287,7 +287,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 				return colors, nil
 			}
 
-			return nil, fmt.Errorf("The colorscheme file %q was not found.\n\nFor help and colorschemes, please visit: https://github.com/cointop-sh/colors", path)
+			return nil, fmt.Errorf("The colorscheme file %q was not found.\n\nTo install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors", path)
 		}
 
 		if _, err := toml.DecodeFile(path, &colors); err != nil {

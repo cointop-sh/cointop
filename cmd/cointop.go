@@ -23,7 +23,7 @@ func Run() {
 	flag.StringVar(&config, "config", "", "Config filepath. Default is ~/.cointop/config.toml")
 	flag.StringVar(&cmcAPIKey, "coinmarketcap-api-key", "", "Set the CoinMarketCap API key")
 	flag.StringVar(&apiChoice, "api", cointop.CoinGecko, "API choice")
-	flag.StringVar(&colorscheme, "colorscheme", "", "Colorscheme to use. Default is \"cointop\", For instructions, visit https://github.com/cointop-sh/colors")
+	flag.StringVar(&colorscheme, "colorscheme", "", "Colorscheme to use. Default is \"cointop\". To install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors")
 	flag.Parse()
 
 	if v || ver {
