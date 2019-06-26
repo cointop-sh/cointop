@@ -158,9 +158,12 @@ func (s *Service) GetCoinGraphData(symbol, name string, start, end int64) (apity
 
 	if chart.Prices != nil {
 		for _, item := range *chart.Prices {
+			timestamp := float64(item[0])
+			price := float64(item[1])
+
 			priceUSD = append(priceUSD, []float64{
-				float64(item[0]),
-				float64(item[1]),
+				timestamp,
+				price,
 			})
 		}
 	}

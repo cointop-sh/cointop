@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gizak/termui"
 	"github.com/miguelmota/cointop/cointop/common/filecache"
+	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
 	"github.com/miguelmota/cointop/cointop/common/timeutil"
 )
 
@@ -111,6 +111,9 @@ func (ct *Cointop) chartPoints(symbol string, name string) error {
 			if err != nil {
 				return nil
 			}
+
+			// NOTE: edit `termui.LineChart.shortenFloatVal(float64)` to not
+			// use exponential notation.
 			for i := range graphData.PriceUSD {
 				price := graphData.PriceUSD[i][1]
 				data = append(data, price)
