@@ -399,7 +399,7 @@ You can then configure the actions you want for each key:
 
 ```toml
 currency = "USD"
-defaultView = ""
+default_view = ""
 api = "coingecko"
 colorscheme = "cointop"
 refresh_rate = 60
@@ -792,15 +792,15 @@ Frequently asked questions:
 
 - Q: How do I set the favorites view to be the default view?
 
-  - A: In `~/.cointop/config.toml`, set `defaultView = "favorites"`
+  - A: In the config file, set `default_view = "favorites"`
 
 - Q: How do I set the portfolio view to be the default view?
 
-  - A: In `~/.cointop/config.toml`, set `defaultView = "portfolio"`
+  - A: In the config file, set `default_view = "portfolio"`
 
 - Q: How do I set the table view to be the default view?
 
-  - A: In `~/.cointop/config.toml`, set `defaultView = "default"`
+  - A: In the config file, set `default_view = "default"`
 
 - Q: How can use a different config file other than the default?
 

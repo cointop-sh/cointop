@@ -18,7 +18,7 @@ type config struct {
 	Favorites     map[string][]interface{} `toml:"favorites"`
 	Portfolio     map[string]interface{}   `toml:"portfolio"`
 	Currency      interface{}              `toml:"currency"`
-	DefaultView   interface{}              `toml:"defaultView"`
+	DefaultView   interface{}              `toml:"default_view"`
 	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
 	API           interface{}              `toml:"api"`
 	Colorscheme   interface{}              `toml:"colorscheme"`
