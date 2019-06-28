@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 
+	"github.com/miguelmota/cointop/cointop/common/open"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
@@ -44,7 +45,14 @@ func (ct *Cointop) updateStatusbar(s string) error {
 	return nil
 }
 
-func (ct *Cointop) refreshRowLink() {
+func (ct *Cointop) refreshRowLink() error {
+	var shortcut string
+	if !open.CommandExists() {
+		shortcut = "[O]Open "
+	}
+
 	url := ct.rowLinkShort()
-	ct.updateStatusbar(fmt.Sprintf("%sOpen %s", "[O]", url))
+	ct.updateStatusbar(fmt.Sprintf("%s%s", shortcut, url))
+
+	return nil
 }

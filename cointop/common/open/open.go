@@ -41,3 +41,8 @@ func URL(s string) error {
 	}
 	return nil
 }
+
+// CommandExists returns true if an 'open' command exists
+func CommandExists() bool {
+	return openCmd != ""
+}
