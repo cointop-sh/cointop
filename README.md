@@ -718,6 +718,33 @@ Frequently asked questions:
 
   - A: Unfortunately Windows WSL doesn't support `snapd` which is required for snaps to run. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
+- Q: How do I fix my GOPATH on Windows?
+
+    - A: Go to Control Panel -> _Edit the system environment variables_ -> _Environment Variables..._ -> GOPATH
+
+      Check the environment variable in PowerShell:
+
+      ```bash
+      $ Get-ChildItem Env:GOPATH
+
+      Name                           Value
+      ----                           -----
+      GOPATH                         C:\Users\alice\go
+      ```
+
+- Q: How do I manually build the cointop executable on Windows?
+
+    - A: Here's how to build the executable and run it:
+
+      ```bash
+      $ cd c:\\go
+      $ mkdir -p github.com/miguelmota
+      $ cd github.com/miguelmota
+      $ git clone github.com/miguelmota/cointop
+      $ go install .
+      $ cointop.exe
+      ```
+
 - Q: How do I show the help menu?
 
   - A: Press <kbd>?</kbd> to toggle the help menu. Press <kbd>q</kbd> to close help menu.
