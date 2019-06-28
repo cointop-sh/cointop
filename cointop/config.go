@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/BurntSushi/toml"
 )
@@ -21,6 +22,7 @@ type config struct {
 	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
 	API           interface{}              `toml:"api"`
 	Colorscheme   interface{}              `toml:"colorscheme"`
+	RefreshRate   interface{}              `toml:"refresh_rate"`
 }
 
 func (ct *Cointop) setupConfig() error {
@@ -52,6 +54,9 @@ func (ct *Cointop) setupConfig() error {
 		return err
 	}
 	if err := ct.loadColorschemeFromConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadRefreshRateFromConfig(); err != nil {
 		return err
 	}
 
@@ -181,6 +186,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	var currencyIfc interface{} = ct.currencyconversion
 	var defaultViewIfc interface{} = ct.defaultView
 	var colorschemeIfc interface{} = ct.colorschemename
+	var refreshRateIfc interface{} = uint(ct.refreshRate.Seconds())
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
@@ -194,6 +200,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		Currency:      currencyIfc,
 		DefaultView:   defaultViewIfc,
 		Favorites:     favoritesIfcs,
+		RefreshRate:   refreshRateIfc,
 		Shortcuts:     shortcutsIfcs,
 		Portfolio:     portfolioIfc,
 	}
@@ -263,6 +270,14 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 func (ct *Cointop) loadColorschemeFromConfig() error {
 	if colorscheme, ok := ct.config.Colorscheme.(string); ok {
 		ct.colorschemename = colorscheme
+	}
+
+	return nil
+}
+
+func (ct *Cointop) loadRefreshRateFromConfig() error {
+	if refreshRate, ok := ct.config.RefreshRate.(int64); ok {
+		ct.refreshRate = time.Duration(uint(refreshRate)) * time.Second
 	}
 
 	return nil

@@ -213,7 +213,7 @@ func (ct *Cointop) intervalFetchData() {
 			select {
 			case <-ct.forcerefresh:
 				ct.refreshAll()
-			case <-ct.refreshticker.C:
+			case <-ct.refreshTicker.C:
 				ct.refreshAll()
 			}
 		}

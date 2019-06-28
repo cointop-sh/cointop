@@ -58,7 +58,8 @@ type Cointop struct {
 	page                int
 	perpage             int
 	refreshmux          sync.Mutex
-	refreshticker       *time.Ticker
+	refreshRate         time.Duration
+	refreshTicker       *time.Ticker
 	forcerefresh        chan bool
 	selectedcoin        *Coin
 	actionsmap          map[string]bool
@@ -127,6 +128,7 @@ type Config struct {
 	HideChart           bool
 	HideStatusbar       bool
 	OnlyTable           bool
+	RefreshRate         *uint
 }
 
 // apiKeys is api keys structure
@@ -155,7 +157,6 @@ func NewCointop(config *Config) *Cointop {
 		apiChoice:       CoinGecko,
 		allcoinsslugmap: make(map[string]*Coin),
 		allcoins:        []*Coin{},
-		refreshticker:   time.NewTicker(1 * time.Minute),
 		sortby:          "rank",
 		page:            0,
 		perpage:         100,
@@ -232,11 +233,23 @@ func NewCointop(config *Config) *Cointop {
 		hideChart:                   config.HideChart,
 		hideStatusbar:               config.HideStatusbar,
 		onlyTable:                   config.OnlyTable,
+		refreshRate:                 60 * time.Second,
 	}
 
 	err := ct.setupConfig()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if config.RefreshRate != nil {
+		ct.refreshRate = time.Duration(*config.RefreshRate) * time.Second
+	}
+
+	if ct.refreshRate == 0 {
+		ct.refreshTicker = time.NewTicker(time.Duration(1))
+		ct.refreshTicker.Stop()
+	} else {
+		ct.refreshTicker = time.NewTicker(ct.refreshRate)
 	}
 
 	// prompt for CoinMarketCap api key if not found

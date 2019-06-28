@@ -402,6 +402,7 @@ currency = "USD"
 defaultView = ""
 api = "coingecko"
 colorscheme = "cointop"
+refresh_rate = 60
 
 [shortcuts]
   "$" = "last_page"
@@ -597,7 +598,15 @@ Frequently asked questions:
 
 - Q: How often is the data polled?
 
-  - A: Data gets polled once every minute by default. You can press <kbd>Ctrl</kbd>+<kbd>r</kbd> to force refresh.
+  - A: Data gets polled once 60 seconds by default. You can press <kbd>Ctrl</kbd>+<kbd>r</kbd> to force refresh. You can configure the refresh rate with the flag `--refresh-rate <seconds>`
+
+- Q: How can I change the refresh rate?
+
+  - A: Run cointop with the flag `--refresh-rate 60` where the value is the number of seconds that it will fetch for data. You can also set the refresh rate in the config file:
+
+    ```toml
+    refresh_rate = 60
+    ```
 
 - Q: I ran cointop for the first time and don't see any data?
 
