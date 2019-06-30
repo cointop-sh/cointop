@@ -50,6 +50,10 @@ func (ct *Cointop) updateChart() error {
 		}
 	}
 	ct.update(func() {
+		if ct.chartview == nil {
+			return
+		}
+
 		fmt.Fprint(ct.chartview, ct.colorscheme.Chart(body))
 	})
 

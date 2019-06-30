@@ -241,6 +241,11 @@ func NewCointop(config *Config) *Cointop {
 		log.Fatal(err)
 	}
 
+	ct.cache.Set("onlyTable", ct.onlyTable, cache.NoExpiration)
+	ct.cache.Set("hideMarketbar", ct.hideMarketbar, cache.NoExpiration)
+	ct.cache.Set("hideChart", ct.hideChart, cache.NoExpiration)
+	ct.cache.Set("hideStatusbar", ct.hideStatusbar, cache.NoExpiration)
+
 	if config.RefreshRate != nil {
 		ct.refreshRate = time.Duration(*config.RefreshRate) * time.Second
 	}

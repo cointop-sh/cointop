@@ -56,6 +56,10 @@ func (ct *Cointop) updateHelp() {
 	content := header + infoline + body + versionline
 
 	ct.update(func() {
+		if ct.helpview == nil {
+			return
+		}
+
 		ct.helpview.Clear()
 		ct.helpview.Frame = true
 		fmt.Fprintln(ct.helpview, content)
@@ -74,6 +78,10 @@ func (ct *Cointop) hideHelp() error {
 	ct.setViewOnBottom(ct.helpviewname)
 	ct.setActiveView(ct.tableviewname)
 	ct.update(func() {
+		if ct.helpview == nil {
+			return
+		}
+
 		ct.helpview.Clear()
 		ct.helpview.Frame = false
 		fmt.Fprintln(ct.helpview, "")

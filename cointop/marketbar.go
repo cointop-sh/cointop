@@ -133,6 +133,10 @@ func (ct *Cointop) updateMarketbar() error {
 	content = ct.colorscheme.Marketbar(content)
 
 	ct.update(func() {
+		if ct.marketbarview == nil {
+			return
+		}
+
 		ct.marketbarview.Clear()
 		fmt.Fprintln(ct.marketbarview, content)
 	})

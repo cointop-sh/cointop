@@ -34,6 +34,10 @@ func (ct *Cointop) updateStatusbar(s string) error {
 	}
 
 	ct.update(func() {
+		if ct.statusbarview == nil {
+			return
+		}
+
 		ct.statusbarview.Clear()
 		base := fmt.Sprintf("%s%s %sHelp %sChart %sRange %sSearch %sConvert %s %s %sSave", "[Q]", quitText, "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText, "[CTRL-S]")
 		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxtablewidth, " ")

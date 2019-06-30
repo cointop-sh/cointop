@@ -348,6 +348,7 @@ Key|Action
 <kbd>[</kbd>|Previous chart date range|
 <kbd>}</kbd>|Last chart date range|
 <kbd>{</kbd>|First chart date range|
+<kbd>\\</kbd>|Toggle table fullscreen|
 
 ## Colorschemes
 
@@ -413,6 +414,7 @@ refresh_rate = 60
   "?" = "help"
   "/" = "open_search"
   "[" = "previous_chart_range"
+  "\\" = "toggle_table_fullscreen"
   "]" = "next_chart_range"
   "{" = "first_chart_range"
   "}" = "last_chart_range"
@@ -543,6 +545,7 @@ Action|Description
 `toggle_portfolio`|Toggle portfolio view
 `toggle_show_portfolio`|Toggle show portfolio view
 `show_portfolio_edit_menu`|Show portfolio edit holdings menu
+`toggle_table_fullscreen`|Toggle table fullscreen
 
 ## FAQ
 
@@ -850,6 +853,10 @@ Frequently asked questions:
   - A: Run cointop with the `--only-table` flag.
 
     <img width="880" alt="table view only" src="https://user-images.githubusercontent.com/168240/60208658-b0387e80-980d-11e9-8819-8039fb11218f.png" />
+
+- Q: How do I toggle the table to go fullscreen?
+
+  - A: Press <kbd>\\</kbd> to toggle the table fullscreen mode.
 
 - Q: How can I hide the top marketbar?
 

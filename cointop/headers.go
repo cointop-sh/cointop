@@ -78,6 +78,10 @@ func (ct *Cointop) updateHeaders() {
 	}
 
 	ct.update(func() {
+		if ct.headersview == nil {
+			return
+		}
+
 		ct.headersview.Clear()
 		fmt.Fprintln(ct.headersview, strings.Join(headers, ""))
 	})

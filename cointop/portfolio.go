@@ -79,6 +79,10 @@ func (ct *Cointop) hidePortfolioUpdateMenu() error {
 	ct.setViewOnBottom(ct.inputviewname)
 	ct.setActiveView(ct.tableviewname)
 	ct.update(func() {
+		if ct.portfolioupdatemenuview == nil {
+			return
+		}
+
 		ct.portfolioupdatemenuview.Clear()
 		ct.portfolioupdatemenuview.Frame = false
 		fmt.Fprintln(ct.portfolioupdatemenuview, "")

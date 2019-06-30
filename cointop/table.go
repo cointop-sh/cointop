@@ -153,6 +153,10 @@ func (ct *Cointop) refreshTable() error {
 	}
 
 	ct.update(func() {
+		if ct.tableview == nil {
+			return
+		}
+
 		ct.tableview.Clear()
 		ct.table.Format().Fprint(ct.tableview)
 		go ct.rowChanged()
@@ -309,6 +313,33 @@ func (ct *Cointop) coinBySymbol(symbol string) *Coin {
 		coin := ct.allcoins[i]
 		if coin.Symbol == symbol {
 			return coin
+		}
+	}
+
+	return nil
+}
+
+func (ct *Cointop) toggleTableFullscreen() error {
+	ct.onlyTable = !ct.onlyTable
+	if ct.onlyTable {
+	} else {
+		// NOTE: cached values are initial config settings.
+		// If the only-table config was set then toggle
+		// all other initial hidden views.
+		onlyTable, _ := ct.cache.Get("onlyTable")
+
+		if onlyTable.(bool) {
+			ct.hideMarketbar = false
+			ct.hideChart = false
+			ct.hideStatusbar = false
+		} else {
+			// NOTE: cached values store initial hidden views preferences.
+			hideMarketbar, _ := ct.cache.Get("hideMarketbar")
+			ct.hideMarketbar = hideMarketbar.(bool)
+			hideChart, _ := ct.cache.Get("hideChart")
+			ct.hideChart = hideChart.(bool)
+			hideStatusbar, _ := ct.cache.Get("hideStatusbar")
+			ct.hideStatusbar = hideStatusbar.(bool)
 		}
 	}
 

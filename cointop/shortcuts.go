@@ -1,8 +1,7 @@
 package cointop
 
 func defaultShortcuts() map[string]string {
-	return map[string]string{
-		"up":        "move_up",
+	return map[string]string{"up": "move_up",
 		"down":      "move_down",
 		"left":      "previous_page",
 		"right":     "next_page",
@@ -71,5 +70,6 @@ func defaultShortcuts() map[string]string {
 		"[":         "previous_chart_range",
 		"}":         "last_chart_range",
 		"{":         "first_chart_range",
+		"\\\\":      "toggle_table_fullscreen",
 	}
 }

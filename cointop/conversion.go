@@ -171,6 +171,10 @@ func (ct *Cointop) updateConvertMenu() {
 
 	content := fmt.Sprintf("%s%s%s", header, helpline, body)
 	ct.update(func() {
+		if ct.convertmenuview == nil {
+			return
+		}
+
 		ct.convertmenuview.Clear()
 		ct.convertmenuview.Frame = true
 		fmt.Fprintln(ct.convertmenuview, content)
@@ -189,6 +193,10 @@ func (ct *Cointop) hideConvertMenu() error {
 	ct.setViewOnBottom(ct.convertmenuviewname)
 	ct.setActiveView(ct.tableviewname)
 	ct.update(func() {
+		if ct.convertmenuview == nil {
+			return
+		}
+
 		ct.convertmenuview.Clear()
 		ct.convertmenuview.Frame = false
 		fmt.Fprintln(ct.convertmenuview, "")

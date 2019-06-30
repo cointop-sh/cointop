@@ -18,8 +18,10 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 			s = k
 		} else if m == "ctrl" {
 			switch k {
-			case "0": // not supported?
-			case "1": // not supported?
+			case "0":
+				key = '0'
+			case "1":
+				key = '1'
 			case "2":
 				key = gocui.KeyCtrl2
 			case "3":
@@ -34,7 +36,8 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 				key = gocui.KeyCtrl7
 			case "8":
 				key = gocui.KeyCtrl8
-			case "9": // not supported?
+			case "9":
+				key = '9'
 			case "a":
 				key = gocui.KeyCtrlA
 			case "b":
@@ -111,6 +114,8 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 				key = gocui.KeyCtrlBackslash
 			case "underscore":
 				key = gocui.KeyCtrlUnderscore
+			case "\\\\":
+				key = '\\'
 			}
 			return key, mod
 		}
@@ -194,6 +199,8 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 		key = gocui.KeyHome
 	case "end":
 		key = gocui.KeyEnd
+	case "\\\\":
+		key = '\\'
 	}
 
 	return key, mod
@@ -323,6 +330,9 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.keyfn(ct.toggleShowPortfolio)
 		case "show_portfolio_edit_menu":
 			fn = ct.keyfn(ct.togglePortfolioUpdateMenu)
+		case "toggle_table_fullscreen":
+			fn = ct.keyfn(ct.toggleTableFullscreen)
+			view = ""
 		default:
 			fn = ct.keyfn(ct.noop)
 		}

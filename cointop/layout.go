@@ -52,6 +52,13 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 				}
 			}()
 		}
+	} else {
+		if ct.marketbarview != nil {
+			if err := g.DeleteView(ct.marketbarviewname); err != nil {
+				return err
+			}
+			ct.marketbarview = nil
+		}
 	}
 
 	topOffset = topOffset + marketbarHeight
@@ -73,6 +80,13 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 					ct.updateChart()
 				}
 			}()
+		}
+	} else {
+		if ct.chartview != nil {
+			if err := g.DeleteView(ct.chartviewname); err != nil {
+				return err
+			}
+			ct.chartview = nil
 		}
 	}
 
@@ -107,7 +121,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	}
 
 	if !ct.hideStatusbar {
-		if v, err := g.SetView(ct.statusbarviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
+		if v, err := g.SetView(ct.statusbarviewname, 0, maxY-statusbarHeight-1, ct.maxtablewidth, maxY); err != nil {
 			if err != gocui.ErrUnknownView {
 				return err
 			}
@@ -115,6 +129,13 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			ct.statusbarview.Frame = false
 			ct.colorscheme.SetViewColor(ct.statusbarview, "statusbar")
 			go ct.updateStatusbar("")
+		}
+	} else {
+		if ct.statusbarview != nil {
+			if err := g.DeleteView(ct.statusbarviewname); err != nil {
+				return err
+			}
+			ct.statusbarview = nil
 		}
 	}
 
