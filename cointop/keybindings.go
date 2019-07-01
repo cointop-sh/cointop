@@ -235,7 +235,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "move_to_page_last_row":
 			fn = ct.keyfn(ct.navigateLastLine)
 		case "open_link":
-			fn = ct.keyfn(ct.openLink)
+			fn = ct.keyfn(ct.OpenLink)
 		case "refresh":
 			fn = ct.keyfn(ct.refresh)
 		case "sort_column_asc":
@@ -268,7 +268,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "sort_column_available_supply":
 			fn = ct.sortfn("availablesupply", true)
 		case "toggle_row_chart":
-			fn = ct.keyfn(ct.toggleCoinChart)
+			fn = ct.keyfn(ct.ToggleCoinChart)
 		case "move_to_page_visible_first_row":
 			fn = ct.keyfn(ct.navigatePageFirstLine)
 		case "move_to_page_visible_last_row":
@@ -305,18 +305,18 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "save":
 			fn = ct.keyfn(ct.save)
 		case "quit":
-			fn = ct.keyfn(ct.quit)
+			fn = ct.keyfn(ct.Quit)
 			view = ""
 		case "quit_view":
-			fn = ct.keyfn(ct.quitView)
+			fn = ct.keyfn(ct.QuitView)
 		case "next_chart_range":
-			fn = ct.keyfn(ct.nextChartRange)
+			fn = ct.keyfn(ct.NextChartRange)
 		case "previous_chart_range":
-			fn = ct.keyfn(ct.prevChartRange)
+			fn = ct.keyfn(ct.PrevChartRange)
 		case "first_chart_range":
-			fn = ct.keyfn(ct.firstChartRange)
+			fn = ct.keyfn(ct.FirstChartRange)
 		case "last_chart_range":
-			fn = ct.keyfn(ct.lastChartRange)
+			fn = ct.keyfn(ct.LastChartRange)
 		case "toggle_show_currency_convert_menu":
 			fn = ct.keyfn(ct.toggleConvertMenu)
 		case "show_currency_convert_menu":
@@ -331,7 +331,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "show_portfolio_edit_menu":
 			fn = ct.keyfn(ct.togglePortfolioUpdateMenu)
 		case "toggle_table_fullscreen":
-			fn = ct.keyfn(ct.toggleTableFullscreen)
+			fn = ct.keyfn(ct.ToggleTableFullscreen)
 			view = ""
 		default:
 			fn = ct.keyfn(ct.noop)
@@ -341,33 +341,33 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	}
 
 	// keys to force quit
-	ct.setKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.keyfn(ct.quit), "")
-	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.quit), "")
+	ct.setKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.keyfn(ct.Quit), "")
+	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.Quit), "")
 
 	// searchfield keys
-	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), ct.Views.SearchField.Name)
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), ct.Views.SearchField.Name)
+	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), ct.Views.SearchField.Name())
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), ct.Views.SearchField.Name())
 
 	// keys to quit help when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), ct.Views.Help.Name)
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.Views.Help.Name)
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), ct.Views.Help.Name())
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.Views.Help.Name())
 
 	// keys to quit portfolio update menu when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.Views.Input.Name)
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.Views.Input.Name)
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.Views.Input.Name())
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.Views.Input.Name())
 
 	// keys to update portfolio holdings
-	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.setPortfolioHoldings), ct.Views.Input.Name)
+	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.setPortfolioHoldings), ct.Views.Input.Name())
 
 	// keys to quit convert menu when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.Views.ConvertMenu.Name)
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.Views.ConvertMenu.Name)
+	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.Views.ConvertMenu.Name())
+	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.Views.ConvertMenu.Name())
 
 	// character key press to select option
 	// TODO: use scrolling table
 	keys := ct.sortedSupportedCurrencyConversions()
 	for i, k := range keys {
-		ct.setKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.keyfn(ct.setCurrencyConverstion(k)), ct.Views.ConvertMenu.Name)
+		ct.setKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.keyfn(ct.setCurrencyConverstion(k)), ct.Views.ConvertMenu.Name())
 	}
 
 	return nil

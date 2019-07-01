@@ -7,28 +7,48 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/levenshtein"
 )
 
+// SearchFieldView is structure for search field view
+type SearchFieldView struct {
+	*View
+}
+
+// NewSearchFieldView returns a new search field view
+func NewSearchFieldView() *SearchFieldView {
+	return &SearchFieldView{NewView("searchfield")}
+}
+
+// InputView is structure for help view
+type InputView struct {
+	*View
+}
+
+// NewInputView returns a new help view
+func NewInputView() *InputView {
+	return &InputView{NewView("input")}
+}
+
 func (ct *Cointop) openSearch() error {
 	ct.State.searchFieldVisible = true
-	ct.setActiveView(ct.Views.SearchField.Name)
+	ct.SetActiveView(ct.Views.SearchField.Name())
 	return nil
 }
 
 func (ct *Cointop) cancelSearch() error {
 	ct.State.searchFieldVisible = false
-	ct.setActiveView(ct.Views.Table.Name)
+	ct.SetActiveView(ct.Views.Table.Name())
 	return nil
 }
 
 func (ct *Cointop) doSearch() error {
-	ct.Views.SearchField.Backing.Rewind()
+	ct.Views.SearchField.Backing().Rewind()
 	b := make([]byte, 100)
-	n, err := ct.Views.SearchField.Backing.Read(b)
+	n, err := ct.Views.SearchField.Backing().Read(b)
 
 	// TODO: do this a better way (SoC)
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = false
 
-	defer ct.setActiveView(ct.Views.Table.Name)
+	defer ct.SetActiveView(ct.Views.Table.Name())
 	if err != nil {
 		return nil
 	}

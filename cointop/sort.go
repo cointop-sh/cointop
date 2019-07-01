@@ -67,7 +67,7 @@ func (ct *Cointop) sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 	})
 
 	if renderHeaders {
-		ct.updateHeaders()
+		ct.updateTableHeader()
 	}
 }
 

@@ -6,11 +6,13 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
-func (ct *Cointop) quit() error {
+// Quit quites the program
+func (ct *Cointop) Quit() error {
 	return gocui.ErrQuit
 }
 
-func (ct *Cointop) quitView() error {
+// QuitView exists the current view
+func (ct *Cointop) QuitView() error {
 	if ct.State.portfolioVisible {
 		ct.State.portfolioVisible = false
 		return ct.updateTable()
@@ -19,14 +21,14 @@ func (ct *Cointop) quitView() error {
 		ct.State.filterByFavorites = false
 		return ct.updateTable()
 	}
-	if ct.activeViewName() == ct.Views.Table.Name {
-		return ct.quit()
+	if ct.ActiveViewName() == ct.Views.Table.Name() {
+		return ct.Quit()
 	}
 
 	return nil
 }
 
-// Exit safely exit application
+// Exit safely exits the program
 func (ct *Cointop) Exit() {
 	if ct.g != nil {
 		ct.g.Close()

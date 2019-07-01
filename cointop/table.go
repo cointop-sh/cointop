@@ -13,7 +13,38 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/table"
 )
 
-func (ct *Cointop) refreshTable() error {
+// TableView is structure for table view
+type TableView struct {
+	*View
+}
+
+// NewTableView returns a new table view
+func NewTableView() *TableView {
+	return &TableView{NewView("table")}
+}
+
+// TableColumnOrder returns the default order of the table columns
+func tableColumnOrder() []string {
+	return []string{
+		"rank",
+		"name",
+		"symbol",
+		"price",
+		"holdings",
+		"balance",
+		"marketcap",
+		"24hvolume",
+		"1hchange",
+		"7dchange",
+		"totalsupply",
+		"availablesupply",
+		"percentholdings",
+		"lastupdated",
+	}
+}
+
+// RefreshTable refreshes the table
+func (ct *Cointop) RefreshTable() error {
 	maxX := ct.width()
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.HideColumHeaders = true
@@ -147,27 +178,28 @@ func (ct *Cointop) refreshTable() error {
 	}
 
 	// highlight last row if current row is out of bounds (can happen when switching views)
-	currentrow := ct.highlightedRowIndex()
+	currentrow := ct.HighlightedRowIndex()
 	if len(ct.State.coins) > currentrow {
 		ct.highlightRow(currentrow)
 	}
 
 	ct.update(func() {
-		if ct.Views.Table.Backing == nil {
+		if ct.Views.Table.Backing() == nil {
 			return
 		}
 
-		ct.Views.Table.Backing.Clear()
-		ct.table.Format().Fprint(ct.Views.Table.Backing)
+		ct.Views.Table.Backing().Clear()
+		ct.table.Format().Fprint(ct.Views.Table.Backing())
 		go ct.rowChanged()
-		go ct.updateHeaders()
+		go ct.updateTableHeader()
 		go ct.updateMarketbar()
-		go ct.updateChart()
+		go ct.UpdateChart()
 	})
 
 	return nil
 }
 
+// updateTable updates the table
 func (ct *Cointop) updateTable() error {
 	sliced := []*Coin{}
 
@@ -186,14 +218,14 @@ func (ct *Cointop) updateTable() error {
 			}
 		}
 		ct.State.coins = sliced
-		go ct.refreshTable()
+		go ct.RefreshTable()
 		return nil
 	}
 
 	if ct.State.portfolioVisible {
 		sliced = ct.getPortfolioSlice()
 		ct.State.coins = sliced
-		go ct.refreshTable()
+		go ct.RefreshTable()
 		return nil
 	}
 
@@ -226,13 +258,14 @@ func (ct *Cointop) updateTable() error {
 	ct.State.coins = sliced
 
 	ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
-	go ct.refreshTable()
+	go ct.RefreshTable()
 	return nil
 }
 
-func (ct *Cointop) highlightedRowIndex() int {
-	_, y := ct.Views.Table.Backing.Origin()
-	_, cy := ct.Views.Table.Backing.Cursor()
+// HighlightedRowIndex returns the index of the highlighted row
+func (ct *Cointop) HighlightedRowIndex() int {
+	_, y := ct.Views.Table.Backing().Origin()
+	_, cy := ct.Views.Table.Backing().Cursor()
 	idx := y + cy
 	if idx < 0 {
 		idx = 0
@@ -243,16 +276,18 @@ func (ct *Cointop) highlightedRowIndex() int {
 	return idx
 }
 
-func (ct *Cointop) highlightedRowCoin() *Coin {
-	idx := ct.highlightedRowIndex()
+// HighlightedRowCoin returns the coin at the index of the highlighted row
+func (ct *Cointop) HighlightedRowCoin() *Coin {
+	idx := ct.HighlightedRowIndex()
 	if len(ct.State.coins) == 0 {
 		return nil
 	}
 	return ct.State.coins[idx]
 }
 
-func (ct *Cointop) rowLink() string {
-	coin := ct.highlightedRowCoin()
+// RowLink returns the row url link
+func (ct *Cointop) RowLink() string {
+	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		return ""
 	}
@@ -260,8 +295,9 @@ func (ct *Cointop) rowLink() string {
 	return ct.api.CoinLink(coin.Name)
 }
 
-func (ct *Cointop) rowLinkShort() string {
-	link := ct.rowLink()
+// RowLinkShort returns a shortened version of the row url link
+func (ct *Cointop) RowLinkShort() string {
+	link := ct.RowLink()
 	if link != "" {
 		u, err := url.Parse(link)
 		if err != nil {
@@ -282,7 +318,8 @@ func (ct *Cointop) rowLinkShort() string {
 	return ""
 }
 
-func (ct *Cointop) toggleTableFullscreen() error {
+// ToggleTableFullscreen toggles the table fullscreen mode
+func (ct *Cointop) ToggleTableFullscreen() error {
 	ct.State.onlyTable = !ct.State.onlyTable
 	if ct.State.onlyTable {
 	} else {

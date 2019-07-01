@@ -87,6 +87,16 @@ var currencySymbol = map[string]string{
 
 var alphanumericcharacters = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
 
+// ConvertMenuView is structure for convert menu view
+type ConvertMenuView struct {
+	*View
+}
+
+// NewConvertMenuView returns a new convert menu view
+func NewConvertMenuView() *ConvertMenuView {
+	return &ConvertMenuView{NewView("convertmenu")}
+}
+
 func (ct *Cointop) supportedCurrencyConversions() map[string]string {
 	all := map[string]string{}
 	for _, symbol := range ct.api.SupportedCurrencies() {
@@ -123,7 +133,7 @@ func (ct *Cointop) updateConvertMenu() {
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxTableWidth-20, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
 	cnt := 0
-	h := ct.viewHeight(ct.Views.ConvertMenu.Name)
+	h := ct.Views.ConvertMenu.Height()
 	percol := h - 5
 	cols := make([][]string, percol)
 	for i := range cols {
@@ -163,13 +173,13 @@ func (ct *Cointop) updateConvertMenu() {
 
 	content := fmt.Sprintf("%s%s%s", header, helpline, body)
 	ct.update(func() {
-		if ct.Views.ConvertMenu.Backing == nil {
+		if ct.Views.ConvertMenu.Backing() == nil {
 			return
 		}
 
-		ct.Views.ConvertMenu.Backing.Clear()
-		ct.Views.ConvertMenu.Backing.Frame = true
-		fmt.Fprintln(ct.Views.ConvertMenu.Backing, content)
+		ct.Views.ConvertMenu.Backing().Clear()
+		ct.Views.ConvertMenu.Backing().Frame = true
+		fmt.Fprintln(ct.Views.ConvertMenu.Backing(), content)
 	})
 }
 
@@ -194,22 +204,22 @@ func (ct *Cointop) currencySymbol() string {
 func (ct *Cointop) showConvertMenu() error {
 	ct.State.convertMenuVisible = true
 	ct.updateConvertMenu()
-	ct.setActiveView(ct.Views.ConvertMenu.Name)
+	ct.SetActiveView(ct.Views.ConvertMenu.Name())
 	return nil
 }
 
 func (ct *Cointop) hideConvertMenu() error {
 	ct.State.convertMenuVisible = false
-	ct.setViewOnBottom(ct.Views.ConvertMenu.Name)
-	ct.setActiveView(ct.Views.Table.Name)
+	ct.SetViewOnBottom(ct.Views.ConvertMenu.Name())
+	ct.SetActiveView(ct.Views.Table.Name())
 	ct.update(func() {
-		if ct.Views.ConvertMenu.Backing == nil {
+		if ct.Views.ConvertMenu.Backing() == nil {
 			return
 		}
 
-		ct.Views.ConvertMenu.Backing.Clear()
-		ct.Views.ConvertMenu.Backing.Frame = false
-		fmt.Fprintln(ct.Views.ConvertMenu.Backing, "")
+		ct.Views.ConvertMenu.Backing().Clear()
+		ct.Views.ConvertMenu.Backing().Frame = false
+		fmt.Fprintln(ct.Views.ConvertMenu.Backing(), "")
 	})
 	return nil
 }

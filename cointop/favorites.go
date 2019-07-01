@@ -2,7 +2,7 @@ package cointop
 
 func (ct *Cointop) toggleFavorite() error {
 	ct.State.portfolioVisible = false
-	coin := ct.highlightedRowCoin()
+	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		return nil
 	}

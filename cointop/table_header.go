@@ -5,7 +5,18 @@ import (
 	"strings"
 )
 
-func (ct *Cointop) updateHeaders() {
+// TableHeaderView is structure for table header view
+type TableHeaderView struct {
+	*View
+}
+
+// NewTableHeaderView returns a new table header view
+func NewTableHeaderView() *TableHeaderView {
+	return &TableHeaderView{NewView("header")}
+}
+
+// updateTableHeader renders the table header
+func (ct *Cointop) updateTableHeader() {
 	var cols []string
 
 	type t struct {
@@ -78,11 +89,11 @@ func (ct *Cointop) updateHeaders() {
 	}
 
 	ct.update(func() {
-		if ct.Views.Header.Backing == nil {
+		if ct.Views.TableHeader.Backing() == nil {
 			return
 		}
 
-		ct.Views.Header.Backing.Clear()
-		fmt.Fprintln(ct.Views.Header.Backing, strings.Join(headers, ""))
+		ct.Views.TableHeader.Backing().Clear()
+		fmt.Fprintln(ct.Views.TableHeader.Backing(), strings.Join(headers, ""))
 	})
 }

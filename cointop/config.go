@@ -87,13 +87,13 @@ func (ct *Cointop) createConfigIfNotExists() error {
 }
 
 func (ct *Cointop) configDirPath() string {
-	path := normalizePath(ct.configFilepath)
+	path := NormalizePath(ct.configFilepath)
 	parts := strings.Split(path, "/")
 	return strings.Join(parts[0:len(parts)-1], "/")
 }
 
 func (ct *Cointop) configPath() string {
-	return normalizePath(ct.configFilepath)
+	return NormalizePath(ct.configFilepath)
 }
 
 func (ct *Cointop) makeConfigDir() error {
@@ -166,10 +166,10 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 			favorites = append(favorites, i)
 		}
 	}
-	var favoritesbysymbol []interface{}
+	var favoritesBySymbol []interface{}
 	favoritesIfcs := map[string][]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols": favoritesbysymbol,
+		"symbols": favoritesBySymbol,
 		"names":   favorites,
 	}
 
@@ -218,7 +218,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 func (ct *Cointop) loadShortcutsFromConfig() error {
 	for k, ifc := range ct.config.Shortcuts {
 		if v, ok := ifc.(string); ok {
-			if !ct.actionExists(v) {
+			if !ct.ActionExists(v) {
 				continue
 			}
 			if ct.State.shortcutKeys[k] == "" {
@@ -291,7 +291,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 			return nil, err
 		}
 	} else {
-		path := normalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemeName))
+		path := NormalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemeName))
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
 			if ct.colorschemeName == "cointop" {
@@ -328,7 +328,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 		if k == "symbols" {
 			for _, ifc := range arr {
 				if v, ok := ifc.(string); ok {
-					ct.State.favoritesbysymbol[strings.ToUpper(v)] = true
+					ct.State.favoritesBySymbol[strings.ToUpper(v)] = true
 				}
 			}
 		} else if k == "names" {

@@ -7,6 +7,16 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
+// HelpView is structure for help view
+type HelpView struct {
+	*View
+}
+
+// NewHelpView returns a new help view
+func NewHelpView() *HelpView {
+	return &HelpView{NewView("help")}
+}
+
 func (ct *Cointop) updateHelp() {
 	keys := make([]string, 0, len(ct.State.shortcutKeys))
 	for k := range ct.State.shortcutKeys {
@@ -16,7 +26,7 @@ func (ct *Cointop) updateHelp() {
 
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxTableWidth-10, " ")))
 	cnt := 0
-	h := ct.viewHeight(ct.Views.Help.Name)
+	h := ct.Views.Help.Height()
 	percol := h - 6
 	cols := make([][]string, percol)
 	for i := range cols {
@@ -44,39 +54,39 @@ func (ct *Cointop) updateHelp() {
 	body = fmt.Sprintf("%s\n", body)
 
 	infoline := " List of keyboard shortcuts\n\n"
-	versionline := pad.Left(fmt.Sprintf("v%s", ct.version()), ct.maxTableWidth-5, " ")
+	versionline := pad.Left(fmt.Sprintf("v%s", ct.Version()), ct.maxTableWidth-5, " ")
 	content := header + infoline + body + versionline
 
 	ct.update(func() {
-		if ct.Views.Help.Backing == nil {
+		if ct.Views.Help.Backing() == nil {
 			return
 		}
 
-		ct.Views.Help.Backing.Clear()
-		ct.Views.Help.Backing.Frame = true
-		fmt.Fprintln(ct.Views.Help.Backing, content)
+		ct.Views.Help.Backing().Clear()
+		ct.Views.Help.Backing().Frame = true
+		fmt.Fprintln(ct.Views.Help.Backing(), content)
 	})
 }
 
 func (ct *Cointop) showHelp() error {
 	ct.State.helpVisible = true
 	ct.updateHelp()
-	ct.setActiveView(ct.Views.Help.Name)
+	ct.SetActiveView(ct.Views.Help.Name())
 	return nil
 }
 
 func (ct *Cointop) hideHelp() error {
 	ct.State.helpVisible = false
-	ct.setViewOnBottom(ct.Views.Help.Name)
-	ct.setActiveView(ct.Views.Table.Name)
+	ct.SetViewOnBottom(ct.Views.Help.Name())
+	ct.SetActiveView(ct.Views.Table.Name())
 	ct.update(func() {
-		if ct.Views.Help.Backing == nil {
+		if ct.Views.Help.Backing() == nil {
 			return
 		}
 
-		ct.Views.Help.Backing.Clear()
-		ct.Views.Help.Backing.Frame = false
-		fmt.Fprintln(ct.Views.Help.Backing, "")
+		ct.Views.Help.Backing().Clear()
+		ct.Views.Help.Backing().Frame = false
+		fmt.Fprintln(ct.Views.Help.Backing(), "")
 	})
 	return nil
 }

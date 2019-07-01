@@ -3,7 +3,8 @@ package cointop
 // TODO: make dynamic based on git tag
 const version = "1.3.2"
 
-func (ct *Cointop) version() string {
+// Version returns the cointop version
+func (ct *Cointop) Version() string {
 	return version
 }
 

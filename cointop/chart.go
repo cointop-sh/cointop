@@ -11,11 +11,54 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/timeutil"
 )
 
+// ChartView is structure for chart view
+type ChartView struct {
+	*View
+}
+
+// NewChartView returns a new chart view
+func NewChartView() *ChartView {
+	return &ChartView{NewView("chart")}
+}
+
 var chartLock sync.Mutex
 var chartPointsLock sync.Mutex
 
-func (ct *Cointop) updateChart() error {
-	if ct.Views.Chart.Backing == nil {
+func chartRanges() []string {
+	return []string{
+		"1H",
+		"6H",
+		"24H",
+		"3D",
+		"7D",
+		"1M",
+		"3M",
+		"6M",
+		"1Y",
+		"YTD",
+		"All Time",
+	}
+}
+
+func chartRangesMap() map[string]time.Duration {
+	return map[string]time.Duration{
+		"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
+		"YTD":      time.Duration(1 * time.Second), // this will be calculated
+		"1Y":       time.Duration(24 * 7 * 4 * 12 * time.Hour),
+		"6M":       time.Duration(24 * 7 * 4 * 6 * time.Hour),
+		"3M":       time.Duration(24 * 7 * 4 * 3 * time.Hour),
+		"1M":       time.Duration(24 * 7 * 4 * time.Hour),
+		"7D":       time.Duration(24 * 7 * time.Hour),
+		"3D":       time.Duration(24 * 3 * time.Hour),
+		"24H":      time.Duration(24 * time.Hour),
+		"6H":       time.Duration(6 * time.Hour),
+		"1H":       time.Duration(1 * time.Hour),
+	}
+}
+
+// UpdateChart updates the chart view
+func (ct *Cointop) UpdateChart() error {
+	if ct.Views.Chart.Backing() == nil {
 		return nil
 	}
 
@@ -23,17 +66,17 @@ func (ct *Cointop) updateChart() error {
 	defer chartLock.Unlock()
 
 	if ct.State.portfolioVisible {
-		if err := ct.portfolioChart(); err != nil {
+		if err := ct.PortfolioChart(); err != nil {
 			return err
 		}
 	} else {
 		symbol := ct.selectedCoinSymbol()
 		name := ct.selectedCoinName()
-		ct.calcChartPoints(symbol, name)
+		ct.ChartPoints(symbol, name)
 	}
 
 	if len(ct.State.chartPoints) != 0 {
-		ct.Views.Chart.Backing.Clear()
+		ct.Views.Chart.Backing().Clear()
 	}
 	var body string
 	if len(ct.State.chartPoints) == 0 {
@@ -50,17 +93,18 @@ func (ct *Cointop) updateChart() error {
 		}
 	}
 	ct.update(func() {
-		if ct.Views.Chart.Backing == nil {
+		if ct.Views.Chart.Backing() == nil {
 			return
 		}
 
-		fmt.Fprint(ct.Views.Chart.Backing, ct.colorscheme.Chart(body))
+		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(body))
 	})
 
 	return nil
 }
 
-func (ct *Cointop) calcChartPoints(symbol string, name string) error {
+// ChartPoints calculates the the chart points
+func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	maxX := ct.maxTableWidth - 3
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
@@ -160,7 +204,8 @@ func (ct *Cointop) calcChartPoints(symbol string, name string) error {
 	return nil
 }
 
-func (ct *Cointop) portfolioChart() error {
+// PortfolioChart renders the portfolio chart
+func (ct *Cointop) PortfolioChart() error {
 	maxX := ct.maxTableWidth - 3
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
@@ -268,7 +313,8 @@ func (ct *Cointop) portfolioChart() error {
 	return nil
 }
 
-func (ct *Cointop) nextChartRange() error {
+// NextChartRange sets the chart to the next range option
+func (ct *Cointop) NextChartRange() error {
 	sel := 0
 	max := len(ct.chartRanges)
 	for i, k := range ct.chartRanges {
@@ -283,11 +329,12 @@ func (ct *Cointop) nextChartRange() error {
 
 	ct.State.selectedChartRange = ct.chartRanges[sel]
 
-	go ct.updateChart()
+	go ct.UpdateChart()
 	return nil
 }
 
-func (ct *Cointop) prevChartRange() error {
+// PrevChartRange sets the chart to the prevous range option
+func (ct *Cointop) PrevChartRange() error {
 	sel := 0
 	for i, k := range ct.chartRanges {
 		if k == ct.State.selectedChartRange {
@@ -300,31 +347,34 @@ func (ct *Cointop) prevChartRange() error {
 	}
 
 	ct.State.selectedChartRange = ct.chartRanges[sel]
-	go ct.updateChart()
+	go ct.UpdateChart()
 	return nil
 }
 
-func (ct *Cointop) firstChartRange() error {
+// FirstChartRange sets the chart to the first range option
+func (ct *Cointop) FirstChartRange() error {
 	ct.State.selectedChartRange = ct.chartRanges[0]
-	go ct.updateChart()
+	go ct.UpdateChart()
 	return nil
 }
 
-func (ct *Cointop) lastChartRange() error {
+// LastChartRange sets the chart to the last range option
+func (ct *Cointop) LastChartRange() error {
 	ct.State.selectedChartRange = ct.chartRanges[len(ct.chartRanges)-1]
-	go ct.updateChart()
+	go ct.UpdateChart()
 	return nil
 }
 
-func (ct *Cointop) toggleCoinChart() error {
-	highlightedcoin := ct.highlightedRowCoin()
+// ToggleCoinChart toggles between the global chart and the coin chart
+func (ct *Cointop) ToggleCoinChart() error {
+	highlightedcoin := ct.HighlightedRowCoin()
 	if ct.State.selectedCoin == highlightedcoin {
 		ct.State.selectedCoin = nil
 	} else {
 		ct.State.selectedCoin = highlightedcoin
 	}
 
-	go ct.updateChart()
+	go ct.UpdateChart()
 	go ct.updateMarketbar()
 	return nil
 }

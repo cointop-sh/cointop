@@ -10,6 +10,16 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
+// PortfolioUpdateMenuView is structure for portfolio update menu view
+type PortfolioUpdateMenuView struct {
+	*View
+}
+
+// NewPortfolioUpdateMenuView returns a new portfolio update menu view
+func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
+	return &PortfolioUpdateMenuView{NewView("portfolioupdatemenu")}
+}
+
 func (ct *Cointop) togglePortfolio() error {
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = !ct.State.portfolioVisible
@@ -33,7 +43,7 @@ func (ct *Cointop) togglePortfolioUpdateMenu() error {
 }
 
 func (ct *Cointop) updatePortfolioUpdateMenu() {
-	coin := ct.highlightedRowCoin()
+	coin := ct.HighlightedRowCoin()
 	exists := ct.PortfolioEntryExists(coin)
 	value := strconv.FormatFloat(coin.Holdings, 'f', -1, 64)
 	var mode string
@@ -52,16 +62,16 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
 	ct.update(func() {
-		ct.Views.PortfolioUpdateMenu.Backing.Clear()
-		ct.Views.PortfolioUpdateMenu.Backing.Frame = true
-		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing, content)
-		fmt.Fprintln(ct.Views.Input.Backing, value)
-		ct.Views.Input.Backing.SetCursor(len(value), 0)
+		ct.Views.PortfolioUpdateMenu.Backing().Clear()
+		ct.Views.PortfolioUpdateMenu.Backing().Frame = true
+		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing(), content)
+		fmt.Fprintln(ct.Views.Input.Backing(), value)
+		ct.Views.Input.Backing().SetCursor(len(value), 0)
 	})
 }
 
 func (ct *Cointop) showPortfolioUpdateMenu() error {
-	coin := ct.highlightedRowCoin()
+	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		ct.togglePortfolio()
 		return nil
@@ -69,26 +79,26 @@ func (ct *Cointop) showPortfolioUpdateMenu() error {
 
 	ct.State.portfolioUpdateMenuVisible = true
 	ct.updatePortfolioUpdateMenu()
-	ct.setActiveView(ct.Views.PortfolioUpdateMenu.Name)
+	ct.SetActiveView(ct.Views.PortfolioUpdateMenu.Name())
 	return nil
 }
 
 func (ct *Cointop) hidePortfolioUpdateMenu() error {
 	ct.State.portfolioUpdateMenuVisible = false
-	ct.setViewOnBottom(ct.Views.PortfolioUpdateMenu.Name)
-	ct.setViewOnBottom(ct.Views.Input.Name)
-	ct.setActiveView(ct.Views.Table.Name)
+	ct.SetViewOnBottom(ct.Views.PortfolioUpdateMenu.Name())
+	ct.SetViewOnBottom(ct.Views.Input.Name())
+	ct.SetActiveView(ct.Views.Table.Name())
 	ct.update(func() {
-		if ct.Views.PortfolioUpdateMenu.Backing == nil {
+		if ct.Views.PortfolioUpdateMenu.Backing() == nil {
 			return
 		}
 
-		ct.Views.PortfolioUpdateMenu.Backing.Clear()
-		ct.Views.PortfolioUpdateMenu.Backing.Frame = false
-		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing, "")
+		ct.Views.PortfolioUpdateMenu.Backing().Clear()
+		ct.Views.PortfolioUpdateMenu.Backing().Frame = false
+		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing(), "")
 
-		ct.Views.Input.Backing.Clear()
-		fmt.Fprintln(ct.Views.Input.Backing, "")
+		ct.Views.Input.Backing().Clear()
+		fmt.Fprintln(ct.Views.Input.Backing(), "")
 	})
 	return nil
 }
@@ -96,10 +106,10 @@ func (ct *Cointop) hidePortfolioUpdateMenu() error {
 // sets portfolio entry holdings from inputed value
 func (ct *Cointop) setPortfolioHoldings() error {
 	defer ct.hidePortfolioUpdateMenu()
-	coin := ct.highlightedRowCoin()
+	coin := ct.HighlightedRowCoin()
 
 	b := make([]byte, 100)
-	n, err := ct.Views.Input.Backing.Read(b)
+	n, err := ct.Views.Input.Backing().Read(b)
 	if n == 0 {
 		return nil
 	}
@@ -129,6 +139,7 @@ func (ct *Cointop) setPortfolioHoldings() error {
 	return nil
 }
 
+// PortfolioEntry returns a portfolio entry
 func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 	if c == nil {
 		return &PortfolioEntry{}, true
@@ -171,6 +182,7 @@ func (ct *Cointop) removePortfolioEntry(coin string) {
 	delete(ct.State.portfolio.Entries, strings.ToLower(coin))
 }
 
+// PortfolioEntryExists returns true if portfolio entry exists
 func (ct *Cointop) PortfolioEntryExists(c *Coin) bool {
 	_, isNew := ct.PortfolioEntry(c)
 	return !isNew

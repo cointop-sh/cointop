@@ -54,6 +54,7 @@ func actionsMap() map[string]bool {
 	}
 }
 
-func (ct *Cointop) actionExists(action string) bool {
+// ActionExists returns true if action exists
+func (ct *Cointop) ActionExists(action string) bool {
 	return ct.actionsMap[action]
 }

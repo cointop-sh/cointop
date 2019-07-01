@@ -5,7 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// update update view
+// update takes a callback which updates the view
 func (ct *Cointop) update(f func()) {
 	if ct.g == nil {
 		log.Fatal("gocui is not initialized")

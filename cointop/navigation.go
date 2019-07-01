@@ -28,19 +28,19 @@ func (ct *Cointop) setPage(page int) int {
 }
 
 func (ct *Cointop) cursorDown() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
-	_, y := ct.Views.Table.Backing.Origin()
-	cx, cy := ct.Views.Table.Backing.Cursor()
+	_, y := ct.Views.Table.Backing().Origin()
+	cx, cy := ct.Views.Table.Backing().Cursor()
 	numRows := len(ct.State.coins) - 1
 	if (cy + y + 1) > numRows {
 		return nil
 	}
-	if err := ct.Views.Table.Backing.SetCursor(cx, cy+1); err != nil {
-		ox, oy := ct.Views.Table.Backing.Origin()
+	if err := ct.Views.Table.Backing().SetCursor(cx, cy+1); err != nil {
+		ox, oy := ct.Views.Table.Backing().Origin()
 		// set origin scrolls
-		if err := ct.Views.Table.Backing.SetOrigin(ox, oy+1); err != nil {
+		if err := ct.Views.Table.Backing().SetOrigin(ox, oy+1); err != nil {
 			return err
 		}
 	}
@@ -52,11 +52,11 @@ func (ct *Cointop) cursorUp() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, oy := ct.Views.Table.Backing.Origin()
-	cx, cy := ct.Views.Table.Backing.Cursor()
-	if err := ct.Views.Table.Backing.SetCursor(cx, cy-1); err != nil && oy > 0 {
+	ox, oy := ct.Views.Table.Backing().Origin()
+	cx, cy := ct.Views.Table.Backing().Cursor()
+	if err := ct.Views.Table.Backing().SetCursor(cx, cy-1); err != nil && oy > 0 {
 		// set origin scrolls
-		if err := ct.Views.Table.Backing.SetOrigin(ox, oy-1); err != nil {
+		if err := ct.Views.Table.Backing().SetOrigin(ox, oy-1); err != nil {
 			return err
 		}
 	}
@@ -68,9 +68,9 @@ func (ct *Cointop) pageDown() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, oy := ct.Views.Table.Backing.Origin() // this is prev origin position
-	cx, _ := ct.Views.Table.Backing.Cursor()  // relative cursor position
-	_, sy := ct.Views.Table.Backing.Size()    // rows in visible view
+	ox, oy := ct.Views.Table.Backing().Origin() // this is prev origin position
+	cx, _ := ct.Views.Table.Backing().Cursor()  // relative cursor position
+	_, sy := ct.Views.Table.Backing().Size()    // rows in visible view
 	k := oy + sy
 	l := len(ct.State.coins)
 	// end of table
@@ -83,12 +83,12 @@ func (ct *Cointop) pageDown() error {
 		sy = l
 	}
 
-	if err := ct.Views.Table.Backing.SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.Backing().SetOrigin(ox, k); err != nil {
 		return err
 	}
 	// move cursor to last line if can't scroll further
 	if k == oy {
-		if err := ct.Views.Table.Backing.SetCursor(cx, sy-1); err != nil {
+		if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
 			return err
 		}
 	}
@@ -100,19 +100,19 @@ func (ct *Cointop) pageUp() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, oy := ct.Views.Table.Backing.Origin()
-	cx, _ := ct.Views.Table.Backing.Cursor() // relative cursor position
-	_, sy := ct.Views.Table.Backing.Size()   // rows in visible view
+	ox, oy := ct.Views.Table.Backing().Origin()
+	cx, _ := ct.Views.Table.Backing().Cursor() // relative cursor position
+	_, sy := ct.Views.Table.Backing().Size()   // rows in visible view
 	k := oy - sy
 	if k < 0 {
 		k = 0
 	}
-	if err := ct.Views.Table.Backing.SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.Backing().SetOrigin(ox, k); err != nil {
 		return err
 	}
 	// move cursor to first line if can't scroll further
 	if k == oy {
-		if err := ct.Views.Table.Backing.SetCursor(cx, 0); err != nil {
+		if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
 			return err
 		}
 	}
@@ -124,12 +124,12 @@ func (ct *Cointop) navigateFirstLine() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, _ := ct.Views.Table.Backing.Origin()
-	cx, _ := ct.Views.Table.Backing.Cursor()
-	if err := ct.Views.Table.Backing.SetOrigin(ox, 0); err != nil {
+	ox, _ := ct.Views.Table.Backing().Origin()
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	if err := ct.Views.Table.Backing().SetOrigin(ox, 0); err != nil {
 		return err
 	}
-	if err := ct.Views.Table.Backing.SetCursor(cx, 0); err != nil {
+	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -140,15 +140,15 @@ func (ct *Cointop) navigateLastLine() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, _ := ct.Views.Table.Backing.Origin()
-	cx, _ := ct.Views.Table.Backing.Cursor()
-	_, sy := ct.Views.Table.Backing.Size()
+	ox, _ := ct.Views.Table.Backing().Origin()
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	_, sy := ct.Views.Table.Backing().Size()
 	l := len(ct.State.coins)
 	k := l - sy
-	if err := ct.Views.Table.Backing.SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.Backing().SetOrigin(ox, k); err != nil {
 		return err
 	}
-	if err := ct.Views.Table.Backing.SetCursor(cx, sy-1); err != nil {
+	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -159,8 +159,8 @@ func (ct *Cointop) navigatePageFirstLine() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	cx, _ := ct.Views.Table.Backing.Cursor()
-	if err := ct.Views.Table.Backing.SetCursor(cx, 0); err != nil {
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -171,9 +171,9 @@ func (ct *Cointop) navigatePageMiddleLine() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	cx, _ := ct.Views.Table.Backing.Cursor()
-	_, sy := ct.Views.Table.Backing.Size()
-	if err := ct.Views.Table.Backing.SetCursor(cx, (sy/2)-1); err != nil {
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	_, sy := ct.Views.Table.Backing().Size()
+	if err := ct.Views.Table.Backing().SetCursor(cx, (sy/2)-1); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -184,9 +184,9 @@ func (ct *Cointop) navigatePageLastLine() error {
 	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	cx, _ := ct.Views.Table.Backing.Cursor()
-	_, sy := ct.Views.Table.Backing.Size()
-	if err := ct.Views.Table.Backing.SetCursor(cx, sy-1); err != nil {
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	_, sy := ct.Views.Table.Backing().Size()
+	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -239,19 +239,19 @@ func (ct *Cointop) goToGlobalIndex(idx int) error {
 }
 
 func (ct *Cointop) highlightRow(idx int) error {
-	ct.Views.Table.Backing.SetOrigin(0, 0)
-	ct.Views.Table.Backing.SetCursor(0, 0)
-	ox, _ := ct.Views.Table.Backing.Origin()
-	cx, _ := ct.Views.Table.Backing.Cursor()
-	_, sy := ct.Views.Table.Backing.Size()
+	ct.Views.Table.Backing().SetOrigin(0, 0)
+	ct.Views.Table.Backing().SetCursor(0, 0)
+	ox, _ := ct.Views.Table.Backing().Origin()
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	_, sy := ct.Views.Table.Backing().Size()
 	perpage := ct.totalPerPage()
 	p := idx % perpage
 	oy := (p / sy) * sy
 	cy := p % sy
 	if oy > 0 {
-		ct.Views.Table.Backing.SetOrigin(ox, oy)
+		ct.Views.Table.Backing().SetOrigin(ox, oy)
 	}
-	ct.Views.Table.Backing.SetCursor(cx, cy)
+	ct.Views.Table.Backing().SetCursor(cx, cy)
 
 	return nil
 }

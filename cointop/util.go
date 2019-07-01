@@ -11,12 +11,14 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/open"
 )
 
-func (ct *Cointop) openLink() error {
-	open.URL(ct.rowLink())
+// OpenLink opens the url in a browser
+func (ct *Cointop) OpenLink() error {
+	open.URL(ct.RowLink())
 	return nil
 }
 
-func getBytes(key interface{}) ([]byte, error) {
+// GetBytes returns the interface in bytes form
+func GetBytes(key interface{}) ([]byte, error) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
 	err := enc.Encode(key)
@@ -26,7 +28,8 @@ func getBytes(key interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func userHomeDir() string {
+// UserHomeDir returns home directory for the user
+func UserHomeDir() string {
 	if runtime.GOOS == "windows" {
 		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 		if home == "" {
@@ -42,16 +45,18 @@ func userHomeDir() string {
 	return os.Getenv("HOME")
 }
 
-func normalizePath(path string) string {
+// NormalizePath normalizes and extends the path string
+func NormalizePath(path string) string {
 	// expand tilde
 	if strings.HasPrefix(path, "~/") {
-		path = filepath.Join(userHomeDir(), path[2:])
+		path = filepath.Join(UserHomeDir(), path[2:])
 	}
 
 	return path
 }
 
-func (ct *Cointop) slugify(s string) string {
-	s = strings.ToLower(s)
+// Slugify returns a slugified string
+func (ct *Cointop) Slugify(s string) string {
+	s = strings.TrimSpace(strings.ToLower(s))
 	return s
 }

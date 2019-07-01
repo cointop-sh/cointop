@@ -7,11 +7,30 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
-func (ct *Cointop) updateStatusbar(s string) error {
-	if ct.Views.Statusbar.Backing == nil {
+// StatusbarView is structure for statusbar view
+type StatusbarView struct {
+	*View
+}
+
+// NewStatusbarView returns a new statusbar view
+func NewStatusbarView() *StatusbarView {
+	return &StatusbarView{NewView("statusbar")}
+}
+
+// Update updates the content of the statusbar
+func (statusbar *StatusbarView) Update(str string) error {
+	if statusbar.Backing() == nil {
 		return nil
 	}
 
+	statusbar.Backing().Clear()
+	fmt.Fprintln(statusbar.Backing(), str)
+
+	return nil
+}
+
+// updateStatusbar updates the statusbar view
+func (ct *Cointop) updateStatusbar(s string) error {
 	currpage := ct.currentDisplayPage()
 	totalpages := ct.totalPagesDisplay()
 	var quitText string
@@ -33,29 +52,26 @@ func (ct *Cointop) updateStatusbar(s string) error {
 		favoritesText = "[F]Favorites"
 	}
 
-	ct.update(func() {
-		if ct.Views.Statusbar.Backing == nil {
-			return
-		}
+	base := fmt.Sprintf("%s%s %sHelp %sChart %sRange %sSearch %sConvert %s %s %sSave", "[Q]", quitText, "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText, "[CTRL-S]")
+	str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
+	v := fmt.Sprintf("v%s", ct.Version())
+	str = str[:len(str)-len(v)+2] + v
 
-		ct.Views.Statusbar.Backing.Clear()
-		base := fmt.Sprintf("%s%s %sHelp %sChart %sRange %sSearch %sConvert %s %s %sSave", "[Q]", quitText, "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText, "[CTRL-S]")
-		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
-		v := fmt.Sprintf("v%s", ct.version())
-		str = str[:len(str)-len(v)+2] + v
-		fmt.Fprintln(ct.Views.Statusbar.Backing, str)
+	ct.update(func() {
+		ct.Views.Statusbar.Update(str)
 	})
 
 	return nil
 }
 
-func (ct *Cointop) refreshRowLink() error {
+// RefreshRowLink updates the row link in the statusbar
+func (ct *Cointop) RefreshRowLink() error {
 	var shortcut string
 	if !open.CommandExists() {
 		shortcut = "[O]Open "
 	}
 
-	url := ct.rowLinkShort()
+	url := ct.RowLinkShort()
 	ct.updateStatusbar(fmt.Sprintf("%s%s", shortcut, url))
 
 	return nil

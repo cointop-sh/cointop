@@ -12,6 +12,16 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
+// MarketbarView is structure for marketbar view
+type MarketbarView struct {
+	*View
+}
+
+// NewMarketbarView returns a new marketbar view
+func NewMarketbarView() *MarketbarView {
+	return &MarketbarView{NewView("marketbar")}
+}
+
 func (ct *Cointop) updateMarketbar() error {
 	if ct.Views.Marketbar.Backing == nil {
 		return nil
@@ -133,12 +143,12 @@ func (ct *Cointop) updateMarketbar() error {
 	content = ct.colorscheme.Marketbar(content)
 
 	ct.update(func() {
-		if ct.Views.Marketbar.Backing == nil {
+		if ct.Views.Marketbar.Backing() == nil {
 			return
 		}
 
-		ct.Views.Marketbar.Backing.Clear()
-		fmt.Fprintln(ct.Views.Marketbar.Backing, content)
+		ct.Views.Marketbar.Backing().Clear()
+		fmt.Fprintln(ct.Views.Marketbar.Backing(), content)
 	})
 
 	return nil

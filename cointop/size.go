@@ -26,13 +26,3 @@ func (ct *Cointop) viewWidth(view string) int {
 	w, _ := v.Size()
 	return w
 }
-
-// viewHeight returns view height
-func (ct *Cointop) viewHeight(view string) int {
-	v, err := ct.g.View(view)
-	if err != nil {
-		return 0
-	}
-	_, h := v.Size()
-	return h
-}
