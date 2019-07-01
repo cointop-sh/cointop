@@ -11,22 +11,22 @@ import (
 )
 
 func (ct *Cointop) togglePortfolio() error {
-	ct.filterByFavorites = false
-	ct.portfoliovisible = !ct.portfoliovisible
+	ct.State.filterByFavorites = false
+	ct.State.portfolioVisible = !ct.State.portfolioVisible
 	go ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) toggleShowPortfolio() error {
-	ct.filterByFavorites = false
-	ct.portfoliovisible = true
+	ct.State.filterByFavorites = false
+	ct.State.portfolioVisible = true
 	go ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) togglePortfolioUpdateMenu() error {
-	ct.portfolioupdatemenuvisible = !ct.portfolioupdatemenuvisible
-	if ct.portfolioupdatemenuvisible {
+	ct.State.portfolioUpdateMenuVisible = !ct.State.portfolioUpdateMenuVisible
+	if ct.State.portfolioUpdateMenuVisible {
 		return ct.showPortfolioUpdateMenu()
 	}
 	return ct.hidePortfolioUpdateMenu()
@@ -34,7 +34,7 @@ func (ct *Cointop) togglePortfolioUpdateMenu() error {
 
 func (ct *Cointop) updatePortfolioUpdateMenu() {
 	coin := ct.highlightedRowCoin()
-	exists := ct.portfolioEntryExists(coin)
+	exists := ct.PortfolioEntryExists(coin)
 	value := strconv.FormatFloat(coin.Holdings, 'f', -1, 64)
 	var mode string
 	var current string
@@ -47,16 +47,16 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 		mode = "Add"
 		submitText = "Add"
 	}
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxtablewidth-26, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxTableWidth-26, " ")))
 	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
 	ct.update(func() {
-		ct.portfolioupdatemenuview.Clear()
-		ct.portfolioupdatemenuview.Frame = true
-		fmt.Fprintln(ct.portfolioupdatemenuview, content)
-		fmt.Fprintln(ct.inputview, value)
-		ct.inputview.SetCursor(len(value), 0)
+		ct.Views.PortfolioUpdateMenu.Backing.Clear()
+		ct.Views.PortfolioUpdateMenu.Backing.Frame = true
+		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing, content)
+		fmt.Fprintln(ct.Views.Input.Backing, value)
+		ct.Views.Input.Backing.SetCursor(len(value), 0)
 	})
 }
 
@@ -67,28 +67,28 @@ func (ct *Cointop) showPortfolioUpdateMenu() error {
 		return nil
 	}
 
-	ct.portfolioupdatemenuvisible = true
+	ct.State.portfolioUpdateMenuVisible = true
 	ct.updatePortfolioUpdateMenu()
-	ct.setActiveView(ct.portfolioupdatemenuviewname)
+	ct.setActiveView(ct.Views.PortfolioUpdateMenu.Name)
 	return nil
 }
 
 func (ct *Cointop) hidePortfolioUpdateMenu() error {
-	ct.portfolioupdatemenuvisible = false
-	ct.setViewOnBottom(ct.portfolioupdatemenuviewname)
-	ct.setViewOnBottom(ct.inputviewname)
-	ct.setActiveView(ct.tableviewname)
+	ct.State.portfolioUpdateMenuVisible = false
+	ct.setViewOnBottom(ct.Views.PortfolioUpdateMenu.Name)
+	ct.setViewOnBottom(ct.Views.Input.Name)
+	ct.setActiveView(ct.Views.Table.Name)
 	ct.update(func() {
-		if ct.portfolioupdatemenuview == nil {
+		if ct.Views.PortfolioUpdateMenu.Backing == nil {
 			return
 		}
 
-		ct.portfolioupdatemenuview.Clear()
-		ct.portfolioupdatemenuview.Frame = false
-		fmt.Fprintln(ct.portfolioupdatemenuview, "")
+		ct.Views.PortfolioUpdateMenu.Backing.Clear()
+		ct.Views.PortfolioUpdateMenu.Backing.Frame = false
+		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing, "")
 
-		ct.inputview.Clear()
-		fmt.Fprintln(ct.inputview, "")
+		ct.Views.Input.Backing.Clear()
+		fmt.Fprintln(ct.Views.Input.Backing, "")
 	})
 	return nil
 }
@@ -99,7 +99,7 @@ func (ct *Cointop) setPortfolioHoldings() error {
 	coin := ct.highlightedRowCoin()
 
 	b := make([]byte, 100)
-	n, err := ct.inputview.Read(b)
+	n, err := ct.Views.Input.Backing.Read(b)
 	if n == 0 {
 		return nil
 	}
@@ -129,20 +129,20 @@ func (ct *Cointop) setPortfolioHoldings() error {
 	return nil
 }
 
-func (ct *Cointop) portfolioEntry(c *Coin) (*portfolioEntry, bool) {
+func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 	if c == nil {
-		return &portfolioEntry{}, true
+		return &PortfolioEntry{}, true
 	}
 
-	var p *portfolioEntry
+	var p *PortfolioEntry
 	var isNew bool
 	var ok bool
 	key := strings.ToLower(c.Name)
-	if p, ok = ct.portfolio.Entries[key]; !ok {
+	if p, ok = ct.State.portfolio.Entries[key]; !ok {
 		// NOTE: if not found then try the symbol
 		key := strings.ToLower(c.Symbol)
-		if p, ok = ct.portfolio.Entries[key]; !ok {
-			p = &portfolioEntry{
+		if p, ok = ct.State.portfolio.Entries[key]; !ok {
+			p = &PortfolioEntry{
 				Coin:     c.Name,
 				Holdings: 0,
 			}
@@ -154,11 +154,11 @@ func (ct *Cointop) portfolioEntry(c *Coin) (*portfolioEntry, bool) {
 }
 
 func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
-	c, _ := ct.allcoinsslugmap[strings.ToLower(coin)]
-	p, isNew := ct.portfolioEntry(c)
+	c, _ := ct.State.allCoinsSlugMap[strings.ToLower(coin)]
+	p, isNew := ct.PortfolioEntry(c)
 	if isNew {
 		key := strings.ToLower(coin)
-		ct.portfolio.Entries[key] = &portfolioEntry{
+		ct.State.portfolio.Entries[key] = &PortfolioEntry{
 			Coin:     coin,
 			Holdings: holdings,
 		}
@@ -168,33 +168,33 @@ func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
 }
 
 func (ct *Cointop) removePortfolioEntry(coin string) {
-	delete(ct.portfolio.Entries, strings.ToLower(coin))
+	delete(ct.State.portfolio.Entries, strings.ToLower(coin))
 }
 
-func (ct *Cointop) portfolioEntryExists(c *Coin) bool {
-	_, isNew := ct.portfolioEntry(c)
+func (ct *Cointop) PortfolioEntryExists(c *Coin) bool {
+	_, isNew := ct.PortfolioEntry(c)
 	return !isNew
 }
 
 func (ct *Cointop) portfolioEntriesCount() int {
-	return len(ct.portfolio.Entries)
+	return len(ct.State.portfolio.Entries)
 }
 
 func (ct *Cointop) getPortfolioSlice() []*Coin {
 	sliced := []*Coin{}
-	for i := range ct.allcoins {
+	for i := range ct.State.allCoins {
 		if ct.portfolioEntriesCount() == 0 {
 			break
 		}
-		coin := ct.allcoins[i]
-		p, isNew := ct.portfolioEntry(coin)
+		coin := ct.State.allCoins[i]
+		p, isNew := ct.PortfolioEntry(coin)
 		if isNew {
 			continue
 		}
 		coin.Holdings = p.Holdings
 		balance := coin.Price * p.Holdings
 		balancestr := fmt.Sprintf("%.2f", balance)
-		if ct.currencyconversion == "ETH" || ct.currencyconversion == "BTC" {
+		if ct.State.currencyConversion == "ETH" || ct.State.currencyConversion == "BTC" {
 			balancestr = fmt.Sprintf("%.5f", balance)
 		}
 		balance, _ = strconv.ParseFloat(balancestr, 64)

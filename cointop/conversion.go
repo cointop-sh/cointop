@@ -119,19 +119,11 @@ func (ct *Cointop) sortedSupportedCurrencyConversions() []string {
 	return keys
 }
 
-func (ct *Cointop) toggleConvertMenu() error {
-	ct.convertmenuvisible = !ct.convertmenuvisible
-	if ct.convertmenuvisible {
-		return ct.showConvertMenu()
-	}
-	return ct.hideConvertMenu()
-}
-
 func (ct *Cointop) updateConvertMenu() {
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxtablewidth-20, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxTableWidth-20, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
 	cnt := 0
-	h := ct.viewHeight(ct.convertmenuviewname)
+	h := ct.viewHeight(ct.Views.ConvertMenu.Name)
 	percol := h - 5
 	cols := make([][]string, percol)
 	for i := range cols {
@@ -146,7 +138,7 @@ func (ct *Cointop) updateConvertMenu() {
 			cnt = 0
 		}
 		shortcut := string(alphanumericcharacters[i])
-		if key == ct.currencyconversion {
+		if key == ct.State.currencyConversion {
 			shortcut = ct.colorscheme.MenuLabelActive(color.Bold("*"))
 			key = ct.colorscheme.Menu(color.Bold(key))
 			currency = ct.colorscheme.MenuLabelActive(color.Bold(currency))
@@ -171,42 +163,19 @@ func (ct *Cointop) updateConvertMenu() {
 
 	content := fmt.Sprintf("%s%s%s", header, helpline, body)
 	ct.update(func() {
-		if ct.convertmenuview == nil {
+		if ct.Views.ConvertMenu.Backing == nil {
 			return
 		}
 
-		ct.convertmenuview.Clear()
-		ct.convertmenuview.Frame = true
-		fmt.Fprintln(ct.convertmenuview, content)
+		ct.Views.ConvertMenu.Backing.Clear()
+		ct.Views.ConvertMenu.Backing.Frame = true
+		fmt.Fprintln(ct.Views.ConvertMenu.Backing, content)
 	})
-}
-
-func (ct *Cointop) showConvertMenu() error {
-	ct.convertmenuvisible = true
-	ct.updateConvertMenu()
-	ct.setActiveView(ct.convertmenuviewname)
-	return nil
-}
-
-func (ct *Cointop) hideConvertMenu() error {
-	ct.convertmenuvisible = false
-	ct.setViewOnBottom(ct.convertmenuviewname)
-	ct.setActiveView(ct.tableviewname)
-	ct.update(func() {
-		if ct.convertmenuview == nil {
-			return
-		}
-
-		ct.convertmenuview.Clear()
-		ct.convertmenuview.Frame = false
-		fmt.Fprintln(ct.convertmenuview, "")
-	})
-	return nil
 }
 
 func (ct *Cointop) setCurrencyConverstion(convert string) func() error {
 	return func() error {
-		ct.currencyconversion = convert
+		ct.State.currencyConversion = convert
 		ct.hideConvertMenu()
 		go ct.refreshAll()
 		return nil
@@ -214,10 +183,41 @@ func (ct *Cointop) setCurrencyConverstion(convert string) func() error {
 }
 
 func (ct *Cointop) currencySymbol() string {
-	symbol, ok := currencySymbol[ct.currencyconversion]
+	symbol, ok := currencySymbol[ct.State.currencyConversion]
 	if ok {
 		return symbol
 	}
 
 	return "$"
+}
+
+func (ct *Cointop) showConvertMenu() error {
+	ct.State.convertMenuVisible = true
+	ct.updateConvertMenu()
+	ct.setActiveView(ct.Views.ConvertMenu.Name)
+	return nil
+}
+
+func (ct *Cointop) hideConvertMenu() error {
+	ct.State.convertMenuVisible = false
+	ct.setViewOnBottom(ct.Views.ConvertMenu.Name)
+	ct.setActiveView(ct.Views.Table.Name)
+	ct.update(func() {
+		if ct.Views.ConvertMenu.Backing == nil {
+			return
+		}
+
+		ct.Views.ConvertMenu.Backing.Clear()
+		ct.Views.ConvertMenu.Backing.Frame = false
+		fmt.Fprintln(ct.Views.ConvertMenu.Backing, "")
+	})
+	return nil
+}
+
+func (ct *Cointop) toggleConvertMenu() error {
+	ct.State.convertMenuVisible = !ct.State.convertMenuVisible
+	if ct.State.convertMenuVisible {
+		return ct.showConvertMenu()
+	}
+	return ct.hideConvertMenu()
 }

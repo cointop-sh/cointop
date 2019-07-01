@@ -37,9 +37,9 @@ func (ct *Cointop) updateHeaders() {
 
 	for k := range cm {
 		cm[k].arrow = " "
-		if ct.sortby == k {
+		if ct.State.sortBy == k {
 			cm[k].colorfn = ct.colorscheme.TableHeaderColumnActiveSprintf()
-			if ct.sortdesc {
+			if ct.State.sortDesc {
 				cm[k].arrow = "▼"
 			} else {
 				cm[k].arrow = "▲"
@@ -47,7 +47,7 @@ func (ct *Cointop) updateHeaders() {
 		}
 	}
 
-	if ct.portfoliovisible {
+	if ct.State.portfolioVisible {
 		cols = []string{"rank", "name", "symbol", "price",
 			"holdings", "balance", "24hchange", "percentholdings", "lastupdated"}
 	} else {
@@ -78,11 +78,11 @@ func (ct *Cointop) updateHeaders() {
 	}
 
 	ct.update(func() {
-		if ct.headersview == nil {
+		if ct.Views.Header.Backing == nil {
 			return
 		}
 
-		ct.headersview.Clear()
-		fmt.Fprintln(ct.headersview, strings.Join(headers, ""))
+		ct.Views.Header.Backing.Clear()
+		fmt.Fprintln(ct.Views.Header.Backing, strings.Join(headers, ""))
 	})
 }

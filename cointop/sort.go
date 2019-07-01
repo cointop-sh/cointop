@@ -9,7 +9,7 @@ import (
 
 var sortlock sync.Mutex
 
-func (ct *Cointop) sort(sortby string, desc bool, list []*Coin, renderHeaders bool) {
+func (ct *Cointop) sort(sortBy string, desc bool, list []*Coin, renderHeaders bool) {
 	sortlock.Lock()
 	defer sortlock.Unlock()
 	if list == nil {
@@ -18,10 +18,10 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*Coin, renderHeaders bo
 	if len(list) < 2 {
 		return
 	}
-	ct.sortby = sortby
-	ct.sortdesc = desc
+	ct.State.sortBy = sortBy
+	ct.State.sortDesc = desc
 	sort.Slice(list[:], func(i, j int) bool {
-		if ct.sortdesc {
+		if ct.State.sortDesc {
 			i, j = j, i
 		}
 		a := list[i]
@@ -32,7 +32,7 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*Coin, renderHeaders bo
 		if b == nil {
 			return false
 		}
-		switch sortby {
+		switch sortBy {
 		case "rank":
 			return a.Rank < b.Rank
 		case "name":
@@ -71,66 +71,66 @@ func (ct *Cointop) sort(sortby string, desc bool, list []*Coin, renderHeaders bo
 	}
 }
 
-func (ct *Cointop) sortToggle(sortby string, desc bool) error {
-	if ct.sortby == sortby {
-		desc = !ct.sortdesc
-	}
-
-	ct.sort(sortby, desc, ct.coins, true)
-	ct.updateTable()
-	return nil
-}
-
-func (ct *Cointop) sortfn(sortby string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
-	return func(g *gocui.Gui, v *gocui.View) error {
-		return ct.sortToggle(sortby, desc)
-	}
-}
-
-func (ct *Cointop) getSortColIndex() int {
-	for i, col := range ct.tablecolumnorder {
-		if ct.sortby == col {
-			return i
-		}
-	}
-	return 0
-}
-
 func (ct *Cointop) sortAsc() error {
-	ct.sortdesc = false
+	ct.State.sortDesc = false
 	ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) sortDesc() error {
-	ct.sortdesc = true
+	ct.State.sortDesc = true
 	ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) sortPrevCol() error {
-	nextsortby := ct.tablecolumnorder[0]
+	nextsortBy := ct.tableColumnOrder[0]
 	i := ct.getSortColIndex()
 	k := i - 1
 	if k < 0 {
 		k = 0
 	}
-	nextsortby = ct.tablecolumnorder[k]
-	ct.sort(nextsortby, ct.sortdesc, ct.coins, true)
+	nextsortBy = ct.tableColumnOrder[k]
+	ct.sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.updateTable()
 	return nil
 }
 
 func (ct *Cointop) sortNextCol() error {
-	nextsortby := ct.tablecolumnorder[0]
-	l := len(ct.tablecolumnorder)
+	nextsortBy := ct.tableColumnOrder[0]
+	l := len(ct.tableColumnOrder)
 	i := ct.getSortColIndex()
 	k := i + 1
 	if k > l-1 {
 		k = l - 1
 	}
-	nextsortby = ct.tablecolumnorder[k]
-	ct.sort(nextsortby, ct.sortdesc, ct.coins, true)
+	nextsortBy = ct.tableColumnOrder[k]
+	ct.sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.updateTable()
 	return nil
+}
+
+func (ct *Cointop) sortToggle(sortBy string, desc bool) error {
+	if ct.State.sortBy == sortBy {
+		desc = !ct.State.sortDesc
+	}
+
+	ct.sort(sortBy, desc, ct.State.coins, true)
+	ct.updateTable()
+	return nil
+}
+
+func (ct *Cointop) sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
+	return func(g *gocui.Gui, v *gocui.View) error {
+		return ct.sortToggle(sortBy, desc)
+	}
+}
+
+func (ct *Cointop) getSortColIndex() int {
+	for i, col := range ct.tableColumnOrder {
+		if ct.State.sortBy == col {
+			return i
+		}
+	}
+	return 0
 }

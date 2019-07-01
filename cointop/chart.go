@@ -11,38 +11,38 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/timeutil"
 )
 
-var chartlock sync.Mutex
-var chartpointslock sync.Mutex
+var chartLock sync.Mutex
+var chartPointsLock sync.Mutex
 
 func (ct *Cointop) updateChart() error {
-	if ct.chartview == nil {
+	if ct.Views.Chart.Backing == nil {
 		return nil
 	}
 
-	chartlock.Lock()
-	defer chartlock.Unlock()
+	chartLock.Lock()
+	defer chartLock.Unlock()
 
-	if ct.portfoliovisible {
+	if ct.State.portfolioVisible {
 		if err := ct.portfolioChart(); err != nil {
 			return err
 		}
 	} else {
 		symbol := ct.selectedCoinSymbol()
 		name := ct.selectedCoinName()
-		ct.chartPoints(symbol, name)
+		ct.calcChartPoints(symbol, name)
 	}
 
-	if len(ct.chartpoints) != 0 {
-		ct.chartview.Clear()
+	if len(ct.State.chartPoints) != 0 {
+		ct.Views.Chart.Backing.Clear()
 	}
 	var body string
-	if len(ct.chartpoints) == 0 {
+	if len(ct.State.chartPoints) == 0 {
 		body = "\n\n\n\n\nnot enough data for chart"
 	} else {
-		for i := range ct.chartpoints {
+		for i := range ct.State.chartPoints {
 			var s string
-			for j := range ct.chartpoints[i] {
-				p := ct.chartpoints[i][j]
+			for j := range ct.State.chartPoints[i] {
+				p := ct.State.chartPoints[i][j]
 				s = fmt.Sprintf("%s%c", s, p.Ch)
 			}
 			body = fmt.Sprintf("%s%s\n", body, s)
@@ -50,20 +50,20 @@ func (ct *Cointop) updateChart() error {
 		}
 	}
 	ct.update(func() {
-		if ct.chartview == nil {
+		if ct.Views.Chart.Backing == nil {
 			return
 		}
 
-		fmt.Fprint(ct.chartview, ct.colorscheme.Chart(body))
+		fmt.Fprint(ct.Views.Chart.Backing, ct.colorscheme.Chart(body))
 	})
 
 	return nil
 }
 
-func (ct *Cointop) chartPoints(symbol string, name string) error {
-	maxX := ct.maxtablewidth - 3
-	chartpointslock.Lock()
-	defer chartpointslock.Unlock()
+func (ct *Cointop) calcChartPoints(symbol string, name string) error {
+	maxX := ct.maxTableWidth - 3
+	chartPointsLock.Lock()
+	defer chartPointsLock.Unlock()
 	// TODO: not do this (SoC)
 	go ct.updateMarketbar()
 
@@ -74,8 +74,8 @@ func (ct *Cointop) chartPoints(symbol string, name string) error {
 	// NOTE: empty list means don't show x-axis labels
 	chart.DataLabels = []string{""}
 
-	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
-	if ct.selectedchartrange == "YTD" {
+	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
+	if ct.State.selectedChartRange == "YTD" {
 		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
@@ -91,7 +91,7 @@ func (ct *Cointop) chartPoints(symbol string, name string) error {
 	if keyname == "" {
 		keyname = "globaldata"
 	}
-	cachekey := ct.cacheKey(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.selectedchartrange, " ", "", -1)))
+	cachekey := ct.cacheKey(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
 
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -155,15 +155,15 @@ func (ct *Cointop) chartPoints(symbol string, name string) error {
 		points = append(points, rowpoints)
 	}
 
-	ct.chartpoints = points
+	ct.State.chartPoints = points
 
 	return nil
 }
 
 func (ct *Cointop) portfolioChart() error {
-	maxX := ct.maxtablewidth - 3
-	chartpointslock.Lock()
-	defer chartpointslock.Unlock()
+	maxX := ct.maxTableWidth - 3
+	chartPointsLock.Lock()
+	defer chartPointsLock.Unlock()
 	// TODO: not do this (SoC)
 	go ct.updateMarketbar()
 
@@ -174,8 +174,8 @@ func (ct *Cointop) portfolioChart() error {
 	// NOTE: empty list means don't show x-axis labels
 	chart.DataLabels = []string{""}
 
-	rangeseconds := ct.chartrangesmap[ct.selectedchartrange]
-	if ct.selectedchartrange == "YTD" {
+	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
+	if ct.State.selectedChartRange == "YTD" {
 		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
@@ -201,7 +201,7 @@ func (ct *Cointop) portfolioChart() error {
 		}
 
 		var graphData []float64
-		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", p.Symbol, strings.Replace(ct.selectedchartrange, " ", "", -1)))
+		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", p.Symbol, strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
 		cached, found := ct.cache.Get(cachekey)
 		if found {
 			// cache hit
@@ -263,16 +263,16 @@ func (ct *Cointop) portfolioChart() error {
 		points = append(points, rowpoints)
 	}
 
-	ct.chartpoints = points
+	ct.State.chartPoints = points
 
 	return nil
 }
 
 func (ct *Cointop) nextChartRange() error {
 	sel := 0
-	max := len(ct.chartranges)
-	for i, k := range ct.chartranges {
-		if k == ct.selectedchartrange {
+	max := len(ct.chartRanges)
+	for i, k := range ct.chartRanges {
+		if k == ct.State.selectedChartRange {
 			sel = i + 1
 			break
 		}
@@ -281,7 +281,7 @@ func (ct *Cointop) nextChartRange() error {
 		sel = 0
 	}
 
-	ct.selectedchartrange = ct.chartranges[sel]
+	ct.State.selectedChartRange = ct.chartRanges[sel]
 
 	go ct.updateChart()
 	return nil
@@ -289,57 +289,39 @@ func (ct *Cointop) nextChartRange() error {
 
 func (ct *Cointop) prevChartRange() error {
 	sel := 0
-	for i, k := range ct.chartranges {
-		if k == ct.selectedchartrange {
+	for i, k := range ct.chartRanges {
+		if k == ct.State.selectedChartRange {
 			sel = i - 1
 			break
 		}
 	}
 	if sel < 0 {
-		sel = len(ct.chartranges) - 1
+		sel = len(ct.chartRanges) - 1
 	}
 
-	ct.selectedchartrange = ct.chartranges[sel]
+	ct.State.selectedChartRange = ct.chartRanges[sel]
 	go ct.updateChart()
 	return nil
 }
 
 func (ct *Cointop) firstChartRange() error {
-	ct.selectedchartrange = ct.chartranges[0]
+	ct.State.selectedChartRange = ct.chartRanges[0]
 	go ct.updateChart()
 	return nil
 }
 
 func (ct *Cointop) lastChartRange() error {
-	ct.selectedchartrange = ct.chartranges[len(ct.chartranges)-1]
+	ct.State.selectedChartRange = ct.chartRanges[len(ct.chartRanges)-1]
 	go ct.updateChart()
 	return nil
 }
 
-func (ct *Cointop) selectedCoinName() string {
-	coin := ct.selectedcoin
-	if coin != nil {
-		return coin.Name
-	}
-
-	return ""
-}
-
-func (ct *Cointop) selectedCoinSymbol() string {
-	coin := ct.selectedcoin
-	if coin != nil {
-		return coin.Symbol
-	}
-
-	return ""
-}
-
 func (ct *Cointop) toggleCoinChart() error {
 	highlightedcoin := ct.highlightedRowCoin()
-	if ct.selectedcoin == highlightedcoin {
-		ct.selectedcoin = nil
+	if ct.State.selectedCoin == highlightedcoin {
+		ct.State.selectedCoin = nil
 	} else {
-		ct.selectedcoin = highlightedcoin
+		ct.State.selectedCoin = highlightedcoin
 	}
 
 	go ct.updateChart()

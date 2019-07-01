@@ -14,23 +14,23 @@ var updatecoinsmux sync.Mutex
 func (ct *Cointop) updateCoins() error {
 	coinslock.Lock()
 	defer coinslock.Unlock()
-	cachekey := ct.cacheKey("allcoinsslugmap")
+	cachekey := ct.cacheKey("allCoinsSlugMap")
 
 	var err error
-	var allcoinsslugmap map[string]types.Coin
+	var allCoinsSlugMap map[string]types.Coin
 	cached, found := ct.cache.Get(cachekey)
 	_ = cached
 	if found {
 		// cache hit
-		allcoinsslugmap, _ = cached.(map[string]types.Coin)
+		allCoinsSlugMap, _ = cached.(map[string]types.Coin)
 		ct.debuglog("soft cache hit")
 	}
 
 	// cache miss
-	if allcoinsslugmap == nil {
+	if allCoinsSlugMap == nil {
 		ct.debuglog("cache miss")
 		ch := make(chan []types.Coin)
-		err = ct.api.GetAllCoinData(ct.currencyconversion, ch)
+		err = ct.api.GetAllCoinData(ct.State.currencyConversion, ch)
 		if err != nil {
 			return err
 		}
@@ -39,7 +39,7 @@ func (ct *Cointop) updateCoins() error {
 			go ct.processCoins(coins)
 		}
 	} else {
-		ct.processCoinsMap(allcoinsslugmap)
+		ct.processCoinsMap(allCoinsSlugMap)
 	}
 
 	return nil
@@ -58,14 +58,14 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
 
-	cachekey := ct.cacheKey("allcoinsslugmap")
-	ct.cache.Set(cachekey, ct.allcoinsslugmap, 10*time.Second)
-	filecache.Set(cachekey, ct.allcoinsslugmap, 24*time.Hour)
+	cachekey := ct.cacheKey("allCoinsSlugMap")
+	ct.cache.Set(cachekey, ct.State.allCoinsSlugMap, 10*time.Second)
+	filecache.Set(cachekey, ct.State.allCoinsSlugMap, 24*time.Hour)
 
 	for _, v := range coins {
 		k := v.Name
-		last := ct.allcoinsslugmap[k]
-		ct.allcoinsslugmap[k] = &Coin{
+		last := ct.State.allCoinsSlugMap[k]
+		ct.State.allCoinsSlugMap[k] = &Coin{
 			ID:               v.ID,
 			Name:             v.Name,
 			Symbol:           v.Symbol,
@@ -81,23 +81,23 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 			LastUpdated:      v.LastUpdated,
 		}
 		if last != nil {
-			ct.allcoinsslugmap[k].Favorite = last.Favorite
+			ct.State.allCoinsSlugMap[k].Favorite = last.Favorite
 		}
 	}
-	if len(ct.allcoins) < len(ct.allcoinsslugmap) {
+	if len(ct.State.allCoins) < len(ct.State.allCoinsSlugMap) {
 		list := []*Coin{}
 		for _, v := range coins {
 			k := v.Name
-			coin := ct.allcoinsslugmap[k]
+			coin := ct.State.allCoinsSlugMap[k]
 			list = append(list, coin)
 		}
-		ct.allcoins = append(ct.allcoins, list...)
+		ct.State.allCoins = append(ct.State.allCoins, list...)
 	} else {
 		// update list in place without changing order
-		for i := range ct.allcoinsslugmap {
-			cm := ct.allcoinsslugmap[i]
-			for k := range ct.allcoins {
-				c := ct.allcoins[k]
+		for i := range ct.State.allCoinsSlugMap {
+			cm := ct.State.allCoinsSlugMap[i]
+			for k := range ct.State.allCoins {
+				c := ct.State.allCoins[k]
 				if c.ID == cm.ID {
 					// TODO: improve this
 					c.ID = cm.ID
@@ -120,7 +120,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	}
 
 	time.AfterFunc(10*time.Millisecond, func() {
-		ct.sort(ct.sortby, ct.sortdesc, ct.coins, true)
+		ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
 		ct.updateTable()
 	})
 }

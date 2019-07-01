@@ -8,6 +8,8 @@ import (
 	xtermcolor "github.com/tomnomnom/xtermcolor"
 )
 
+// TODO: fix hex color support
+
 // colorschemeColors ..
 type colorschemeColors map[string]interface{}
 

@@ -8,16 +8,16 @@ import (
 func (ct *Cointop) refresh() error {
 	go func() {
 		<-ct.limiter
-		ct.forcerefresh <- true
+		ct.forceRefresh <- true
 	}()
 	return nil
 }
 
 func (ct *Cointop) refreshAll() error {
-	ct.refreshmux.Lock()
-	defer ct.refreshmux.Unlock()
+	ct.refreshMux.Lock()
+	defer ct.refreshMux.Unlock()
 	ct.setRefreshStatus()
-	ct.cache.Delete("allcoinsslugmap")
+	ct.cache.Delete("allCoinsSlugMap")
 	ct.cache.Delete("market")
 	go func() {
 		ct.updateCoins()
@@ -45,4 +45,17 @@ func (ct *Cointop) loadingTicks(s string, t int) {
 			k = 0
 		}
 	}
+}
+
+func (ct *Cointop) intervalFetchData() {
+	go func() {
+		for {
+			select {
+			case <-ct.forceRefresh:
+				ct.refreshAll()
+			case <-ct.refreshTicker.C:
+				ct.refreshAll()
+			}
+		}
+	}()
 }

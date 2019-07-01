@@ -13,26 +13,26 @@ import (
 )
 
 func (ct *Cointop) updateMarketbar() error {
-	if ct.marketbarview == nil {
+	if ct.Views.Marketbar.Backing == nil {
 		return nil
 	}
 
 	maxX := ct.width()
 	logo := "❯❯❯cointop"
-	if ct.colorschemename == "cointop" {
+	if ct.colorschemeName == "cointop" {
 		logo = fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
 	}
 	var content string
 
-	if ct.portfoliovisible {
+	if ct.State.portfolioVisible {
 		total := ct.getPortfolioTotal()
 		totalstr := humanize.Commaf(total)
-		if !(ct.currencyconversion == "BTC" || ct.currencyconversion == "ETH" || total < 1) {
+		if !(ct.State.currencyConversion == "BTC" || ct.State.currencyConversion == "ETH" || total < 1) {
 			total = math.Round(total*1e2) / 1e2
 			totalstr = humanize.Commaf2(total)
 		}
 
-		timeframe := ct.selectedchartrange
+		timeframe := ct.State.selectedChartRange
 		chartname := ct.selectedCoinName()
 		var charttitle string
 		if chartname == "" {
@@ -63,7 +63,7 @@ func (ct *Cointop) updateMarketbar() error {
 		}
 
 		chartInfo := ""
-		if !ct.hideChart {
+		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
 				"[ Chart: %s %s ] ",
 				charttitle,
@@ -93,7 +93,7 @@ func (ct *Cointop) updateMarketbar() error {
 		}
 
 		if market.TotalMarketCapUSD == 0 {
-			market, err = ct.api.GetGlobalMarketData(ct.currencyconversion)
+			market, err = ct.api.GetGlobalMarketData(ct.State.currencyConversion)
 			if err != nil {
 				filecache.Get(cachekey, &market)
 			}
@@ -104,14 +104,14 @@ func (ct *Cointop) updateMarketbar() error {
 			}()
 		}
 
-		timeframe := ct.selectedchartrange
+		timeframe := ct.State.selectedChartRange
 		chartname := ct.selectedCoinName()
 		if chartname == "" {
 			chartname = "Global"
 		}
 
 		chartInfo := ""
-		if !ct.hideChart {
+		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
 				"[ Chart: %s %s ] ",
 				ct.colorscheme.MarketBarLabelActive(chartname),
@@ -133,12 +133,12 @@ func (ct *Cointop) updateMarketbar() error {
 	content = ct.colorscheme.Marketbar(content)
 
 	ct.update(func() {
-		if ct.marketbarview == nil {
+		if ct.Views.Marketbar.Backing == nil {
 			return
 		}
 
-		ct.marketbarview.Clear()
-		fmt.Fprintln(ct.marketbarview, content)
+		ct.Views.Marketbar.Backing.Clear()
+		fmt.Fprintln(ct.Views.Marketbar.Backing, content)
 	})
 
 	return nil

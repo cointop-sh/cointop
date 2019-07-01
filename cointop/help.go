@@ -7,31 +7,23 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
-func (ct *Cointop) toggleHelp() error {
-	ct.helpvisible = !ct.helpvisible
-	if ct.helpvisible {
-		return ct.showHelp()
-	}
-	return ct.hideHelp()
-}
-
 func (ct *Cointop) updateHelp() {
-	keys := make([]string, 0, len(ct.shortcutkeys))
-	for k := range ct.shortcutkeys {
+	keys := make([]string, 0, len(ct.State.shortcutKeys))
+	for k := range ct.State.shortcutKeys {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxtablewidth-10, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxTableWidth-10, " ")))
 	cnt := 0
-	h := ct.viewHeight(ct.helpviewname)
+	h := ct.viewHeight(ct.Views.Help.Name)
 	percol := h - 6
 	cols := make([][]string, percol)
 	for i := range cols {
 		cols[i] = make([]string, 20)
 	}
 	for _, k := range keys {
-		v := ct.shortcutkeys[k]
+		v := ct.State.shortcutKeys[k]
 		if cnt%percol == 0 {
 			cnt = 0
 		}
@@ -52,39 +44,47 @@ func (ct *Cointop) updateHelp() {
 	body = fmt.Sprintf("%s\n", body)
 
 	infoline := " List of keyboard shortcuts\n\n"
-	versionline := pad.Left(fmt.Sprintf("v%s", ct.version()), ct.maxtablewidth-5, " ")
+	versionline := pad.Left(fmt.Sprintf("v%s", ct.version()), ct.maxTableWidth-5, " ")
 	content := header + infoline + body + versionline
 
 	ct.update(func() {
-		if ct.helpview == nil {
+		if ct.Views.Help.Backing == nil {
 			return
 		}
 
-		ct.helpview.Clear()
-		ct.helpview.Frame = true
-		fmt.Fprintln(ct.helpview, content)
+		ct.Views.Help.Backing.Clear()
+		ct.Views.Help.Backing.Frame = true
+		fmt.Fprintln(ct.Views.Help.Backing, content)
 	})
 }
 
 func (ct *Cointop) showHelp() error {
-	ct.helpvisible = true
+	ct.State.helpVisible = true
 	ct.updateHelp()
-	ct.setActiveView(ct.helpviewname)
+	ct.setActiveView(ct.Views.Help.Name)
 	return nil
 }
 
 func (ct *Cointop) hideHelp() error {
-	ct.helpvisible = false
-	ct.setViewOnBottom(ct.helpviewname)
-	ct.setActiveView(ct.tableviewname)
+	ct.State.helpVisible = false
+	ct.setViewOnBottom(ct.Views.Help.Name)
+	ct.setActiveView(ct.Views.Table.Name)
 	ct.update(func() {
-		if ct.helpview == nil {
+		if ct.Views.Help.Backing == nil {
 			return
 		}
 
-		ct.helpview.Clear()
-		ct.helpview.Frame = false
-		fmt.Fprintln(ct.helpview, "")
+		ct.Views.Help.Backing.Clear()
+		ct.Views.Help.Backing.Frame = false
+		fmt.Fprintln(ct.Views.Help.Backing, "")
 	})
 	return nil
+}
+
+func (ct *Cointop) toggleHelp() error {
+	ct.State.helpVisible = !ct.State.helpVisible
+	if ct.State.helpVisible {
+		return ct.showHelp()
+	}
+	return ct.hideHelp()
 }

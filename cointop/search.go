@@ -8,27 +8,27 @@ import (
 )
 
 func (ct *Cointop) openSearch() error {
-	ct.searchfieldvisible = true
-	ct.setActiveView(ct.searchfieldviewname)
+	ct.State.searchFieldVisible = true
+	ct.setActiveView(ct.Views.SearchField.Name)
 	return nil
 }
 
 func (ct *Cointop) cancelSearch() error {
-	ct.searchfieldvisible = false
-	ct.setActiveView(ct.tableviewname)
+	ct.State.searchFieldVisible = false
+	ct.setActiveView(ct.Views.Table.Name)
 	return nil
 }
 
 func (ct *Cointop) doSearch() error {
-	ct.searchfield.Rewind()
+	ct.Views.SearchField.Backing.Rewind()
 	b := make([]byte, 100)
-	n, err := ct.searchfield.Read(b)
+	n, err := ct.Views.SearchField.Backing.Read(b)
 
 	// TODO: do this a better way (SoC)
-	ct.filterByFavorites = false
-	ct.portfoliovisible = false
+	ct.State.filterByFavorites = false
+	ct.State.portfolioVisible = false
 
-	defer ct.setActiveView(ct.tableviewname)
+	defer ct.setActiveView(ct.Views.Table.Name)
 	if err != nil {
 		return nil
 	}
@@ -51,8 +51,8 @@ func (ct *Cointop) search(q string) error {
 	min := -1
 	var hasprefixidx []int
 	var hasprefixdist []int
-	for i := range ct.allcoins {
-		coin := ct.allcoins[i]
+	for i := range ct.State.allCoins {
+		coin := ct.State.allCoins[i]
 		name := strings.ToLower(coin.Name)
 		symbol := strings.ToLower(coin.Symbol)
 		// if query matches symbol, return immediately

@@ -18,7 +18,7 @@ func (ct *Cointop) refreshTable() error {
 	ct.table = table.New().SetWidth(maxX)
 	ct.table.HideColumHeaders = true
 
-	if ct.portfoliovisible {
+	if ct.State.portfolioVisible {
 		ct.table.AddCol("")
 		ct.table.AddCol("")
 		ct.table.AddCol("")
@@ -31,7 +31,7 @@ func (ct *Cointop) refreshTable() error {
 
 		total := ct.getPortfolioTotal()
 
-		for _, coin := range ct.coins {
+		for _, coin := range ct.State.coins {
 			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
 			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
 			colorbalance := ct.colorscheme.TableColumnPrice
@@ -80,7 +80,7 @@ func (ct *Cointop) refreshTable() error {
 		ct.table.AddCol("")
 		ct.table.AddCol("")
 		ct.table.AddCol("")
-		for _, coin := range ct.coins {
+		for _, coin := range ct.State.coins {
 			if coin == nil {
 				continue
 			}
@@ -125,7 +125,7 @@ func (ct *Cointop) refreshTable() error {
 			symbolpadding := 5
 			// NOTE: this is to adjust padding by 1 because when all name rows are
 			// yellow it messes the spacing (need to debug)
-			if ct.filterByFavorites {
+			if ct.State.filterByFavorites {
 				symbolpadding = 6
 			}
 			ct.table.AddRow(
@@ -148,17 +148,17 @@ func (ct *Cointop) refreshTable() error {
 
 	// highlight last row if current row is out of bounds (can happen when switching views)
 	currentrow := ct.highlightedRowIndex()
-	if len(ct.coins) > currentrow {
+	if len(ct.State.coins) > currentrow {
 		ct.highlightRow(currentrow)
 	}
 
 	ct.update(func() {
-		if ct.tableview == nil {
+		if ct.Views.Table.Backing == nil {
 			return
 		}
 
-		ct.tableview.Clear()
-		ct.table.Format().Fprint(ct.tableview)
+		ct.Views.Table.Backing.Clear()
+		ct.table.Format().Fprint(ct.Views.Table.Backing)
 		go ct.rowChanged()
 		go ct.updateHeaders()
 		go ct.updateMarketbar()
@@ -171,36 +171,36 @@ func (ct *Cointop) refreshTable() error {
 func (ct *Cointop) updateTable() error {
 	sliced := []*Coin{}
 
-	for i := range ct.allcoinsslugmap {
-		v := ct.allcoinsslugmap[i]
-		if ct.favorites[v.Name] {
+	for i := range ct.State.allCoinsSlugMap {
+		v := ct.State.allCoinsSlugMap[i]
+		if ct.State.favorites[v.Name] {
 			v.Favorite = true
 		}
 	}
 
-	if ct.filterByFavorites {
-		for i := range ct.allcoins {
-			coin := ct.allcoins[i]
+	if ct.State.filterByFavorites {
+		for i := range ct.State.allCoins {
+			coin := ct.State.allCoins[i]
 			if coin.Favorite {
 				sliced = append(sliced, coin)
 			}
 		}
-		ct.coins = sliced
+		ct.State.coins = sliced
 		go ct.refreshTable()
 		return nil
 	}
 
-	if ct.portfoliovisible {
+	if ct.State.portfolioVisible {
 		sliced = ct.getPortfolioSlice()
-		ct.coins = sliced
+		ct.State.coins = sliced
 		go ct.refreshTable()
 		return nil
 	}
 
-	start := ct.page * ct.perpage
-	end := start + ct.perpage
-	allcoins := ct.allCoins()
-	size := len(allcoins)
+	start := ct.State.page * ct.State.perPage
+	end := start + ct.State.perPage
+	allCoins := ct.allCoins()
+	size := len(allCoins)
 	if start < 0 {
 		start = 0
 	}
@@ -221,34 +221,34 @@ func (ct *Cointop) updateTable() error {
 		return nil
 	}
 	if end > 0 {
-		sliced = allcoins[start:end]
+		sliced = allCoins[start:end]
 	}
-	ct.coins = sliced
+	ct.State.coins = sliced
 
-	ct.sort(ct.sortby, ct.sortdesc, ct.coins, true)
+	ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
 	go ct.refreshTable()
 	return nil
 }
 
 func (ct *Cointop) highlightedRowIndex() int {
-	_, y := ct.tableview.Origin()
-	_, cy := ct.tableview.Cursor()
+	_, y := ct.Views.Table.Backing.Origin()
+	_, cy := ct.Views.Table.Backing.Cursor()
 	idx := y + cy
 	if idx < 0 {
 		idx = 0
 	}
-	if idx >= len(ct.coins) {
-		idx = len(ct.coins) - 1
+	if idx >= len(ct.State.coins) {
+		idx = len(ct.State.coins) - 1
 	}
 	return idx
 }
 
 func (ct *Cointop) highlightedRowCoin() *Coin {
 	idx := ct.highlightedRowIndex()
-	if len(ct.coins) == 0 {
+	if len(ct.State.coins) == 0 {
 		return nil
 	}
-	return ct.coins[idx]
+	return ct.State.coins[idx]
 }
 
 func (ct *Cointop) rowLink() string {
@@ -282,46 +282,9 @@ func (ct *Cointop) rowLinkShort() string {
 	return ""
 }
 
-func (ct *Cointop) allCoins() []*Coin {
-	if ct.filterByFavorites {
-		var list []*Coin
-		for i := range ct.allcoins {
-			coin := ct.allcoins[i]
-			if coin.Favorite {
-				list = append(list, coin)
-			}
-		}
-		return list
-	}
-
-	if ct.portfoliovisible {
-		var list []*Coin
-		for i := range ct.allcoins {
-			coin := ct.allcoins[i]
-			if ct.portfolioEntryExists(coin) {
-				list = append(list, coin)
-			}
-		}
-		return list
-	}
-
-	return ct.allcoins
-}
-
-func (ct *Cointop) coinBySymbol(symbol string) *Coin {
-	for i := range ct.allcoins {
-		coin := ct.allcoins[i]
-		if coin.Symbol == symbol {
-			return coin
-		}
-	}
-
-	return nil
-}
-
 func (ct *Cointop) toggleTableFullscreen() error {
-	ct.onlyTable = !ct.onlyTable
-	if ct.onlyTable {
+	ct.State.onlyTable = !ct.State.onlyTable
+	if ct.State.onlyTable {
 	} else {
 		// NOTE: cached values are initial config settings.
 		// If the only-table config was set then toggle
@@ -329,17 +292,17 @@ func (ct *Cointop) toggleTableFullscreen() error {
 		onlyTable, _ := ct.cache.Get("onlyTable")
 
 		if onlyTable.(bool) {
-			ct.hideMarketbar = false
-			ct.hideChart = false
-			ct.hideStatusbar = false
+			ct.State.hideMarketbar = false
+			ct.State.hideChart = false
+			ct.State.hideStatusbar = false
 		} else {
 			// NOTE: cached values store initial hidden views preferences.
 			hideMarketbar, _ := ct.cache.Get("hideMarketbar")
-			ct.hideMarketbar = hideMarketbar.(bool)
+			ct.State.hideMarketbar = hideMarketbar.(bool)
 			hideChart, _ := ct.cache.Get("hideChart")
-			ct.hideChart = hideChart.(bool)
+			ct.State.hideChart = hideChart.(bool)
 			hideStatusbar, _ := ct.cache.Get("hideStatusbar")
-			ct.hideStatusbar = hideStatusbar.(bool)
+			ct.State.hideStatusbar = hideStatusbar.(bool)
 		}
 	}
 

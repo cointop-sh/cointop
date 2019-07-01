@@ -24,80 +24,79 @@ import (
 // ErrInvalidAPIChoice is error for invalid API choice
 var ErrInvalidAPIChoice = errors.New("Invalid API choice")
 
-// Cointop cointop
-type Cointop struct {
-	g                   *gocui.Gui
-	apiChoice           string
-	colorschemename     string
-	colorscheme         *Colorscheme
-	marketbarviewname   string
-	marketbarview       *gocui.View
-	chartview           *gocui.View
-	chartviewname       string
-	chartpoints         [][]termui.Cell
-	chartranges         []string
-	chartrangesmap      map[string]time.Duration
-	selectedchartrange  string
-	headersview         *gocui.View
-	headerviewname      string
-	tableview           *gocui.View
-	tableviewname       string
-	tablecolumnorder    []string
-	table               *table.Table
-	maxtablewidth       int
-	portfoliovisible    bool
-	visible             bool
-	statusbarview       *gocui.View
-	statusbarviewname   string
-	sortdesc            bool
-	sortby              string
-	api                 api.Interface
-	allcoins            []*Coin
-	coins               []*Coin
-	allcoinsslugmap     map[string]*Coin
-	page                int
-	perpage             int
-	refreshmux          sync.Mutex
-	refreshRate         time.Duration
-	refreshTicker       *time.Ticker
-	forcerefresh        chan bool
-	selectedcoin        *Coin
-	actionsmap          map[string]bool
-	shortcutkeys        map[string]string
-	config              config // toml config
-	configFilepath      string
-	searchfield         *gocui.View
-	searchfieldviewname string
-	searchfieldvisible  bool
+// Views are all views in cointop
+type Views struct {
+	Chart               *View
+	Header              *View
+	Table               *View
+	Marketbar           *View
+	SearchField         *View
+	Statusbar           *View
+	Help                *View
+	ConvertMenu         *View
+	Input               *View
+	PortfolioUpdateMenu *View
+}
+
+// State is the state preferences of cointop
+type State struct {
+	allCoins           []*Coin
+	allCoinsSlugMap    map[string]*Coin
+	coins              []*Coin
+	chartPoints        [][]termui.Cell
+	currencyConversion string
+	convertMenuVisible bool
+	defaultView        string
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
 	favoritesbysymbol map[string]bool
 
-	favorites                   map[string]bool
-	filterByFavorites           bool
-	savemux                     sync.Mutex
-	cache                       *cache.Cache
-	debug                       bool
-	helpview                    *gocui.View
-	helpviewname                string
-	helpvisible                 bool
-	currencyconversion          string
-	convertmenuview             *gocui.View
-	convertmenuviewname         string
-	convertmenuvisible          bool
-	portfolio                   *portfolio
-	portfolioupdatemenuview     *gocui.View
-	portfolioupdatemenuviewname string
-	portfolioupdatemenuvisible  bool
-	inputview                   *gocui.View
-	inputviewname               string
-	defaultView                 string
-	apiKeys                     *apiKeys
-	limiter                     <-chan time.Time
-	hideMarketbar               bool
-	hideChart                   bool
-	hideStatusbar               bool
-	onlyTable                   bool
+	favorites                  map[string]bool
+	filterByFavorites          bool
+	helpVisible                bool
+	hideMarketbar              bool
+	hideChart                  bool
+	hideStatusbar              bool
+	page                       int
+	perPage                    int
+	portfolio                  *Portfolio
+	portfolioVisible           bool
+	portfolioUpdateMenuVisible bool
+	refreshRate                time.Duration
+	searchFieldVisible         bool
+	selectedCoin               *Coin
+	selectedChartRange         string
+	shortcutKeys               map[string]string
+	sortDesc                   bool
+	sortBy                     string
+	onlyTable                  bool
+}
+
+// Cointop cointop
+type Cointop struct {
+	g                *gocui.Gui
+	actionsMap       map[string]bool
+	apiKeys          *APIKeys
+	cache            *cache.Cache
+	config           config // toml config
+	configFilepath   string
+	api              api.Interface
+	apiChoice        string
+	chartRanges      []string
+	chartRangesMap   map[string]time.Duration
+	colorschemeName  string
+	colorscheme      *Colorscheme
+	debug            bool
+	forceRefresh     chan bool
+	limiter          <-chan time.Time
+	maxTableWidth    int
+	refreshMux       sync.Mutex
+	refreshTicker    *time.Ticker
+	saveMux          sync.Mutex
+	State            *State
+	table            *table.Table
+	tableColumnOrder []string
+	Views            *Views
 }
 
 // CoinMarketCap is API choice
@@ -107,14 +106,14 @@ var CoinMarketCap = "coinmarketcap"
 var CoinGecko = "coingecko"
 
 // PortfolioEntry is portfolio entry
-type portfolioEntry struct {
+type PortfolioEntry struct {
 	Coin     string
 	Holdings float64
 }
 
 // Portfolio is portfolio structure
-type portfolio struct {
-	Entries map[string]*portfolioEntry
+type Portfolio struct {
+	Entries map[string]*PortfolioEntry
 }
 
 // Config config options
@@ -131,8 +130,8 @@ type Config struct {
 	RefreshRate         *uint
 }
 
-// apiKeys is api keys structure
-type apiKeys struct {
+// APIKeys is api keys structure
+type APIKeys struct {
 	cmc string
 }
 
@@ -154,25 +153,14 @@ func NewCointop(config *Config) *Cointop {
 	}
 
 	ct := &Cointop{
-		apiChoice:       CoinGecko,
-		allcoinsslugmap: make(map[string]*Coin),
-		allcoins:        []*Coin{},
-		sortby:          "rank",
-		page:            0,
-		perpage:         100,
-		forcerefresh:    make(chan bool),
-		maxtablewidth:   175,
-		actionsmap:      actionsMap(),
-		shortcutkeys:    defaultShortcuts(),
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		favoritesbysymbol: make(map[string]bool),
-		favorites:         make(map[string]bool),
-		cache:             cache.New(1*time.Minute, 2*time.Minute),
-		debug:             debug,
-		configFilepath:    configFilepath,
-		marketbarviewname: "market",
-		chartviewname:     "chart",
-		chartranges: []string{
+		apiChoice:      CoinGecko,
+		apiKeys:        new(APIKeys),
+		forceRefresh:   make(chan bool),
+		maxTableWidth:  175,
+		actionsMap:     actionsMap(),
+		cache:          cache.New(1*time.Minute, 2*time.Minute),
+		configFilepath: configFilepath,
+		chartRanges: []string{
 			"1H",
 			"6H",
 			"24H",
@@ -185,7 +173,8 @@ func NewCointop(config *Config) *Cointop {
 			"YTD",
 			"All Time",
 		},
-		chartrangesmap: map[string]time.Duration{
+		debug: debug,
+		chartRangesMap: map[string]time.Duration{
 			"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
 			"YTD":      time.Duration(1 * time.Second), // this will be calculated
 			"1Y":       time.Duration(24 * 7 * 4 * 12 * time.Hour),
@@ -198,10 +187,29 @@ func NewCointop(config *Config) *Cointop {
 			"6H":       time.Duration(6 * time.Hour),
 			"1H":       time.Duration(1 * time.Hour),
 		},
-		selectedchartrange: "7D",
-		headerviewname:     "header",
-		tableviewname:      "table",
-		tablecolumnorder: []string{
+		limiter: time.Tick(2 * time.Second),
+		State: &State{
+			allCoinsSlugMap:    make(map[string]*Coin),
+			allCoins:           []*Coin{},
+			currencyConversion: "USD",
+			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
+			favoritesbysymbol:  make(map[string]bool),
+			favorites:          make(map[string]bool),
+			hideMarketbar:      config.HideMarketbar,
+			hideChart:          config.HideChart,
+			hideStatusbar:      config.HideStatusbar,
+			onlyTable:          config.OnlyTable,
+			refreshRate:        60 * time.Second,
+			selectedChartRange: "7D",
+			shortcutKeys:       defaultShortcuts(),
+			sortBy:             "rank",
+			page:               0,
+			perPage:            100,
+			portfolio: &Portfolio{
+				Entries: make(map[string]*PortfolioEntry, 0),
+			},
+		},
+		tableColumnOrder: []string{
 			"rank",
 			"name",
 			"symbol",
@@ -217,23 +225,38 @@ func NewCointop(config *Config) *Cointop {
 			"percentholdings",
 			"lastupdated",
 		},
-		statusbarviewname:   "statusbar",
-		searchfieldviewname: "searchfield",
-		helpviewname:        "help",
-		convertmenuviewname: "convertmenu",
-		currencyconversion:  "USD",
-		portfolio: &portfolio{
-			Entries: make(map[string]*portfolioEntry, 0),
+		Views: &Views{
+			Chart: &View{
+				Name: "chart",
+			},
+			Header: &View{
+				Name: "header",
+			},
+			Table: &View{
+				Name: "table",
+			},
+			Marketbar: &View{
+				Name: "marketbar",
+			},
+			SearchField: &View{
+				Name: "searchfield",
+			},
+			Statusbar: &View{
+				Name: "statusbar",
+			},
+			Help: &View{
+				Name: "help",
+			},
+			ConvertMenu: &View{
+				Name: "convert",
+			},
+			Input: &View{
+				Name: "input",
+			},
+			PortfolioUpdateMenu: &View{
+				Name: "portfolioupdatemenu",
+			},
 		},
-		portfolioupdatemenuviewname: "portfolioupdatemenu",
-		inputviewname:               "input",
-		apiKeys:                     new(apiKeys),
-		limiter:                     time.Tick(2 * time.Second),
-		hideMarketbar:               config.HideMarketbar,
-		hideChart:                   config.HideChart,
-		hideStatusbar:               config.HideStatusbar,
-		onlyTable:                   config.OnlyTable,
-		refreshRate:                 60 * time.Second,
 	}
 
 	err := ct.setupConfig()
@@ -241,20 +264,20 @@ func NewCointop(config *Config) *Cointop {
 		log.Fatal(err)
 	}
 
-	ct.cache.Set("onlyTable", ct.onlyTable, cache.NoExpiration)
-	ct.cache.Set("hideMarketbar", ct.hideMarketbar, cache.NoExpiration)
-	ct.cache.Set("hideChart", ct.hideChart, cache.NoExpiration)
-	ct.cache.Set("hideStatusbar", ct.hideStatusbar, cache.NoExpiration)
+	ct.cache.Set("onlyTable", ct.State.onlyTable, cache.NoExpiration)
+	ct.cache.Set("hideMarketbar", ct.State.hideMarketbar, cache.NoExpiration)
+	ct.cache.Set("hideChart", ct.State.hideChart, cache.NoExpiration)
+	ct.cache.Set("hideStatusbar", ct.State.hideStatusbar, cache.NoExpiration)
 
 	if config.RefreshRate != nil {
-		ct.refreshRate = time.Duration(*config.RefreshRate) * time.Second
+		ct.State.refreshRate = time.Duration(*config.RefreshRate) * time.Second
 	}
 
-	if ct.refreshRate == 0 {
+	if ct.State.refreshRate == 0 {
 		ct.refreshTicker = time.NewTicker(time.Duration(1))
 		ct.refreshTicker.Stop()
 	} else {
-		ct.refreshTicker = time.NewTicker(ct.refreshRate)
+		ct.refreshTicker = time.NewTicker(ct.State.refreshRate)
 	}
 
 	// prompt for CoinMarketCap api key if not found
@@ -266,7 +289,7 @@ func NewCointop(config *Config) *Cointop {
 	}
 
 	if config.Colorscheme != "" {
-		ct.colorschemename = config.Colorscheme
+		ct.colorschemeName = config.Colorscheme
 	}
 
 	colors, err := ct.getColorschemeColors()
@@ -297,7 +320,7 @@ func NewCointop(config *Config) *Cointop {
 	}
 
 	if ct.apiChoice == CoinGecko {
-		ct.selectedchartrange = "1Y"
+		ct.State.selectedChartRange = "1Y"
 	}
 
 	if ct.apiChoice == CoinMarketCap {
@@ -308,35 +331,35 @@ func NewCointop(config *Config) *Cointop {
 		log.Fatal(ErrInvalidAPIChoice)
 	}
 
-	coinscachekey := ct.cacheKey("allcoinsslugmap")
-	filecache.Get(coinscachekey, &ct.allcoinsslugmap)
+	coinscachekey := ct.cacheKey("allCoinsSlugMap")
+	filecache.Get(coinscachekey, &ct.State.allCoinsSlugMap)
 
-	for k := range ct.allcoinsslugmap {
-		ct.allcoins = append(ct.allcoins, ct.allcoinsslugmap[k])
+	for k := range ct.State.allCoinsSlugMap {
+		ct.State.allCoins = append(ct.State.allCoins, ct.State.allCoinsSlugMap[k])
 	}
-	if len(ct.allcoins) > 1 {
-		max := len(ct.allcoins)
+	if len(ct.State.allCoins) > 1 {
+		max := len(ct.State.allCoins)
 		if max > 100 {
 			max = 100
 		}
-		ct.sort(ct.sortby, ct.sortdesc, ct.allcoins, false)
-		ct.coins = ct.allcoins[0:max]
+		ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.allCoins, false)
+		ct.State.coins = ct.State.allCoins[0:max]
 	}
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 	// Here we're doing a lookup based on symbol and setting the favorite to the coin name instead of coin symbol.
-	for i := range ct.allcoinsslugmap {
-		coin := ct.allcoinsslugmap[i]
-		for k := range ct.favoritesbysymbol {
+	for i := range ct.State.allCoinsSlugMap {
+		coin := ct.State.allCoinsSlugMap[i]
+		for k := range ct.State.favoritesbysymbol {
 			if coin.Symbol == k {
-				ct.favorites[coin.Name] = true
-				delete(ct.favoritesbysymbol, k)
+				ct.State.favorites[coin.Name] = true
+				delete(ct.State.favoritesbysymbol, k)
 			}
 		}
 	}
 
 	var globaldata []float64
-	chartcachekey := ct.cacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
+	chartcachekey := ct.cacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
 	filecache.Get(chartcachekey, &globaldata)
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 

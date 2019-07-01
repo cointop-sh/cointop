@@ -8,7 +8,7 @@ import (
 )
 
 func (ct *Cointop) updateStatusbar(s string) error {
-	if ct.statusbarview == nil {
+	if ct.Views.Statusbar.Backing == nil {
 		return nil
 	}
 
@@ -17,33 +17,33 @@ func (ct *Cointop) updateStatusbar(s string) error {
 	var quitText string
 	var favoritesText string
 	var portfolioText string
-	if ct.portfoliovisible || ct.filterByFavorites {
+	if ct.State.portfolioVisible || ct.State.filterByFavorites {
 		quitText = "Return"
 	} else {
 		quitText = "Quit"
 	}
-	if ct.portfoliovisible {
+	if ct.State.portfolioVisible {
 		portfolioText = "[E]Edit"
 	} else {
 		portfolioText = "[P]Portfolio"
 	}
-	if ct.filterByFavorites {
+	if ct.State.filterByFavorites {
 		favoritesText = "[Space]Unfavorite"
 	} else {
 		favoritesText = "[F]Favorites"
 	}
 
 	ct.update(func() {
-		if ct.statusbarview == nil {
+		if ct.Views.Statusbar.Backing == nil {
 			return
 		}
 
-		ct.statusbarview.Clear()
+		ct.Views.Statusbar.Backing.Clear()
 		base := fmt.Sprintf("%s%s %sHelp %sChart %sRange %sSearch %sConvert %s %s %sSave", "[Q]", quitText, "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText, "[CTRL-S]")
-		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxtablewidth, " ")
+		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
 		v := fmt.Sprintf("v%s", ct.version())
 		str = str[:len(str)-len(v)+2] + v
-		fmt.Fprintln(ct.statusbarview, str)
+		fmt.Fprintln(ct.Views.Statusbar.Backing, str)
 	})
 
 	return nil

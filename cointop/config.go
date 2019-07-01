@@ -125,8 +125,8 @@ func (ct *Cointop) makeConfigFile() error {
 }
 
 func (ct *Cointop) saveConfig() error {
-	ct.savemux.Lock()
-	defer ct.savemux.Unlock()
+	ct.saveMux.Lock()
+	defer ct.saveMux.Unlock()
 	path := ct.configPath()
 	if _, err := os.Stat(path); err == nil {
 		b, err := ct.configToToml()
@@ -154,13 +154,13 @@ func (ct *Cointop) parseConfig() error {
 
 func (ct *Cointop) configToToml() ([]byte, error) {
 	shortcutsIfcs := map[string]interface{}{}
-	for k, v := range ct.shortcutkeys {
+	for k, v := range ct.State.shortcutKeys {
 		var i interface{} = v
 		shortcutsIfcs[k] = i
 	}
 
 	var favorites []interface{}
-	for k, ok := range ct.favorites {
+	for k, ok := range ct.State.favorites {
 		if ok {
 			var i interface{} = k
 			favorites = append(favorites, i)
@@ -174,8 +174,8 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	}
 
 	portfolioIfc := map[string]interface{}{}
-	for name := range ct.portfolio.Entries {
-		entry, ok := ct.portfolio.Entries[name]
+	for name := range ct.State.portfolio.Entries {
+		entry, ok := ct.State.portfolio.Entries[name]
 		if !ok || entry.Coin == "" {
 			continue
 		}
@@ -183,10 +183,10 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		portfolioIfc[entry.Coin] = i
 	}
 
-	var currencyIfc interface{} = ct.currencyconversion
-	var defaultViewIfc interface{} = ct.defaultView
-	var colorschemeIfc interface{} = ct.colorschemename
-	var refreshRateIfc interface{} = uint(ct.refreshRate.Seconds())
+	var currencyIfc interface{} = ct.State.currencyConversion
+	var defaultViewIfc interface{} = ct.State.defaultView
+	var colorschemeIfc interface{} = ct.colorschemeName
+	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
@@ -221,10 +221,10 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 			if !ct.actionExists(v) {
 				continue
 			}
-			if ct.shortcutkeys[k] == "" {
+			if ct.State.shortcutKeys[k] == "" {
 				continue
 			}
-			ct.shortcutkeys[k] = v
+			ct.State.shortcutKeys[k] = v
 		}
 	}
 	return nil
@@ -232,7 +232,7 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 
 func (ct *Cointop) loadCurrencyFromConfig() error {
 	if currency, ok := ct.config.Currency.(string); ok {
-		ct.currencyconversion = strings.ToUpper(currency)
+		ct.State.currencyConversion = strings.ToUpper(currency)
 	}
 	return nil
 }
@@ -242,17 +242,17 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 		defaultView = strings.ToLower(defaultView)
 		switch defaultView {
 		case "portfolio":
-			ct.portfoliovisible = true
+			ct.State.portfolioVisible = true
 		case "favorites":
-			ct.filterByFavorites = true
+			ct.State.filterByFavorites = true
 		case "default":
 			fallthrough
 		default:
-			ct.portfoliovisible = false
-			ct.filterByFavorites = false
+			ct.State.portfolioVisible = false
+			ct.State.filterByFavorites = false
 			defaultView = "default"
 		}
-		ct.defaultView = defaultView
+		ct.State.defaultView = defaultView
 	}
 	return nil
 }
@@ -269,7 +269,7 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 
 func (ct *Cointop) loadColorschemeFromConfig() error {
 	if colorscheme, ok := ct.config.Colorscheme.(string); ok {
-		ct.colorschemename = colorscheme
+		ct.colorschemeName = colorscheme
 	}
 
 	return nil
@@ -277,7 +277,7 @@ func (ct *Cointop) loadColorschemeFromConfig() error {
 
 func (ct *Cointop) loadRefreshRateFromConfig() error {
 	if refreshRate, ok := ct.config.RefreshRate.(int64); ok {
-		ct.refreshRate = time.Duration(uint(refreshRate)) * time.Second
+		ct.State.refreshRate = time.Duration(uint(refreshRate)) * time.Second
 	}
 
 	return nil
@@ -285,16 +285,16 @@ func (ct *Cointop) loadRefreshRateFromConfig() error {
 
 func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 	var colors map[string]interface{}
-	if ct.colorschemename == "" {
-		ct.colorschemename = defaultColorscheme
+	if ct.colorschemeName == "" {
+		ct.colorschemeName = defaultColorscheme
 		if _, err := toml.Decode(DefaultColors, &colors); err != nil {
 			return nil, err
 		}
 	} else {
-		path := normalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemename))
+		path := normalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemeName))
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
-			if ct.colorschemename == "cointop" {
+			if ct.colorschemeName == "cointop" {
 				if _, err := toml.Decode(DefaultColors, &colors); err != nil {
 					return nil, err
 				}
@@ -328,13 +328,13 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 		if k == "symbols" {
 			for _, ifc := range arr {
 				if v, ok := ifc.(string); ok {
-					ct.favoritesbysymbol[strings.ToUpper(v)] = true
+					ct.State.favoritesbysymbol[strings.ToUpper(v)] = true
 				}
 			}
 		} else if k == "names" {
 			for _, ifc := range arr {
 				if v, ok := ifc.(string); ok {
-					ct.favorites[v] = true
+					ct.State.favorites[v] = true
 				}
 			}
 		}

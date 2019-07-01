@@ -1,17 +1,17 @@
 package cointop
 
 func (ct *Cointop) toggleFavorite() error {
-	ct.portfoliovisible = false
+	ct.State.portfolioVisible = false
 	coin := ct.highlightedRowCoin()
 	if coin == nil {
 		return nil
 	}
-	_, ok := ct.favorites[coin.Name]
+	_, ok := ct.State.favorites[coin.Name]
 	if ok {
-		delete(ct.favorites, coin.Name)
+		delete(ct.State.favorites, coin.Name)
 		coin.Favorite = false
 	} else {
-		ct.favorites[coin.Name] = true
+		ct.State.favorites[coin.Name] = true
 		coin.Favorite = true
 	}
 	go ct.updateTable()
@@ -19,8 +19,8 @@ func (ct *Cointop) toggleFavorite() error {
 }
 
 func (ct *Cointop) toggleShowFavorites() error {
-	ct.portfoliovisible = false
-	ct.filterByFavorites = !ct.filterByFavorites
+	ct.State.portfolioVisible = false
+	ct.State.filterByFavorites = !ct.State.filterByFavorites
 	go ct.updateTable()
 	return nil
 }

@@ -7,6 +7,8 @@ import (
 	"github.com/jroimartin/gocui"
 )
 
+// TODO: break up into small functions
+
 // layout sets initial layout
 func (ct *Cointop) layout(g *gocui.Gui) error {
 	maxX, maxY := ct.size()
@@ -17,63 +19,63 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 	chartHeight := 10
 	statusbarHeight := 1
 
-	if ct.onlyTable {
-		ct.hideMarketbar = true
-		ct.hideChart = true
-		ct.hideStatusbar = true
+	if ct.State.onlyTable {
+		ct.State.hideMarketbar = true
+		ct.State.hideChart = true
+		ct.State.hideStatusbar = true
 	}
 
-	if ct.hideMarketbar {
+	if ct.State.hideMarketbar {
 		marketbarHeight = 0
 	}
 
-	if ct.hideChart {
+	if ct.State.hideChart {
 		chartHeight = 0
 	}
 
-	if ct.hideStatusbar {
+	if ct.State.hideStatusbar {
 		statusbarHeight = 0
 	}
 
-	if !ct.hideMarketbar {
-		if v, err := g.SetView(ct.marketbarviewname, 0, topOffset, maxX, 2); err != nil {
+	if !ct.State.hideMarketbar {
+		if v, err := g.SetView(ct.Views.Marketbar.Name, 0, topOffset, maxX, 2); err != nil {
 			if err != gocui.ErrUnknownView {
 				return err
 			}
-			ct.marketbarview = v
-			ct.marketbarview.Frame = false
-			ct.colorscheme.SetViewColor(ct.marketbarview, "marketbar")
+			ct.Views.Marketbar.Backing = v
+			ct.Views.Marketbar.Backing.Frame = false
+			ct.colorscheme.SetViewColor(ct.Views.Marketbar.Backing, "marketbar")
 			go func() {
 				ct.updateMarketbar()
-				_, found := ct.cache.Get(ct.marketbarviewname)
+				_, found := ct.cache.Get(ct.Views.Marketbar.Name)
 				if found {
-					ct.cache.Delete(ct.marketbarviewname)
+					ct.cache.Delete(ct.Views.Marketbar.Name)
 					ct.updateMarketbar()
 				}
 			}()
 		}
 	} else {
-		if ct.marketbarview != nil {
-			if err := g.DeleteView(ct.marketbarviewname); err != nil {
+		if ct.Views.Marketbar.Backing != nil {
+			if err := g.DeleteView(ct.Views.Marketbar.Name); err != nil {
 				return err
 			}
-			ct.marketbarview = nil
+			ct.Views.Marketbar.Backing = nil
 		}
 	}
 
 	topOffset = topOffset + marketbarHeight
 
-	if !ct.hideChart {
-		if v, err := g.SetView(ct.chartviewname, 0, topOffset, maxX, topOffset+chartHeight+marketbarHeight); err != nil {
+	if !ct.State.hideChart {
+		if v, err := g.SetView(ct.Views.Chart.Name, 0, topOffset, maxX, topOffset+chartHeight+marketbarHeight); err != nil {
 			if err != gocui.ErrUnknownView {
 				return err
 			}
-			ct.chartview = v
-			ct.chartview.Frame = false
-			ct.colorscheme.SetViewColor(ct.chartview, "chart")
+			ct.Views.Chart.Backing = v
+			ct.Views.Chart.Backing.Frame = false
+			ct.colorscheme.SetViewColor(ct.Views.Chart.Backing, "chart")
 			go func() {
 				ct.updateChart()
-				cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.selectedchartrange, " ", "", -1)))
+				cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
 				_, found := ct.cache.Get(cachekey)
 				if found {
 					ct.cache.Delete(cachekey)
@@ -82,37 +84,37 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			}()
 		}
 	} else {
-		if ct.chartview != nil {
-			if err := g.DeleteView(ct.chartviewname); err != nil {
+		if ct.Views.Chart.Backing != nil {
+			if err := g.DeleteView(ct.Views.Chart.Name); err != nil {
 				return err
 			}
-			ct.chartview = nil
+			ct.Views.Chart.Backing = nil
 		}
 	}
 
 	topOffset = topOffset + chartHeight
-	if v, err := g.SetView(ct.headerviewname, 0, topOffset, ct.maxtablewidth, topOffset+2); err != nil {
+	if v, err := g.SetView(ct.Views.Header.Name, 0, topOffset, ct.maxTableWidth, topOffset+2); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.headersview = v
-		ct.headersview.Frame = false
-		ct.colorscheme.SetViewColor(ct.headersview, "table_header")
+		ct.Views.Header.Backing = v
+		ct.Views.Header.Backing.Frame = false
+		ct.colorscheme.SetViewColor(ct.Views.Header.Backing, "table_header")
 		go ct.updateHeaders()
 	}
 
 	topOffset = topOffset + headerHeight
-	if v, err := g.SetView(ct.tableviewname, 0, topOffset, ct.maxtablewidth, maxY-statusbarHeight); err != nil {
+	if v, err := g.SetView(ct.Views.Table.Name, 0, topOffset, ct.maxTableWidth, maxY-statusbarHeight); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.tableview = v
-		ct.tableview.Frame = false
-		ct.tableview.Highlight = true
-		ct.colorscheme.SetViewActiveColor(ct.tableview, "table_row_active")
-		_, found := ct.cache.Get("allcoinsslugmap")
+		ct.Views.Table.Backing = v
+		ct.Views.Table.Backing.Frame = false
+		ct.Views.Table.Backing.Highlight = true
+		ct.colorscheme.SetViewActiveColor(ct.Views.Table.Backing, "table_row_active")
+		_, found := ct.cache.Get("allCoinsSlugMap")
 		if found {
-			ct.cache.Delete("allcoinsslugmap")
+			ct.cache.Delete("allCoinsSlugMap")
 		}
 		go func() {
 			ct.updateCoins()
@@ -120,123 +122,84 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}()
 	}
 
-	if !ct.hideStatusbar {
-		if v, err := g.SetView(ct.statusbarviewname, 0, maxY-statusbarHeight-1, ct.maxtablewidth, maxY); err != nil {
+	if !ct.State.hideStatusbar {
+		if v, err := g.SetView(ct.Views.Statusbar.Name, 0, maxY-statusbarHeight-1, ct.maxTableWidth, maxY); err != nil {
 			if err != gocui.ErrUnknownView {
 				return err
 			}
-			ct.statusbarview = v
-			ct.statusbarview.Frame = false
-			ct.colorscheme.SetViewColor(ct.statusbarview, "statusbar")
+			ct.Views.Statusbar.Backing = v
+			ct.Views.Statusbar.Backing.Frame = false
+			ct.colorscheme.SetViewColor(ct.Views.Statusbar.Backing, "statusbar")
 			go ct.updateStatusbar("")
 		}
 	} else {
-		if ct.statusbarview != nil {
-			if err := g.DeleteView(ct.statusbarviewname); err != nil {
+		if ct.Views.Statusbar.Backing != nil {
+			if err := g.DeleteView(ct.Views.Statusbar.Name); err != nil {
 				return err
 			}
-			ct.statusbarview = nil
+			ct.Views.Statusbar.Backing = nil
 		}
 	}
 
-	if v, err := g.SetView(ct.searchfieldviewname, 0, maxY-2, ct.maxtablewidth, maxY); err != nil {
+	if v, err := g.SetView(ct.Views.SearchField.Name, 0, maxY-2, ct.maxTableWidth, maxY); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.searchfield = v
-		ct.searchfield.Editable = true
-		ct.searchfield.Wrap = true
-		ct.searchfield.Frame = false
-		ct.colorscheme.SetViewColor(ct.searchfield, "searchbar")
+		ct.Views.SearchField.Backing = v
+		ct.Views.SearchField.Backing.Editable = true
+		ct.Views.SearchField.Backing.Wrap = true
+		ct.Views.SearchField.Backing.Frame = false
+		ct.colorscheme.SetViewColor(ct.Views.SearchField.Backing, "searchbar")
 	}
 
-	if v, err := g.SetView(ct.helpviewname, 1, 1, ct.maxtablewidth-1, maxY-1); err != nil {
+	if v, err := g.SetView(ct.Views.Help.Name, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.helpview = v
-		ct.helpview.Frame = false
-		ct.colorscheme.SetViewColor(ct.helpview, "menu")
+		ct.Views.Help.Backing = v
+		ct.Views.Help.Backing.Frame = false
+		ct.colorscheme.SetViewColor(ct.Views.Help.Backing, "menu")
 	}
 
-	if v, err := g.SetView(ct.portfolioupdatemenuviewname, 1, 1, ct.maxtablewidth-1, maxY-1); err != nil {
+	if v, err := g.SetView(ct.Views.PortfolioUpdateMenu.Name, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.portfolioupdatemenuview = v
-		ct.portfolioupdatemenuview.Frame = false
-		ct.colorscheme.SetViewColor(ct.portfolioupdatemenuview, "menu")
+		ct.Views.PortfolioUpdateMenu.Backing = v
+		ct.Views.PortfolioUpdateMenu.Backing.Frame = false
+		ct.colorscheme.SetViewColor(ct.Views.PortfolioUpdateMenu.Backing, "menu")
 	}
 
-	if v, err := g.SetView(ct.inputviewname, 3, 6, 30, 8); err != nil {
+	if v, err := g.SetView(ct.Views.Input.Name, 3, 6, 30, 8); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.inputview = v
-		ct.inputview.Frame = true
-		ct.inputview.Editable = true
-		ct.inputview.Wrap = true
-		ct.colorscheme.SetViewColor(ct.inputview, "menu")
+		ct.Views.Input.Backing = v
+		ct.Views.Input.Backing.Frame = true
+		ct.Views.Input.Backing.Editable = true
+		ct.Views.Input.Backing.Wrap = true
+		ct.colorscheme.SetViewColor(ct.Views.Input.Backing, "menu")
 	}
 
-	if v, err := g.SetView(ct.convertmenuviewname, 1, 1, ct.maxtablewidth-1, maxY-1); err != nil {
+	if v, err := g.SetView(ct.Views.ConvertMenu.Name, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		ct.convertmenuview = v
-		ct.convertmenuview.Frame = false
-		ct.colorscheme.SetViewColor(ct.convertmenuview, "menu")
+		ct.Views.ConvertMenu.Backing = v
+		ct.Views.ConvertMenu.Backing.Frame = false
+		ct.colorscheme.SetViewColor(ct.Views.ConvertMenu.Backing, "menu")
 
 		// run only once on init.
 		// this bit of code should be at the bottom
 		ct.g = g
-		g.SetViewOnBottom(ct.searchfieldviewname)         // hide
-		g.SetViewOnBottom(ct.helpviewname)                // hide
-		g.SetViewOnBottom(ct.convertmenuviewname)         // hide
-		g.SetViewOnBottom(ct.portfolioupdatemenuviewname) // hide
-		g.SetViewOnBottom(ct.inputviewname)               // hide
-		ct.setActiveView(ct.tableviewname)
+		g.SetViewOnBottom(ct.Views.SearchField.Name)         // hide
+		g.SetViewOnBottom(ct.Views.Help.Name)                // hide
+		g.SetViewOnBottom(ct.Views.ConvertMenu.Name)         // hide
+		g.SetViewOnBottom(ct.Views.PortfolioUpdateMenu.Name) // hide
+		g.SetViewOnBottom(ct.Views.Input.Name)               // hide
+		ct.setActiveView(ct.Views.Table.Name)
 		ct.intervalFetchData()
 	}
 
 	return nil
-}
-
-func (ct *Cointop) setActiveView(v string) error {
-	ct.g.SetViewOnTop(v)
-	ct.g.SetCurrentView(v)
-	if v == ct.searchfieldviewname {
-		ct.searchfield.Clear()
-		ct.searchfield.SetCursor(1, 0)
-		fmt.Fprintf(ct.searchfield, "%s", "/")
-	} else if v == ct.tableviewname {
-		ct.g.SetViewOnTop(ct.statusbarviewname)
-	}
-	if v == ct.portfolioupdatemenuviewname {
-		ct.g.SetViewOnTop(ct.inputviewname)
-		ct.g.SetCurrentView(ct.inputviewname)
-	}
-	return nil
-}
-
-func (ct *Cointop) activeViewName() string {
-	return ct.g.CurrentView().Name()
-}
-
-func (ct *Cointop) setViewOnBottom(v string) error {
-	_, err := ct.g.SetViewOnBottom(v)
-	return err
-}
-
-func (ct *Cointop) intervalFetchData() {
-	go func() {
-		for {
-			select {
-			case <-ct.forcerefresh:
-				ct.refreshAll()
-			case <-ct.refreshTicker.C:
-				ct.refreshAll()
-			}
-		}
-	}()
 }

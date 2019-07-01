@@ -1,15 +1,15 @@
 package cointop
 
 func (ct *Cointop) currentPage() int {
-	return ct.page + 1
+	return ct.State.page + 1
 }
 
 func (ct *Cointop) currentDisplayPage() int {
-	return ct.page + 1
+	return ct.State.page + 1
 }
 
 func (ct *Cointop) totalPages() int {
-	return ct.getListCount() / ct.perpage
+	return ct.getListCount() / ct.State.perPage
 }
 
 func (ct *Cointop) totalPagesDisplay() int {
@@ -17,48 +17,30 @@ func (ct *Cointop) totalPagesDisplay() int {
 }
 
 func (ct *Cointop) totalPerPage() int {
-	return ct.perpage
+	return ct.State.perPage
 }
 
 func (ct *Cointop) setPage(page int) int {
-	if (page*ct.perpage) < ct.getListCount() && page >= 0 {
-		ct.page = page
+	if (page*ct.State.perPage) < ct.getListCount() && page >= 0 {
+		ct.State.page = page
 	}
-	return ct.page
-}
-
-func (ct *Cointop) highlightRow(idx int) error {
-	ct.tableview.SetOrigin(0, 0)
-	ct.tableview.SetCursor(0, 0)
-	ox, _ := ct.tableview.Origin()
-	cx, _ := ct.tableview.Cursor()
-	_, sy := ct.tableview.Size()
-	perpage := ct.totalPerPage()
-	p := idx % perpage
-	oy := (p / sy) * sy
-	cy := p % sy
-	if oy > 0 {
-		ct.tableview.SetOrigin(ox, oy)
-	}
-	ct.tableview.SetCursor(cx, cy)
-
-	return nil
+	return ct.State.page
 }
 
 func (ct *Cointop) cursorDown() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	_, y := ct.tableview.Origin()
-	cx, cy := ct.tableview.Cursor()
-	numRows := len(ct.coins) - 1
+	_, y := ct.Views.Table.Backing.Origin()
+	cx, cy := ct.Views.Table.Backing.Cursor()
+	numRows := len(ct.State.coins) - 1
 	if (cy + y + 1) > numRows {
 		return nil
 	}
-	if err := ct.tableview.SetCursor(cx, cy+1); err != nil {
-		ox, oy := ct.tableview.Origin()
+	if err := ct.Views.Table.Backing.SetCursor(cx, cy+1); err != nil {
+		ox, oy := ct.Views.Table.Backing.Origin()
 		// set origin scrolls
-		if err := ct.tableview.SetOrigin(ox, oy+1); err != nil {
+		if err := ct.Views.Table.Backing.SetOrigin(ox, oy+1); err != nil {
 			return err
 		}
 	}
@@ -67,14 +49,14 @@ func (ct *Cointop) cursorDown() error {
 }
 
 func (ct *Cointop) cursorUp() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, oy := ct.tableview.Origin()
-	cx, cy := ct.tableview.Cursor()
-	if err := ct.tableview.SetCursor(cx, cy-1); err != nil && oy > 0 {
+	ox, oy := ct.Views.Table.Backing.Origin()
+	cx, cy := ct.Views.Table.Backing.Cursor()
+	if err := ct.Views.Table.Backing.SetCursor(cx, cy-1); err != nil && oy > 0 {
 		// set origin scrolls
-		if err := ct.tableview.SetOrigin(ox, oy-1); err != nil {
+		if err := ct.Views.Table.Backing.SetOrigin(ox, oy-1); err != nil {
 			return err
 		}
 	}
@@ -83,14 +65,14 @@ func (ct *Cointop) cursorUp() error {
 }
 
 func (ct *Cointop) pageDown() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, oy := ct.tableview.Origin() // this is prev origin position
-	cx, _ := ct.tableview.Cursor()  // relative cursor position
-	_, sy := ct.tableview.Size()    // rows in visible view
+	ox, oy := ct.Views.Table.Backing.Origin() // this is prev origin position
+	cx, _ := ct.Views.Table.Backing.Cursor()  // relative cursor position
+	_, sy := ct.Views.Table.Backing.Size()    // rows in visible view
 	k := oy + sy
-	l := len(ct.coins)
+	l := len(ct.State.coins)
 	// end of table
 	if (oy + sy + sy) > l {
 		k = l - sy
@@ -101,12 +83,12 @@ func (ct *Cointop) pageDown() error {
 		sy = l
 	}
 
-	if err := ct.tableview.SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.Backing.SetOrigin(ox, k); err != nil {
 		return err
 	}
 	// move cursor to last line if can't scroll further
 	if k == oy {
-		if err := ct.tableview.SetCursor(cx, sy-1); err != nil {
+		if err := ct.Views.Table.Backing.SetCursor(cx, sy-1); err != nil {
 			return err
 		}
 	}
@@ -115,22 +97,22 @@ func (ct *Cointop) pageDown() error {
 }
 
 func (ct *Cointop) pageUp() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, oy := ct.tableview.Origin()
-	cx, _ := ct.tableview.Cursor() // relative cursor position
-	_, sy := ct.tableview.Size()   // rows in visible view
+	ox, oy := ct.Views.Table.Backing.Origin()
+	cx, _ := ct.Views.Table.Backing.Cursor() // relative cursor position
+	_, sy := ct.Views.Table.Backing.Size()   // rows in visible view
 	k := oy - sy
 	if k < 0 {
 		k = 0
 	}
-	if err := ct.tableview.SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.Backing.SetOrigin(ox, k); err != nil {
 		return err
 	}
 	// move cursor to first line if can't scroll further
 	if k == oy {
-		if err := ct.tableview.SetCursor(cx, 0); err != nil {
+		if err := ct.Views.Table.Backing.SetCursor(cx, 0); err != nil {
 			return err
 		}
 	}
@@ -139,15 +121,15 @@ func (ct *Cointop) pageUp() error {
 }
 
 func (ct *Cointop) navigateFirstLine() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, _ := ct.tableview.Origin()
-	cx, _ := ct.tableview.Cursor()
-	if err := ct.tableview.SetOrigin(ox, 0); err != nil {
+	ox, _ := ct.Views.Table.Backing.Origin()
+	cx, _ := ct.Views.Table.Backing.Cursor()
+	if err := ct.Views.Table.Backing.SetOrigin(ox, 0); err != nil {
 		return err
 	}
-	if err := ct.tableview.SetCursor(cx, 0); err != nil {
+	if err := ct.Views.Table.Backing.SetCursor(cx, 0); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -155,18 +137,18 @@ func (ct *Cointop) navigateFirstLine() error {
 }
 
 func (ct *Cointop) navigateLastLine() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	ox, _ := ct.tableview.Origin()
-	cx, _ := ct.tableview.Cursor()
-	_, sy := ct.tableview.Size()
-	l := len(ct.coins)
+	ox, _ := ct.Views.Table.Backing.Origin()
+	cx, _ := ct.Views.Table.Backing.Cursor()
+	_, sy := ct.Views.Table.Backing.Size()
+	l := len(ct.State.coins)
 	k := l - sy
-	if err := ct.tableview.SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.Backing.SetOrigin(ox, k); err != nil {
 		return err
 	}
-	if err := ct.tableview.SetCursor(cx, sy-1); err != nil {
+	if err := ct.Views.Table.Backing.SetCursor(cx, sy-1); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -174,11 +156,11 @@ func (ct *Cointop) navigateLastLine() error {
 }
 
 func (ct *Cointop) navigatePageFirstLine() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	cx, _ := ct.tableview.Cursor()
-	if err := ct.tableview.SetCursor(cx, 0); err != nil {
+	cx, _ := ct.Views.Table.Backing.Cursor()
+	if err := ct.Views.Table.Backing.SetCursor(cx, 0); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -186,12 +168,12 @@ func (ct *Cointop) navigatePageFirstLine() error {
 }
 
 func (ct *Cointop) navigatePageMiddleLine() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	cx, _ := ct.tableview.Cursor()
-	_, sy := ct.tableview.Size()
-	if err := ct.tableview.SetCursor(cx, (sy/2)-1); err != nil {
+	cx, _ := ct.Views.Table.Backing.Cursor()
+	_, sy := ct.Views.Table.Backing.Size()
+	if err := ct.Views.Table.Backing.SetCursor(cx, (sy/2)-1); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -199,12 +181,12 @@ func (ct *Cointop) navigatePageMiddleLine() error {
 }
 
 func (ct *Cointop) navigatePageLastLine() error {
-	if ct.tableview == nil {
+	if ct.Views.Table.Backing == nil {
 		return nil
 	}
-	cx, _ := ct.tableview.Cursor()
-	_, sy := ct.tableview.Size()
-	if err := ct.tableview.SetCursor(cx, sy-1); err != nil {
+	cx, _ := ct.Views.Table.Backing.Cursor()
+	_, sy := ct.Views.Table.Backing.Size()
+	if err := ct.Views.Table.Backing.SetCursor(cx, sy-1); err != nil {
 		return err
 	}
 	ct.rowChanged()
@@ -215,32 +197,32 @@ func (ct *Cointop) prevPage() error {
 	if ct.isFirstPage() {
 		return nil
 	}
-	ct.setPage(ct.page - 1)
+	ct.setPage(ct.State.page - 1)
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
 }
 
 func (ct *Cointop) nextPage() error {
-	ct.setPage(ct.page + 1)
+	ct.setPage(ct.State.page + 1)
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
 }
 
 func (ct *Cointop) firstPage() error {
-	ct.page = 0
+	ct.State.page = 0
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
 }
 
 func (ct *Cointop) isFirstPage() bool {
-	return ct.page == 0
+	return ct.State.page == 0
 }
 
 func (ct *Cointop) lastPage() error {
-	ct.page = ct.getListCount() / ct.perpage
+	ct.State.page = ct.getListCount() / ct.State.perPage
 	ct.updateTable()
 	ct.rowChanged()
 	return nil
@@ -253,5 +235,23 @@ func (ct *Cointop) goToGlobalIndex(idx int) error {
 	rowIndex := (idx % perpage)
 	ct.highlightRow(rowIndex)
 	ct.updateTable()
+	return nil
+}
+
+func (ct *Cointop) highlightRow(idx int) error {
+	ct.Views.Table.Backing.SetOrigin(0, 0)
+	ct.Views.Table.Backing.SetCursor(0, 0)
+	ox, _ := ct.Views.Table.Backing.Origin()
+	cx, _ := ct.Views.Table.Backing.Cursor()
+	_, sy := ct.Views.Table.Backing.Size()
+	perpage := ct.totalPerPage()
+	p := idx % perpage
+	oy := (p / sy) * sy
+	cy := p % sy
+	if oy > 0 {
+		ct.Views.Table.Backing.SetOrigin(ox, oy)
+	}
+	ct.Views.Table.Backing.SetCursor(cx, cy)
+
 	return nil
 }

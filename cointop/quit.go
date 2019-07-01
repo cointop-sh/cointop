@@ -11,15 +11,15 @@ func (ct *Cointop) quit() error {
 }
 
 func (ct *Cointop) quitView() error {
-	if ct.portfoliovisible {
-		ct.portfoliovisible = false
+	if ct.State.portfolioVisible {
+		ct.State.portfolioVisible = false
 		return ct.updateTable()
 	}
-	if ct.filterByFavorites {
-		ct.filterByFavorites = false
+	if ct.State.filterByFavorites {
+		ct.State.filterByFavorites = false
 		return ct.updateTable()
 	}
-	if ct.activeViewName() == ct.tableviewname {
+	if ct.activeViewName() == ct.Views.Table.Name {
 		return ct.quit()
 	}
 

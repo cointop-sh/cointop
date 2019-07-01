@@ -644,6 +644,10 @@ Frequently asked questions:
     cointop --coinmarketcap-api-key=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     ```
 
+- Q: I can I add my own API to cointop?
+
+  - A: Fork cointop and add the API that implements the [interface](https://github.com/miguelmota/cointop/blob/master/cointop/common/api/interface.go) to [`cointop/cointop/common/api/impl/`](https://github.com/miguelmota/cointop/tree/master/cointop/common/api/impl). You can use the [CoinGecko implementatoin](https://github.com/miguelmota/cointop/blob/master/cointop/common/api/impl/coingecko/coingecko.go) as reference.
+
 - Q: I installed cointop without errors but the command is not found.
 
   - A: Make sure your `GOPATH` and `PATH` is set correctly.
@@ -885,7 +889,6 @@ Frequently asked questions:
 - Q: How much memory does cointop use?
 
   -A: Cointop uses ~15MB of memory so you can run it on a Raspberry Pi Zero if you wanted to (one reason why cointop was built using Go instead of Node.js or Python).
-
 
 - Q: How does cointop differ from [rate.sx](https://rate.sx/)?
 
