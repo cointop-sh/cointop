@@ -99,7 +99,7 @@ func (ct *Cointop) configPath() string {
 func (ct *Cointop) makeConfigDir() error {
 	path := ct.configDirPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return os.Mkdir(path, os.ModePerm)
+		return os.MkdirAll(path, os.ModePerm)
 	}
 
 	return nil
