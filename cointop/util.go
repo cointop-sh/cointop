@@ -52,6 +52,8 @@ func NormalizePath(path string) string {
 		path = filepath.Join(UserHomeDir(), path[2:])
 	}
 
+	path = strings.ReplaceAll(path, "/", string(filepath.Separator))
+
 	return path
 }
 
