@@ -49,7 +49,7 @@ func (ct *Cointop) cursorDown() error {
 }
 
 func (ct *Cointop) cursorUp() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	ox, oy := ct.Views.Table.Backing().Origin()
@@ -65,7 +65,7 @@ func (ct *Cointop) cursorUp() error {
 }
 
 func (ct *Cointop) pageDown() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	ox, oy := ct.Views.Table.Backing().Origin() // this is prev origin position
@@ -97,7 +97,7 @@ func (ct *Cointop) pageDown() error {
 }
 
 func (ct *Cointop) pageUp() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	ox, oy := ct.Views.Table.Backing().Origin()
@@ -121,7 +121,7 @@ func (ct *Cointop) pageUp() error {
 }
 
 func (ct *Cointop) navigateFirstLine() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	ox, _ := ct.Views.Table.Backing().Origin()
@@ -137,7 +137,7 @@ func (ct *Cointop) navigateFirstLine() error {
 }
 
 func (ct *Cointop) navigateLastLine() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	ox, _ := ct.Views.Table.Backing().Origin()
@@ -156,7 +156,7 @@ func (ct *Cointop) navigateLastLine() error {
 }
 
 func (ct *Cointop) navigatePageFirstLine() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	cx, _ := ct.Views.Table.Backing().Cursor()
@@ -168,7 +168,7 @@ func (ct *Cointop) navigatePageFirstLine() error {
 }
 
 func (ct *Cointop) navigatePageMiddleLine() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	cx, _ := ct.Views.Table.Backing().Cursor()
@@ -181,7 +181,7 @@ func (ct *Cointop) navigatePageMiddleLine() error {
 }
 
 func (ct *Cointop) navigatePageLastLine() error {
-	if ct.Views.Table.Backing == nil {
+	if ct.Views.Table.Backing() == nil {
 		return nil
 	}
 	cx, _ := ct.Views.Table.Backing().Cursor()
