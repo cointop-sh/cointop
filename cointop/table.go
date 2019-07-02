@@ -43,6 +43,8 @@ func tableColumnOrder() []string {
 	}
 }
 
+const dots = "..."
+
 // RefreshTable refreshes the table
 func (ct *Cointop) RefreshTable() error {
 	maxX := ct.width()
@@ -74,7 +76,6 @@ func (ct *Cointop) RefreshTable() error {
 				color24h = ct.colorscheme.TableColumnChangeDown
 			}
 			name := coin.Name
-			dots := "..."
 			star := " "
 			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
 			if len(name) > 20 {
@@ -143,7 +144,6 @@ func (ct *Cointop) RefreshTable() error {
 				color7d = ct.colorscheme.TableColumnChangeDown
 			}
 			name := coin.Name
-			dots := "..."
 			star := ct.colorscheme.TableRow(" ")
 			if coin.Favorite {
 				star = ct.colorscheme.TableRowFavorite("*")
@@ -312,7 +312,7 @@ func (ct *Cointop) RowLinkShort() string {
 			path = parts[len(parts)-1]
 		}
 
-		return fmt.Sprintf("http://%s/.../%s", host, path)
+		return fmt.Sprintf("http://%s/%s/%s", host, dots, path)
 	}
 
 	return ""

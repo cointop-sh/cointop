@@ -149,7 +149,7 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 func (s *Service) GetCoinGraphData(symbol, name string, start, end int64) (apitypes.CoinGraph, error) {
 	ret := apitypes.CoinGraph{}
 	days := strconv.Itoa(util.CalcDays(start, end))
-	chart, err := s.client.CoinsIDMarketChart(strings.ToLower(name), "usd", days)
+	chart, err := s.client.CoinsIDMarketChart(util.NameToSlug(name), "usd", days)
 	if err != nil {
 		return ret, err
 	}

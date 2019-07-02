@@ -92,6 +92,7 @@ func (ct *Cointop) UpdateChart() error {
 
 		}
 	}
+
 	ct.update(func() {
 		if ct.Views.Chart.Backing() == nil {
 			return
@@ -108,6 +109,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	maxX := ct.maxTableWidth - 3
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
+
 	// TODO: not do this (SoC)
 	go ct.updateMarketbar()
 
@@ -209,6 +211,7 @@ func (ct *Cointop) PortfolioChart() error {
 	maxX := ct.maxTableWidth - 3
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
+
 	// TODO: not do this (SoC)
 	go ct.updateMarketbar()
 
@@ -374,7 +377,23 @@ func (ct *Cointop) ToggleCoinChart() error {
 		ct.State.selectedCoin = highlightedcoin
 	}
 
+	go ct.ShowChartLoader()
 	go ct.UpdateChart()
 	go ct.updateMarketbar()
+	return nil
+}
+
+// ShowChartLoader shows chart loading indicator
+func (ct *Cointop) ShowChartLoader() error {
+	ct.update(func() {
+		if ct.Views.Chart.Backing() == nil {
+			return
+		}
+
+		content := "\n\nLoading..."
+		ct.Views.Chart.Backing().Clear()
+		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(content))
+	})
+
 	return nil
 }

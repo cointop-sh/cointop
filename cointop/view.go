@@ -36,10 +36,16 @@ func (view *View) SetBacking(gocuiView *gocui.View) {
 	view.backing = gocuiView
 }
 
-// Height returns thejview height
+// Height returns the view height
 func (view *View) Height() int {
 	_, h := view.backing.Size()
 	return h
+}
+
+// Width returns the view width
+func (view *View) Width() int {
+	w, _ := view.backing.Size()
+	return w
 }
 
 // Name returns the view's name

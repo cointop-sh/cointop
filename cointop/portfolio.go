@@ -23,6 +23,7 @@ func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
 func (ct *Cointop) togglePortfolio() error {
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = !ct.State.portfolioVisible
+	go ct.UpdateChart()
 	go ct.updateTable()
 	return nil
 }
@@ -30,6 +31,7 @@ func (ct *Cointop) togglePortfolio() error {
 func (ct *Cointop) toggleShowPortfolio() error {
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = true
+	go ct.UpdateChart()
 	go ct.updateTable()
 	return nil
 }
@@ -39,6 +41,7 @@ func (ct *Cointop) togglePortfolioUpdateMenu() error {
 	if ct.State.portfolioUpdateMenuVisible {
 		return ct.showPortfolioUpdateMenu()
 	}
+
 	return ct.hidePortfolioUpdateMenu()
 }
 
