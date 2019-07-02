@@ -168,7 +168,7 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 // Price returns the current price of the coin
 func (s *Service) Price(name string, convert string) (float64, error) {
 	convert = strings.ToUpper(convert)
-	symbol, err := cmcv2.CoinSymbol(name)
+	symbol, err := cmcv2.CoinSymbol(util.NameToSlug(name))
 	if err != nil {
 		return 0, err
 	}

@@ -238,15 +238,26 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 
 // Price returns the current price of the coin
 func (s *Service) Price(name string, convert string) (float64, error) {
-	ids := []string{name}
-	convert = strings.ToLower(convert)
-	currencies := []string{convert}
-	list, err := s.client.SimplePrice(ids, currencies)
+	list, err := s.client.CoinsList()
 	if err != nil {
 		return 0, err
 	}
 
 	for _, item := range *list {
+		if item.Symbol == strings.ToLower(name) {
+			name = item.Name
+		}
+	}
+
+	ids := []string{util.NameToSlug(name)}
+	convert = strings.ToLower(convert)
+	currencies := []string{convert}
+	priceList, err := s.client.SimplePrice(ids, currencies)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, item := range *priceList {
 		if p, ok := item[convert]; ok {
 			return util.FormatPrice(float64(p), convert), nil
 		}
