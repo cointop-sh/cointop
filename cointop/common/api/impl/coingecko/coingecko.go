@@ -16,6 +16,9 @@ import (
 // ErrPingFailed is the error for when pinging the API fails
 var ErrPingFailed = errors.New("Failed to ping")
 
+// ErrNotFound is the error when the target is not found
+var ErrNotFound = errors.New("Not found")
+
 // Service service
 type Service struct {
 	client *gecko.Client
@@ -231,6 +234,25 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 	}
 
 	return ret, nil
+}
+
+// Price returns the current price of the coin
+func (s *Service) Price(name string, convert string) (float64, error) {
+	ids := []string{name}
+	convert = strings.ToLower(convert)
+	currencies := []string{convert}
+	list, err := s.client.SimplePrice(ids, currencies)
+	if err != nil {
+		return 0, err
+	}
+
+	for _, item := range *list {
+		if p, ok := item[convert]; ok {
+			return util.FormatPrice(float64(p), convert), nil
+		}
+	}
+
+	return 0, ErrNotFound
 }
 
 // CoinLink returns the URL link for the coin

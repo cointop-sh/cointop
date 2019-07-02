@@ -37,6 +37,7 @@ type Interface interface {
 	Price(options *PriceOptions) (float64, error)
 	CoinID(symbol string) (int, error)
 	CoinSlug(symbol string) (string, error)
+	CoinSymbol(slug string) (string, error)
 }
 
 // listingsMedia listings response media
@@ -315,8 +316,12 @@ func CoinID(symbol string) (int, error) {
 		if l.Symbol == symbol {
 			return l.ID, nil
 		}
+
+		if l.Slug == strings.ToLower(symbol) {
+			return l.ID, nil
+		}
 	}
-	//returns error as default
+
 	return 0, errors.New("coin not found")
 }
 
@@ -334,6 +339,23 @@ func CoinSlug(symbol string) (string, error) {
 		return "", errors.New("coin not found")
 	}
 	return coin.Slug, nil
+}
+
+// CoinSymbol gets the symbol for the cryptocurrency
+func CoinSymbol(slug string) (string, error) {
+	slug = strings.ToLower(strings.TrimSpace(slug))
+	coin, err := Ticker(&TickerOptions{
+		Symbol: slug,
+	})
+	if err != nil {
+		return "", err
+	}
+
+	if coin == nil {
+		return "", errors.New("coin not found")
+	}
+
+	return coin.Symbol, nil
 }
 
 // toInt helper for parsing strings to int

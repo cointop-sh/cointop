@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	color "github.com/miguelmota/cointop/cointop/common/color"
 	"github.com/miguelmota/cointop/cointop/common/pad"
@@ -48,7 +49,7 @@ var cryptocurrencyNames = map[string]string{
 	"ETH": "Ethereum",
 }
 
-var currencySymbol = map[string]string{
+var currencySymbolMap = map[string]string{
 	"AUD": "$",
 	"BRL": "R$",
 	"BTC": "Ƀ",
@@ -192,8 +193,19 @@ func (ct *Cointop) setCurrencyConverstion(convert string) func() error {
 	}
 }
 
+// currencySymbol returns the symbol for the currency
+func currencySymbol(currency string) string {
+	symbol, ok := currencySymbolMap[strings.ToUpper(currency)]
+	if ok {
+		return symbol
+	}
+
+	return "$"
+}
+
+// currencySymbol returns the symbol for the currency
 func (ct *Cointop) currencySymbol() string {
-	symbol, ok := currencySymbol[ct.State.currencyConversion]
+	symbol, ok := currencySymbolMap[strings.ToUpper(ct.State.currencyConversion)]
 	if ok {
 		return symbol
 	}

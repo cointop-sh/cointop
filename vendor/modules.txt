@@ -4,8 +4,8 @@ github.com/BurntSushi/toml
 github.com/anaskhan96/soup
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
-# github.com/gizak/termui v2.3.0+incompatible
-github.com/gizak/termui
+# github.com/inconshreveable/mousetrap v1.0.0
+github.com/inconshreveable/mousetrap
 # github.com/jroimartin/gocui v0.4.0
 github.com/jroimartin/gocui
 # github.com/konsorten/go-windows-terminal-sequences v1.0.1
@@ -18,7 +18,7 @@ github.com/mattn/go-colorable
 github.com/mattn/go-isatty
 # github.com/mattn/go-runewidth v0.0.4
 github.com/mattn/go-runewidth
-# github.com/miguelmota/go-coinmarketcap v0.1.4
+# github.com/miguelmota/go-coinmarketcap v0.1.5
 github.com/miguelmota/go-coinmarketcap/pro/v1
 github.com/miguelmota/go-coinmarketcap/v2
 github.com/miguelmota/go-coinmarketcap/v2/types
@@ -30,21 +30,27 @@ github.com/nsf/termbox-go
 github.com/patrickmn/go-cache
 # github.com/sirupsen/logrus v1.4.1
 github.com/sirupsen/logrus
+# github.com/spf13/cobra v0.0.5
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.3
+github.com/spf13/pflag
 # github.com/tomnomnom/xtermcolor v0.0.0-20160428124646-b78803f00a7e
 github.com/tomnomnom/xtermcolor
-# golang.org/x/net v0.0.0-20190415214537-1da14a5a36f2
+# golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20190416152802-12500544f89f
+# golang.org/x/sys v0.0.0-20190626221950-04f50cda93cb
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.0
+# golang.org/x/text v0.3.2
 golang.org/x/text/language
 golang.org/x/text/message
-golang.org/x/text/internal/tag
+golang.org/x/text/internal/language
+golang.org/x/text/internal/language/compact
 golang.org/x/text/feature/plural
 golang.org/x/text/internal/format
 golang.org/x/text/internal/number
 golang.org/x/text/message/catalog
+golang.org/x/text/internal/tag
 golang.org/x/text/internal/catmsg
-golang.org/x/text/internal
 golang.org/x/text/internal/stringset
+golang.org/x/text/internal

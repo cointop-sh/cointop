@@ -17,4 +17,5 @@ type Interface interface {
 	//GetCoinMarkets(coin string) ([]types.Market, error)
 	CoinLink(name string) string
 	SupportedCurrencies() []string
+	Price(name string, convert string) (float64, error)
 }

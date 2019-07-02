@@ -1,5 +1,10 @@
 package cointop
 
+import (
+	"fmt"
+	"os"
+)
+
 // TODO: make dynamic based on git tag
 const version = "1.3.2"
 
@@ -11,4 +16,9 @@ func (ct *Cointop) Version() string {
 // Version returns cointop version
 func Version() string {
 	return version
+}
+
+// PrintVersion prints the version
+func PrintVersion() {
+	fmt.Fprint(os.Stdout, Version())
 }

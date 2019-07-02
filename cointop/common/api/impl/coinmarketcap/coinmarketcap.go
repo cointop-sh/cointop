@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	apitypes "github.com/miguelmota/cointop/cointop/common/api/types"
@@ -162,6 +163,25 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 		ActiveMarkets:                int(market.ActiveMarketPairs),
 	}
 	return ret, nil
+}
+
+// Price returns the current price of the coin
+func (s *Service) Price(name string, convert string) (float64, error) {
+	convert = strings.ToUpper(convert)
+	symbol, err := cmcv2.CoinSymbol(name)
+	if err != nil {
+		return 0, err
+	}
+
+	price, err := cmcv2.Price(&cmcv2.PriceOptions{
+		Symbol:  symbol,
+		Convert: convert,
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return util.FormatPrice(price, convert), nil
 }
 
 // CoinLink returns the URL link for the coin

@@ -14,9 +14,9 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/api/types"
 	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
+	"github.com/miguelmota/cointop/cointop/common/humanize"
 	"github.com/miguelmota/cointop/cointop/common/table"
 	"github.com/patrickmn/go-cache"
-	log "github.com/sirupsen/logrus"
 )
 
 // TODO: clean up and optimize codebase
@@ -139,7 +139,7 @@ var defaultConfigPath = "~/.cointop/config.toml"
 var defaultColorscheme = "cointop"
 
 // NewCointop initializes cointop
-func NewCointop(config *Config) *Cointop {
+func NewCointop(config *Config) (*Cointop, error) {
 	var debug bool
 	if os.Getenv("DEBUG") != "" {
 		debug = true
@@ -202,7 +202,7 @@ func NewCointop(config *Config) *Cointop {
 
 	err := ct.setupConfig()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	ct.cache.Set("onlyTable", ct.State.onlyTable, cache.NoExpiration)
@@ -225,7 +225,7 @@ func NewCointop(config *Config) *Cointop {
 	if config.CoinMarketCapAPIKey != "" {
 		ct.apiKeys.cmc = config.CoinMarketCapAPIKey
 		if err := ct.saveConfig(); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 	}
 
@@ -235,14 +235,14 @@ func NewCointop(config *Config) *Cointop {
 
 	colors, err := ct.getColorschemeColors()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	ct.colorscheme = NewColorscheme(colors)
 
 	if config.APIChoice != "" {
 		ct.apiChoice = config.APIChoice
 		if err := ct.saveConfig(); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 	}
 
@@ -256,7 +256,7 @@ func NewCointop(config *Config) *Cointop {
 			ct.apiKeys.cmc = apiKey
 		}
 		if err := ct.saveConfig(); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 	}
 
@@ -269,7 +269,7 @@ func NewCointop(config *Config) *Cointop {
 	} else if ct.apiChoice == CoinGecko {
 		ct.api = api.NewCG()
 	} else {
-		log.Fatal(ErrInvalidAPIChoice)
+		return nil, ErrInvalidAPIChoice
 	}
 
 	coinscachekey := ct.cacheKey("allCoinsSlugMap")
@@ -312,17 +312,17 @@ func NewCointop(config *Config) *Cointop {
 	// TODO: notify offline status in status bar
 	/*
 		if err := ct.api.Ping(); err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 	*/
-	return ct
+	return ct, nil
 }
 
 // Run runs cointop
-func (ct *Cointop) Run() {
+func (ct *Cointop) Run() error {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
-		log.Fatalf("new gocui: %v", err)
+		return fmt.Errorf("new gocui: %v", err)
 	}
 
 	g.FgColor = ct.colorscheme.BaseFg()
@@ -335,20 +335,51 @@ func (ct *Cointop) Run() {
 	g.Highlight = true
 	g.SetManagerFunc(ct.layout)
 	if err := ct.keybindings(g); err != nil {
-		log.Fatalf("keybindings: %v", err)
+		return fmt.Errorf("keybindings: %v", err)
 	}
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
-		log.Fatalf("main loop: %v", err)
+		return fmt.Errorf("main loop: %v", err)
 	}
+
+	return nil
+}
+
+// PriceConfig is the config options for the price command
+type PriceConfig struct {
+	Coin      string
+	Currency  string
+	APIChoice string
+}
+
+// PrintPrice outputs the current price of the coin
+func PrintPrice(config *PriceConfig) error {
+	var priceAPI api.Interface
+	if config.APIChoice == CoinMarketCap {
+		priceAPI = api.NewCMC("")
+	} else if config.APIChoice == CoinGecko {
+		priceAPI = api.NewCG()
+	} else {
+		return ErrInvalidAPIChoice
+	}
+
+	price, err := priceAPI.Price(config.Coin, config.Currency)
+	if err != nil {
+		return err
+	}
+
+	symbol := currencySymbol(config.Currency)
+	fmt.Fprintf(os.Stdout, "%s%s", symbol, humanize.Commaf(price))
+
+	return nil
 }
 
 // Clean ...
-func Clean() {
+func Clean() error {
 	tmpPath := "/tmp"
 	if _, err := os.Stat(tmpPath); !os.IsNotExist(err) {
 		files, err := ioutil.ReadDir(tmpPath)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		for _, f := range files {
@@ -356,27 +387,31 @@ func Clean() {
 				file := fmt.Sprintf("%s/%s", tmpPath, f.Name())
 				fmt.Printf("removing %s\n", file)
 				if err := os.Remove(file); err != nil {
-					log.Fatal(err)
+					return err
 				}
 			}
 		}
 	}
 
 	fmt.Println("cointop cache has been cleaned")
+	return nil
 }
 
 // Reset ...
-func Reset() {
-	Clean()
+func Reset() error {
+	if err := Clean(); err != nil {
+		return err
+	}
 
 	// default config path
 	configPath := fmt.Sprintf("%s%s", UserHomeDir(), "/.cointop")
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
 		fmt.Printf("removing %s\n", configPath)
 		if err := os.RemoveAll(configPath); err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
 	fmt.Println("cointop has been reset")
+	return nil
 }

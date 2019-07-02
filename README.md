@@ -67,6 +67,7 @@ In action
 - Help menu
 - Offline cache
 - Supports multiple coin stat APIs
+- Auto-refresh
 - Works on macOS, Linux, and Windows
 - It's very lightweight; can be left running indefinitely
 
@@ -617,7 +618,7 @@ Frequently asked questions:
 
 - Q: I'm no longer seeing any data!
 
-  - A: Run `cointop --clean` to delete the cache and then rerun cointop. If you're still not seeing any data, then please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
+  - A: Run cointop with the `--clean` flag to delete the cache. If you're still not seeing any data, then please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
 
 - Q: How do I get a CoinMarketCap Pro API key?
 
@@ -876,11 +877,11 @@ Frequently asked questions:
 
 - Q: How can I delete the cache?
 
-  - A: Run `cointop -clean` to delete the cache files. Cointop will generate new cache files after fetching data.
+  - A: Run `cointop clean` to delete the cache files. Cointop will generate new cache files after fetching data.
 
 - Q: How can I reset cointop?
 
-  - A: Run `cointop -reset` to delete the config files and cache. Cointop will generate a new config when starting up.
+  - A: Run the command `cointop reset` to delete the config files and cache. Cointop will generate a new config when starting up. You can run `cointop --reset` to reset before running cointop.
 
 - Q: What is the size of the binary?
 
@@ -893,6 +894,24 @@ Frequently asked questions:
 - Q: How does cointop differ from [rate.sx](https://rate.sx/)?
 
   - A: *rate.sx* is great for one-off queries or fetching data for bash scripts because it doesn't require installing anything. Cointop differs in that it is interactive and also supports more currencies.
+
+- Q: How can I get just the coin price with cointop?
+
+  - A: Use the `cointop price` command. Here are some examples:
+
+    ```bash
+    $ cointop price --coin ethereum
+    $277.76
+
+    $ cointop price -c ethereum --currency btc
+    Ƀ0.02814
+
+    $ cointop -c ethereum -f eur
+    €245.51
+
+    $ cointop price -c ethereum -f usd --api coinmarketcap
+    $276.37
+    ```
 
 ## Mentioned in
 
