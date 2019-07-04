@@ -482,10 +482,10 @@ refresh_rate = 60
   pro_api_key = ""
 ```
 
-You may specify a different config file to use by using the `-config` flag:
+You may specify a different config file to use by using the `--config` flag:
 
 ```bash
-cointop -config="/path/to/config.toml"
+cointop --config="/path/to/config.toml"
 ```
 
 ## List of actions
@@ -839,7 +839,7 @@ Frequently asked questions:
 
 - Q: How can use a different config file other than the default?
 
-  - A: Run `cointop -config="/path/to/config.toml"` to use the specified file as the config.
+  - A: Run cointop with the `--config` flag, eg `cointop --config="/path/to/config.toml"`, to use the specified file as the config.
 
 - Q: I'm getting the error `open /dev/tty: no such device or address`.
 
