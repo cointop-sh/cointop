@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -71,7 +72,7 @@ func (ct *Cointop) createConfigIfNotExists() error {
 
 	// NOTE: legacy support for default path
 	path := ct.configPath()
-	oldConfigPath := strings.Replace(path, "cointop/config.toml", "cointop/config", 1)
+	oldConfigPath := NormalizePath(strings.Replace(path, "cointop/config.toml", "cointop/config", 1))
 	if _, err := os.Stat(oldConfigPath); err == nil {
 		path = oldConfigPath
 		ct.configFilepath = oldConfigPath
@@ -88,8 +89,9 @@ func (ct *Cointop) createConfigIfNotExists() error {
 
 func (ct *Cointop) configDirPath() string {
 	path := NormalizePath(ct.configFilepath)
-	parts := strings.Split(path, "/")
-	return strings.Join(parts[0:len(parts)-1], "/")
+	separator := string(filepath.Separator)
+	parts := strings.Split(path, separator)
+	return strings.Join(parts[0:len(parts)-1], separator)
 }
 
 func (ct *Cointop) configPath() string {

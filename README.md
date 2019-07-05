@@ -195,9 +195,19 @@ cointop snapcraft [project page](https://snapcraft.io/cointop).
 
 Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
-### Windows WSL (Windows)
+### Windows
 
-Recommended to install using Go (instructions above).
+### PowerShell
+
+Install [Go](https://golang.org/doc/install) and [git](https://git-scm.com/download/win), then:
+
+```powershell
+go get -u github.com/miguelmota/cointop
+```
+
+### WSL
+
+Recommended to install using Go (instructions [above](#installing)).
 
 You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
 
