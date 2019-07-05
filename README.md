@@ -195,9 +195,7 @@ cointop snapcraft [project page](https://snapcraft.io/cointop).
 
 Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
-### Windows
-
-### PowerShell
+### Windows (PowerShell / WSL)
 
 Install [Go](https://golang.org/doc/install) and [git](https://git-scm.com/download/win), then:
 
@@ -205,11 +203,7 @@ Install [Go](https://golang.org/doc/install) and [git](https://git-scm.com/downl
 go get -u github.com/miguelmota/cointop
 ```
 
-### WSL
-
-Recommended to install using Go (instructions [above](#installing)).
-
-You'll need additional font support for Windows WSL. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
+You'll need additional font support for Windows. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
 
 ### Binaries
 
@@ -726,7 +720,7 @@ Frequently asked questions:
     LANG=en_US.utf8 TERM=xterm-256color cointop
     ```
 
-    If you're on Windows WSL, please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for font support instructions.
+    If you're on Windows (PowerShell, Command Prompt, or WSL), please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for font support instructions.
 
 - Q: How do I install Go on Ubuntu?
 
@@ -738,7 +732,7 @@ Frequently asked questions:
 
 - Q: How do I fix my GOPATH on Windows?
 
-    - A: Go to Control Panel -> _Edit the system environment variables_ -> _Environment Variables..._ -> GOPATH
+    - A: Go to Control Panel -> Under _System_ click _Edit the system environment variables_ -> then click the _Environment Variables..._ button -> check the `GOPATH` variable.
 
       Check the environment variable in PowerShell:
 
@@ -754,13 +748,11 @@ Frequently asked questions:
 
     - A: Here's how to build the executable and run it:
 
-      ```bash
-      $ cd c:\\go
-      $ mkdir -p github.com/miguelmota
-      $ cd github.com/miguelmota
-      $ git clone github.com/miguelmota/cointop
-      $ go install .
-      $ cointop.exe
+      ```powershell
+      > md C:\Users\Josem\go\src\github.com\miguelmota -ea 0
+      > git clone https://github.com/miguelmota/cointop.git
+      > go build -o cointop.exe main.go
+      > cointop.exe
       ```
 
 - Q: How do I show the help menu?
