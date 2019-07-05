@@ -41,7 +41,7 @@ type Views struct {
 // State is the state preferences of cointop
 type State struct {
 	allCoins           []*Coin
-	allCoinsSlugMap    map[string]*Coin
+	allCoinsSlugMap    sync.Map
 	coins              []*Coin
 	chartPoints        [][]termui.Cell
 	currencyConversion string
@@ -165,7 +165,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		chartRangesMap: chartRangesMap(),
 		limiter:        time.Tick(2 * time.Second),
 		State: &State{
-			allCoinsSlugMap:    make(map[string]*Coin),
 			allCoins:           []*Coin{},
 			currencyConversion: "USD",
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
@@ -272,12 +271,21 @@ func NewCointop(config *Config) (*Cointop, error) {
 		return nil, ErrInvalidAPIChoice
 	}
 
+	allCoinsSlugMap := make(map[string]*Coin)
 	coinscachekey := ct.cacheKey("allCoinsSlugMap")
-	filecache.Get(coinscachekey, &ct.State.allCoinsSlugMap)
+	filecache.Get(coinscachekey, &allCoinsSlugMap)
 
-	for k := range ct.State.allCoinsSlugMap {
-		ct.State.allCoins = append(ct.State.allCoins, ct.State.allCoinsSlugMap[k])
+	for k, v := range allCoinsSlugMap {
+		ct.State.allCoinsSlugMap.Store(k, v)
 	}
+
+	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
+		if coin, ok := value.(*Coin); ok {
+			ct.State.allCoins = append(ct.State.allCoins, coin)
+		}
+		return true
+	})
+
 	if len(ct.State.allCoins) > 1 {
 		max := len(ct.State.allCoins)
 		if max > 100 {
@@ -289,15 +297,18 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 	// Here we're doing a lookup based on symbol and setting the favorite to the coin name instead of coin symbol.
-	for i := range ct.State.allCoinsSlugMap {
-		coin := ct.State.allCoinsSlugMap[i]
-		for k := range ct.State.favoritesBySymbol {
-			if coin.Symbol == k {
-				ct.State.favorites[coin.Name] = true
-				delete(ct.State.favoritesBySymbol, k)
+	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
+		if coin, ok := value.(*Coin); ok {
+			for k := range ct.State.favoritesBySymbol {
+				if coin.Symbol == k {
+					ct.State.favorites[coin.Name] = true
+					delete(ct.State.favoritesBySymbol, k)
+				}
 			}
 		}
-	}
+
+		return true
+	})
 
 	var globaldata []float64
 	chartcachekey := ct.cacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))

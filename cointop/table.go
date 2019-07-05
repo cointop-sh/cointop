@@ -203,12 +203,16 @@ func (ct *Cointop) RefreshTable() error {
 func (ct *Cointop) updateTable() error {
 	sliced := []*Coin{}
 
-	for i := range ct.State.allCoinsSlugMap {
-		v := ct.State.allCoinsSlugMap[i]
-		if ct.State.favorites[v.Name] {
-			v.Favorite = true
+	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
+		k := key.(string)
+		if v, ok := value.(*Coin); ok {
+			if ct.State.favorites[v.Name] {
+				v.Favorite = true
+				ct.State.allCoinsSlugMap.Store(k, v)
+			}
 		}
-	}
+		return true
+	})
 
 	if ct.State.filterByFavorites {
 		for i := range ct.State.allCoins {

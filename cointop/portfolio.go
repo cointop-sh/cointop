@@ -168,7 +168,9 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 }
 
 func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
-	c, _ := ct.State.allCoinsSlugMap[strings.ToLower(coin)]
+
+	ic, _ := ct.State.allCoinsSlugMap.Load(strings.ToLower(coin))
+	c, _ := ic.(*Coin)
 	p, isNew := ct.PortfolioEntry(c)
 	if isNew {
 		key := strings.ToLower(coin)

@@ -58,14 +58,20 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
 
+	allCoinsSlugMap := make(map[string]*Coin)
+	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
+		allCoinsSlugMap[key.(string)] = value.(*Coin)
+		return true
+	})
+
 	cachekey := ct.cacheKey("allCoinsSlugMap")
-	ct.cache.Set(cachekey, ct.State.allCoinsSlugMap, 10*time.Second)
-	filecache.Set(cachekey, ct.State.allCoinsSlugMap, 24*time.Hour)
+	ct.cache.Set(cachekey, allCoinsSlugMap, 10*time.Second)
+	filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
 
 	for _, v := range coins {
 		k := v.Name
-		last := ct.State.allCoinsSlugMap[k]
-		ct.State.allCoinsSlugMap[k] = &Coin{
+		ilast, _ := ct.State.allCoinsSlugMap.Load(k)
+		ct.State.allCoinsSlugMap.Store(k, &Coin{
 			ID:               v.ID,
 			Name:             v.Name,
 			Symbol:           v.Symbol,
@@ -79,23 +85,38 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 			PercentChange24H: v.PercentChange24H,
 			PercentChange7D:  v.PercentChange7D,
 			LastUpdated:      v.LastUpdated,
-		}
-		if last != nil {
-			ct.State.allCoinsSlugMap[k].Favorite = last.Favorite
+		})
+		if ilast != nil {
+			last, _ := ilast.(*Coin)
+			if last != nil {
+				ivalue, _ := ct.State.allCoinsSlugMap.Load(k)
+				l, _ := ivalue.(*Coin)
+				l.Favorite = last.Favorite
+				ct.State.allCoinsSlugMap.Store(k, l)
+			}
 		}
 	}
-	if len(ct.State.allCoins) < len(ct.State.allCoinsSlugMap) {
+
+	size := 0
+	// NOTE: there's no Len method on sync.Map so need to manually count
+	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
+		size++
+		return true
+	})
+
+	if len(ct.State.allCoins) < size {
 		list := []*Coin{}
 		for _, v := range coins {
 			k := v.Name
-			coin := ct.State.allCoinsSlugMap[k]
+			icoin, _ := ct.State.allCoinsSlugMap.Load(k)
+			coin, _ := icoin.(*Coin)
 			list = append(list, coin)
 		}
 		ct.State.allCoins = append(ct.State.allCoins, list...)
 	} else {
 		// update list in place without changing order
-		for i := range ct.State.allCoinsSlugMap {
-			cm := ct.State.allCoinsSlugMap[i]
+		ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
+			cm, _ := value.(*Coin)
 			for k := range ct.State.allCoins {
 				c := ct.State.allCoins[k]
 				if c.ID == cm.ID {
@@ -116,7 +137,9 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 					c.Favorite = cm.Favorite
 				}
 			}
-		}
+
+			return true
+		})
 	}
 
 	time.AfterFunc(10*time.Millisecond, func() {
