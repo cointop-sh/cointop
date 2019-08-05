@@ -106,7 +106,8 @@ func (ct *Cointop) UpdateChart() error {
 
 // ChartPoints calculates the the chart points
 func (ct *Cointop) ChartPoints(symbol string, name string) error {
-	maxX := ct.maxTableWidth - 3
+	maxX := ct.ClampedWidth()
+
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
 
@@ -208,7 +209,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 // PortfolioChart renders the portfolio chart
 func (ct *Cointop) PortfolioChart() error {
-	maxX := ct.maxTableWidth - 3
+	maxX := ct.ClampedWidth()
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
 

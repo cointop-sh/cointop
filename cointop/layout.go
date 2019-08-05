@@ -9,9 +9,13 @@ import (
 
 // TODO: break up into small functions
 
+var lastWidth int
+
 // layout sets initial layout
 func (ct *Cointop) layout(g *gocui.Gui) error {
-	maxX, maxY := ct.size()
+	maxY := ct.height()
+	maxX := ct.ClampedWidth()
+
 	topOffset := 0
 
 	headerHeight := 1
@@ -70,6 +74,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			if err != gocui.ErrUnknownView {
 				return err
 			}
+			v.Clear()
 			ct.Views.Chart.SetBacking(v)
 			ct.Views.Chart.Backing().Frame = false
 			ct.colorscheme.SetViewColor(ct.Views.Chart.Backing(), "chart")
@@ -199,6 +204,11 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		g.SetViewOnBottom(ct.Views.Input.Name())               // hide
 		ct.SetActiveView(ct.Views.Table.Name())
 		ct.intervalFetchData()
+	}
+
+	if lastWidth != maxX {
+		lastWidth = maxX
+		ct.refresh()
 	}
 
 	return nil

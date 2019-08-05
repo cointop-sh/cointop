@@ -22,8 +22,8 @@ func (ct *Cointop) refreshAll() error {
 	go func() {
 		ct.updateCoins()
 		ct.updateTable()
+		ct.UpdateChart()
 	}()
-	go ct.UpdateChart()
 	return nil
 }
 

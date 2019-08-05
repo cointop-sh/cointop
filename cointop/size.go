@@ -26,3 +26,13 @@ func (ct *Cointop) viewWidth(view string) int {
 	w, _ := v.Size()
 	return w
 }
+
+// ClampedWidth returns the clamped width
+func (ct *Cointop) ClampedWidth() int {
+	w := ct.width()
+	if w > ct.maxTableWidth {
+		return ct.maxTableWidth
+	}
+
+	return w
+}

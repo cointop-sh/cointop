@@ -915,6 +915,10 @@ Frequently asked questions:
     $276.37
     ```
 
+- Q: Does cointop do mining?
+
+  - A: Cointop does not do any kind of mining.
+
 ## Mentioned in
 
 Cointop has been mentioned in:
