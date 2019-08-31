@@ -66,23 +66,8 @@ func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coi
 			currencies[i] = item.Name
 		}
 
-		// NOTE: "simple" prices include decimal places so we use these prices
-		// if available but if there's an error then simply use "current price"
-		// which may not have a decimal place.
-		prices, err := s.client.SimplePrice(currencies, []string{convertTo})
-
 		for _, item := range *list {
 			price := item.CurrentPrice
-
-			if prices != nil && err == nil {
-				pricesObj := *prices
-				if coinObj, ok := pricesObj[strings.ToLower(item.Name)]; ok {
-					if p, ok := coinObj[convertTo]; ok {
-						price = float64(p)
-					}
-				}
-			}
-
 			var percentChange1H float64
 			var percentChange24H float64
 			var percentChange7D float64
