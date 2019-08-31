@@ -415,7 +415,7 @@ func Reset() error {
 	}
 
 	// default config path
-	configPath := fmt.Sprintf("%s%s", UserHomeDir(), "/.cointop")
+	configPath := fmt.Sprintf("%s%s", UserPreferredHomeDir(), "/.cointop")
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
 		fmt.Printf("removing %s\n", configPath)
 		if err := os.RemoveAll(configPath); err != nil {

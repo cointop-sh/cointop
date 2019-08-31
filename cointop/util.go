@@ -28,28 +28,28 @@ func GetBytes(key interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// UserHomeDir returns home directory for the user
-func UserHomeDir() string {
+// UserPreferredHomeDir returns the preferred home directory for the user
+func UserPreferredHomeDir() string {
+	var home string
+
 	if runtime.GOOS == "windows" {
-		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
-		if home == "" {
-			home = os.Getenv("USERPROFILE")
-		}
-		return home
+		home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 	} else if runtime.GOOS == "linux" {
-		home := os.Getenv("XDG_CONFIG_HOME")
-		if home != "" {
-			return home
-		}
+		home = os.Getenv("XDG_CONFIG_HOME")
 	}
-	return os.Getenv("HOME")
+
+	if home == "" {
+		home, _ = os.UserHomeDir()
+	}
+
+	return home
 }
 
 // NormalizePath normalizes and extends the path string
 func NormalizePath(path string) string {
 	// expand tilde
 	if strings.HasPrefix(path, "~/") {
-		path = filepath.Join(UserHomeDir(), path[2:])
+		path = filepath.Join(UserPreferredHomeDir(), path[2:])
 	}
 
 	path = strings.Replace(path, "/", string(filepath.Separator), -1)
