@@ -77,7 +77,7 @@ There are multiple ways you can install cointop depending on the platform you're
 
 ### From source (always latest and recommeded)
 
-Make sure to have [go](https://golang.org/) (1.10+) installed, then do:
+Make sure to have [go](https://golang.org/) (1.12+) installed, then do:
 
 ```bash
 go get -u github.com/miguelmota/cointop
