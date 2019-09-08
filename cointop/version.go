@@ -6,7 +6,7 @@ import (
 )
 
 // TODO: make dynamic based on git tag
-const version = "1.3.4"
+const version = "1.3.5"
 
 // Version returns the cointop version
 func (ct *Cointop) Version() string {
