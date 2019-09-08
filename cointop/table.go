@@ -211,55 +211,45 @@ func (ct *Cointop) updateTable() error {
 				ct.State.allCoinsSlugMap.Store(k, v)
 			}
 		}
+
 		return true
 	})
 
 	if ct.State.filterByFavorites {
-		for i := range ct.State.allCoins {
-			coin := ct.State.allCoins[i]
-			if coin.Favorite {
-				sliced = append(sliced, coin)
-			}
-		}
+		sliced = ct.getFavoritesSlice()
 		ct.State.coins = sliced
-		go ct.RefreshTable()
-		return nil
-	}
-
-	if ct.State.portfolioVisible {
+	} else if ct.State.portfolioVisible {
 		sliced = ct.getPortfolioSlice()
 		ct.State.coins = sliced
-		go ct.RefreshTable()
-		return nil
+	} else {
+		start := ct.State.page * ct.State.perPage
+		end := start + ct.State.perPage
+		allCoins := ct.allCoins()
+		size := len(allCoins)
+		if start < 0 {
+			start = 0
+		}
+		if end >= size-1 {
+			start = int(math.Floor(float64(start/100)) * 100)
+			end = size - 1
+		}
+		if start < 0 {
+			start = 0
+		}
+		if end >= size {
+			end = size - 1
+		}
+		if end < 0 {
+			end = 0
+		}
+		if start >= end {
+			return nil
+		}
+		if end > 0 {
+			sliced = allCoins[start:end]
+		}
+		ct.State.coins = sliced
 	}
-
-	start := ct.State.page * ct.State.perPage
-	end := start + ct.State.perPage
-	allCoins := ct.allCoins()
-	size := len(allCoins)
-	if start < 0 {
-		start = 0
-	}
-	if end >= size-1 {
-		start = int(math.Floor(float64(start/100)) * 100)
-		end = size - 1
-	}
-	if start < 0 {
-		start = 0
-	}
-	if end >= size {
-		end = size - 1
-	}
-	if end < 0 {
-		end = 0
-	}
-	if start >= end {
-		return nil
-	}
-	if end > 0 {
-		sliced = allCoins[start:end]
-	}
-	ct.State.coins = sliced
 
 	ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
 	go ct.RefreshTable()
@@ -287,6 +277,17 @@ func (ct *Cointop) HighlightedRowCoin() *Coin {
 		return nil
 	}
 	return ct.State.coins[idx]
+}
+
+// HighlightedPageRowIndex returns the index of page row of the highlighted row
+func (ct *Cointop) HighlightedPageRowIndex() int {
+	_, cy := ct.Views.Table.Backing().Cursor()
+	idx := cy
+	if idx < 0 {
+		idx = 0
+	}
+
+	return idx
 }
 
 // RowLink returns the row url link

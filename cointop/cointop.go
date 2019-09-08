@@ -57,6 +57,7 @@ type State struct {
 	hideMarketbar              bool
 	hideChart                  bool
 	hideStatusbar              bool
+	lastSelectedRowIndex       int
 	page                       int
 	perPage                    int
 	portfolio                  *Portfolio
@@ -340,8 +341,8 @@ func (ct *Cointop) Run() error {
 	g.BgColor = ct.colorscheme.BaseBg()
 	ct.g = g
 	defer g.Close()
-	g.InputEsc = true
 
+	g.InputEsc = true
 	g.Mouse = true
 	g.Highlight = true
 	g.SetManagerFunc(ct.layout)

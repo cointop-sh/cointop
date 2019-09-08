@@ -90,6 +90,7 @@ func (ct *Cointop) sortPrevCol() error {
 	if k < 0 {
 		k = 0
 	}
+
 	nextsortBy = ct.tableColumnOrder[k]
 	ct.sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.updateTable()
@@ -104,6 +105,7 @@ func (ct *Cointop) sortNextCol() error {
 	if k > l-1 {
 		k = l - 1
 	}
+
 	nextsortBy = ct.tableColumnOrder[k]
 	ct.sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.updateTable()

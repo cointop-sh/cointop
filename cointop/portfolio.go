@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/miguelmota/cointop/cointop/common/pad"
+	log "github.com/sirupsen/logrus"
 )
 
 // PortfolioUpdateMenuView is structure for portfolio update menu view
@@ -21,8 +22,15 @@ func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
 }
 
 func (ct *Cointop) togglePortfolio() error {
+	if ct.State.portfolioVisible {
+		ct.goToPageRowIndex(ct.State.lastSelectedRowIndex)
+	} else {
+		ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
+	}
+
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = !ct.State.portfolioVisible
+
 	go ct.UpdateChart()
 	go ct.updateTable()
 	return nil
@@ -80,6 +88,7 @@ func (ct *Cointop) showPortfolioUpdateMenu() error {
 		return nil
 	}
 
+	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.State.portfolioUpdateMenuVisible = true
 	ct.updatePortfolioUpdateMenu()
 	ct.SetActiveView(ct.Views.PortfolioUpdateMenu.Name())
@@ -111,6 +120,7 @@ func (ct *Cointop) setPortfolioHoldings() error {
 	defer ct.hidePortfolioUpdateMenu()
 	coin := ct.HighlightedRowCoin()
 
+	// read input field
 	b := make([]byte, 100)
 	n, err := ct.Views.Input.Backing().Read(b)
 	if n == 0 {
@@ -136,7 +146,7 @@ func (ct *Cointop) setPortfolioHoldings() error {
 		ct.goToGlobalIndex(0)
 	} else {
 		ct.updateTable()
-		ct.goToGlobalIndex(coin.Rank - 1)
+		ct.goToPageRowIndex(ct.State.lastSelectedRowIndex)
 	}
 
 	return nil
@@ -180,6 +190,10 @@ func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
 		}
 	} else {
 		p.Holdings = holdings
+	}
+
+	if err := ct.save(); err != nil {
+		log.Fatal(err)
 	}
 }
 

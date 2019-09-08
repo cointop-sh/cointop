@@ -228,6 +228,18 @@ func (ct *Cointop) lastPage() error {
 	return nil
 }
 
+func (ct *Cointop) goToPageRowIndex(idx int) error {
+	if ct.Views.Table.Backing() == nil {
+		return nil
+	}
+	cx, _ := ct.Views.Table.Backing().Cursor()
+	if err := ct.Views.Table.Backing().SetCursor(cx, idx); err != nil {
+		return err
+	}
+	ct.rowChanged()
+	return nil
+}
+
 func (ct *Cointop) goToGlobalIndex(idx int) error {
 	perpage := ct.totalPerPage()
 	atpage := idx / perpage

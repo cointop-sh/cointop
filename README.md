@@ -684,7 +684,7 @@ Frequently asked questions:
 
 - Q: How do I save my favorites?
 
-  - A: Press <kbd>ctrl</kbd>+<kbd>s</kbd> to save your favorites.
+  - A: Favorites are autosaved when setting them. You can also press <kbd>ctrl</kbd>+<kbd>s</kbd> to manually save your favorites to the config file.
 
 - Q: What does the yellow asterisk in the row mean?
 
@@ -709,6 +709,10 @@ Frequently asked questions:
 - Q: How do I view my portfolio?
 
   - A: Press <kbd>P</kbd> (Shift+p) to toggle view your portfolio.
+
+- Q: How do I save my portfolio?
+
+  - A: Your portfolio is autosaved after you edit holdings. You can also press <kbd>ctrl</kbd>+<kbd>s</kbd> to manually save your portfolio holdings to the config file.
 
 - Q: I'm getting question marks or weird symbols instead of the correct characters.
 
@@ -809,7 +813,7 @@ Frequently asked questions:
 
 - Q: How do I save the selected currency to convert to?
 
-  - A: Press <kbd>ctrl</kbd>+<kbd>s</kbd> to save the selected currency to convert to.
+  - A: The selected currency conversion is autosaved. You can also press <kbd>ctrl</kbd>+<kbd>s</kbd> to manually save the selected currency conversion.
 
 - Q: What does saving do?
 
