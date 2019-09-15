@@ -125,6 +125,10 @@ func (c *Client) SimpleSupportedVSCurrencies() (*types.SimpleSupportedVSCurrenci
 	}
 	var data *types.SimpleSupportedVSCurrencies
 	err = json.Unmarshal(resp, &data)
+	if err != nil {
+		return nil, err
+	}
+
 	return data, nil
 }
 

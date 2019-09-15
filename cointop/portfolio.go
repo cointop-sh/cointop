@@ -136,6 +136,9 @@ func (ct *Cointop) setPortfolioHoldings() error {
 	// read input field
 	b := make([]byte, 100)
 	n, err := ct.Views.Input.Backing().Read(b)
+	if err != nil {
+		return err
+	}
 	if n == 0 {
 		return nil
 	}
