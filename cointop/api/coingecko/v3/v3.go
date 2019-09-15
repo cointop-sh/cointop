@@ -125,7 +125,7 @@ func (c *Client) SimpleSupportedVSCurrencies() (*types.SimpleSupportedVSCurrenci
 	}
 	var data *types.SimpleSupportedVSCurrencies
 	err = json.Unmarshal(resp, &data)
-	return data, nil
+	return data, err
 }
 
 // CoinsList /coins/list
