@@ -13,6 +13,7 @@ func (ct *Cointop) Quit() error {
 
 // QuitView exists the current view
 func (ct *Cointop) QuitView() error {
+	ct.debuglog("quitView()")
 	if ct.State.portfolioVisible {
 		ct.State.portfolioVisible = false
 		return ct.updateTable()
@@ -30,6 +31,7 @@ func (ct *Cointop) QuitView() error {
 
 // Exit safely exits the program
 func (ct *Cointop) Exit() {
+	ct.debuglog("exit()")
 	if ct.g != nil {
 		ct.g.Close()
 	} else {

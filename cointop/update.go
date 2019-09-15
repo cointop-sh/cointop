@@ -1,18 +1,16 @@
 package cointop
 
 import (
-	"sync"
+	"fmt"
 
 	"github.com/jroimartin/gocui"
 	log "github.com/sirupsen/logrus"
 )
 
-var updateMutex sync.Mutex
-
 // update takes a callback which updates the view
 func (ct *Cointop) update(f func()) {
-	updateMutex.Lock()
-	defer updateMutex.Unlock()
+	ct.debuglog(fmt.Sprintf("update()"))
+
 	if ct.g == nil {
 		log.Fatal("gocui is not initialized")
 	}

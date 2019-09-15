@@ -131,6 +131,7 @@ func (ct *Cointop) sortedSupportedCurrencyConversions() []string {
 }
 
 func (ct *Cointop) updateConvertMenu() {
+	ct.debuglog("updateConvertMenu()")
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxTableWidth-20, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
 	cnt := 0
@@ -184,27 +185,30 @@ func (ct *Cointop) updateConvertMenu() {
 	})
 }
 
-func (ct *Cointop) setCurrencyConverstion(convert string) func() error {
+func (ct *Cointop) setCurrencyConverstionFn(convert string) func() error {
+	ct.debuglog("setCurrencyConverstionFn()")
 	return func() error {
-		ct.State.currencyConversion = convert
 		ct.hideConvertMenu()
+
+		// NOTE: return if the currency selection wasn't changed
+		if ct.State.currencyConversion == convert {
+			return nil
+		}
+
+		ct.State.currencyConversion = convert
+
+		if err := ct.save(); err != nil {
+			return err
+		}
+
 		go ct.refreshAll()
 		return nil
 	}
 }
 
 // currencySymbol returns the symbol for the currency
-func currencySymbol(currency string) string {
-	symbol, ok := currencySymbolMap[strings.ToUpper(currency)]
-	if ok {
-		return symbol
-	}
-
-	return "$"
-}
-
-// currencySymbol returns the symbol for the currency
 func (ct *Cointop) currencySymbol() string {
+	ct.debuglog("currencySymbol()")
 	symbol, ok := currencySymbolMap[strings.ToUpper(ct.State.currencyConversion)]
 	if ok {
 		return symbol
@@ -214,6 +218,7 @@ func (ct *Cointop) currencySymbol() string {
 }
 
 func (ct *Cointop) showConvertMenu() error {
+	ct.debuglog("showConvertMenu()")
 	ct.State.convertMenuVisible = true
 	ct.updateConvertMenu()
 	ct.SetActiveView(ct.Views.ConvertMenu.Name())
@@ -221,6 +226,7 @@ func (ct *Cointop) showConvertMenu() error {
 }
 
 func (ct *Cointop) hideConvertMenu() error {
+	ct.debuglog("hideConvertMenu()")
 	ct.State.convertMenuVisible = false
 	ct.SetViewOnBottom(ct.Views.ConvertMenu.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
@@ -237,9 +243,20 @@ func (ct *Cointop) hideConvertMenu() error {
 }
 
 func (ct *Cointop) toggleConvertMenu() error {
+	ct.debuglog("toggleConvertMenu()")
 	ct.State.convertMenuVisible = !ct.State.convertMenuVisible
 	if ct.State.convertMenuVisible {
 		return ct.showConvertMenu()
 	}
 	return ct.hideConvertMenu()
+}
+
+// currencySymbol returns the symbol for the currency
+func currencySymbol(currency string) string {
+	symbol, ok := currencySymbolMap[strings.ToUpper(currency)]
+	if ok {
+		return symbol
+	}
+
+	return "$"
 }

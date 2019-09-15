@@ -27,6 +27,7 @@ type config struct {
 }
 
 func (ct *Cointop) setupConfig() error {
+	ct.debuglog("setupConfig()")
 	if err := ct.createConfigIfNotExists(); err != nil {
 		return err
 	}
@@ -65,6 +66,7 @@ func (ct *Cointop) setupConfig() error {
 }
 
 func (ct *Cointop) createConfigIfNotExists() error {
+	ct.debuglog("createConfigIfNotExists()")
 	err := ct.makeConfigDir()
 	if err != nil {
 		return err
@@ -88,6 +90,7 @@ func (ct *Cointop) createConfigIfNotExists() error {
 }
 
 func (ct *Cointop) configDirPath() string {
+	ct.debuglog("configDirPath()")
 	path := NormalizePath(ct.configFilepath)
 	separator := string(filepath.Separator)
 	parts := strings.Split(path, separator)
@@ -95,10 +98,12 @@ func (ct *Cointop) configDirPath() string {
 }
 
 func (ct *Cointop) configPath() string {
+	ct.debuglog("configPath()")
 	return NormalizePath(ct.configFilepath)
 }
 
 func (ct *Cointop) makeConfigDir() error {
+	ct.debuglog("makeConfigDir()")
 	path := ct.configDirPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return os.MkdirAll(path, os.ModePerm)
@@ -108,6 +113,7 @@ func (ct *Cointop) makeConfigDir() error {
 }
 
 func (ct *Cointop) makeConfigFile() error {
+	ct.debuglog("makeConfigFile()")
 	path := ct.configPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fo, err := os.Create(path)
@@ -127,6 +133,7 @@ func (ct *Cointop) makeConfigFile() error {
 }
 
 func (ct *Cointop) saveConfig() error {
+	ct.debuglog("saveConfig()")
 	ct.saveMux.Lock()
 	defer ct.saveMux.Unlock()
 	path := ct.configPath()
@@ -144,6 +151,7 @@ func (ct *Cointop) saveConfig() error {
 }
 
 func (ct *Cointop) parseConfig() error {
+	ct.debuglog("parseConfig()")
 	var conf config
 	path := ct.configPath()
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
@@ -155,6 +163,7 @@ func (ct *Cointop) parseConfig() error {
 }
 
 func (ct *Cointop) configToToml() ([]byte, error) {
+	ct.debuglog("configToToml()")
 	shortcutsIfcs := map[string]interface{}{}
 	for k, v := range ct.State.shortcutKeys {
 		var i interface{} = v
@@ -218,6 +227,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 }
 
 func (ct *Cointop) loadShortcutsFromConfig() error {
+	ct.debuglog("loadShortcutsFromConfig()")
 	for k, ifc := range ct.config.Shortcuts {
 		if v, ok := ifc.(string); ok {
 			if !ct.ActionExists(v) {
@@ -233,6 +243,7 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 }
 
 func (ct *Cointop) loadCurrencyFromConfig() error {
+	ct.debuglog("loadCurrencyFromConfig()")
 	if currency, ok := ct.config.Currency.(string); ok {
 		ct.State.currencyConversion = strings.ToUpper(currency)
 	}
@@ -240,6 +251,7 @@ func (ct *Cointop) loadCurrencyFromConfig() error {
 }
 
 func (ct *Cointop) loadDefaultViewFromConfig() error {
+	ct.debuglog("loadDefaultViewFromConfig()")
 	if defaultView, ok := ct.config.DefaultView.(string); ok {
 		defaultView = strings.ToLower(defaultView)
 		switch defaultView {
@@ -260,6 +272,7 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 }
 
 func (ct *Cointop) loadAPIKeysFromConfig() error {
+	ct.debuglog("loadAPIKeysFromConfig()")
 	for key, value := range ct.config.CoinMarketCap {
 		k := strings.TrimSpace(strings.ToLower(key))
 		if k == "pro_api_key" {
@@ -270,6 +283,7 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 }
 
 func (ct *Cointop) loadColorschemeFromConfig() error {
+	ct.debuglog("loadColorschemeFromConfig()")
 	if colorscheme, ok := ct.config.Colorscheme.(string); ok {
 		ct.colorschemeName = colorscheme
 	}
@@ -278,6 +292,7 @@ func (ct *Cointop) loadColorschemeFromConfig() error {
 }
 
 func (ct *Cointop) loadRefreshRateFromConfig() error {
+	ct.debuglog("loadRefreshRateFromConfig()")
 	if refreshRate, ok := ct.config.RefreshRate.(int64); ok {
 		ct.State.refreshRate = time.Duration(uint(refreshRate)) * time.Second
 	}
@@ -286,6 +301,7 @@ func (ct *Cointop) loadRefreshRateFromConfig() error {
 }
 
 func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
+	ct.debuglog("getColorschemeColors()")
 	var colors map[string]interface{}
 	if ct.colorschemeName == "" {
 		ct.colorschemeName = defaultColorscheme
@@ -316,6 +332,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 }
 
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
+	ct.debuglog("loadAPIKeysFromConfig()")
 	apiChoice, ok := ct.config.API.(string)
 	if ok {
 		apiChoice = strings.TrimSpace(strings.ToLower(apiChoice))
@@ -325,6 +342,7 @@ func (ct *Cointop) loadAPIChoiceFromConfig() error {
 }
 
 func (ct *Cointop) loadFavoritesFromConfig() error {
+	ct.debuglog("loadFavoritesFromConfig()")
 	for k, arr := range ct.config.Favorites {
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 		if k == "symbols" {
@@ -345,6 +363,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 }
 
 func (ct *Cointop) loadPortfolioFromConfig() error {
+	ct.debuglog("loadPortfolioFromConfig()")
 	for name, holdingsIfc := range ct.config.Portfolio {
 		var holdings float64
 		var ok bool

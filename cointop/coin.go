@@ -24,6 +24,7 @@ type Coin struct {
 }
 
 func (ct *Cointop) allCoins() []*Coin {
+	ct.debuglog("allCoins()")
 	if ct.State.filterByFavorites {
 		var list []*Coin
 		for i := range ct.State.allCoins {
@@ -50,6 +51,7 @@ func (ct *Cointop) allCoins() []*Coin {
 }
 
 func (ct *Cointop) coinBySymbol(symbol string) *Coin {
+	ct.debuglog("coinBySymbol()")
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		if coin.Symbol == symbol {

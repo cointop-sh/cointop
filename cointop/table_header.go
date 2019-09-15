@@ -17,6 +17,7 @@ func NewTableHeaderView() *TableHeaderView {
 
 // updateTableHeader renders the table header
 func (ct *Cointop) updateTableHeader() {
+	ct.debuglog("updateTableHeader()")
 	var cols []string
 
 	type t struct {

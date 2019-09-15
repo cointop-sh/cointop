@@ -5,13 +5,13 @@ import (
 	"time"
 
 	types "github.com/miguelmota/cointop/cointop/common/api/types"
-	"github.com/miguelmota/cointop/cointop/common/filecache"
 )
 
 var coinslock sync.Mutex
 var updatecoinsmux sync.Mutex
 
 func (ct *Cointop) updateCoins() error {
+	ct.debuglog("updateCoins()")
 	coinslock.Lock()
 	defer coinslock.Unlock()
 	cachekey := ct.cacheKey("allCoinsSlugMap")
@@ -46,6 +46,7 @@ func (ct *Cointop) updateCoins() error {
 }
 
 func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
+	ct.debuglog("processCoinsMap()")
 	var coins []types.Coin
 	for _, v := range coinsMap {
 		coins = append(coins, v)
@@ -55,18 +56,11 @@ func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 }
 
 func (ct *Cointop) processCoins(coins []types.Coin) {
+	ct.debuglog("processCoins()")
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
 
-	allCoinsSlugMap := make(map[string]*Coin)
-	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
-		allCoinsSlugMap[key.(string)] = value.(*Coin)
-		return true
-	})
-
-	cachekey := ct.cacheKey("allCoinsSlugMap")
-	ct.cache.Set(cachekey, allCoinsSlugMap, 10*time.Second)
-	filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
+	ct.cacheAllCoinsSlugMap()
 
 	for _, v := range coins {
 		k := v.Name
@@ -149,5 +143,12 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 }
 
 func (ct *Cointop) getListCount() int {
-	return len(ct.allCoins())
+	ct.debuglog("getListCount()")
+	if ct.State.filterByFavorites {
+		return len(ct.State.favorites)
+	} else if ct.State.portfolioVisible {
+		return len(ct.State.portfolio.Entries)
+	} else {
+		return len(ct.State.allCoins)
+	}
 }

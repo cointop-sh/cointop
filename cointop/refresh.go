@@ -6,6 +6,7 @@ import (
 )
 
 func (ct *Cointop) refresh() error {
+	ct.debuglog("refresh()")
 	go func() {
 		<-ct.limiter
 		ct.forceRefresh <- true
@@ -14,6 +15,7 @@ func (ct *Cointop) refresh() error {
 }
 
 func (ct *Cointop) refreshAll() error {
+	ct.debuglog("refreshAll()")
 	ct.refreshMux.Lock()
 	defer ct.refreshMux.Unlock()
 	ct.setRefreshStatus()
@@ -28,6 +30,7 @@ func (ct *Cointop) refreshAll() error {
 }
 
 func (ct *Cointop) setRefreshStatus() {
+	ct.debuglog("setRefreshStatus()")
 	go func() {
 		ct.loadingTicks("refreshing", 900)
 		ct.rowChanged()
@@ -35,6 +38,7 @@ func (ct *Cointop) setRefreshStatus() {
 }
 
 func (ct *Cointop) loadingTicks(s string, t int) {
+	ct.debuglog("loadingTicks()")
 	interval := 150
 	k := 0
 	for i := 0; i < (t / interval); i++ {
@@ -48,6 +52,7 @@ func (ct *Cointop) loadingTicks(s string, t int) {
 }
 
 func (ct *Cointop) intervalFetchData() {
+	ct.debuglog("intervalFetchData()")
 	go func() {
 		for {
 			select {

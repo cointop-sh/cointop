@@ -367,7 +367,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 	// TODO: use scrolling table
 	keys := ct.sortedSupportedCurrencyConversions()
 	for i, k := range keys {
-		ct.setKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.keyfn(ct.setCurrencyConverstion(k)), ct.Views.ConvertMenu.Name())
+		ct.setKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.keyfn(ct.setCurrencyConverstionFn(k)), ct.Views.ConvertMenu.Name())
 	}
 
 	return nil

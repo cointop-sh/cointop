@@ -28,18 +28,21 @@ func NewInputView() *InputView {
 }
 
 func (ct *Cointop) openSearch() error {
+	ct.debuglog("openSearch()")
 	ct.State.searchFieldVisible = true
 	ct.SetActiveView(ct.Views.SearchField.Name())
 	return nil
 }
 
 func (ct *Cointop) cancelSearch() error {
+	ct.debuglog("cancelSearch()")
 	ct.State.searchFieldVisible = false
 	ct.SetActiveView(ct.Views.Table.Name())
 	return nil
 }
 
 func (ct *Cointop) doSearch() error {
+	ct.debuglog("doSearch()")
 	ct.Views.SearchField.Backing().Rewind()
 	b := make([]byte, 100)
 	n, err := ct.Views.SearchField.Backing().Read(b)
@@ -66,6 +69,7 @@ func (ct *Cointop) doSearch() error {
 }
 
 func (ct *Cointop) search(q string) error {
+	ct.debuglog("search()")
 	q = strings.TrimSpace(strings.ToLower(q))
 	idx := -1
 	min := -1

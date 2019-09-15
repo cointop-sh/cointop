@@ -332,6 +332,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 // Run runs cointop
 func (ct *Cointop) Run() error {
+	ct.debuglog("run()")
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
 		return fmt.Errorf("new gocui: %v", err)

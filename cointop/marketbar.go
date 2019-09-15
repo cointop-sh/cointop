@@ -23,6 +23,7 @@ func NewMarketbarView() *MarketbarView {
 }
 
 func (ct *Cointop) updateMarketbar() error {
+	ct.debuglog("updateMarketbar()")
 	if ct.Views.Marketbar.Backing() == nil {
 		return nil
 	}

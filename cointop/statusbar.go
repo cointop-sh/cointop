@@ -31,6 +31,7 @@ func (statusbar *StatusbarView) Update(str string) error {
 
 // updateStatusbar updates the statusbar view
 func (ct *Cointop) updateStatusbar(s string) error {
+	ct.debuglog("updateStatusbar()")
 	currpage := ct.currentDisplayPage()
 	totalpages := ct.totalPagesDisplay()
 	var quitText string
@@ -66,6 +67,7 @@ func (ct *Cointop) updateStatusbar(s string) error {
 
 // RefreshRowLink updates the row link in the statusbar
 func (ct *Cointop) RefreshRowLink() error {
+	ct.debuglog("refreshRowLink()")
 	var shortcut string
 	if !open.CommandExists() {
 		shortcut = "[O]Open "

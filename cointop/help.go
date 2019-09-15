@@ -18,6 +18,7 @@ func NewHelpView() *HelpView {
 }
 
 func (ct *Cointop) updateHelp() {
+	ct.debuglog("updateHelp()")
 	keys := make([]string, 0, len(ct.State.shortcutKeys))
 	for k := range ct.State.shortcutKeys {
 		keys = append(keys, k)
@@ -69,6 +70,7 @@ func (ct *Cointop) updateHelp() {
 }
 
 func (ct *Cointop) showHelp() error {
+	ct.debuglog("showHelp()")
 	ct.State.helpVisible = true
 	ct.updateHelp()
 	ct.SetActiveView(ct.Views.Help.Name())
@@ -76,6 +78,7 @@ func (ct *Cointop) showHelp() error {
 }
 
 func (ct *Cointop) hideHelp() error {
+	ct.debuglog("hideHelp()")
 	ct.State.helpVisible = false
 	ct.SetViewOnBottom(ct.Views.Help.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
@@ -92,6 +95,7 @@ func (ct *Cointop) hideHelp() error {
 }
 
 func (ct *Cointop) toggleHelp() error {
+	ct.debuglog("toggleHelp()")
 	ct.State.helpVisible = !ct.State.helpVisible
 	if ct.State.helpVisible {
 		return ct.showHelp()

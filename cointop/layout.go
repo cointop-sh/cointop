@@ -13,6 +13,7 @@ var lastWidth int
 
 // layout sets initial layout
 func (ct *Cointop) layout(g *gocui.Gui) error {
+	ct.debuglog("layout()")
 	maxY := ct.height()
 	maxX := ct.ClampedWidth()
 

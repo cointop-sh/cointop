@@ -13,6 +13,7 @@ import (
 
 // OpenLink opens the url in a browser
 func (ct *Cointop) OpenLink() error {
+	ct.debuglog("openLink()")
 	open.URL(ct.RowLink())
 	return nil
 }
@@ -58,7 +59,7 @@ func NormalizePath(path string) string {
 }
 
 // Slugify returns a slugified string
-func (ct *Cointop) Slugify(s string) string {
+func Slugify(s string) string {
 	s = strings.TrimSpace(strings.ToLower(s))
 	return s
 }
