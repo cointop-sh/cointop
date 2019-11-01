@@ -21,7 +21,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 
 	headerHeight := 1
 	marketbarHeight := 1
-	chartHeight := 10
+	chartHeight := ct.State.chartHeight
 	statusbarHeight := 1
 
 	if ct.State.onlyTable {

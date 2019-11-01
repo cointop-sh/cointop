@@ -51,6 +51,8 @@ func actionsMap() map[string]bool {
 		"hide_currency_convert_menu":        true,
 		"toggle_portfolio":                  true,
 		"toggle_show_portfolio":             true,
+		"enlarge_chart":                     true,
+		"shorten_chart":                     true,
 	}
 }
 

@@ -333,6 +333,10 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "toggle_table_fullscreen":
 			fn = ct.keyfn(ct.ToggleTableFullscreen)
 			view = ""
+		case "enlarge_chart":
+			fn = ct.keyfn(ct.EnlargeChart)
+		case "shorten_chart":
+			fn = ct.keyfn(ct.ShortenChart)
 		default:
 			fn = ct.keyfn(ct.noop)
 		}
