@@ -1,6 +1,7 @@
 package cointop
 
-func actionsMap() map[string]bool {
+// ActionsMap returns a map of all the available actions
+func ActionsMap() map[string]bool {
 	return map[string]bool{
 		"first_page":                        true,
 		"help":                              true,
@@ -58,5 +59,5 @@ func actionsMap() map[string]bool {
 
 // ActionExists returns true if action exists
 func (ct *Cointop) ActionExists(action string) bool {
-	return ct.actionsMap[action]
+	return ct.ActionsMap[action]
 }

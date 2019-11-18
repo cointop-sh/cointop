@@ -14,7 +14,7 @@ func (ct *Cointop) updateCoins() error {
 	ct.debuglog("updateCoins()")
 	coinslock.Lock()
 	defer coinslock.Unlock()
-	cachekey := ct.cacheKey("allCoinsSlugMap")
+	cachekey := ct.CacheKey("allCoinsSlugMap")
 
 	var err error
 	var allCoinsSlugMap map[string]types.Coin
@@ -60,7 +60,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
 
-	ct.cacheAllCoinsSlugMap()
+	ct.CacheAllCoinsSlugMap()
 
 	for _, v := range coins {
 		k := v.Name
@@ -138,7 +138,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 
 	time.AfterFunc(10*time.Millisecond, func() {
 		ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
-		ct.updateTable()
+		ct.UpdateTable()
 	})
 }
 

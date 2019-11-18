@@ -24,7 +24,7 @@ func NewTableView() *TableView {
 }
 
 // TableColumnOrder returns the default order of the table columns
-func tableColumnOrder() []string {
+func TableColumnOrder() []string {
 	return []string{
 		"rank",
 		"name",
@@ -193,15 +193,15 @@ func (ct *Cointop) RefreshTable() error {
 		ct.highlightRow(currentrow)
 	}
 
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.Table.Backing() == nil {
 			return
 		}
 
 		ct.Views.Table.Backing().Clear()
 		ct.table.Format().Fprint(ct.Views.Table.Backing())
-		go ct.rowChanged()
-		go ct.updateTableHeader()
+		go ct.RowChanged()
+		go ct.UpdateTableHeader()
 		go ct.updateMarketbar()
 		go ct.UpdateChart()
 	})
@@ -209,9 +209,9 @@ func (ct *Cointop) RefreshTable() error {
 	return nil
 }
 
-// updateTable updates the table
-func (ct *Cointop) updateTable() error {
-	ct.debuglog("updateTable()")
+// UpdateTable updates the table
+func (ct *Cointop) UpdateTable() error {
+	ct.debuglog("UpdateTable()")
 	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
 		k := key.(string)
 		if v, ok := value.(*Coin); ok {
@@ -233,7 +233,7 @@ func (ct *Cointop) updateTable() error {
 			ct.State.sortDesc = false
 		}
 
-		ct.State.coins = ct.getTableCoinsSlice()
+		ct.State.coins = ct.GetTableCoinsSlice()
 	}
 
 	ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
@@ -241,13 +241,13 @@ func (ct *Cointop) updateTable() error {
 	return nil
 }
 
-// getTableCoinsSlice ...
-func (ct *Cointop) getTableCoinsSlice() []*Coin {
-	ct.debuglog("getTableCoinsSlice()")
+// GetTableCoinsSlice returns a slice of the table rows
+func (ct *Cointop) GetTableCoinsSlice() []*Coin {
+	ct.debuglog("GetTableCoinsSlice()")
 	sliced := []*Coin{}
 	start := ct.State.page * ct.State.perPage
 	end := start + ct.State.perPage
-	allCoins := ct.allCoins()
+	allCoins := ct.AllCoins()
 	size := len(allCoins)
 	if start < 0 {
 		start = 0
@@ -286,7 +286,7 @@ func (ct *Cointop) getTableCoinsSlice() []*Coin {
 
 // HighlightedRowIndex returns the index of the highlighted row
 func (ct *Cointop) HighlightedRowIndex() int {
-	ct.debuglog("highlightedRowIndex()")
+	ct.debuglog("HighlightedRowIndex()")
 	_, y := ct.Views.Table.Backing().Origin()
 	_, cy := ct.Views.Table.Backing().Cursor()
 	idx := y + cy
@@ -301,7 +301,7 @@ func (ct *Cointop) HighlightedRowIndex() int {
 
 // HighlightedRowCoin returns the coin at the index of the highlighted row
 func (ct *Cointop) HighlightedRowCoin() *Coin {
-	ct.debuglog("highlightedRowCoin()")
+	ct.debuglog("HighlightedRowCoin()")
 	idx := ct.HighlightedRowIndex()
 	if len(ct.State.coins) == 0 {
 		return nil
@@ -311,7 +311,7 @@ func (ct *Cointop) HighlightedRowCoin() *Coin {
 
 // HighlightedPageRowIndex returns the index of page row of the highlighted row
 func (ct *Cointop) HighlightedPageRowIndex() int {
-	ct.debuglog("highlightedPageRowIndex()")
+	ct.debuglog("HighlightedPageRowIndex()")
 	_, cy := ct.Views.Table.Backing().Cursor()
 	idx := cy
 	if idx < 0 {
@@ -323,7 +323,7 @@ func (ct *Cointop) HighlightedPageRowIndex() int {
 
 // RowLink returns the row url link
 func (ct *Cointop) RowLink() string {
-	ct.debuglog("rowLink()")
+	ct.debuglog("RowLink()")
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		return ""
@@ -334,7 +334,7 @@ func (ct *Cointop) RowLink() string {
 
 // RowLinkShort returns a shortened version of the row url link
 func (ct *Cointop) RowLinkShort() string {
-	ct.debuglog("rowLinkShort()")
+	ct.debuglog("RowLinkShort()")
 	link := ct.RowLink()
 	if link != "" {
 		u, err := url.Parse(link)
@@ -358,7 +358,7 @@ func (ct *Cointop) RowLinkShort() string {
 
 // ToggleTableFullscreen toggles the table fullscreen mode
 func (ct *Cointop) ToggleTableFullscreen() error {
-	ct.debuglog("toggleTableFullscreen()")
+	ct.debuglog("ToggleTableFullscreen()")
 	ct.State.onlyTable = !ct.State.onlyTable
 	if ct.State.onlyTable {
 	} else {

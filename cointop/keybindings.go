@@ -303,7 +303,7 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 		case "toggle_show_favorites":
 			fn = ct.keyfn(ct.toggleShowFavorites)
 		case "save":
-			fn = ct.keyfn(ct.save)
+			fn = ct.keyfn(ct.Save)
 		case "quit":
 			fn = ct.keyfn(ct.Quit)
 			view = ""

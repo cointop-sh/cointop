@@ -52,7 +52,7 @@ func (ct *Cointop) cursorDown() error {
 			return err
 		}
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -76,7 +76,7 @@ func (ct *Cointop) cursorUp() error {
 			return err
 		}
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -115,7 +115,7 @@ func (ct *Cointop) pageDown() error {
 			return err
 		}
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -146,7 +146,7 @@ func (ct *Cointop) pageUp() error {
 			return err
 		}
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -169,7 +169,7 @@ func (ct *Cointop) navigateFirstLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
 		return err
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -195,7 +195,7 @@ func (ct *Cointop) navigateLastLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
 		return err
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -214,7 +214,7 @@ func (ct *Cointop) navigatePageFirstLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
 		return err
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -234,7 +234,7 @@ func (ct *Cointop) navigatePageMiddleLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, (sy/2)-1); err != nil {
 		return err
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -254,7 +254,7 @@ func (ct *Cointop) navigatePageLastLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
 		return err
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -267,8 +267,8 @@ func (ct *Cointop) prevPage() error {
 	}
 
 	ct.setPage(ct.State.page - 1)
-	ct.updateTable()
-	ct.rowChanged()
+	ct.UpdateTable()
+	ct.RowChanged()
 	return nil
 }
 
@@ -281,8 +281,8 @@ func (ct *Cointop) nextPage() error {
 	}
 
 	ct.setPage(ct.State.page + 1)
-	ct.updateTable()
-	ct.rowChanged()
+	ct.UpdateTable()
+	ct.RowChanged()
 	return nil
 }
 
@@ -295,8 +295,8 @@ func (ct *Cointop) firstPage() error {
 	}
 
 	ct.State.page = 0
-	ct.updateTable()
-	ct.rowChanged()
+	ct.UpdateTable()
+	ct.RowChanged()
 	return nil
 }
 
@@ -361,8 +361,8 @@ func (ct *Cointop) lastPage() error {
 	}
 
 	ct.State.page = ct.getListCount() / ct.State.perPage
-	ct.updateTable()
-	ct.rowChanged()
+	ct.UpdateTable()
+	ct.RowChanged()
 	return nil
 }
 
@@ -375,7 +375,7 @@ func (ct *Cointop) goToPageRowIndex(idx int) error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, idx); err != nil {
 		return err
 	}
-	ct.rowChanged()
+	ct.RowChanged()
 	return nil
 }
 
@@ -386,7 +386,7 @@ func (ct *Cointop) goToGlobalIndex(idx int) error {
 	ct.setPage(atpage)
 	rowIndex := (idx % perpage)
 	ct.highlightRow(rowIndex)
-	ct.updateTable()
+	ct.UpdateTable()
 	return nil
 }
 

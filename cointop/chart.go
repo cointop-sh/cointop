@@ -58,7 +58,7 @@ func chartRangesMap() map[string]time.Duration {
 
 // UpdateChart updates the chart view
 func (ct *Cointop) UpdateChart() error {
-	ct.debuglog("updateChart()")
+	ct.debuglog("UpdateChart()")
 	if ct.Views.Chart.Backing() == nil {
 		return nil
 	}
@@ -94,7 +94,7 @@ func (ct *Cointop) UpdateChart() error {
 		}
 	}
 
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.Chart.Backing() == nil {
 			return
 		}
@@ -107,7 +107,7 @@ func (ct *Cointop) UpdateChart() error {
 
 // ChartPoints calculates the the chart points
 func (ct *Cointop) ChartPoints(symbol string, name string) error {
-	ct.debuglog("chartPoints()")
+	ct.debuglog("ChartPoints()")
 	maxX := ct.ClampedWidth()
 
 	chartPointsLock.Lock()
@@ -140,7 +140,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	if keyname == "" {
 		keyname = "globaldata"
 	}
-	cachekey := ct.cacheKey(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
+	cachekey := ct.CacheKey(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
 
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -211,7 +211,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 // PortfolioChart renders the portfolio chart
 func (ct *Cointop) PortfolioChart() error {
-	ct.debuglog("portfolioChart()")
+	ct.debuglog("PortfolioChart()")
 	maxX := ct.ClampedWidth()
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
@@ -348,7 +348,7 @@ func (ct *Cointop) EnlargeChart() error {
 
 // NextChartRange sets the chart to the next range option
 func (ct *Cointop) NextChartRange() error {
-	ct.debuglog("nextChartRange()")
+	ct.debuglog("NextChartRange()")
 	sel := 0
 	max := len(ct.chartRanges)
 	for i, k := range ct.chartRanges {
@@ -369,7 +369,7 @@ func (ct *Cointop) NextChartRange() error {
 
 // PrevChartRange sets the chart to the prevous range option
 func (ct *Cointop) PrevChartRange() error {
-	ct.debuglog("prevChartRange()")
+	ct.debuglog("PrevChartRange()")
 	sel := 0
 	for i, k := range ct.chartRanges {
 		if k == ct.State.selectedChartRange {
@@ -388,7 +388,7 @@ func (ct *Cointop) PrevChartRange() error {
 
 // FirstChartRange sets the chart to the first range option
 func (ct *Cointop) FirstChartRange() error {
-	ct.debuglog("firstChartRange()")
+	ct.debuglog("FirstChartRange()")
 	ct.State.selectedChartRange = ct.chartRanges[0]
 	go ct.UpdateChart()
 	return nil
@@ -396,7 +396,7 @@ func (ct *Cointop) FirstChartRange() error {
 
 // LastChartRange sets the chart to the last range option
 func (ct *Cointop) LastChartRange() error {
-	ct.debuglog("lastChartRange()")
+	ct.debuglog("LastChartRange()")
 	ct.State.selectedChartRange = ct.chartRanges[len(ct.chartRanges)-1]
 	go ct.UpdateChart()
 	return nil
@@ -404,7 +404,7 @@ func (ct *Cointop) LastChartRange() error {
 
 // ToggleCoinChart toggles between the global chart and the coin chart
 func (ct *Cointop) ToggleCoinChart() error {
-	ct.debuglog("toggleCoinChart()")
+	ct.debuglog("ToggleCoinChart()")
 	highlightedcoin := ct.HighlightedRowCoin()
 	if ct.State.selectedCoin == highlightedcoin {
 		ct.State.selectedCoin = nil
@@ -420,8 +420,8 @@ func (ct *Cointop) ToggleCoinChart() error {
 
 // ShowChartLoader shows chart loading indicator
 func (ct *Cointop) ShowChartLoader() error {
-	ct.debuglog("showChartLoader()")
-	ct.update(func() {
+	ct.debuglog("ShowChartLoader()")
+	ct.Update(func() {
 		if ct.Views.Chart.Backing() == nil {
 			return
 		}

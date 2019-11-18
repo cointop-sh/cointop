@@ -33,7 +33,7 @@ func (ct *Cointop) togglePortfolio() error {
 	ct.State.portfolioVisible = !ct.State.portfolioVisible
 
 	go ct.UpdateChart()
-	go ct.updateTable()
+	go ct.UpdateTable()
 	return nil
 }
 
@@ -42,7 +42,7 @@ func (ct *Cointop) toggleShowPortfolio() error {
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = true
 	go ct.UpdateChart()
-	go ct.updateTable()
+	go ct.UpdateTable()
 	return nil
 }
 
@@ -82,7 +82,7 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
-	ct.update(func() {
+	ct.Update(func() {
 		ct.Views.PortfolioUpdateMenu.Backing().Clear()
 		ct.Views.PortfolioUpdateMenu.Backing().Frame = true
 		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing(), content)
@@ -112,7 +112,7 @@ func (ct *Cointop) hidePortfolioUpdateMenu() error {
 	ct.SetViewOnBottom(ct.Views.PortfolioUpdateMenu.Name())
 	ct.SetViewOnBottom(ct.Views.Input.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.PortfolioUpdateMenu.Backing() == nil {
 			return
 		}
@@ -158,9 +158,9 @@ func (ct *Cointop) setPortfolioHoldings() error {
 
 	if shouldDelete {
 		ct.removePortfolioEntry(coin.Name)
-		ct.updateTable()
+		ct.UpdateTable()
 	} else {
-		ct.updateTable()
+		ct.UpdateTable()
 		ct.goToPageRowIndex(ct.State.lastSelectedRowIndex)
 	}
 
@@ -208,7 +208,7 @@ func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
 		p.Holdings = holdings
 	}
 
-	if err := ct.save(); err != nil {
+	if err := ct.Save(); err != nil {
 		log.Fatal(err)
 	}
 }

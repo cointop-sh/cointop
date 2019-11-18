@@ -174,7 +174,7 @@ func (ct *Cointop) updateConvertMenu() {
 	}
 
 	content := fmt.Sprintf("%s%s%s", header, helpline, body)
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.ConvertMenu.Backing() == nil {
 			return
 		}
@@ -197,7 +197,7 @@ func (ct *Cointop) setCurrencyConverstionFn(convert string) func() error {
 
 		ct.State.currencyConversion = convert
 
-		if err := ct.save(); err != nil {
+		if err := ct.Save(); err != nil {
 			return err
 		}
 
@@ -230,7 +230,7 @@ func (ct *Cointop) hideConvertMenu() error {
 	ct.State.convertMenuVisible = false
 	ct.SetViewOnBottom(ct.Views.ConvertMenu.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.ConvertMenu.Backing() == nil {
 			return
 		}

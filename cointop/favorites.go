@@ -18,11 +18,11 @@ func (ct *Cointop) toggleFavorite() error {
 		coin.Favorite = true
 	}
 
-	if err := ct.save(); err != nil {
+	if err := ct.Save(); err != nil {
 		return err
 	}
 
-	go ct.updateTable()
+	go ct.UpdateTable()
 
 	return nil
 }
@@ -31,7 +31,7 @@ func (ct *Cointop) toggleShowFavorites() error {
 	ct.debuglog("toggleShowFavorites()")
 	ct.State.portfolioVisible = false
 	ct.State.filterByFavorites = !ct.State.filterByFavorites
-	go ct.updateTable()
+	go ct.UpdateTable()
 	return nil
 }
 

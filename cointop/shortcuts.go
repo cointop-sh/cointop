@@ -1,6 +1,7 @@
 package cointop
 
-func defaultShortcuts() map[string]string {
+// DefaultShortcuts is a map of the default shortcuts
+func DefaultShortcuts() map[string]string {
 	return map[string]string{"up": "move_up",
 		"down":      "move_down",
 		"left":      "previous_page",

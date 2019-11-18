@@ -91,7 +91,7 @@ func (ct *Cointop) updateMarketbar() error {
 	} else {
 		var market types.GlobalMarketData
 		var err error
-		cachekey := ct.cacheKey("market")
+		cachekey := ct.CacheKey("market")
 		cached, found := ct.cache.Get(cachekey)
 
 		if found {
@@ -143,7 +143,7 @@ func (ct *Cointop) updateMarketbar() error {
 	content = pad.Right(content, maxX, " ")
 	content = ct.colorscheme.Marketbar(content)
 
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.Marketbar.Backing() == nil {
 			return
 		}

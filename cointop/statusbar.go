@@ -29,9 +29,9 @@ func (statusbar *StatusbarView) Update(str string) error {
 	return nil
 }
 
-// updateStatusbar updates the statusbar view
-func (ct *Cointop) updateStatusbar(s string) error {
-	ct.debuglog("updateStatusbar()")
+// UpdateStatusbar updates the statusbar view
+func (ct *Cointop) UpdateStatusbar(s string) error {
+	ct.debuglog("UpdateStatusbar()")
 	currpage := ct.currentDisplayPage()
 	totalpages := ct.totalPagesDisplay()
 	var quitText string
@@ -63,7 +63,7 @@ func (ct *Cointop) updateStatusbar(s string) error {
 
 	str = str[:end] + v
 
-	ct.update(func() {
+	ct.Update(func() {
 		ct.Views.Statusbar.Update(str)
 	})
 
@@ -72,14 +72,14 @@ func (ct *Cointop) updateStatusbar(s string) error {
 
 // RefreshRowLink updates the row link in the statusbar
 func (ct *Cointop) RefreshRowLink() error {
-	ct.debuglog("refreshRowLink()")
+	ct.debuglog("RefreshRowLink()")
 	var shortcut string
 	if !open.CommandExists() {
 		shortcut = "[O]Open "
 	}
 
 	url := ct.RowLinkShort()
-	ct.updateStatusbar(fmt.Sprintf("%s%s", shortcut, url))
+	ct.UpdateStatusbar(fmt.Sprintf("%s%s", shortcut, url))
 
 	return nil
 }

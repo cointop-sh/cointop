@@ -1,6 +1,6 @@
 package cointop
 
-// DefaultColors ...
+// DefaultColors is the default color scheme
 var DefaultColors = `
 colorscheme = "cointop"
 

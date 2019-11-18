@@ -8,13 +8,15 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/filecache"
 )
 
-func (ct *Cointop) cacheKey(key string) string {
-	ct.debuglog("cacheKey()")
+// CacheKey returns cached value given key
+func (ct *Cointop) CacheKey(key string) string {
+	ct.debuglog("CacheKey()")
 	return strings.ToLower(fmt.Sprintf("%s_%s", ct.apiChoice, key))
 }
 
-func (ct *Cointop) cacheAllCoinsSlugMap() {
-	ct.debuglog("cacheAllCoinsSlugMap()")
+// CacheAllCoinsSlugMap writes the coins map to the memory and disk cache
+func (ct *Cointop) CacheAllCoinsSlugMap() {
+	ct.debuglog("CacheAllCoinsSlugMap()")
 	allCoinsSlugMap := make(map[string]*Coin)
 	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
 		allCoinsSlugMap[key.(string)] = value.(*Coin)
@@ -23,7 +25,7 @@ func (ct *Cointop) cacheAllCoinsSlugMap() {
 
 	// NOTE: do not override with empty data on startup
 	if len(allCoinsSlugMap) != 0 {
-		cachekey := ct.cacheKey("allCoinsSlugMap")
+		cachekey := ct.CacheKey("allCoinsSlugMap")
 		ct.cache.Set(cachekey, allCoinsSlugMap, 10*time.Second)
 		filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
 	}

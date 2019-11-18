@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// debuglog writs a debug log to stdout
 func (ct *Cointop) debuglog(msg string) {
 	if !ct.debug {
 		return

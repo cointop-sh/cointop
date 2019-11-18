@@ -15,9 +15,9 @@ func NewTableHeaderView() *TableHeaderView {
 	return &TableHeaderView{NewView("header")}
 }
 
-// updateTableHeader renders the table header
-func (ct *Cointop) updateTableHeader() {
-	ct.debuglog("updateTableHeader()")
+// UpdateTableHeader renders the table header
+func (ct *Cointop) UpdateTableHeader() {
+	ct.debuglog("UpdateTableHeader()")
 	var cols []string
 
 	type t struct {
@@ -89,7 +89,7 @@ func (ct *Cointop) updateTableHeader() {
 		headers = append(headers, str)
 	}
 
-	ct.update(func() {
+	ct.Update(func() {
 		if ct.Views.TableHeader.Backing() == nil {
 			return
 		}

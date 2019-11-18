@@ -106,7 +106,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		ct.Views.TableHeader.SetBacking(v)
 		ct.Views.TableHeader.Backing().Frame = false
 		ct.colorscheme.SetViewColor(ct.Views.TableHeader.Backing(), "table_header")
-		go ct.updateTableHeader()
+		go ct.UpdateTableHeader()
 	}
 
 	topOffset = topOffset + headerHeight
@@ -124,7 +124,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 		}
 		go func() {
 			ct.updateCoins()
-			ct.updateTable()
+			ct.UpdateTable()
 		}()
 	}
 
@@ -136,7 +136,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			ct.Views.Statusbar.SetBacking(v)
 			ct.Views.Statusbar.Backing().Frame = false
 			ct.colorscheme.SetViewColor(ct.Views.Statusbar.Backing(), "statusbar")
-			go ct.updateStatusbar("")
+			go ct.UpdateStatusbar("")
 		}
 	} else {
 		if ct.Views.Statusbar.Backing() != nil {

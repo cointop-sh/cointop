@@ -77,7 +77,7 @@ type State struct {
 // Cointop cointop
 type Cointop struct {
 	g                *gocui.Gui
-	actionsMap       map[string]bool
+	ActionsMap       map[string]bool
 	apiKeys          *APIKeys
 	cache            *cache.Cache
 	config           config // toml config
@@ -97,7 +97,7 @@ type Cointop struct {
 	saveMux          sync.Mutex
 	State            *State
 	table            *table.Table
-	tableColumnOrder []string
+	TableColumnOrder []string
 	Views            *Views
 }
 
@@ -159,7 +159,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		apiKeys:        new(APIKeys),
 		forceRefresh:   make(chan bool),
 		maxTableWidth:  175,
-		actionsMap:     actionsMap(),
+		ActionsMap:     ActionsMap(),
 		cache:          cache.New(1*time.Minute, 2*time.Minute),
 		configFilepath: configFilepath,
 		chartRanges:    chartRanges(),
@@ -178,7 +178,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			onlyTable:          config.OnlyTable,
 			refreshRate:        60 * time.Second,
 			selectedChartRange: "7D",
-			shortcutKeys:       defaultShortcuts(),
+			shortcutKeys:       DefaultShortcuts(),
 			sortBy:             "rank",
 			page:               0,
 			perPage:            100,
@@ -187,7 +187,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			},
 			chartHeight: 10,
 		},
-		tableColumnOrder: tableColumnOrder(),
+		TableColumnOrder: TableColumnOrder(),
 		Views: &Views{
 			Chart:               NewChartView(),
 			Table:               NewTableView(),
@@ -252,7 +252,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		apiKey := os.Getenv("CMC_PRO_API_KEY")
 		if apiKey == "" {
 			if !config.NoPrompts {
-				ct.apiKeys.cmc = ct.readAPIKeyFromStdin("CoinMarketCap Pro")
+				ct.apiKeys.cmc = ct.ReadAPIKeyFromStdin("CoinMarketCap Pro")
 			}
 		} else {
 			ct.apiKeys.cmc = apiKey
@@ -275,7 +275,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	allCoinsSlugMap := make(map[string]*Coin)
-	coinscachekey := ct.cacheKey("allCoinsSlugMap")
+	coinscachekey := ct.CacheKey("allCoinsSlugMap")
 	filecache.Get(coinscachekey, &allCoinsSlugMap)
 
 	for k, v := range allCoinsSlugMap {
@@ -314,12 +314,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 	})
 
 	var globaldata []float64
-	chartcachekey := ct.cacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
+	chartcachekey := ct.CacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
 	filecache.Get(chartcachekey, &globaldata)
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 
 	var market types.GlobalMarketData
-	marketcachekey := ct.cacheKey("market")
+	marketcachekey := ct.CacheKey("market")
 	filecache.Get(marketcachekey, &market)
 	ct.cache.Set(marketcachekey, market, 10*time.Second)
 

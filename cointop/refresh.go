@@ -23,7 +23,7 @@ func (ct *Cointop) refreshAll() error {
 	ct.cache.Delete("market")
 	go func() {
 		ct.updateCoins()
-		ct.updateTable()
+		ct.UpdateTable()
 		ct.UpdateChart()
 	}()
 	return nil
@@ -33,7 +33,7 @@ func (ct *Cointop) setRefreshStatus() {
 	ct.debuglog("setRefreshStatus()")
 	go func() {
 		ct.loadingTicks("refreshing", 900)
-		ct.rowChanged()
+		ct.RowChanged()
 	}()
 }
 
@@ -42,7 +42,7 @@ func (ct *Cointop) loadingTicks(s string, t int) {
 	interval := 150
 	k := 0
 	for i := 0; i < (t / interval); i++ {
-		ct.updateStatusbar(s + strings.Repeat(".", k))
+		ct.UpdateStatusbar(s + strings.Repeat(".", k))
 		time.Sleep(time.Duration(i*interval) * time.Millisecond)
 		k = k + 1
 		if k > 3 {

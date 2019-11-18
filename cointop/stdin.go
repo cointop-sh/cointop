@@ -9,9 +9,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// readAPIKeyFromStdin reads the user inputed API from the stdin prompt
-func (ct *Cointop) readAPIKeyFromStdin(name string) string {
-	ct.debuglog("readAPIKeyFromStdin()")
+// ReadAPIKeyFromStdin reads the user inputed API from the stdin prompt
+func (ct *Cointop) ReadAPIKeyFromStdin(name string) string {
+	ct.debuglog("ReadAPIKeyFromStdin()")
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Printf("Enter %s API Key: ", name)
 	text, err := reader.ReadString('\n')

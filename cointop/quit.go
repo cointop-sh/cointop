@@ -16,11 +16,11 @@ func (ct *Cointop) QuitView() error {
 	ct.debuglog("quitView()")
 	if ct.State.portfolioVisible {
 		ct.State.portfolioVisible = false
-		return ct.updateTable()
+		return ct.UpdateTable()
 	}
 	if ct.State.filterByFavorites {
 		ct.State.filterByFavorites = false
-		return ct.updateTable()
+		return ct.UpdateTable()
 	}
 	if ct.ActiveViewName() == ct.Views.Table.Name() {
 		return ct.Quit()

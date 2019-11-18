@@ -23,8 +23,9 @@ type Coin struct {
 	Balance  float64
 }
 
-func (ct *Cointop) allCoins() []*Coin {
-	ct.debuglog("allCoins()")
+// AllCoins returns a slice of all the coins
+func (ct *Cointop) AllCoins() []*Coin {
+	ct.debuglog("AllCoins()")
 	if ct.State.filterByFavorites {
 		var list []*Coin
 		for i := range ct.State.allCoins {
@@ -50,8 +51,9 @@ func (ct *Cointop) allCoins() []*Coin {
 	return ct.State.allCoins
 }
 
-func (ct *Cointop) coinBySymbol(symbol string) *Coin {
-	ct.debuglog("coinBySymbol()")
+// CoinBySymbol returns the coin struct given the symbol
+func (ct *Cointop) CoinBySymbol(symbol string) *Coin {
+	ct.debuglog("CoinBySymbol()")
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		if coin.Symbol == symbol {

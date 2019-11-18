@@ -10,16 +10,16 @@ import (
 
 // TODO: fix hex color support
 
-// colorschemeColors ..
+// colorschemeColors is a map of color string names to Attribute types
 type colorschemeColors map[string]interface{}
 
-// ISprintf ...
+// ISprintf is a sprintf interface
 type ISprintf func(...interface{}) string
 
-// colorCache ..
+// colorCache is a map of color string names to sprintf functions
 type colorCache map[string]ISprintf
 
-// Colorscheme ...
+// Colorscheme is the struct for colorscheme
 type Colorscheme struct {
 	colors colorschemeColors
 	cache  colorCache
@@ -320,14 +320,17 @@ func (c *Colorscheme) toBgAttr(v string) (fcolor.Attribute, bool) {
 	return 0, false
 }
 
+// toBoldAttr converts a boolean to an Attribute type
 func (c *Colorscheme) toBoldAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Bold, v
 }
 
+// toUnderlineAttr converts a boolean to an Attribute type
 func (c *Colorscheme) toUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
 }
 
+// toGocuiAttr converts a color string name to a gocui Attribute type
 func (c *Colorscheme) toGocuiAttr(v string) (gocui.Attribute, bool) {
 	if attr, ok := gocuiColorschemeColorsMap[v]; ok {
 		return attr, true
@@ -340,6 +343,7 @@ func (c *Colorscheme) toGocuiAttr(v string) (gocui.Attribute, bool) {
 	return 0, false
 }
 
+// hexToAnsi converts a hex color string to a uint8 ansi code
 func hexToAnsi(h string) (uint8, bool) {
 	if h == "" {
 		return 0, false
