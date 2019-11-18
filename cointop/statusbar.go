@@ -56,7 +56,12 @@ func (ct *Cointop) updateStatusbar(s string) error {
 	base := fmt.Sprintf("%s%s %sHelp %sChart %sRange %sSearch %sConvert %s %s %sSave", "[Q]", quitText, "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText, "[CTRL-S]")
 	str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
 	v := fmt.Sprintf("v%s", ct.Version())
-	str = str[:len(str)-len(v)+2] + v
+	end := len(str) - len(v) + 2
+	if end > len(str) {
+		end = len(str)
+	}
+
+	str = str[:end] + v
 
 	ct.update(func() {
 		ct.Views.Statusbar.Update(str)

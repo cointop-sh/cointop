@@ -6,7 +6,7 @@ import (
 )
 
 // version is the cointop version which will be populated by ldflags
-var version string
+var version = "dev"
 
 // Version returns the cointop version
 func (ct *Cointop) Version() string {
