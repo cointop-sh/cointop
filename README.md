@@ -447,6 +447,8 @@ refresh_rate = 60
   "ctrl+c" = "quit"
   "ctrl+d" = "page_down"
   "ctrl+f" = "open_search"
+  "ctrl+j" = "enlarge_chart"
+  "ctrl+k" = "shorten_chart"
   "ctrl+n" = "next_page"
   "ctrl+p" = "previous_page"
   "ctrl+r" = "refresh"
@@ -502,6 +504,7 @@ Action|Description
 ----|------|
 `first_chart_range`|Select first chart date range (e.g. 1H)
 `first_page`|Go to first page
+`enlarge_chart`|Increase chart height
 `help`|Show help
 `hide_currency_convert_menu`|Hide currency convert menu
 `last_chart_range`|Select last chart date range (e.g. All Time)
@@ -525,6 +528,7 @@ Action|Description
 `quit_view`|Quit view
 `refresh`|Do a manual refresh on the data
 `save`|Save config
+`shorten_chart`|Decrease chart height
 `show_currency_convert_menu`|Show currency convert menu
 `show_favorites`|Show favorites
 `sort_column_1h_change`|Sort table by column *1 hour change*
