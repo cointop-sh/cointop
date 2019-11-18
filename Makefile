@@ -168,4 +168,4 @@ git/repack:
 
 release:
 	rm -rf dist
-	goreleaser
+	VERSION=$(VERSION) goreleaser

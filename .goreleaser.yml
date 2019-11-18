@@ -6,3 +6,5 @@ builds:
       - linux
     goarch:
       - amd64
+    ldflags:
+     - -X main.version={{.Env.VERSION}}

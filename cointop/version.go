@@ -5,8 +5,8 @@ import (
 	"os"
 )
 
-// TODO: make dynamic based on git tag
-const version = "1.3.6"
+// version is the cointop version which will be populated by ldflags
+var version string
 
 // Version returns the cointop version
 func (ct *Cointop) Version() string {
