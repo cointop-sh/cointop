@@ -23,6 +23,8 @@ func defaultShortcuts() map[string]string {
 		"ctrl+s":    "save",
 		"ctrl+S":    "save",
 		"ctrl+u":    "page_up",
+		"ctrl+j":    "enlarge_chart",
+		"ctrl+k":    "shorten_chart",
 		"alt+up":    "sort_column_asc",
 		"alt+down":  "sort_column_desc",
 		"alt+left":  "sort_left_column",

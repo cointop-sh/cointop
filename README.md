@@ -307,6 +307,8 @@ Key|Action
 <kbd>Ctrl</kbd>+<kbd>r</kbd>|Force refresh data
 <kbd>Ctrl</kbd>+<kbd>s</kbd>|Save config
 <kbd>Ctrl</kbd>+<kbd>u</kbd>|Jump page up (vim inspired)
+<kbd>Ctrl</kbd>+<kbd>j</kbd>|Increase chart height
+<kbd>Ctrl</kbd>+<kbd>k</kbd>|Decrease chart height
 <kbd>Alt</kbd>+<kbd>↑</kbd>|Sort current column in ascending order
 <kbd>Alt</kbd>+<kbd>↓</kbd>|Sort current column in descending order
 <kbd>Alt</kbd>+<kbd>←</kbd>|Sort column to the left

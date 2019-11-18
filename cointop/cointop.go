@@ -71,6 +71,7 @@ type State struct {
 	sortDesc                   bool
 	sortBy                     string
 	onlyTable                  bool
+	chartHeight                int
 }
 
 // Cointop cointop
@@ -184,6 +185,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry, 0),
 			},
+			chartHeight: 10,
 		},
 		tableColumnOrder: tableColumnOrder(),
 		Views: &Views{

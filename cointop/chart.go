@@ -117,7 +117,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	go ct.updateMarketbar()
 
 	chart := termui.NewLineChart()
-	chart.Height = 10
+	chart.Height = ct.State.chartHeight
 	chart.Border = false
 
 	// NOTE: empty list means don't show x-axis labels
@@ -157,7 +157,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 			}
 			for i := range graphData.MarketCapByAvailableSupply {
 				price := graphData.MarketCapByAvailableSupply[i][1]
-				data = append(data, price/1E9)
+				data = append(data, price/1e9)
 			}
 		} else {
 			graphData, err := ct.api.GetCoinGraphData(symbol, name, start, end)
@@ -192,7 +192,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	// calculate layout
 	termui.Body.Align()
 	w := termui.Body.Width
-	h := 10
+	h := chart.Height
 	row := termui.Body.Rows[0]
 	b := row.Buffer()
 	for i := 0; i < h; i = i + 1 {
@@ -220,7 +220,7 @@ func (ct *Cointop) PortfolioChart() error {
 	go ct.updateMarketbar()
 
 	chart := termui.NewLineChart()
-	chart.Height = 10
+	chart.Height = ct.State.chartHeight
 	chart.Border = false
 
 	// NOTE: empty list means don't show x-axis labels
@@ -303,7 +303,7 @@ func (ct *Cointop) PortfolioChart() error {
 	// calculate layout
 	termui.Body.Align()
 	w := termui.Body.Width
-	h := 10
+	h := chart.Height
 	row := termui.Body.Rows[0]
 	b := row.Buffer()
 	for i := 0; i < h; i = i + 1 {
@@ -317,6 +317,32 @@ func (ct *Cointop) PortfolioChart() error {
 
 	ct.State.chartPoints = points
 
+	return nil
+}
+
+// ShortenChart decreases the chart height by one row
+func (ct *Cointop) ShortenChart() error {
+	ct.debuglog("ShortenChart()")
+	candidate := ct.State.chartHeight - 1
+	if candidate < 5 {
+		return nil
+	}
+	ct.State.chartHeight = candidate
+
+	go ct.UpdateChart()
+	return nil
+}
+
+// EnlargeChart increases the chart height by one row
+func (ct *Cointop) EnlargeChart() error {
+	ct.debuglog("EnlargeChart()")
+	candidate := ct.State.chartHeight + 1
+	if candidate > 30 {
+		return nil
+	}
+	ct.State.chartHeight = candidate
+
+	go ct.UpdateChart()
 	return nil
 }
 
