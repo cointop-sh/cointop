@@ -15,6 +15,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/miguelmota/cointop?)](https://goreportcard.com/report/github.com/miguelmota/cointop)
 [![GoDoc](https://godoc.org/github.com/miguelmota/cointop?status.svg)](https://godoc.org/github.com/miguelmota/cointop)
 [![Mentioned in Awesome Terminals](https://awesome.re/mentioned-badge.svg)](https://github.com/k4m4/terminals-are-sexy)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
 [`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
@@ -46,6 +47,7 @@ In action
 - [Config](#config)
 - [FAQ](#faq)
 - [Mentioned in](#mentioned-in)
+- [Contributing](#contributing)
 - [Development](#development)
 - [Tip Jar](#tip-jar)
 - [License](#license)
@@ -938,6 +940,12 @@ Cointop has been mentioned in:
 - [Ubuntu Facebook](https://www.facebook.com/ubuntulinux/photos/coin-tracking-for-hackers-cointop-is-a-fast-and-easy-to-use-command-line-applica/10156147393253592/)
 - [Terminals Are Sexy](https://github.com/k4m4/terminals-are-sexy#tools-and-plugins)
 - [The Changelog News](https://changelog.com/news/cointop-coin-tracking-for-hackers-rAzZ)
+
+## Contributing
+
+Pull requests are welcome!
+
+For contributions please create a new branch and submit a pull request for review.
 
 ## Development
 
