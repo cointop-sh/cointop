@@ -66,7 +66,12 @@ snap/clean:
 	rm -f cointop_*.snap
 
 snap/stage:
-	GO111MODULE=off snapcraft stage
+	# https://github.com/elopio/go/issues/2
+	mv go.mod go.mod~ ;GO111MODULE=off snapcraft stage; mv go.mod~ go.mod
+
+snap/install:
+	sudo apt install snapd
+	sudo snap install snapcraft --classic
 
 snap/build: snap/clean snap/stage
 	snapcraft snap
