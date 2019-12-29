@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -375,7 +374,6 @@ func (c *Client) GlobalCharts(vsCurrency string, days string) (*types.GlobalChar
 	url := fmt.Sprintf("https://www.coingecko.com/market_cap/total_charts_data?%s", params.Encode())
 	resp, err := c.MakeReq(url)
 	if err != nil {
-		log.Fatal(err)
 		return nil, err
 	}
 
