@@ -4,7 +4,7 @@ import (
 	"strconv"
 
 	fcolor "github.com/fatih/color"
-	gocui "github.com/jroimartin/gocui"
+	gocui "github.com/miguelmota/gocui"
 	xtermcolor "github.com/tomnomnom/xtermcolor"
 )
 

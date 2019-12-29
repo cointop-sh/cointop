@@ -8,9 +8,10 @@ import (
 	"regexp"
 	"strings"
 
-	tm "github.com/nsf/termbox-go"
+	tm "github.com/miguelmota/termbox-go"
+
+	rw "github.com/mattn/go-runewidth"
 )
-import rw "github.com/mattn/go-runewidth"
 
 /* ---------------Port from termbox-go --------------------- */
 

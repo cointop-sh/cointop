@@ -3,7 +3,7 @@ package cointop
 import (
 	"os"
 
-	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/gocui"
 )
 
 // Quit quites the program

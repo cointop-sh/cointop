@@ -6,16 +6,15 @@ require (
 	github.com/fatih/color v1.7.0
 	github.com/gizak/termui v2.3.0+incompatible // indirect
 	github.com/google/pprof v0.0.0-20190502144155-8358a9778bd1 // indirect
-	github.com/jroimartin/gocui v0.4.0
 	github.com/maruel/panicparse v1.1.2-0.20180806203336-f20d4c4d746f
 	github.com/mattn/go-colorable v0.1.1 // indirect
 	github.com/mattn/go-isatty v0.0.8 // indirect
-	github.com/mattn/go-runewidth v0.0.4
+	github.com/mattn/go-runewidth v0.0.7
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/miguelmota/go-coinmarketcap v0.1.5
+	github.com/miguelmota/gocui v0.4.2
+	github.com/miguelmota/termbox-go v0.0.0-20191229070316-58d4fcbce2a7
 	github.com/mitchellh/go-wordwrap v1.0.0
-	github.com/nsf/termbox v1.1.2 // indirect
-	github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/sirupsen/logrus v1.4.1
 	github.com/spf13/cobra v0.0.5

@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/gocui"
 )
 
 var sortlock sync.Mutex

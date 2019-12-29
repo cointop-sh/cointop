@@ -3,7 +3,7 @@ package cointop
 import (
 	"fmt"
 
-	"github.com/jroimartin/gocui"
+	"github.com/miguelmota/gocui"
 )
 
 // IView is a cointop view

@@ -19,7 +19,7 @@ import (
 	"bytes"
 
 	"github.com/maruel/panicparse/stack"
-	tm "github.com/nsf/termbox-go"
+	tm "github.com/miguelmota/termbox-go"
 )
 
 // Bufferer should be implemented by all renderable components.

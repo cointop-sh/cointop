@@ -10,7 +10,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nsf/termbox-go"
+	"github.com/miguelmota/termbox-go"
 )
 
 type Event struct {
