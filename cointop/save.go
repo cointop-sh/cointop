@@ -1,13 +1,11 @@
 package cointop
 
-import "log"
-
 // Save saves the cointop settings to the config file
 func (ct *Cointop) Save() error {
 	ct.debuglog("Save()")
 	ct.SetSavingStatus()
 	if err := ct.saveConfig(); err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	ct.CacheAllCoinsSlugMap()

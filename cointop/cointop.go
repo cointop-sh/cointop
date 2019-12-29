@@ -252,11 +252,17 @@ func NewCointop(config *Config) (*Cointop, error) {
 		apiKey := os.Getenv("CMC_PRO_API_KEY")
 		if apiKey == "" {
 			if !config.NoPrompts {
-				ct.apiKeys.cmc = ct.ReadAPIKeyFromStdin("CoinMarketCap Pro")
+				apiKey, err = ct.ReadAPIKeyFromStdin("CoinMarketCap Pro")
+				if err != nil {
+					return nil, err
+				}
+
+				ct.apiKeys.cmc = apiKey
 			}
 		} else {
 			ct.apiKeys.cmc = apiKey
 		}
+
 		if err := ct.saveConfig(); err != nil {
 			return nil, err
 		}

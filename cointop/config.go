@@ -373,7 +373,10 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 			}
 		}
 
-		ct.setPortfolioEntry(name, holdings)
+		if err := ct.setPortfolioEntry(name, holdings); err != nil {
+			return err
+		}
 	}
+
 	return nil
 }

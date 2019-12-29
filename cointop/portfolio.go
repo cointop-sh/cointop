@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/miguelmota/cointop/cointop/common/pad"
-	log "github.com/sirupsen/logrus"
 )
 
 // PortfolioUpdateMenuView is structure for portfolio update menu view
@@ -154,7 +153,9 @@ func (ct *Cointop) setPortfolioHoldings() error {
 		}
 	}
 
-	ct.setPortfolioEntry(coin.Name, holdings)
+	if err := ct.setPortfolioEntry(coin.Name, holdings); err != nil {
+		return err
+	}
 
 	if shouldDelete {
 		ct.removePortfolioEntry(coin.Name)
@@ -193,7 +194,7 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 	return p, isNew
 }
 
-func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
+func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) error {
 	ct.debuglog("setPortfolioEntry()")
 	ic, _ := ct.State.allCoinsSlugMap.Load(strings.ToLower(coin))
 	c, _ := ic.(*Coin)
@@ -209,8 +210,10 @@ func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) {
 	}
 
 	if err := ct.Save(); err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }
 
 func (ct *Cointop) removePortfolioEntry(coin string) {

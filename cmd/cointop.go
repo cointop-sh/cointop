@@ -1,9 +1,6 @@
 package cmd
 
 import (
-	"log"
-	"os"
-
 	"github.com/miguelmota/cointop/cointop"
 	"github.com/spf13/cobra"
 )
@@ -150,8 +147,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	rootCmd.AddCommand(versionCmd, cleanCmd, resetCmd, priceCmd, testCmd)
 
 	if err := rootCmd.Execute(); err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		panic(err)
 	}
 }
 
@@ -159,8 +155,9 @@ func doTest() {
 	ct, err := cointop.NewCointop(&cointop.Config{
 		NoPrompts: true,
 	})
+
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	ct.Exit()
