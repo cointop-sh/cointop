@@ -7,7 +7,7 @@ import (
 )
 
 // Update takes a callback which updates the view
-func (ct *Cointop) Update(f func()) {
+func (ct *Cointop) Update(f func() error) {
 	ct.debuglog(fmt.Sprintf("Update()"))
 
 	if ct.g == nil {
@@ -15,8 +15,6 @@ func (ct *Cointop) Update(f func()) {
 	}
 
 	ct.g.Update(func(g *gocui.Gui) error {
-		f()
-
-		return nil
+		return f()
 	})
 }

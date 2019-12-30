@@ -143,13 +143,14 @@ func (ct *Cointop) updateMarketbar() error {
 	content = pad.Right(content, maxX, " ")
 	content = ct.colorscheme.Marketbar(content)
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.Marketbar.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.Marketbar.Backing().Clear()
 		fmt.Fprintln(ct.Views.Marketbar.Backing(), content)
+		return nil
 	})
 
 	return nil

@@ -63,8 +63,9 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 
 	str = str[:end] + v
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		ct.Views.Statusbar.Update(str)
+		return nil
 	})
 
 	return nil

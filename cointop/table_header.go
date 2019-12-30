@@ -89,12 +89,13 @@ func (ct *Cointop) UpdateTableHeader() {
 		headers = append(headers, str)
 	}
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.TableHeader.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.TableHeader.Backing().Clear()
 		fmt.Fprintln(ct.Views.TableHeader.Backing(), strings.Join(headers, ""))
+		return nil
 	})
 }

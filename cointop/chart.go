@@ -91,13 +91,14 @@ func (ct *Cointop) UpdateChart() error {
 		}
 	}
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.Chart.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.Chart.Backing().Clear()
 		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(body))
+		return nil
 	})
 
 	return nil
@@ -424,14 +425,15 @@ func (ct *Cointop) ToggleCoinChart() error {
 // ShowChartLoader shows chart loading indicator
 func (ct *Cointop) ShowChartLoader() error {
 	ct.debuglog("ShowChartLoader()")
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.Chart.Backing() == nil {
-			return
+			return nil
 		}
 
 		content := "\n\nLoading..."
 		ct.Views.Chart.Backing().Clear()
 		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(content))
+		return nil
 	})
 
 	return nil

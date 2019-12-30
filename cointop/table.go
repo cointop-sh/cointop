@@ -193,9 +193,9 @@ func (ct *Cointop) RefreshTable() error {
 		ct.highlightRow(currentrow)
 	}
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.Table.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.Table.Backing().Clear()
@@ -204,6 +204,7 @@ func (ct *Cointop) RefreshTable() error {
 		go ct.UpdateTableHeader()
 		go ct.updateMarketbar()
 		go ct.UpdateChart()
+		return nil
 	})
 
 	return nil

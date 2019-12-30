@@ -58,14 +58,15 @@ func (ct *Cointop) updateHelp() {
 	versionline := pad.Left(fmt.Sprintf("v%s", ct.Version()), ct.maxTableWidth-5, " ")
 	content := header + infoline + body + versionline
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.Help.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.Help.Backing().Clear()
 		ct.Views.Help.Backing().Frame = true
 		fmt.Fprintln(ct.Views.Help.Backing(), content)
+		return nil
 	})
 }
 
@@ -82,14 +83,15 @@ func (ct *Cointop) hideHelp() error {
 	ct.State.helpVisible = false
 	ct.SetViewOnBottom(ct.Views.Help.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.Help.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.Help.Backing().Clear()
 		ct.Views.Help.Backing().Frame = false
 		fmt.Fprintln(ct.Views.Help.Backing(), "")
+		return nil
 	})
 	return nil
 }

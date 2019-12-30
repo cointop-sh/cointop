@@ -81,12 +81,13 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
-	ct.Update(func() {
+	ct.Update(func() error {
 		ct.Views.PortfolioUpdateMenu.Backing().Clear()
 		ct.Views.PortfolioUpdateMenu.Backing().Frame = true
 		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing(), content)
 		fmt.Fprintln(ct.Views.Input.Backing(), value)
 		ct.Views.Input.Backing().SetCursor(len(value), 0)
+		return nil
 	})
 }
 
@@ -111,9 +112,9 @@ func (ct *Cointop) hidePortfolioUpdateMenu() error {
 	ct.SetViewOnBottom(ct.Views.PortfolioUpdateMenu.Name())
 	ct.SetViewOnBottom(ct.Views.Input.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.PortfolioUpdateMenu.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.PortfolioUpdateMenu.Backing().Clear()
@@ -122,7 +123,9 @@ func (ct *Cointop) hidePortfolioUpdateMenu() error {
 
 		ct.Views.Input.Backing().Clear()
 		fmt.Fprintln(ct.Views.Input.Backing(), "")
+		return nil
 	})
+
 	return nil
 }
 

@@ -174,14 +174,15 @@ func (ct *Cointop) updateConvertMenu() {
 	}
 
 	content := fmt.Sprintf("%s%s%s", header, helpline, body)
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.ConvertMenu.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.ConvertMenu.Backing().Clear()
 		ct.Views.ConvertMenu.Backing().Frame = true
 		fmt.Fprintln(ct.Views.ConvertMenu.Backing(), content)
+		return nil
 	})
 }
 
@@ -230,14 +231,15 @@ func (ct *Cointop) hideConvertMenu() error {
 	ct.State.convertMenuVisible = false
 	ct.SetViewOnBottom(ct.Views.ConvertMenu.Name())
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.Update(func() {
+	ct.Update(func() error {
 		if ct.Views.ConvertMenu.Backing() == nil {
-			return
+			return nil
 		}
 
 		ct.Views.ConvertMenu.Backing().Clear()
 		ct.Views.ConvertMenu.Backing().Frame = false
 		fmt.Fprintln(ct.Views.ConvertMenu.Backing(), "")
+		return nil
 	})
 	return nil
 }
