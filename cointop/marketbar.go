@@ -133,8 +133,8 @@ func (ct *Cointop) updateMarketbar() error {
 		content = fmt.Sprintf(
 			"%sGlobal ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
 			chartInfo,
-			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.TotalMarketCapUSD)),
-			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf(market.Total24HVolumeUSD)),
+			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf0(market.TotalMarketCapUSD)),
+			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf0(market.Total24HVolumeUSD)),
 			market.BitcoinPercentageOfMarketCap,
 		)
 	}

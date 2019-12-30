@@ -191,22 +191,15 @@ func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (apitypes.Mar
 
 // GetGlobalMarketData gets global market data
 func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData, error) {
+	convert = strings.ToLower(convert)
 	ret := apitypes.GlobalMarketData{}
 	market, err := s.client.Global()
 	if err != nil {
 		return ret, err
 	}
 
-	var totalMarketCap float64
-	for _, value := range market.TotalMarketCap {
-		totalMarketCap += value
-	}
-
-	var totalVolume float64
-	for _, value := range market.TotalVolume {
-		totalVolume += value
-	}
-
+	totalMarketCap := market.TotalMarketCap[convert]
+	totalVolume := market.TotalVolume[convert]
 	btcDominance := market.MarketCapPercentage["btc"]
 
 	ret = apitypes.GlobalMarketData{

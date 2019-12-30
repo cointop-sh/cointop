@@ -47,3 +47,9 @@ func Commaf2(v float64) string {
 	p := message.NewPrinter(language.English)
 	return p.Sprintf("%.2f", v)
 }
+
+// Commaf0 ...
+func Commaf0(v float64) string {
+	p := message.NewPrinter(language.English)
+	return p.Sprintf("%.0f", v)
+}
