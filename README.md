@@ -309,6 +309,7 @@ Key|Action
 <kbd>Enter</kbd>|Toggle chart for highlighted coin
 <kbd>Esc</kbd>|Quit view
 <kbd>Space</kbd>|Toggle coin as favorite
+<kbd>Tab</kbd>|Move down or next page
 <kbd>Ctrl</kbd>+<kbd>c</kbd>|Quit application
 <kbd>Ctrl</kbd>+<kbd>d</kbd>|Jump page down (vim inspired)
 <kbd>Ctrl</kbd>+<kbd>f</kbd>|Search
@@ -488,6 +489,7 @@ refresh_rate = 60
   r = "sort_column_rank"
   s = "sort_column_symbol"
   space = "toggle_favorite"
+  tab = "move_down_or_next_page"
   t = "sort_column_total_supply"
   u = "sort_column_last_updated"
   v = "sort_column_24h_volume"
@@ -526,6 +528,8 @@ Action|Description
 `move_to_page_visible_middle_row`|Move to middle visible row on page
 `move_up`|Move one row up
 `move_down`|Move one row down
+`move_down_or_next_page`|Move one row down or to next page if at last row
+`move_up_or_previous_page`|Move one row up or to previous page if at first row
 `next_chart_range`|Select next chart date range (e.g. 3D → 7D)
 `next_page`|Go to next page
 `open_link`|Open row link

@@ -13,6 +13,7 @@ func DefaultShortcuts() map[string]string {
 		"enter":     "toggle_row_chart",
 		"esc":       "quit_view",
 		"space":     "toggle_favorite",
+		"tab":       "move_down_or_next_page",
 		"ctrl+c":    "quit",
 		"ctrl+C":    "quit",
 		"ctrl+d":    "page_down",

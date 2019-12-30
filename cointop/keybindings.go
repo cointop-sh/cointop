@@ -337,6 +337,10 @@ func (ct *Cointop) keybindings(g *gocui.Gui) error {
 			fn = ct.keyfn(ct.EnlargeChart)
 		case "shorten_chart":
 			fn = ct.keyfn(ct.ShortenChart)
+		case "move_down_or_next_page":
+			fn = ct.keyfn(ct.CursorDownOrNextPage)
+		case "move_up_or_previous_page":
+			fn = ct.keyfn(ct.CursorUpOrPreviousPage)
 		default:
 			fn = ct.keyfn(ct.noop)
 		}

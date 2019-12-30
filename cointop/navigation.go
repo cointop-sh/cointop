@@ -169,6 +169,7 @@ func (ct *Cointop) navigateFirstLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
 		return err
 	}
+
 	ct.RowChanged()
 	return nil
 }
@@ -195,6 +196,7 @@ func (ct *Cointop) navigateLastLine() error {
 	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
 		return err
 	}
+
 	ct.RowChanged()
 	return nil
 }
@@ -286,6 +288,24 @@ func (ct *Cointop) nextPage() error {
 	return nil
 }
 
+func (ct *Cointop) nextPageTop() error {
+	ct.debuglog("nextPageTop()")
+
+	ct.nextPage()
+	ct.navigateFirstLine()
+
+	return nil
+}
+
+func (ct *Cointop) prevPageTop() error {
+	ct.debuglog("prevtPageTop()")
+
+	ct.prevPage()
+	ct.navigateLastLine()
+
+	return nil
+}
+
 func (ct *Cointop) firstPage() error {
 	ct.debuglog("firstPage()")
 
@@ -326,7 +346,7 @@ func (ct *Cointop) isFirstPage() bool {
 
 func (ct *Cointop) isLastPage() bool {
 	ct.debuglog("isLastPage()")
-	return ct.State.page == ct.totalPages()
+	return ct.State.page == ct.totalPages()-1
 }
 
 func (ct *Cointop) isPageFirstLine() bool {
@@ -405,6 +425,50 @@ func (ct *Cointop) highlightRow(idx int) error {
 		ct.Views.Table.Backing().SetOrigin(ox, oy)
 	}
 	ct.Views.Table.Backing().SetCursor(cx, cy)
+
+	return nil
+}
+
+// CursorDownOrNextPage ...
+func (ct *Cointop) CursorDownOrNextPage() error {
+	ct.debuglog("CursorDownOrNextPage()")
+	if ct.isLastRow() {
+		if ct.isLastPage() {
+			return nil
+		}
+
+		if err := ct.nextPageTop(); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if err := ct.cursorDown(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// CursorUpOrPreviousPage ...
+func (ct *Cointop) CursorUpOrPreviousPage() error {
+	ct.debuglog("CursorUpOrPreviousPage()")
+	if ct.isFirstRow() {
+		if ct.isFirstPage() {
+			return nil
+		}
+
+		if err := ct.prevPageTop(); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	if err := ct.cursorUp(); err != nil {
+		return err
+	}
 
 	return nil
 }
