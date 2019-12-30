@@ -76,9 +76,6 @@ func (ct *Cointop) UpdateChart() error {
 		ct.ChartPoints(symbol, name)
 	}
 
-	if len(ct.State.chartPoints) != 0 {
-		ct.Views.Chart.Backing().Clear()
-	}
 	var body string
 	if len(ct.State.chartPoints) == 0 {
 		body = "\n\n\n\n\nnot enough data for chart"
@@ -99,6 +96,7 @@ func (ct *Cointop) UpdateChart() error {
 			return
 		}
 
+		ct.Views.Chart.Backing().Clear()
 		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(body))
 	})
 
@@ -412,9 +410,14 @@ func (ct *Cointop) ToggleCoinChart() error {
 		ct.State.selectedCoin = highlightedcoin
 	}
 
-	go ct.ShowChartLoader()
-	go ct.UpdateChart()
+	go func() {
+		// keep these two synchronous to avoid race conditions
+		ct.ShowChartLoader()
+		ct.UpdateChart()
+	}()
+
 	go ct.updateMarketbar()
+
 	return nil
 }
 

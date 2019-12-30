@@ -6,8 +6,6 @@ github.com/anaskhan96/soup
 github.com/fatih/color
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/konsorten/go-windows-terminal-sequences v1.0.1
-github.com/konsorten/go-windows-terminal-sequences
 # github.com/maruel/panicparse v1.1.2-0.20180806203336-f20d4c4d746f
 github.com/maruel/panicparse/stack
 # github.com/mattn/go-colorable v0.1.1
@@ -28,8 +26,6 @@ github.com/miguelmota/termbox-go
 github.com/mitchellh/go-wordwrap
 # github.com/patrickmn/go-cache v2.1.0+incompatible
 github.com/patrickmn/go-cache
-# github.com/sirupsen/logrus v1.4.1
-github.com/sirupsen/logrus
 # github.com/spf13/cobra v0.0.5
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.3
