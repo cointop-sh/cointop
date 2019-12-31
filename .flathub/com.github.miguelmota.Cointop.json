@@ -1,12 +1,15 @@
 {
   "app-id": "com.github.miguelmota.Cointop",
   "runtime": "org.freedesktop.Platform",
-  "runtime-version": "1.6",
+  "runtime-version": "19.08",
   "sdk": "org.freedesktop.Sdk",
   "sdk-extensions": [
     "org.freedesktop.Sdk.Extension.golang"
   ],
   "command": "cointop",
+  "finish-args": [
+    "--share=network"
+  ],
   "cleanup": [
     "/go",
     "/bin/scripts"
@@ -18,27 +21,27 @@
         {
           "type": "script",
           "commands": [
-            ". /usr/lib/sdk/golang/enable.sh;  export GOPATH=/app/go"
+            ". /usr/lib/sdk/golang/enable.sh; export GOPATH=/app/go"
             ],
             "dest-filename": "my_enable.sh"
         },
         {
           "type": "script",
           "commands": [
-            ". /app/bin/scripts/my_enable.sh; cd /app/go/src/$1; go build -o x"
+            ". /app/bin/scripts/my_enable.sh; cd /app/go/src/$1; GO111MODULE=off go build -o x"
             ],
             "dest-filename": "build.sh"
         }
       ],
       "buildsystem": "simple",
       "build-commands": [
-        "mkdir -p /app/go/{src,pkg,bin} # make go workspace",
+        "mkdir -p /app/go/{src,pkg,bin}",
         "install -d /app/bin/scripts",
         "cp *.sh /app/bin/scripts/"
       ]
     },
     {
-      "name": "hello",
+      "name": "cointop",
       "buildsystem": "simple",
       "build-commands": [
         "cp -rpv go/* /app/go/",
@@ -50,21 +53,17 @@
         "mkdir -p /app/share/metainfo",
         "cp /app/go/src/github.com/miguelmota/cointop/assets/icon_64x64.png /app/share/icons/hicolor/64x64/apps/com.github.miguelmota.Cointop.png",
         "cp /app/go/src/github.com/miguelmota/cointop/assets/icon_128x128.png /app/share/icons/hicolor/128x128/apps/com.github.miguelmota.Cointop.png",
-        "cp /app/go/src/github.com/miguelmota/cointop/flathub/com.github.miguelmota.Cointop.appdata.xml /app/share/metainfo/com.github.miguelmota.Cointop.appdata.xml",
-        "cp /app/go/src/github.com/miguelmota/cointop/flathub/com.github.miguelmota.Cointop.desktop /app/share/applications/com.github.miguelmota.Cointop.desktop"
+        "cp /app/go/src/github.com/miguelmota/cointop/.flathub/com.github.miguelmota.Cointop.appdata.xml /app/share/metainfo/com.github.miguelmota.Cointop.appdata.xml",
+        "cp /app/go/src/github.com/miguelmota/cointop/.flathub/com.github.miguelmota.Cointop.desktop /app/share/applications/com.github.miguelmota.Cointop.desktop"
       ],
       "sources": [
         {
-          "type": "git",
-          "url": "https://github.com/miguelmota/cointop.git",
-          "commit": "8b33ac7b32c3a3f25d803afe9cc425dfb2c2c207",
+          "type": "archive",
+          "url": "https://github.com/miguelmota/cointop/archive/1.4.3.tar.gz",
+          "sha256": "842b11703e4e8c825c7d0e3d167c018f44b555d9bde467a1f57be4aba7ba8606",
           "dest": "go/src/github.com/miguelmota/cointop"
         }
       ]
     }
-
-  ],
-  "finish-args": [
-    "--share=network"
   ]
 }

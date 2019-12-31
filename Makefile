@@ -1,4 +1,5 @@
 VERSION = $$(git describe --abbrev=0 --tags)
+VERSION_DATE = $$(git log -1 --pretty='%ad' --date=format:'%Y-%m-%d' $(VERSION))
 COMMIT_REV = $$(git rev-list -n 1 $(VERSION))
 
 all: build
@@ -113,6 +114,10 @@ flatpak/install:
 
 flatpak/run:
 	flatpak run com.github.miguelmota.Cointop
+
+flatpak/update-version:
+	xmlstarlet ed --inplace -u '/component/releases/release/@version' -v $(VERSION) .flathub/com.github.miguelmota.Cointop.appdata.xml
+	xmlstarlet ed --inplace -u '/component/releases/release/@date' -v $(VERSION_DATE) .flathub/com.github.miguelmota.Cointop.appdata.xml
 
 rpm/install/deps:
 	sudo dnf install -y rpm-build
