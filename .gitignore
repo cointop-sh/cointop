@@ -20,6 +20,11 @@ snap
 !snap/snapcraft.yaml
 stage
 *.snap
+*.xdelta3
+
+# flatpak files
+.flatpak-builder
+build-dir
 
 # bfg
 bfg.jar

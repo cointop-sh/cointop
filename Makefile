@@ -12,9 +12,15 @@ commit_rev:
 start:
 	go run main.go
 
-deps:
+deps/clean:
+	go clean -modcache
+	rm -rf vendor
+
+deps/download:
+	GO111MODULE=on go mod download
 	GO111MODULE=on go mod vendor
 
+deps: deps/clean deps/download
 vendor: deps
 
 debug:
