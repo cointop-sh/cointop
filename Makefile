@@ -133,8 +133,9 @@ rpm/lint:
 	rpmlint ~/rpmbuild/SPECS/cointop.spec
 
 rpm/dirs:
-	chmod -R a+rwx ~/rpmbuild
+	mkdir -p ~/rpmbuild
 	mkdir -p ~/rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+	chmod -R a+rwx ~/rpmbuild
 
 rpm/download:
 	wget https://github.com/miguelmota/cointop/archive/$(VERSION).tar.gz -O ~/rpmbuild/SOURCES/$(VERSION).tar.gz
