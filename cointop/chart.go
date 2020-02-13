@@ -150,7 +150,8 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 	if len(data) == 0 {
 		if symbol == "" {
-			graphData, err := ct.api.GetGlobalMarketGraphData(start, end)
+			convert := ct.State.currencyConversion
+			graphData, err := ct.api.GetGlobalMarketGraphData(convert, start, end)
 			if err != nil {
 				return nil
 			}
@@ -159,15 +160,16 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 				data = append(data, price/1e9)
 			}
 		} else {
-			graphData, err := ct.api.GetCoinGraphData(symbol, name, start, end)
+			convert := ct.State.currencyConversion
+			graphData, err := ct.api.GetCoinGraphData(convert, symbol, name, start, end)
 			if err != nil {
 				return nil
 			}
 
 			// NOTE: edit `termui.LineChart.shortenFloatVal(float64)` to not
 			// use exponential notation.
-			for i := range graphData.PriceUSD {
-				price := graphData.PriceUSD[i][1]
+			for i := range graphData.PriceCoin {
+				price := graphData.PriceCoin[i][1]
 				data = append(data, price)
 			}
 		}
@@ -263,12 +265,14 @@ func (ct *Cointop) PortfolioChart() error {
 
 			if len(graphData) == 0 {
 				time.Sleep(2 * time.Second)
-				apiGraphData, err := ct.api.GetCoinGraphData(p.Symbol, p.Name, start, end)
+
+				convert := ct.State.currencyConversion
+				apiGraphData, err := ct.api.GetCoinGraphData(convert, p.Symbol, p.Name, start, end)
 				if err != nil {
 					return err
 				}
-				for i := range apiGraphData.PriceUSD {
-					price := apiGraphData.PriceUSD[i][1]
+				for i := range apiGraphData.PriceCoin {
+					price := apiGraphData.PriceCoin[i][1]
 					graphData = append(graphData, price)
 				}
 			}

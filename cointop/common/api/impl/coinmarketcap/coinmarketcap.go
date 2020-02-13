@@ -110,7 +110,7 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 }
 
 // GetCoinGraphData gets coin graph data
-func (s *Service) GetCoinGraphData(symbol string, name string, start int64, end int64) (apitypes.CoinGraph, error) {
+func (s *Service) GetCoinGraphData(convert, symbol string, name string, start int64, end int64) (apitypes.CoinGraph, error) {
 	ret := apitypes.CoinGraph{}
 	graphData, err := cmcv2.TickerGraph(&cmcv2.TickerGraphOptions{
 		Symbol: symbol,
@@ -123,13 +123,13 @@ func (s *Service) GetCoinGraphData(symbol string, name string, start int64, end 
 
 	ret.MarketCapByAvailableSupply = graphData.MarketCapByAvailableSupply
 	ret.PriceBTC = graphData.PriceBTC
-	ret.PriceUSD = graphData.PriceUSD
-	ret.VolumeUSD = graphData.VolumeUSD
+	ret.PriceCoin = graphData.PriceUSD
+	ret.VolumeCoin = graphData.VolumeUSD
 	return ret, nil
 }
 
 // GetGlobalMarketGraphData gets global market graph data
-func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (apitypes.MarketGraph, error) {
+func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int64) (apitypes.MarketGraph, error) {
 	ret := apitypes.MarketGraph{}
 	graphData, err := cmcv2.GlobalMarketGraph(&cmcv2.GlobalMarketGraphOptions{
 		Start: start,

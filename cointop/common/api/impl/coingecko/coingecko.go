@@ -131,25 +131,25 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 }
 
 // GetCoinGraphData gets coin graph data
-func (s *Service) GetCoinGraphData(symbol, name string, start, end int64) (apitypes.CoinGraph, error) {
+func (s *Service) GetCoinGraphData(convert, symbol, name string, start, end int64) (apitypes.CoinGraph, error) {
 	ret := apitypes.CoinGraph{}
 	days := strconv.Itoa(util.CalcDays(start, end))
-	chart, err := s.client.CoinsIDMarketChart(util.NameToSlug(name), "usd", days)
+	chart, err := s.client.CoinsIDMarketChart(util.NameToSlug(name), convert, days)
 	if err != nil {
 		return ret, err
 	}
 
 	var marketCap [][]float64
-	var priceUSD [][]float64
+	var priceCoin [][]float64
 	var priceBTC [][]float64
-	var volumeUSD [][]float64
+	var volumeCoin [][]float64
 
 	if chart.Prices != nil {
 		for _, item := range *chart.Prices {
 			timestamp := float64(item[0])
 			price := float64(item[1])
 
-			priceUSD = append(priceUSD, []float64{
+			priceCoin = append(priceCoin, []float64{
 				timestamp,
 				price,
 			})
@@ -158,17 +158,21 @@ func (s *Service) GetCoinGraphData(symbol, name string, start, end int64) (apity
 
 	ret.MarketCapByAvailableSupply = marketCap
 	ret.PriceBTC = priceBTC
-	ret.PriceUSD = priceUSD
-	ret.VolumeUSD = volumeUSD
+	ret.PriceCoin = priceCoin
+	ret.VolumeCoin = volumeCoin
 
 	return ret, nil
 }
 
 // GetGlobalMarketGraphData gets global market graph data
-func (s *Service) GetGlobalMarketGraphData(start int64, end int64) (apitypes.MarketGraph, error) {
+func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int64) (apitypes.MarketGraph, error) {
 	days := strconv.Itoa(util.CalcDays(start, end))
 	ret := apitypes.MarketGraph{}
-	graphData, err := s.client.GlobalCharts("usd", days)
+	convertTo := strings.ToLower(convert)
+	if convertTo == "" {
+		convertTo = "usd"
+	}
+	graphData, err := s.client.GlobalCharts(convertTo, days)
 	if err != nil {
 		return ret, err
 	}
