@@ -227,5 +227,6 @@ func (s *Service) SupportedCurrencies() []string {
 		"TWD",
 		"USD",
 		"ZAR",
+		"VND",
 	}
 }
