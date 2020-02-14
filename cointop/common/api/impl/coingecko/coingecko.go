@@ -158,8 +158,8 @@ func (s *Service) GetCoinGraphData(convert, symbol, name string, start, end int6
 
 	ret.MarketCapByAvailableSupply = marketCap
 	ret.PriceBTC = priceBTC
-	ret.PriceCoin = priceCoin
-	ret.VolumeCoin = volumeCoin
+	ret.Price = priceCoin
+	ret.Volume = volumeCoin
 
 	return ret, nil
 }

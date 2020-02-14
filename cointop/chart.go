@@ -168,8 +168,8 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 			// NOTE: edit `termui.LineChart.shortenFloatVal(float64)` to not
 			// use exponential notation.
-			for i := range graphData.PriceCoin {
-				price := graphData.PriceCoin[i][1]
+			for i := range graphData.Price {
+				price := graphData.Price[i][1]
 				data = append(data, price)
 			}
 		}
@@ -271,8 +271,8 @@ func (ct *Cointop) PortfolioChart() error {
 				if err != nil {
 					return err
 				}
-				for i := range apiGraphData.PriceCoin {
-					price := apiGraphData.PriceCoin[i][1]
+				for i := range apiGraphData.Price {
+					price := apiGraphData.Price[i][1]
 					graphData = append(graphData, price)
 				}
 			}

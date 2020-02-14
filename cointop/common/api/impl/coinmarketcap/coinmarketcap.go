@@ -123,8 +123,8 @@ func (s *Service) GetCoinGraphData(convert, symbol string, name string, start in
 
 	ret.MarketCapByAvailableSupply = graphData.MarketCapByAvailableSupply
 	ret.PriceBTC = graphData.PriceBTC
-	ret.PriceCoin = graphData.PriceUSD
-	ret.VolumeCoin = graphData.VolumeUSD
+	ret.Price = graphData.PriceUSD
+	ret.Volume = graphData.VolumeUSD
 	return ret, nil
 }
 
