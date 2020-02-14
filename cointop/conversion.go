@@ -9,6 +9,7 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
+// keep these in alphabetical order
 var fiatCurrencyNames = map[string]string{
 	"AUD": "Australian Dollar",
 	"BRL": "Brazilian Real",
@@ -41,8 +42,8 @@ var fiatCurrencyNames = map[string]string{
 	"TRY": "Turkish lira",
 	"TWD": "New Taiwan Dollar",
 	"USD": "US Dollar",
+	"VND": "Vietnamese Dong",
 	"ZAR": "South African Rand",
-	"VND": "Vietnamese đồng",
 }
 
 var cryptocurrencyNames = map[string]string{
@@ -50,6 +51,7 @@ var cryptocurrencyNames = map[string]string{
 	"ETH": "Ethereum",
 }
 
+// keep these in alphabetical order
 var currencySymbolMap = map[string]string{
 	"AUD": "$",
 	"BRL": "R$",
@@ -84,8 +86,8 @@ var currencySymbolMap = map[string]string{
 	"TRY": "₺",
 	"TWD": "NT$",
 	"USD": "$",
-	"ZAR": "R",
 	"VND": "₫",
+	"ZAR": "R",
 }
 
 var alphanumericcharacters = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}

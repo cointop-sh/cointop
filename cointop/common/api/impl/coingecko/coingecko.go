@@ -252,25 +252,26 @@ func (s *Service) CoinLink(name string) string {
 
 // SupportedCurrencies returns a list of supported currencies
 func (s *Service) SupportedCurrencies() []string {
+
+	// keep these in alphabetical order
 	return []string{
-		"BTC",
-		"ETH",
-		"BNB",
-		"EOS",
-		"USD",
 		"AED",
 		"ARS",
 		"AUD",
 		"BDT",
 		"BHD",
 		"BMD",
+		"BNB",
 		"BRL",
+		"BTC",
 		"CAD",
 		"CHF",
 		"CLP",
 		"CNY",
 		"CZK",
 		"DKK",
+		"EOS",
+		"ETH",
 		"EUR",
 		"GBP",
 		"HKD",
@@ -297,11 +298,11 @@ func (s *Service) SupportedCurrencies() []string {
 		"THB",
 		"TRY",
 		"TWD",
+		"USD",
 		"VEF",
 		"VND",
-		"ZAR",
-		"XDR",
 		"XAG",
-		"VND",
+		"XDR",
+		"ZAR",
 	}
 }
