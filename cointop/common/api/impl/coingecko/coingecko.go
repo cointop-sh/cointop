@@ -302,5 +302,6 @@ func (s *Service) SupportedCurrencies() []string {
 		"ZAR",
 		"XDR",
 		"XAG",
+		"VND",
 	}
 }
