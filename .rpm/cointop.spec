@@ -1,5 +1,5 @@
-%define version     1.4.4
-%global commit      3ec64837dd97581e0e38a017beafdde293454afd 
+%define version     1.4.5
+%global commit      da958204ddfdf4e586abe61728983aec2ee772ad
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:           cointop
