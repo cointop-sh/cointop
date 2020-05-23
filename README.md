@@ -378,11 +378,11 @@ To use standard colorschemes, clone the [colors](https://github.com/cointop-sh/c
 
 
 ```bash
-$ cd ~/.cointop
+$ cd ~/.config/cointop
 $ git clone git@github.com:cointop-sh/colors.git
 ```
 
-Then edit your config `~/.cointop/config.toml` and set the colorscheme you want to use:
+Then edit your config `~/.config/cointop/config.toml` and set the colorscheme you want to use:
 
 ```toml
 colorscheme = "<colorscheme>"
@@ -409,12 +409,12 @@ To create your own colorscheme; simply copy an existing [colorscheme](https://gi
 The first time you run cointop, it'll create a config file in:
 
 ```
-~/.cointop/config.toml
+~/.config/cointop/config.toml
 ```
 
 You can then configure the actions you want for each key:
 
-(default `~/.cointop/config.toml`)
+(default `~/.config/cointop/config.toml`)
 
 ```toml
 currency = "USD"
@@ -610,11 +610,13 @@ Frequently asked questions:
 
 - Q: How do I create a custom colorscheme?
 
-  - A: Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
+  - A: Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.config/cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
 
 - Q: Where is the config file located?
 
-  - A: The default configuration file is located under `~/.cointop/config.toml`
+  - A: The default configuration file is located under `~/.config/cointop/config.toml`
+
+      Note: Previous version of cointop used `~/.cointop/config` or `~/.cointop/config.toml` as the default config filepath. Cointop will use those config filepaths respectively if they exist.
 
 - Q: What format is the configuration file in?
 
