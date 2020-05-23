@@ -175,6 +175,12 @@ cd cointop
 makepkg -si
 ```
 
+Using [yay](https://github.com/Jguer/yay)
+
+```bash
+yay -S cointop
+```
+
 ### Snap (Ubuntu)
 
 cointop is available as a [snap](https://snapcraft.io/cointop) for Linux users.
