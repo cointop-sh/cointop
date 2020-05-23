@@ -67,18 +67,24 @@ func (ct *Cointop) setupConfig() error {
 
 func (ct *Cointop) createConfigIfNotExists() error {
 	ct.debuglog("createConfigIfNotExists()")
+
+	// NOTE: this is to support previous default config filepaths
+	previousDefaultConfigPaths := []string{
+		"~/.cointop/config",
+		"~/.cointop/config.toml",
+	}
+
+	for _, previousConfigFilepath := range previousDefaultConfigPaths {
+		normalizedPath := NormalizePath(previousConfigFilepath)
+		if _, err := os.Stat(normalizedPath); err == nil {
+			ct.configFilepath = normalizedPath
+			return nil
+		}
+	}
+
 	err := ct.makeConfigDir()
 	if err != nil {
 		return err
-	}
-
-	// NOTE: legacy support for default path
-	path := ct.configPath()
-	oldConfigPath := NormalizePath(strings.Replace(path, "cointop/config.toml", "cointop/config", 1))
-	if _, err := os.Stat(oldConfigPath); err == nil {
-		path = oldConfigPath
-		ct.configFilepath = oldConfigPath
-		return nil
 	}
 
 	err = ct.makeConfigFile()
@@ -304,7 +310,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 	ct.debuglog("getColorschemeColors()")
 	var colors map[string]interface{}
 	if ct.colorschemeName == "" {
-		ct.colorschemeName = defaultColorscheme
+		ct.colorschemeName = DefaultColorscheme
 		if _, err := toml.Decode(DefaultColors, &colors); err != nil {
 			return nil, err
 		}
@@ -320,7 +326,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 				return colors, nil
 			}
 
-			return nil, fmt.Errorf("The colorscheme file %q was not found.\n\nTo install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors", path)
+			return nil, fmt.Errorf("The colorscheme file %q was not found.\n\nTo install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.config/cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors", path)
 		}
 
 		if _, err := toml.DecodeFile(path, &colors); err != nil {

@@ -137,8 +137,8 @@ type APIKeys struct {
 	cmc string
 }
 
-var defaultConfigPath = "~/.cointop/config.toml"
-var defaultColorscheme = "cointop"
+var DefaultColorscheme = "cointop"
+var DefaultConfigFilepath = "~/.config/cointop/config.toml"
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
@@ -147,12 +147,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		debug = true
 	}
 
-	configFilepath := defaultConfigPath
-	if config != nil {
-		if config.ConfigFilepath != "" {
-			configFilepath = config.ConfigFilepath
-		}
-	}
+	configFilepath := DefaultConfigFilepath
 
 	ct := &Cointop{
 		apiChoice:      CoinGecko,
