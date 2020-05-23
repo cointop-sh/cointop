@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -137,8 +138,15 @@ type APIKeys struct {
 	cmc string
 }
 
-var defaultConfigPath = "~/.cointop/config.toml"
 var defaultColorscheme = "cointop"
+
+func defaultConfigPath() (string, error) {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "cointop", "config.toml"), nil
+}
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
@@ -147,7 +155,11 @@ func NewCointop(config *Config) (*Cointop, error) {
 		debug = true
 	}
 
-	configFilepath := defaultConfigPath
+	configFilepath, err := defaultConfigPath()
+	if err != nil {
+		return nil, err
+	}
+
 	if config != nil {
 		if config.ConfigFilepath != "" {
 			configFilepath = config.ConfigFilepath
@@ -202,7 +214,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		},
 	}
 
-	err := ct.setupConfig()
+	err = ct.setupConfig()
 	if err != nil {
 		return nil, err
 	}
