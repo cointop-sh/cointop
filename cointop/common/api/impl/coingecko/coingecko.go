@@ -21,14 +21,18 @@ var ErrNotFound = errors.New("Not found")
 
 // Service service
 type Service struct {
-	client *gecko.Client
+	client            *gecko.Client
+	maxResultsPerPage int
+	maxPages          int
 }
 
 // NewCoinGecko new service
 func NewCoinGecko() *Service {
 	client := gecko.NewClient(nil)
 	return &Service{
-		client: client,
+		client:            client,
+		maxResultsPerPage: 250,
+		maxPages:          20,
 	}
 }
 
@@ -44,7 +48,6 @@ func (s *Service) Ping() error {
 func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coin, error) {
 	var ret []apitypes.Coin
 	ids := []string{}
-	perPage := 250
 	page := offset
 	sparkline := false
 	pcp := geckoTypes.PriceChangePercentageObject
@@ -54,7 +57,7 @@ func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coi
 	if convertTo == "" {
 		convertTo = "usd"
 	}
-	list, err := s.client.CoinsMarket(convertTo, ids, order, perPage, page, sparkline, priceChangePercentage)
+	list, err := s.client.CoinsMarket(convertTo, ids, order, s.maxResultsPerPage, page, sparkline, priceChangePercentage)
 	if err != nil {
 		return nil, err
 	}
@@ -114,16 +117,18 @@ func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coi
 // GetAllCoinData gets all coin data. Need to paginate through all pages
 func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error {
 	go func() {
-		maxPages := 5
 		defer close(ch)
-		for i := 0; i < maxPages; i++ {
+
+		for i := 0; i < s.maxPages; i++ {
 			if i > 0 {
 				time.Sleep(1 * time.Second)
 			}
+
 			coins, err := s.getLimitedCoinData(convert, i)
 			if err != nil {
 				return
 			}
+
 			ch <- coins
 		}
 	}()

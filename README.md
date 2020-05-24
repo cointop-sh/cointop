@@ -616,7 +616,7 @@ Frequently asked questions:
 
   - A: The default configuration file is located under `~/.config/cointop/config.toml`
 
-      Note: Previous version of cointop used `~/.cointop/config` or `~/.cointop/config.toml` as the default config filepath. Cointop will use those config filepaths respectively if they exist.
+      Note: Previous versions of cointop used `~/.cointop/config` or `~/.cointop/config.toml` as the default config filepath. Cointop will use those config filepaths respectively if they exist.
 
 - Q: What format is the configuration file in?
 
