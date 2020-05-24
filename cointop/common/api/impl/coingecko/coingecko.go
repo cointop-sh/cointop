@@ -32,7 +32,7 @@ func NewCoinGecko() *Service {
 	return &Service{
 		client:            client,
 		maxResultsPerPage: 250,
-		maxPages:          20,
+		maxPages:          10,
 	}
 }
 
