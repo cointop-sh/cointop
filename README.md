@@ -514,7 +514,7 @@ This are the action keywords you may use in the config file to change what the s
 
 Action|Description
 ----|------|
-`first_chart_range`|Select first chart date range (e.g. 1H)
+`first_chart_range`|Select first chart date range (e.g. 24H)
 `first_page`|Go to first page
 `enlarge_chart`|Increase chart height
 `help`|Show help
@@ -817,7 +817,7 @@ Frequently asked questions:
 
 - Q: What chart date ranges are supported?
 
-  - A: Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`, `6H`, `1H`.
+  - A: Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`.
 
     <sup><sub>YTD = Year-to-date<sub></sup>
 

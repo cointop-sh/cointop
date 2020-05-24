@@ -26,8 +26,6 @@ var chartPointsLock sync.Mutex
 
 func chartRanges() []string {
 	return []string{
-		"1H",
-		"6H",
 		"24H",
 		"3D",
 		"7D",
