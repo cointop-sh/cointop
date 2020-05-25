@@ -186,3 +186,12 @@ git-repack:
 release:
 	rm -rf dist
 	VERSION=$(VERSION) goreleaser
+
+docker-build:
+	docker build -t cointop/cointop .
+
+docker-run:
+	docker run -it cointop/cointop
+
+docker-push:
+	docker push cointop/cointop:latest

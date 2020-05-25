@@ -107,6 +107,12 @@ tar -xvzf cointop_x.x.x_linux_amd64.tar.gz cointop
 sudo mv cointop /usr/local/bin/cointop
 ```
 
+### Docker
+
+```bash
+docker run -it cointop/cointop
+```
+
 ### Homebrew (macOS)
 
 cointop is available via [Homebrew](https://formulae.brew.sh/formula/cointop) for macOS:
