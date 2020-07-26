@@ -45,6 +45,7 @@ In action
 - [Shortcuts](#shortcuts)
 - [Colorschemes](#colorschemes)
 - [Config](#config)
+- [SSH server](#ssh-server)
 - [FAQ](#faq)
 - [Mentioned in](#mentioned-in)
 - [Contributing](#contributing)
@@ -578,6 +579,20 @@ Action|Description
 `show_portfolio_edit_menu`|Show portfolio edit holdings menu
 `toggle_table_fullscreen`|Toggle table fullscreen
 
+## SSH Server
+
+Run SSH server:
+
+```bash
+cointop server -p 2222
+```
+
+SSH into server to see cointop:
+
+```bash
+ssh localhost -p 2222
+```
+
 ## FAQ
 
 Frequently asked questions:
@@ -950,6 +965,14 @@ Frequently asked questions:
 - Q: Does cointop do mining?
 
   - A: Cointop does not do any kind of mining.
+
+- Q: How can I run the cointop SSH server on port 22?
+
+  - A: Port 22 is a privileged port so you need to run with `sudo`:
+
+    ```bash
+    sudo cointop server -p 22
+    ```
 
 ## Mentioned in
 

@@ -2,8 +2,14 @@
 github.com/BurntSushi/toml
 # github.com/anaskhan96/soup v1.1.1
 github.com/anaskhan96/soup
+# github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be
+github.com/anmitsu/go-shlex
+# github.com/creack/pty v1.1.11
+github.com/creack/pty
 # github.com/fatih/color v1.7.0
 github.com/fatih/color
+# github.com/gliderlabs/ssh v0.3.0
+github.com/gliderlabs/ssh
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
 # github.com/maruel/panicparse v1.1.2-0.20180806203336-f20d4c4d746f
@@ -32,10 +38,19 @@ github.com/spf13/cobra
 github.com/spf13/pflag
 # github.com/tomnomnom/xtermcolor v0.0.0-20160428124646-b78803f00a7e
 github.com/tomnomnom/xtermcolor
+# golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/internal/chacha20
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/poly1305
+golang.org/x/crypto/ssh
 # golang.org/x/net v0.0.0-20190628185345-da137c7871d7
 golang.org/x/net/html
 golang.org/x/net/html/atom
 # golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa
+golang.org/x/sys/cpu
 golang.org/x/sys/unix
 # golang.org/x/text v0.3.2
 golang.org/x/text/feature/plural

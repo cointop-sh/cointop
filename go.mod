@@ -3,8 +3,11 @@ module github.com/miguelmota/cointop
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/anaskhan96/soup v1.1.1 // indirect
+	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
+	github.com/creack/pty v1.1.11
 	github.com/fatih/color v1.7.0
 	github.com/gizak/termui v2.3.0+incompatible // indirect
+	github.com/gliderlabs/ssh v0.3.0
 	github.com/google/pprof v0.0.0-20190502144155-8358a9778bd1 // indirect
 	github.com/maruel/panicparse v1.1.2-0.20180806203336-f20d4c4d746f
 	github.com/mattn/go-colorable v0.1.1 // indirect
@@ -19,7 +22,7 @@ require (
 	github.com/sirupsen/logrus v1.4.1 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/tomnomnom/xtermcolor v0.0.0-20160428124646-b78803f00a7e
-	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4 // indirect
+	golang.org/x/crypto v0.0.0-20190701094942-4def268fd1a4
 	golang.org/x/net v0.0.0-20190628185345-da137c7871d7 // indirect
 	golang.org/x/sys v0.0.0-20190804053845-51ab0e2deafa // indirect
 	golang.org/x/text v0.3.2

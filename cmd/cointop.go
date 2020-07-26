@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/miguelmota/cointop/cointop"
+	cssh "github.com/miguelmota/cointop/cointop/ssh"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +15,7 @@ func Execute() {
 	var refreshRate uint
 	var config, cmcAPIKey, apiChoice, colorscheme, coin, currency string
 
-	var rootCmd = &cobra.Command{
+	rootCmd := &cobra.Command{
 		Use:   "cointop",
 		Short: "Cointop is an interactive terminal based app for tracking cryptocurrencies",
 		Long: `
@@ -91,7 +93,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", cointop.CoinGecko, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", "Colorscheme to use (default \"cointop\"). To install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.config/cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors")
 
-	var versionCmd = &cobra.Command{
+	versionCmd := &cobra.Command{
 		Use:   "version",
 		Short: "Displays the current version",
 		Long:  `The version command displays the current version`,
@@ -100,7 +102,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		},
 	}
 
-	var cleanCmd = &cobra.Command{
+	cleanCmd := &cobra.Command{
 		Use:   "clean",
 		Short: "Clear the cache",
 		Long:  `The clean command clears the cache`,
@@ -110,7 +112,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		},
 	}
 
-	var resetCmd = &cobra.Command{
+	resetCmd := &cobra.Command{
 		Use:   "reset",
 		Short: "Resets the config and clear the cache",
 		Long:  `The reset command resets the config and clears the cache`,
@@ -120,7 +122,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		},
 	}
 
-	var priceCmd = &cobra.Command{
+	priceCmd := &cobra.Command{
 		Use:   "price",
 		Short: "Displays the current price of a coin",
 		Long:  `The price command display the current price of a coin`,
@@ -133,7 +135,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		},
 	}
 
-	var testCmd = &cobra.Command{
+	testCmd := &cobra.Command{
 		Use:   "test",
 		Short: "Runs tests",
 		Long:  `The test command runs tests for Homebrew`,
@@ -146,7 +148,34 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	priceCmd.Flags().StringVarP(&currency, "currency", "f", "USD", "The currency to convert to (default \"USD\")")
 	priceCmd.Flags().StringVarP(&apiChoice, "api", "a", cointop.CoinGecko, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 
-	rootCmd.AddCommand(versionCmd, cleanCmd, resetCmd, priceCmd, testCmd)
+	var port uint = 22
+	var address string = "0.0.0.0"
+	var idleTimeout uint = 60
+	var executableBinary string = "cointop"
+
+	serverCmd := &cobra.Command{
+		Use:   "server",
+		Short: "Run cintop SSH Server",
+		Long:  `Run cointop SSH server`,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			server := cssh.NewServer(&cssh.Config{
+				Address:          address,
+				Port:             port,
+				IdleTimeout:      time.Duration(int(idleTimeout)) * time.Second,
+				ExecutableBinary: executableBinary,
+			})
+
+			fmt.Printf("Running SSH server on port %v\n", port)
+			return server.ListenAndServe()
+		},
+	}
+
+	serverCmd.Flags().UintVarP(&port, "port", "p", port, "Port")
+	serverCmd.Flags().StringVarP(&address, "address", "a", address, "Address")
+	serverCmd.Flags().UintVarP(&idleTimeout, "idle-timeout", "t", idleTimeout, "Idle timeout in seconds")
+	serverCmd.Flags().StringVarP(&executableBinary, "binary", "b", executableBinary, "ExecutableBinary")
+
+	rootCmd.AddCommand(versionCmd, cleanCmd, resetCmd, priceCmd, testCmd, serverCmd)
 
 	if err := rootCmd.Execute(); err != nil {
 		panic(err)
