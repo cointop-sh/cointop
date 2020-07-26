@@ -593,6 +593,12 @@ SSH into server to see cointop:
 ssh localhost -p 2222
 ```
 
+SSH demo:
+
+```bash
+ssh cointop.sh
+```
+
 ## FAQ
 
 Frequently asked questions:
