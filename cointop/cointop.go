@@ -137,7 +137,10 @@ type APIKeys struct {
 	cmc string
 }
 
+// DefaultColorscheme ...
 var DefaultColorscheme = "cointop"
+
+// DefaultConfigFilepath ...
 var DefaultConfigFilepath = "~/.config/cointop/config.toml"
 
 // NewCointop initializes cointop
@@ -389,8 +392,12 @@ func PrintPrice(config *PriceConfig) error {
 	return nil
 }
 
+type CleanConfig struct {
+	Log bool
+}
+
 // Clean ...
-func Clean() error {
+func Clean(config *CleanConfig) error {
 	tmpPath := "/tmp"
 	if _, err := os.Stat(tmpPath); !os.IsNotExist(err) {
 		files, err := ioutil.ReadDir(tmpPath)
@@ -401,7 +408,9 @@ func Clean() error {
 		for _, f := range files {
 			if strings.HasPrefix(f.Name(), "fcache.") {
 				file := fmt.Sprintf("%s/%s", tmpPath, f.Name())
-				fmt.Printf("removing %s\n", file)
+				if config.Log {
+					fmt.Printf("removing %s\n", file)
+				}
 				if err := os.Remove(file); err != nil {
 					return err
 				}
@@ -409,25 +418,39 @@ func Clean() error {
 		}
 	}
 
-	fmt.Println("cointop cache has been cleaned")
+	if config.Log {
+		fmt.Println("cointop cache has been cleaned")
+	}
+
 	return nil
 }
 
+type ResetConfig struct {
+	Log bool
+}
+
 // Reset ...
-func Reset() error {
-	if err := Clean(); err != nil {
+func Reset(config *ResetConfig) error {
+	if err := Clean(&CleanConfig{
+		Log: config.Log,
+	}); err != nil {
 		return err
 	}
 
 	// default config path
 	configPath := fmt.Sprintf("%s%s", UserPreferredHomeDir(), "/.cointop")
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
-		fmt.Printf("removing %s\n", configPath)
+		if config.Log {
+			fmt.Printf("removing %s\n", configPath)
+		}
 		if err := os.RemoveAll(configPath); err != nil {
 			return err
 		}
 	}
 
-	fmt.Println("cointop has been reset")
+	if config.Log {
+		fmt.Println("cointop has been reset")
+	}
+
 	return nil
 }

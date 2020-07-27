@@ -11,7 +11,7 @@ import (
 
 // Execute executes the program
 func Execute() {
-	var version, test, clean, reset, hideMarketbar, hideChart, hideStatusbar, onlyTable bool
+	var version, test, clean, reset, hideMarketbar, hideChart, hideStatusbar, onlyTable, silent bool
 	var refreshRate uint
 	var config, cmcAPIKey, apiChoice, colorscheme, coin, currency string
 
@@ -43,14 +43,18 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 
 			// NOTE: if reset flag enabled, reset and run cointop
 			if reset {
-				if err := cointop.Reset(); err != nil {
+				if err := cointop.Reset(&cointop.ResetConfig{
+					Log: !silent,
+				}); err != nil {
 					return err
 				}
 			}
 
 			// NOTE: if clean flag enabled, clean and run cointop
 			if clean {
-				if err := cointop.Clean(); err != nil {
+				if err := cointop.Clean(&cointop.CleanConfig{
+					Log: !silent,
+				}); err != nil {
 					return err
 				}
 			}
@@ -87,6 +91,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	rootCmd.Flags().BoolVarP(&hideChart, "hide-chart", "", false, "Hide the chart view")
 	rootCmd.Flags().BoolVarP(&hideStatusbar, "hide-statusbar", "", false, "Hide the bottom statusbar")
 	rootCmd.Flags().BoolVarP(&onlyTable, "only-table", "", false, "Show only the table. Hides the chart and top and bottom bars")
+	rootCmd.Flags().BoolVarP(&silent, "silent", "s", false, "Silence log ouput")
 	rootCmd.Flags().UintVarP(&refreshRate, "refresh-rate", "r", 60, "Refresh rate in seconds. Set to 0 to not auto-refresh")
 	rootCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")
@@ -108,7 +113,9 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		Long:  `The clean command clears the cache`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// NOTE: if clean command, clean but don't run cointop
-			return cointop.Clean()
+			return cointop.Clean(&cointop.CleanConfig{
+				Log: true,
+			})
 		},
 	}
 
@@ -118,7 +125,9 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		Long:  `The reset command resets the config and clears the cache`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// NOTE: if reset command, reset but don't run cointop
-			return cointop.Reset()
+			return cointop.Reset(&cointop.ResetConfig{
+				Log: true,
+			})
 		},
 	}
 
