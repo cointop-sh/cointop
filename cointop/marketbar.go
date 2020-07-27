@@ -22,7 +22,8 @@ func NewMarketbarView() *MarketbarView {
 	return &MarketbarView{NewView("marketbar")}
 }
 
-func (ct *Cointop) updateMarketbar() error {
+// UpdateMarketbar updates the market bar view
+func (ct *Cointop) UpdateMarketbar() error {
 	ct.debuglog("updateMarketbar()")
 	if ct.Views.Marketbar.Backing() == nil {
 		return nil
@@ -36,7 +37,7 @@ func (ct *Cointop) updateMarketbar() error {
 	var content string
 
 	if ct.State.portfolioVisible {
-		total := ct.getPortfolioTotal()
+		total := ct.GetPortfolioTotal()
 		totalstr := humanize.Commaf(total)
 		if !(ct.State.currencyConversion == "BTC" || ct.State.currencyConversion == "ETH" || total < 1) {
 			total = math.Round(total*1e2) / 1e2
@@ -44,7 +45,7 @@ func (ct *Cointop) updateMarketbar() error {
 		}
 
 		timeframe := ct.State.selectedChartRange
-		chartname := ct.selectedCoinName()
+		chartname := ct.SelectedCoinName()
 		var charttitle string
 		if chartname == "" {
 			chartname = "Portfolio"
@@ -54,7 +55,7 @@ func (ct *Cointop) updateMarketbar() error {
 		}
 
 		var percentChange24H float64
-		for _, p := range ct.getPortfolioSlice() {
+		for _, p := range ct.GetPortfolioSlice() {
 			n := ((p.Balance / total) * p.PercentChange24H)
 			if math.IsNaN(n) {
 				continue
@@ -85,7 +86,7 @@ func (ct *Cointop) updateMarketbar() error {
 		content = fmt.Sprintf(
 			"%sTotal Portfolio Value: %s • 24H: %s",
 			chartInfo,
-			ct.colorscheme.MarketBarLabelActive(fmt.Sprintf("%s%s", ct.currencySymbol(), totalstr)),
+			ct.colorscheme.MarketBarLabelActive(fmt.Sprintf("%s%s", ct.CurrencySymbol(), totalstr)),
 			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
 		)
 	} else {
@@ -116,7 +117,7 @@ func (ct *Cointop) updateMarketbar() error {
 		}
 
 		timeframe := ct.State.selectedChartRange
-		chartname := ct.selectedCoinName()
+		chartname := ct.SelectedCoinName()
 		if chartname == "" {
 			chartname = "Global"
 		}
@@ -133,8 +134,8 @@ func (ct *Cointop) updateMarketbar() error {
 		content = fmt.Sprintf(
 			"%sGlobal ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
 			chartInfo,
-			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf0(market.TotalMarketCapUSD)),
-			fmt.Sprintf("%s%s", ct.currencySymbol(), humanize.Commaf0(market.Total24HVolumeUSD)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Commaf0(market.TotalMarketCapUSD)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Commaf0(market.Total24HVolumeUSD)),
 			market.BitcoinPercentageOfMarketCap,
 		)
 	}

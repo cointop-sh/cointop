@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-func (ct *Cointop) refresh() error {
+// Refresh triggers a force refresh of coin data
+func (ct *Cointop) Refresh() error {
 	ct.debuglog("refresh()")
 	go func() {
 		<-ct.limiter
@@ -14,7 +15,8 @@ func (ct *Cointop) refresh() error {
 	return nil
 }
 
-func (ct *Cointop) refreshAll() error {
+// RefreshAll triggers a force refresh of all data
+func (ct *Cointop) RefreshAll() error {
 	ct.debuglog("refreshAll()")
 	ct.refreshMux.Lock()
 	defer ct.refreshMux.Unlock()
@@ -22,13 +24,14 @@ func (ct *Cointop) refreshAll() error {
 	ct.cache.Delete("allCoinsSlugMap")
 	ct.cache.Delete("market")
 	go func() {
-		ct.updateCoins()
+		ct.UpdateCoins()
 		ct.UpdateTable()
 		ct.UpdateChart()
 	}()
 	return nil
 }
 
+// SetRefreshStatus sets the refresh ticker
 func (ct *Cointop) setRefreshStatus() {
 	ct.debuglog("setRefreshStatus()")
 	go func() {
@@ -37,6 +40,7 @@ func (ct *Cointop) setRefreshStatus() {
 	}()
 }
 
+// LoadingTicks sets the loading ticking dots
 func (ct *Cointop) loadingTicks(s string, t int) {
 	ct.debuglog("loadingTicks()")
 	interval := 150
@@ -51,15 +55,16 @@ func (ct *Cointop) loadingTicks(s string, t int) {
 	}
 }
 
+// intervalFetchData does a force refresh at every interval
 func (ct *Cointop) intervalFetchData() {
 	ct.debuglog("intervalFetchData()")
 	go func() {
 		for {
 			select {
 			case <-ct.forceRefresh:
-				ct.refreshAll()
+				ct.RefreshAll()
 			case <-ct.refreshTicker.C:
-				ct.refreshAll()
+				ct.RefreshAll()
 			}
 		}
 	}()

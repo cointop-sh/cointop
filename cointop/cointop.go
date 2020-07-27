@@ -160,9 +160,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ActionsMap:     ActionsMap(),
 		cache:          cache.New(1*time.Minute, 2*time.Minute),
 		configFilepath: configFilepath,
-		chartRanges:    chartRanges(),
+		chartRanges:    ChartRanges(),
 		debug:          debug,
-		chartRangesMap: chartRangesMap(),
+		chartRangesMap: ChartRangesMap(),
 		limiter:        time.Tick(2 * time.Second),
 		State: &State{
 			allCoins:           []*Coin{},
@@ -200,7 +200,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		},
 	}
 
-	err := ct.setupConfig()
+	err := ct.SetupConfig()
 	if err != nil {
 		return nil, err
 	}
@@ -224,7 +224,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 	// prompt for CoinMarketCap api key if not found
 	if config.CoinMarketCapAPIKey != "" {
 		ct.apiKeys.cmc = config.CoinMarketCapAPIKey
-		if err := ct.saveConfig(); err != nil {
+		if err := ct.SaveConfig(); err != nil {
 			return nil, err
 		}
 	}
@@ -241,7 +241,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 	if config.APIChoice != "" {
 		ct.apiChoice = config.APIChoice
-		if err := ct.saveConfig(); err != nil {
+		if err := ct.SaveConfig(); err != nil {
 			return nil, err
 		}
 	}
@@ -261,7 +261,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			ct.apiKeys.cmc = apiKey
 		}
 
-		if err := ct.saveConfig(); err != nil {
+		if err := ct.SaveConfig(); err != nil {
 			return nil, err
 		}
 	}
@@ -298,7 +298,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		if max > 100 {
 			max = 100
 		}
-		ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.allCoins, false)
+		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.allCoins, false)
 		ct.State.coins = ct.State.allCoins[0:max]
 	}
 
@@ -353,7 +353,7 @@ func (ct *Cointop) Run() error {
 	g.Mouse = true
 	g.Highlight = true
 	g.SetManagerFunc(ct.layout)
-	if err := ct.keybindings(g); err != nil {
+	if err := ct.Keybindings(g); err != nil {
 		return fmt.Errorf("keybindings: %v", err)
 	}
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
@@ -386,17 +386,18 @@ func PrintPrice(config *PriceConfig) error {
 		return err
 	}
 
-	symbol := currencySymbol(config.Currency)
+	symbol := CurrencySymbol(config.Currency)
 	fmt.Fprintf(os.Stdout, "%s%s", symbol, humanize.Commaf(price))
 
 	return nil
 }
 
+// CleanConfig is the config for the clean function
 type CleanConfig struct {
 	Log bool
 }
 
-// Clean ...
+// Clean removes cache files
 func Clean(config *CleanConfig) error {
 	tmpPath := "/tmp"
 	if _, err := os.Stat(tmpPath); !os.IsNotExist(err) {
@@ -425,11 +426,12 @@ func Clean(config *CleanConfig) error {
 	return nil
 }
 
+// ResetConfig is the config for the reset function
 type ResetConfig struct {
 	Log bool
 }
 
-// Reset ...
+// Reset removes configuration and cache files
 func Reset(config *ResetConfig) error {
 	if err := Clean(&CleanConfig{
 		Log: config.Log,

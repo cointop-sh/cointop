@@ -4,7 +4,7 @@ package cointop
 func (ct *Cointop) Save() error {
 	ct.debuglog("Save()")
 	ct.SetSavingStatus()
-	if err := ct.saveConfig(); err != nil {
+	if err := ct.SaveConfig(); err != nil {
 		return err
 	}
 

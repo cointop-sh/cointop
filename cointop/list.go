@@ -10,7 +10,8 @@ import (
 var coinslock sync.Mutex
 var updatecoinsmux sync.Mutex
 
-func (ct *Cointop) updateCoins() error {
+// UpdateCoins updates coins view
+func (ct *Cointop) UpdateCoins() error {
 	ct.debuglog("updateCoins()")
 	coinslock.Lock()
 	defer coinslock.Unlock()
@@ -45,6 +46,7 @@ func (ct *Cointop) updateCoins() error {
 	return nil
 }
 
+// ProcessCoinsMap processes coins map
 func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 	ct.debuglog("processCoinsMap()")
 	var coins []types.Coin
@@ -55,6 +57,7 @@ func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 	ct.processCoins(coins)
 }
 
+// ProcessCoins processes coins list
 func (ct *Cointop) processCoins(coins []types.Coin) {
 	ct.debuglog("processCoins()")
 	updatecoinsmux.Lock()
@@ -137,12 +140,13 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	}
 
 	time.AfterFunc(10*time.Millisecond, func() {
-		ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
 		ct.UpdateTable()
 	})
 }
 
-func (ct *Cointop) getListCount() int {
+// GetListCount returns count of coins list
+func (ct *Cointop) GetListCount() int {
 	ct.debuglog("getListCount()")
 	if ct.State.filterByFavorites {
 		return len(ct.State.favorites)

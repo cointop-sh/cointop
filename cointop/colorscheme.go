@@ -301,7 +301,7 @@ func (c *Colorscheme) toFgAttr(v string) (fcolor.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := hexToAnsi(v); ok {
+	if code, ok := HexToAnsi(v); ok {
 		return fcolor.Attribute(code), true
 	}
 
@@ -313,7 +313,7 @@ func (c *Colorscheme) toBgAttr(v string) (fcolor.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := hexToAnsi(v); ok {
+	if code, ok := HexToAnsi(v); ok {
 		return fcolor.Attribute(code), true
 	}
 
@@ -336,15 +336,15 @@ func (c *Colorscheme) toGocuiAttr(v string) (gocui.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := hexToAnsi(v); ok {
+	if code, ok := HexToAnsi(v); ok {
 		return gocui.Attribute(code), true
 	}
 
 	return 0, false
 }
 
-// hexToAnsi converts a hex color string to a uint8 ansi code
-func hexToAnsi(h string) (uint8, bool) {
+// HexToAnsi converts a hex color string to a uint8 ansi code
+func HexToAnsi(h string) (uint8, bool) {
 	if h == "" {
 		return 0, false
 	}

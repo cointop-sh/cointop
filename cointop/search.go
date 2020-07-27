@@ -27,6 +27,7 @@ func NewInputView() *InputView {
 	return &InputView{NewView("input")}
 }
 
+// OpenSearch opens the search field
 func (ct *Cointop) openSearch() error {
 	ct.debuglog("openSearch()")
 	ct.State.searchFieldVisible = true
@@ -34,14 +35,16 @@ func (ct *Cointop) openSearch() error {
 	return nil
 }
 
-func (ct *Cointop) cancelSearch() error {
+// CancelSearch closes the search field
+func (ct *Cointop) CancelSearch() error {
 	ct.debuglog("cancelSearch()")
 	ct.State.searchFieldVisible = false
 	ct.SetActiveView(ct.Views.Table.Name())
 	return nil
 }
 
-func (ct *Cointop) doSearch() error {
+// DoSearch triggers the search and sets views
+func (ct *Cointop) DoSearch() error {
 	ct.debuglog("doSearch()")
 	ct.Views.SearchField.Backing().Rewind()
 	b := make([]byte, 100)
@@ -65,10 +68,11 @@ func (ct *Cointop) doSearch() error {
 	if len(matches) > 0 {
 		q = matches[1]
 	}
-	return ct.search(q)
+	return ct.Search(q)
 }
 
-func (ct *Cointop) search(q string) error {
+// Search performs the search and filtering
+func (ct *Cointop) Search(q string) error {
 	ct.debuglog("search()")
 	q = strings.TrimSpace(strings.ToLower(q))
 	idx := -1
@@ -81,12 +85,12 @@ func (ct *Cointop) search(q string) error {
 		symbol := strings.ToLower(coin.Symbol)
 		// if query matches symbol, return immediately
 		if symbol == q {
-			ct.goToGlobalIndex(i)
+			ct.GoToGlobalIndex(i)
 			return nil
 		}
 		// if query matches name, return immediately
 		if name == q {
-			ct.goToGlobalIndex(i)
+			ct.GoToGlobalIndex(i)
 			return nil
 		}
 		// store index with the smallest levenshtein
@@ -105,12 +109,12 @@ func (ct *Cointop) search(q string) error {
 	}
 	// go to row if prefix match
 	if len(hasprefixidx) > 0 && hasprefixidx[0] != -1 && min > 0 {
-		ct.goToGlobalIndex(hasprefixidx[0])
+		ct.GoToGlobalIndex(hasprefixidx[0])
 		return nil
 	}
 	// go to row if levenshtein distance is small enough
 	if idx > -1 && min <= 6 {
-		ct.goToGlobalIndex(idx)
+		ct.GoToGlobalIndex(idx)
 		return nil
 	}
 	return nil

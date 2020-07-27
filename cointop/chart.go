@@ -24,7 +24,8 @@ func NewChartView() *ChartView {
 var chartLock sync.Mutex
 var chartPointsLock sync.Mutex
 
-func chartRanges() []string {
+// ChartRanges returns list of chart ranges available
+func ChartRanges() []string {
 	return []string{
 		"24H",
 		"3D",
@@ -38,7 +39,8 @@ func chartRanges() []string {
 	}
 }
 
-func chartRangesMap() map[string]time.Duration {
+// ChartRanges returns map of chart range time ranges
+func ChartRangesMap() map[string]time.Duration {
 	return map[string]time.Duration{
 		"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
 		"YTD":      time.Duration(1 * time.Second), // this will be calculated
@@ -69,8 +71,8 @@ func (ct *Cointop) UpdateChart() error {
 			return err
 		}
 	} else {
-		symbol := ct.selectedCoinSymbol()
-		name := ct.selectedCoinName()
+		symbol := ct.SelectedCoinSymbol()
+		name := ct.SelectedCoinName()
 		ct.ChartPoints(symbol, name)
 	}
 
@@ -111,7 +113,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	defer chartPointsLock.Unlock()
 
 	// TODO: not do this (SoC)
-	go ct.updateMarketbar()
+	go ct.UpdateMarketbar()
 
 	chart := termui.NewLineChart()
 	chart.Height = ct.State.chartHeight
@@ -216,7 +218,7 @@ func (ct *Cointop) PortfolioChart() error {
 	defer chartPointsLock.Unlock()
 
 	// TODO: not do this (SoC)
-	go ct.updateMarketbar()
+	go ct.UpdateMarketbar()
 
 	chart := termui.NewLineChart()
 	chart.Height = ct.State.chartHeight
@@ -237,8 +239,8 @@ func (ct *Cointop) PortfolioChart() error {
 	end := nowseconds
 
 	var data []float64
-	portfolio := ct.getPortfolioSlice()
-	chartname := ct.selectedCoinName()
+	portfolio := ct.GetPortfolioSlice()
+	chartname := ct.SelectedCoinName()
 	for _, p := range portfolio {
 		// filter by selected chart if selected
 		if chartname != "" {
@@ -419,7 +421,7 @@ func (ct *Cointop) ToggleCoinChart() error {
 		ct.UpdateChart()
 	}()
 
-	go ct.updateMarketbar()
+	go ct.UpdateMarketbar()
 
 	return nil
 }

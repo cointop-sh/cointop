@@ -9,8 +9,9 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
-// keep these in alphabetical order
-var fiatCurrencyNames = map[string]string{
+// FiatCurrencyNames is a mpa of currency symbols to names.
+// Keep these in alphabetical order.
+var FiatCurrencyNames = map[string]string{
 	"AUD": "Australian Dollar",
 	"BGN": "Bulgarian lev",
 	"BRL": "Brazilian Real",
@@ -50,13 +51,15 @@ var fiatCurrencyNames = map[string]string{
 	"ZAR": "South African Rand",
 }
 
-var cryptocurrencyNames = map[string]string{
+// CryptocurrencyNames is a map of cryptocurrency symbols to name
+var CryptocurrencyNames = map[string]string{
 	"BTC": "Bitcoin",
 	"ETH": "Ethereum",
 }
 
-// keep these in alphabetical order
-var currencySymbolMap = map[string]string{
+// CurrencySymbolMap is map of fiat currency symbols to names.
+// Keep these in alphabetical order.
+var CurrencySymbolMap = map[string]string{
 	"AUD": "$",
 	"BGN": "Лв.",
 	"BRL": "R$",
@@ -110,13 +113,14 @@ func NewConvertMenuView() *ConvertMenuView {
 	return &ConvertMenuView{NewView("convertmenu")}
 }
 
-func (ct *Cointop) supportedCurrencyConversions() map[string]string {
+// SupportedCurrencyConversions returns a map of all supported currencies for conversion
+func (ct *Cointop) SupportedCurrencyConversions() map[string]string {
 	all := map[string]string{}
 	for _, symbol := range ct.api.SupportedCurrencies() {
-		if v, ok := fiatCurrencyNames[symbol]; ok {
+		if v, ok := FiatCurrencyNames[symbol]; ok {
 			all[symbol] = v
 		}
-		if v, ok := cryptocurrencyNames[symbol]; ok {
+		if v, ok := CryptocurrencyNames[symbol]; ok {
 			all[symbol] = v
 		}
 	}
@@ -124,16 +128,19 @@ func (ct *Cointop) supportedCurrencyConversions() map[string]string {
 	return all
 }
 
-func (ct *Cointop) supportedFiatCurrencyConversions() map[string]string {
-	return fiatCurrencyNames
+// SupportedFiatCurrencyConversions returns map of supported fiat currencies for conversion
+func (ct *Cointop) SupportedFiatCurrencyConversions() map[string]string {
+	return FiatCurrencyNames
 }
 
-func (ct *Cointop) supportedCryptoCurrencyConversions() map[string]string {
-	return cryptocurrencyNames
+// SupportedCryptoCurrencyConversions returns map of supported cryptocurrencies for conversion
+func (ct *Cointop) SupportedCryptoCurrencyConversions() map[string]string {
+	return CryptocurrencyNames
 }
 
-func (ct *Cointop) sortedSupportedCurrencyConversions() []string {
-	currencies := ct.supportedCurrencyConversions()
+// SortedSupportedCurrencyConversions returns sorted list of supported currencies for conversion
+func (ct *Cointop) SortedSupportedCurrencyConversions() []string {
+	currencies := ct.SupportedCurrencyConversions()
 	keys := make([]string, 0, len(currencies))
 	for k := range currencies {
 		keys = append(keys, k)
@@ -142,7 +149,8 @@ func (ct *Cointop) sortedSupportedCurrencyConversions() []string {
 	return keys
 }
 
-func (ct *Cointop) updateConvertMenu() {
+// UpdateConvertMenu updates the convert menu
+func (ct *Cointop) UpdateConvertMenu() {
 	ct.debuglog("updateConvertMenu()")
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxTableWidth-20, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
@@ -154,8 +162,8 @@ func (ct *Cointop) updateConvertMenu() {
 		cols[i] = make([]string, 20)
 	}
 
-	keys := ct.sortedSupportedCurrencyConversions()
-	currencies := ct.supportedCurrencyConversions()
+	keys := ct.SortedSupportedCurrencyConversions()
+	currencies := ct.SupportedCurrencyConversions()
 	for i, key := range keys {
 		currency := currencies[key]
 		if cnt%percol == 0 {
@@ -198,10 +206,11 @@ func (ct *Cointop) updateConvertMenu() {
 	})
 }
 
-func (ct *Cointop) setCurrencyConverstionFn(convert string) func() error {
+// SetCurrencyConverstionFn sets the currency conversion function
+func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 	ct.debuglog("setCurrencyConverstionFn()")
 	return func() error {
-		ct.hideConvertMenu()
+		ct.HideConvertMenu()
 
 		// NOTE: return if the currency selection wasn't changed
 		if ct.State.currencyConversion == convert {
@@ -214,15 +223,15 @@ func (ct *Cointop) setCurrencyConverstionFn(convert string) func() error {
 			return err
 		}
 
-		go ct.refreshAll()
+		go ct.RefreshAll()
 		return nil
 	}
 }
 
-// currencySymbol returns the symbol for the currency
-func (ct *Cointop) currencySymbol() string {
+// CurrencySymbol returns the symbol for the currency conversion
+func (ct *Cointop) CurrencySymbol() string {
 	ct.debuglog("currencySymbol()")
-	symbol, ok := currencySymbolMap[strings.ToUpper(ct.State.currencyConversion)]
+	symbol, ok := CurrencySymbolMap[strings.ToUpper(ct.State.currencyConversion)]
 	if ok {
 		return symbol
 	}
@@ -230,15 +239,17 @@ func (ct *Cointop) currencySymbol() string {
 	return "$"
 }
 
-func (ct *Cointop) showConvertMenu() error {
+// ShowConvertMenu shows the convert menu view
+func (ct *Cointop) ShowConvertMenu() error {
 	ct.debuglog("showConvertMenu()")
 	ct.State.convertMenuVisible = true
-	ct.updateConvertMenu()
+	ct.UpdateConvertMenu()
 	ct.SetActiveView(ct.Views.ConvertMenu.Name())
 	return nil
 }
 
-func (ct *Cointop) hideConvertMenu() error {
+// HideConvertMenu hides the convert menu view
+func (ct *Cointop) HideConvertMenu() error {
 	ct.debuglog("hideConvertMenu()")
 	ct.State.convertMenuVisible = false
 	ct.SetViewOnBottom(ct.Views.ConvertMenu.Name())
@@ -256,18 +267,19 @@ func (ct *Cointop) hideConvertMenu() error {
 	return nil
 }
 
-func (ct *Cointop) toggleConvertMenu() error {
+// ToggleConvertMenu toggles the convert menu view
+func (ct *Cointop) ToggleConvertMenu() error {
 	ct.debuglog("toggleConvertMenu()")
 	ct.State.convertMenuVisible = !ct.State.convertMenuVisible
 	if ct.State.convertMenuVisible {
-		return ct.showConvertMenu()
+		return ct.ShowConvertMenu()
 	}
-	return ct.hideConvertMenu()
+	return ct.HideConvertMenu()
 }
 
-// currencySymbol returns the symbol for the currency
-func currencySymbol(currency string) string {
-	symbol, ok := currencySymbolMap[strings.ToUpper(currency)]
+// CurrencySymbol returns the symbol for the currency name
+func CurrencySymbol(currency string) string {
+	symbol, ok := CurrencySymbolMap[strings.ToUpper(currency)]
 	if ok {
 		return symbol
 	}

@@ -77,7 +77,7 @@ func (ct *Cointop) UpdateTableHeader() {
 		var str string
 		d := s.arrow + s.displaytext
 		if v == "price" || v == "balance" {
-			d = s.arrow + ct.currencySymbol() + s.displaytext
+			d = s.arrow + ct.CurrencySymbol() + s.displaytext
 		}
 
 		str = fmt.Sprintf(

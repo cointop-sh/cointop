@@ -20,10 +20,11 @@ func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
 	return &PortfolioUpdateMenuView{NewView("portfolioupdatemenu")}
 }
 
-func (ct *Cointop) togglePortfolio() error {
+// TogglePortfolio toggles the portfolio view
+func (ct *Cointop) TogglePortfolio() error {
 	ct.debuglog("togglePortfolio()")
 	if ct.State.portfolioVisible {
-		ct.goToPageRowIndex(ct.State.lastSelectedRowIndex)
+		ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
 	} else {
 		ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	}
@@ -36,7 +37,8 @@ func (ct *Cointop) togglePortfolio() error {
 	return nil
 }
 
-func (ct *Cointop) toggleShowPortfolio() error {
+// ToggleShowPortfolio shows the portfolio view
+func (ct *Cointop) ToggleShowPortfolio() error {
 	ct.debuglog("toggleShowPortfolio()")
 	ct.State.filterByFavorites = false
 	ct.State.portfolioVisible = true
@@ -45,26 +47,29 @@ func (ct *Cointop) toggleShowPortfolio() error {
 	return nil
 }
 
-func (ct *Cointop) togglePortfolioUpdateMenu() error {
+// TogglePortfolioUpdateMenu toggles the portfolio update menu
+func (ct *Cointop) TogglePortfolioUpdateMenu() error {
 	ct.debuglog("togglePortfolioUpdateMenu()")
 	ct.State.portfolioUpdateMenuVisible = !ct.State.portfolioUpdateMenuVisible
 	if ct.State.portfolioUpdateMenuVisible {
-		return ct.showPortfolioUpdateMenu()
+		return ct.ShowPortfolioUpdateMenu()
 	}
 
-	return ct.hidePortfolioUpdateMenu()
+	return ct.HidePortfolioUpdateMenu()
 }
 
-func (ct *Cointop) coinHoldings(coin *Coin) float64 {
+// CoinHoldings returns portfolio coin holdings
+func (ct *Cointop) CoinHoldings(coin *Coin) float64 {
 	entry, _ := ct.PortfolioEntry(coin)
 	return entry.Holdings
 }
 
-func (ct *Cointop) updatePortfolioUpdateMenu() {
+// UpdatePortfolioUpdateMenu updates the portfolio update menu view
+func (ct *Cointop) UpdatePortfolioUpdateMenu() {
 	ct.debuglog("updatePortfolioUpdateMenu()")
 	coin := ct.HighlightedRowCoin()
 	exists := ct.PortfolioEntryExists(coin)
-	value := strconv.FormatFloat(ct.coinHoldings(coin), 'f', -1, 64)
+	value := strconv.FormatFloat(ct.CoinHoldings(coin), 'f', -1, 64)
 	ct.debuglog(fmt.Sprintf("holdings %v", value))
 	var mode string
 	var current string
@@ -91,22 +96,24 @@ func (ct *Cointop) updatePortfolioUpdateMenu() {
 	})
 }
 
-func (ct *Cointop) showPortfolioUpdateMenu() error {
+// ShowPortfolioUpdateMenu shows the portfolio update menu
+func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 	ct.debuglog("showPortfolioUpdateMenu()")
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
-		ct.togglePortfolio()
+		ct.TogglePortfolio()
 		return nil
 	}
 
 	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.State.portfolioUpdateMenuVisible = true
-	ct.updatePortfolioUpdateMenu()
+	ct.UpdatePortfolioUpdateMenu()
 	ct.SetActiveView(ct.Views.PortfolioUpdateMenu.Name())
 	return nil
 }
 
-func (ct *Cointop) hidePortfolioUpdateMenu() error {
+// HidePortfolioUpdateMenu hides the portfolio update menu
+func (ct *Cointop) HidePortfolioUpdateMenu() error {
 	ct.debuglog("hidePortfolioUpdateMenu()")
 	ct.State.portfolioUpdateMenuVisible = false
 	ct.SetViewOnBottom(ct.Views.PortfolioUpdateMenu.Name())
@@ -129,10 +136,10 @@ func (ct *Cointop) hidePortfolioUpdateMenu() error {
 	return nil
 }
 
-// sets portfolio entry holdings from inputed value
-func (ct *Cointop) setPortfolioHoldings() error {
+// SetPortfolioHoldings sets portfolio entry holdings from inputed value
+func (ct *Cointop) SetPortfolioHoldings() error {
 	ct.debuglog("setPortfolioHoldings()")
-	defer ct.hidePortfolioUpdateMenu()
+	defer ct.HidePortfolioUpdateMenu()
 	coin := ct.HighlightedRowCoin()
 
 	// read input field
@@ -145,7 +152,7 @@ func (ct *Cointop) setPortfolioHoldings() error {
 		return nil
 	}
 
-	value := normalizeFloatstring(string(b))
+	value := normalizeFloatString(string(b))
 	shouldDelete := value == ""
 	var holdings float64
 
@@ -156,16 +163,16 @@ func (ct *Cointop) setPortfolioHoldings() error {
 		}
 	}
 
-	if err := ct.setPortfolioEntry(coin.Name, holdings); err != nil {
+	if err := ct.SetPortfolioEntry(coin.Name, holdings); err != nil {
 		return err
 	}
 
 	if shouldDelete {
-		ct.removePortfolioEntry(coin.Name)
+		ct.RemovePortfolioEntry(coin.Name)
 		ct.UpdateTable()
 	} else {
 		ct.UpdateTable()
-		ct.goToPageRowIndex(ct.State.lastSelectedRowIndex)
+		ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
 	}
 
 	return nil
@@ -197,7 +204,8 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 	return p, isNew
 }
 
-func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) error {
+// SetPortfolioEntry sets a portfolio entry
+func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
 	ct.debuglog("setPortfolioEntry()")
 	ic, _ := ct.State.allCoinsSlugMap.Load(strings.ToLower(coin))
 	c, _ := ic.(*Coin)
@@ -219,7 +227,8 @@ func (ct *Cointop) setPortfolioEntry(coin string, holdings float64) error {
 	return nil
 }
 
-func (ct *Cointop) removePortfolioEntry(coin string) {
+// RemovePortfolioEntry removes a portfolio entry
+func (ct *Cointop) RemovePortfolioEntry(coin string) {
 	ct.debuglog("removePortfolioEntry()")
 	delete(ct.State.portfolio.Entries, strings.ToLower(coin))
 }
@@ -231,15 +240,17 @@ func (ct *Cointop) PortfolioEntryExists(c *Coin) bool {
 	return !isNew
 }
 
-func (ct *Cointop) portfolioEntriesCount() int {
+// PortfolioEntriesCount returns the count of portfolio entries
+func (ct *Cointop) PortfolioEntriesCount() int {
 	ct.debuglog("portfolioEntriesCount()")
 	return len(ct.State.portfolio.Entries)
 }
 
-func (ct *Cointop) getPortfolioSlice() []*Coin {
+// GetPortfolioSlice returns portfolio entries as a slice
+func (ct *Cointop) GetPortfolioSlice() []*Coin {
 	ct.debuglog("getPortfolioSlice()")
 	sliced := []*Coin{}
-	if ct.portfolioEntriesCount() == 0 {
+	if ct.PortfolioEntriesCount() == 0 {
 		return sliced
 	}
 
@@ -271,9 +282,10 @@ func (ct *Cointop) getPortfolioSlice() []*Coin {
 	return sliced
 }
 
-func (ct *Cointop) getPortfolioTotal() float64 {
+// GetPortfolioTotal returns the total balance of portfolio entries
+func (ct *Cointop) GetPortfolioTotal() float64 {
 	ct.debuglog("getPortfolioTotal()")
-	portfolio := ct.getPortfolioSlice()
+	portfolio := ct.GetPortfolioSlice()
 	var total float64
 	for _, p := range portfolio {
 		total += p.Balance
@@ -281,7 +293,8 @@ func (ct *Cointop) getPortfolioTotal() float64 {
 	return total
 }
 
-func normalizeFloatstring(input string) string {
+// NormalizeFloatString normalizes a float as a string
+func normalizeFloatString(input string) string {
 	re := regexp.MustCompile(`(\d+\.\d+|\.\d+|\d+)`)
 	result := re.FindStringSubmatch(input)
 	if len(result) > 0 {

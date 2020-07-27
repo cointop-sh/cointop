@@ -2,7 +2,8 @@ package cointop
 
 import "sort"
 
-func (ct *Cointop) toggleFavorite() error {
+// ToggleFavorite toggles coin as favorite
+func (ct *Cointop) ToggleFavorite() error {
 	ct.debuglog("toggleFavorite()")
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
@@ -27,7 +28,8 @@ func (ct *Cointop) toggleFavorite() error {
 	return nil
 }
 
-func (ct *Cointop) toggleShowFavorites() error {
+// ToggleShowFavorites toggles the favorites view
+func (ct *Cointop) ToggleShowFavorites() error {
 	ct.debuglog("toggleShowFavorites()")
 	ct.State.portfolioVisible = false
 	ct.State.filterByFavorites = !ct.State.filterByFavorites
@@ -35,7 +37,8 @@ func (ct *Cointop) toggleShowFavorites() error {
 	return nil
 }
 
-func (ct *Cointop) getFavoritesSlice() []*Coin {
+// GetFavoritesSlice returns coin favorites as slice
+func (ct *Cointop) GetFavoritesSlice() []*Coin {
 	ct.debuglog("getFavoritesSlice()")
 	sliced := []*Coin{}
 	for i := range ct.State.allCoins {

@@ -9,7 +9,8 @@ import (
 
 var sortlock sync.Mutex
 
-func (ct *Cointop) sort(sortBy string, desc bool, list []*Coin, renderHeaders bool) {
+// Sort sorts the list of coins
+func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bool) {
 	ct.debuglog("sort()")
 	sortlock.Lock()
 	defer sortlock.Unlock()
@@ -72,70 +73,77 @@ func (ct *Cointop) sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 	}
 }
 
-func (ct *Cointop) sortAsc() error {
+// SortAsc sorts list of coins in ascending order
+func (ct *Cointop) SortAsc() error {
 	ct.debuglog("sortAsc()")
 	ct.State.sortDesc = false
 	ct.UpdateTable()
 	return nil
 }
 
-func (ct *Cointop) sortDesc() error {
+// SortDesc sorts list of coins in descending order
+func (ct *Cointop) SortDesc() error {
 	ct.debuglog("sortDesc()")
 	ct.State.sortDesc = true
 	ct.UpdateTable()
 	return nil
 }
 
-func (ct *Cointop) sortPrevCol() error {
+// SortPrevCol sorts the previous column
+func (ct *Cointop) SortPrevCol() error {
 	ct.debuglog("sortPrevCol()")
 	nextsortBy := ct.TableColumnOrder[0]
-	i := ct.getSortColIndex()
+	i := ct.GetSortColIndex()
 	k := i - 1
 	if k < 0 {
 		k = 0
 	}
 
 	nextsortBy = ct.TableColumnOrder[k]
-	ct.sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
+	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
 }
 
-func (ct *Cointop) sortNextCol() error {
+// SortNextCol sorts the next column
+func (ct *Cointop) SortNextCol() error {
 	ct.debuglog("sortNextCol()")
 	nextsortBy := ct.TableColumnOrder[0]
 	l := len(ct.TableColumnOrder)
-	i := ct.getSortColIndex()
+	i := ct.GetSortColIndex()
 	k := i + 1
 	if k > l-1 {
 		k = l - 1
 	}
 
 	nextsortBy = ct.TableColumnOrder[k]
-	ct.sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
+	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
 }
 
-func (ct *Cointop) sortToggle(sortBy string, desc bool) error {
+// SortToggle toggles the sort order
+func (ct *Cointop) SortToggle(sortBy string, desc bool) error {
 	ct.debuglog("sortToggle()")
 	if ct.State.sortBy == sortBy {
 		desc = !ct.State.sortDesc
 	}
 
-	ct.sort(sortBy, desc, ct.State.coins, true)
+	ct.Sort(sortBy, desc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
 }
 
-func (ct *Cointop) sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
+// Sortfn returns the sort function as a wrapped gocui keybinding function
+func (ct *Cointop) Sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
 	ct.debuglog("sortfn()")
 	return func(g *gocui.Gui, v *gocui.View) error {
-		return ct.sortToggle(sortBy, desc)
+		return ct.SortToggle(sortBy, desc)
 	}
 }
 
-func (ct *Cointop) getSortColIndex() int {
+// GetSortColIndex gets the sort column index
+func (ct *Cointop) GetSortColIndex() int {
 	ct.debuglog("getSortColIndex()")
 	for i, col := range ct.TableColumnOrder {
 		if ct.State.sortBy == col {

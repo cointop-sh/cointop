@@ -6,7 +6,8 @@ import (
 	"github.com/miguelmota/gocui"
 )
 
-func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
+// ParseKeys returns string keyboard key as gocui key type
+func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 	var key interface{}
 	mod := gocui.ModNone
 	split := strings.Split(s, "+")
@@ -206,182 +207,184 @@ func (ct *Cointop) parseKeys(s string) (interface{}, gocui.Modifier) {
 	return key, mod
 }
 
-func (ct *Cointop) keybindings(g *gocui.Gui) error {
+// Keybindings sets keyboard shortcut key bindings
+func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 	for k, v := range ct.State.shortcutKeys {
 		if k == "" {
 			continue
 		}
 		v = strings.TrimSpace(strings.ToLower(v))
 		var fn func(g *gocui.Gui, v *gocui.View) error
-		key, mod := ct.parseKeys(k)
+		key, mod := ct.ParseKeys(k)
 		view := "table"
 		switch v {
 		case "move_up":
-			fn = ct.keyfn(ct.cursorUp)
+			fn = ct.Keyfn(ct.CursorUp)
 		case "move_down":
-			fn = ct.keyfn(ct.cursorDown)
+			fn = ct.Keyfn(ct.CursorDown)
 		case "previous_page":
 			fn = ct.handleHkey(key)
 		case "next_page":
-			fn = ct.keyfn(ct.nextPage)
+			fn = ct.Keyfn(ct.NextPage)
 		case "page_down":
-			fn = ct.keyfn(ct.pageDown)
+			fn = ct.Keyfn(ct.PageDown)
 		case "page_up":
-			fn = ct.keyfn(ct.pageUp)
+			fn = ct.Keyfn(ct.PageUp)
 		case "sort_column_symbol":
-			fn = ct.sortfn("symbol", false)
+			fn = ct.Sortfn("symbol", false)
 		case "move_to_page_first_row":
-			fn = ct.keyfn(ct.navigateFirstLine)
+			fn = ct.Keyfn(ct.NavigateFirstLine)
 		case "move_to_page_last_row":
-			fn = ct.keyfn(ct.navigateLastLine)
+			fn = ct.Keyfn(ct.NavigateLastLine)
 		case "open_link":
-			fn = ct.keyfn(ct.OpenLink)
+			fn = ct.Keyfn(ct.OpenLink)
 		case "refresh":
-			fn = ct.keyfn(ct.refresh)
+			fn = ct.Keyfn(ct.Refresh)
 		case "sort_column_asc":
-			fn = ct.keyfn(ct.sortAsc)
+			fn = ct.Keyfn(ct.SortAsc)
 		case "sort_column_desc":
-			fn = ct.keyfn(ct.sortDesc)
+			fn = ct.Keyfn(ct.SortDesc)
 		case "sort_left_column":
-			fn = ct.keyfn(ct.sortPrevCol)
+			fn = ct.Keyfn(ct.SortPrevCol)
 		case "sort_right_column":
-			fn = ct.keyfn(ct.sortNextCol)
+			fn = ct.Keyfn(ct.SortNextCol)
 		case "help":
 			fallthrough
 		case "toggle_show_help":
-			fn = ct.keyfn(ct.toggleHelp)
+			fn = ct.Keyfn(ct.ToggleHelp)
 			view = ""
 		case "show_help":
-			fn = ct.keyfn(ct.showHelp)
+			fn = ct.Keyfn(ct.ShowHelp)
 			view = ""
 		case "hide_help":
-			fn = ct.keyfn(ct.hideHelp)
+			fn = ct.Keyfn(ct.HideHelp)
 			view = "help"
 		case "first_page":
-			fn = ct.keyfn(ct.firstPage)
+			fn = ct.Keyfn(ct.FirstPage)
 		case "sort_column_1h_change":
-			fn = ct.sortfn("1hchange", true)
+			fn = ct.Sortfn("1hchange", true)
 		case "sort_column_24h_change":
-			fn = ct.sortfn("24hchange", true)
+			fn = ct.Sortfn("24hchange", true)
 		case "sort_column_7d_change":
-			fn = ct.sortfn("7dchange", true)
+			fn = ct.Sortfn("7dchange", true)
 		case "sort_column_available_supply":
-			fn = ct.sortfn("availablesupply", true)
+			fn = ct.Sortfn("availablesupply", true)
 		case "toggle_row_chart":
-			fn = ct.keyfn(ct.ToggleCoinChart)
+			fn = ct.Keyfn(ct.ToggleCoinChart)
 		case "move_to_page_visible_first_row":
-			fn = ct.keyfn(ct.navigatePageFirstLine)
+			fn = ct.Keyfn(ct.NavigatePageFirstLine)
 		case "move_to_page_visible_last_row":
-			fn = ct.keyfn(ct.navigatePageLastLine)
+			fn = ct.Keyfn(ct.navigatePageLastLine)
 		case "sort_column_market_cap":
-			fn = ct.sortfn("marketcap", true)
+			fn = ct.Sortfn("marketcap", true)
 		case "move_to_page_visible_middle_row":
-			fn = ct.keyfn(ct.navigatePageMiddleLine)
+			fn = ct.Keyfn(ct.NavigatePageMiddleLine)
 		case "sort_column_name":
-			fn = ct.sortfn("name", false)
+			fn = ct.Sortfn("name", false)
 		case "sort_column_price":
-			fn = ct.sortfn("price", true)
+			fn = ct.Sortfn("price", true)
 		case "sort_column_rank":
-			fn = ct.sortfn("rank", false)
+			fn = ct.Sortfn("rank", false)
 		case "sort_column_total_supply":
-			fn = ct.sortfn("totalsupply", true)
+			fn = ct.Sortfn("totalsupply", true)
 		case "sort_column_last_updated":
-			fn = ct.sortfn("lastupdated", true)
+			fn = ct.Sortfn("lastupdated", true)
 		case "sort_column_24h_volume":
-			fn = ct.sortfn("24hvolume", true)
+			fn = ct.Sortfn("24hvolume", true)
 		case "sort_column_balance":
-			fn = ct.sortfn("balance", true)
+			fn = ct.Sortfn("balance", true)
 		case "sort_column_holdings":
-			fn = ct.sortfn("holdings", true)
+			fn = ct.Sortfn("holdings", true)
 		case "last_page":
-			fn = ct.keyfn(ct.lastPage)
+			fn = ct.Keyfn(ct.LastPage)
 		case "open_search":
-			fn = ct.keyfn(ct.openSearch)
+			fn = ct.Keyfn(ct.openSearch)
 			view = ""
 		case "toggle_favorite":
-			fn = ct.keyfn(ct.toggleFavorite)
+			fn = ct.Keyfn(ct.ToggleFavorite)
 		case "toggle_show_favorites":
-			fn = ct.keyfn(ct.toggleShowFavorites)
+			fn = ct.Keyfn(ct.ToggleShowFavorites)
 		case "save":
-			fn = ct.keyfn(ct.Save)
+			fn = ct.Keyfn(ct.Save)
 		case "quit":
-			fn = ct.keyfn(ct.Quit)
+			fn = ct.Keyfn(ct.Quit)
 			view = ""
 		case "quit_view":
-			fn = ct.keyfn(ct.QuitView)
+			fn = ct.Keyfn(ct.QuitView)
 		case "next_chart_range":
-			fn = ct.keyfn(ct.NextChartRange)
+			fn = ct.Keyfn(ct.NextChartRange)
 		case "previous_chart_range":
-			fn = ct.keyfn(ct.PrevChartRange)
+			fn = ct.Keyfn(ct.PrevChartRange)
 		case "first_chart_range":
-			fn = ct.keyfn(ct.FirstChartRange)
+			fn = ct.Keyfn(ct.FirstChartRange)
 		case "last_chart_range":
-			fn = ct.keyfn(ct.LastChartRange)
+			fn = ct.Keyfn(ct.LastChartRange)
 		case "toggle_show_currency_convert_menu":
-			fn = ct.keyfn(ct.toggleConvertMenu)
+			fn = ct.Keyfn(ct.ToggleConvertMenu)
 		case "show_currency_convert_menu":
-			fn = ct.keyfn(ct.showConvertMenu)
+			fn = ct.Keyfn(ct.ShowConvertMenu)
 		case "hide_currency_convert_menu":
-			fn = ct.keyfn(ct.hideConvertMenu)
+			fn = ct.Keyfn(ct.HideConvertMenu)
 			view = "convertmenu"
 		case "toggle_portfolio":
-			fn = ct.keyfn(ct.togglePortfolio)
+			fn = ct.Keyfn(ct.TogglePortfolio)
 		case "toggle_show_portfolio":
-			fn = ct.keyfn(ct.toggleShowPortfolio)
+			fn = ct.Keyfn(ct.ToggleShowPortfolio)
 		case "show_portfolio_edit_menu":
-			fn = ct.keyfn(ct.togglePortfolioUpdateMenu)
+			fn = ct.Keyfn(ct.TogglePortfolioUpdateMenu)
 		case "toggle_table_fullscreen":
-			fn = ct.keyfn(ct.ToggleTableFullscreen)
+			fn = ct.Keyfn(ct.ToggleTableFullscreen)
 			view = ""
 		case "enlarge_chart":
-			fn = ct.keyfn(ct.EnlargeChart)
+			fn = ct.Keyfn(ct.EnlargeChart)
 		case "shorten_chart":
-			fn = ct.keyfn(ct.ShortenChart)
+			fn = ct.Keyfn(ct.ShortenChart)
 		case "move_down_or_next_page":
-			fn = ct.keyfn(ct.CursorDownOrNextPage)
+			fn = ct.Keyfn(ct.CursorDownOrNextPage)
 		case "move_up_or_previous_page":
-			fn = ct.keyfn(ct.CursorUpOrPreviousPage)
+			fn = ct.Keyfn(ct.CursorUpOrPreviousPage)
 		default:
-			fn = ct.keyfn(ct.noop)
+			fn = ct.Keyfn(ct.Noop)
 		}
 
-		ct.setKeybindingMod(key, mod, fn, view)
+		ct.SetKeybindingMod(key, mod, fn, view)
 	}
 
 	// keys to force quit
-	ct.setKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.keyfn(ct.Quit), "")
-	ct.setKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.keyfn(ct.Quit), "")
+	ct.SetKeybindingMod(gocui.KeyCtrlC, gocui.ModNone, ct.Keyfn(ct.Quit), "")
+	ct.SetKeybindingMod(gocui.KeyCtrlZ, gocui.ModNone, ct.Keyfn(ct.Quit), "")
 
 	// searchfield keys
-	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.doSearch), ct.Views.SearchField.Name())
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.cancelSearch), ct.Views.SearchField.Name())
+	ct.SetKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.Keyfn(ct.DoSearch), ct.Views.SearchField.Name())
+	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.CancelSearch), ct.Views.SearchField.Name())
 
 	// keys to quit help when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideHelp), ct.Views.Help.Name())
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideHelp), ct.Views.Help.Name())
+	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideHelp), ct.Views.Help.Name())
+	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideHelp), ct.Views.Help.Name())
 
 	// keys to quit portfolio update menu when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.Views.Input.Name())
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hidePortfolioUpdateMenu), ct.Views.Input.Name())
+	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HidePortfolioUpdateMenu), ct.Views.Input.Name())
+	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HidePortfolioUpdateMenu), ct.Views.Input.Name())
 
 	// keys to update portfolio holdings
-	ct.setKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.keyfn(ct.setPortfolioHoldings), ct.Views.Input.Name())
+	ct.SetKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.Keyfn(ct.SetPortfolioHoldings), ct.Views.Input.Name())
 
 	// keys to quit convert menu when open
-	ct.setKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.Views.ConvertMenu.Name())
-	ct.setKeybindingMod('q', gocui.ModNone, ct.keyfn(ct.hideConvertMenu), ct.Views.ConvertMenu.Name())
+	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.ConvertMenu.Name())
+	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.ConvertMenu.Name())
 
 	// character key press to select option
 	// TODO: use scrolling table
-	keys := ct.sortedSupportedCurrencyConversions()
+	keys := ct.SortedSupportedCurrencyConversions()
 	for i, k := range keys {
-		ct.setKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.keyfn(ct.setCurrencyConverstionFn(k)), ct.Views.ConvertMenu.Name())
+		ct.SetKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.Keyfn(ct.SetCurrencyConverstionFn(k)), ct.Views.ConvertMenu.Name())
 	}
 
 	return nil
 }
 
-func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error, view string) error {
+// SetKeybindingMod sets the keybinding modifier key
+func (ct *Cointop) SetKeybindingMod(key interface{}, mod gocui.Modifier, callback func(g *gocui.Gui, v *gocui.View) error, view string) error {
 	var err error
 	switch t := key.(type) {
 	case gocui.Key:
@@ -392,23 +395,26 @@ func (ct *Cointop) setKeybindingMod(key interface{}, mod gocui.Modifier, callbac
 	return err
 }
 
-func (ct *Cointop) keyfn(fn func() error) func(g *gocui.Gui, v *gocui.View) error {
+// Keyfn returns the keybinding function as a wrapped gocui view function
+func (ct *Cointop) Keyfn(fn func() error) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
 		return fn()
 	}
 }
 
+// handleHkey handles the h key
 func (ct *Cointop) handleHkey(key interface{}) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
 		if k, ok := key.(rune); ok && k == 'h' && ct.State.portfolioVisible {
-			ct.sortToggle("holdings", true)
+			ct.SortToggle("holdings", true)
 		} else {
-			ct.prevPage()
+			ct.PrevPage()
 		}
 		return nil
 	}
 }
 
-func (ct *Cointop) noop() error {
+// Noop is a no-operation function
+func (ct *Cointop) Noop() error {
 	return nil
 }

@@ -63,7 +63,7 @@ func (ct *Cointop) RefreshTable() error {
 		ct.table.AddCol("")
 		ct.table.AddCol("")
 
-		total := ct.getPortfolioTotal()
+		total := ct.GetPortfolioTotal()
 
 		for _, coin := range ct.State.coins {
 			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
@@ -190,7 +190,7 @@ func (ct *Cointop) RefreshTable() error {
 	// highlight last row if current row is out of bounds (can happen when switching views)
 	currentrow := ct.HighlightedRowIndex()
 	if len(ct.State.coins) > currentrow {
-		ct.highlightRow(currentrow)
+		ct.HighlightRow(currentrow)
 	}
 
 	ct.Update(func() error {
@@ -202,7 +202,7 @@ func (ct *Cointop) RefreshTable() error {
 		ct.table.Format().Fprint(ct.Views.Table.Backing())
 		go ct.RowChanged()
 		go ct.UpdateTableHeader()
-		go ct.updateMarketbar()
+		go ct.UpdateMarketbar()
 		go ct.UpdateChart()
 		return nil
 	})
@@ -224,9 +224,9 @@ func (ct *Cointop) UpdateTable() error {
 	})
 
 	if ct.State.filterByFavorites {
-		ct.State.coins = ct.getFavoritesSlice()
+		ct.State.coins = ct.GetFavoritesSlice()
 	} else if ct.State.portfolioVisible {
-		ct.State.coins = ct.getPortfolioSlice()
+		ct.State.coins = ct.GetPortfolioSlice()
 	} else {
 		// TODO: maintain state of previous sorting
 		if ct.State.sortBy == "holdings" {
@@ -237,7 +237,7 @@ func (ct *Cointop) UpdateTable() error {
 		ct.State.coins = ct.GetTableCoinsSlice()
 	}
 
-	ct.sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+	ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
 	go ct.RefreshTable()
 	return nil
 }

@@ -51,11 +51,11 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			ct.Views.Marketbar.Backing().Frame = false
 			ct.colorscheme.SetViewColor(ct.Views.Marketbar.Backing(), "marketbar")
 			go func() {
-				ct.updateMarketbar()
+				ct.UpdateMarketbar()
 				_, found := ct.cache.Get(ct.Views.Marketbar.Name())
 				if found {
 					ct.cache.Delete(ct.Views.Marketbar.Name())
-					ct.updateMarketbar()
+					ct.UpdateMarketbar()
 				}
 			}()
 		}
@@ -123,7 +123,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 			ct.cache.Delete("allCoinsSlugMap")
 		}
 		go func() {
-			ct.updateCoins()
+			ct.UpdateCoins()
 			ct.UpdateTable()
 		}()
 	}
@@ -209,7 +209,7 @@ func (ct *Cointop) layout(g *gocui.Gui) error {
 
 	if lastWidth != maxX {
 		lastWidth = maxX
-		ct.refresh()
+		ct.Refresh()
 	}
 
 	return nil

@@ -32,8 +32,8 @@ func (statusbar *StatusbarView) Update(str string) error {
 // UpdateStatusbar updates the statusbar view
 func (ct *Cointop) UpdateStatusbar(s string) error {
 	ct.debuglog("UpdateStatusbar()")
-	currpage := ct.currentDisplayPage()
-	totalpages := ct.totalPagesDisplay()
+	currpage := ct.CurrentDisplayPage()
+	totalpages := ct.TotalPagesDisplay()
 	var quitText string
 	var favoritesText string
 	var portfolioText string

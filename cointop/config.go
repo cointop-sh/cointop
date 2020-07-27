@@ -26,9 +26,10 @@ type config struct {
 	RefreshRate   interface{}              `toml:"refresh_rate"`
 }
 
-func (ct *Cointop) setupConfig() error {
+// SetupConfig loads config file
+func (ct *Cointop) SetupConfig() error {
 	ct.debuglog("setupConfig()")
-	if err := ct.createConfigIfNotExists(); err != nil {
+	if err := ct.CreateConfigIfNotExists(); err != nil {
 		return err
 	}
 	if err := ct.parseConfig(); err != nil {
@@ -65,7 +66,8 @@ func (ct *Cointop) setupConfig() error {
 	return nil
 }
 
-func (ct *Cointop) createConfigIfNotExists() error {
+// CreateConfigIfNotExists creates config file if it doesn't exist
+func (ct *Cointop) CreateConfigIfNotExists() error {
 	ct.debuglog("createConfigIfNotExists()")
 
 	// NOTE: this is to support previous default config filepaths
@@ -95,7 +97,8 @@ func (ct *Cointop) createConfigIfNotExists() error {
 	return nil
 }
 
-func (ct *Cointop) configDirPath() string {
+// ConfigDirPath returns the config directory path
+func (ct *Cointop) ConfigDirPath() string {
 	ct.debuglog("configDirPath()")
 	path := NormalizePath(ct.configFilepath)
 	separator := string(filepath.Separator)
@@ -103,14 +106,16 @@ func (ct *Cointop) configDirPath() string {
 	return strings.Join(parts[0:len(parts)-1], separator)
 }
 
-func (ct *Cointop) configPath() string {
-	ct.debuglog("configPath()")
+// ConfigPath return the config file path
+func (ct *Cointop) ConfigFilePath() string {
+	ct.debuglog("configFilePath()")
 	return NormalizePath(ct.configFilepath)
 }
 
+// ConfigPath return the config file path
 func (ct *Cointop) makeConfigDir() error {
 	ct.debuglog("makeConfigDir()")
-	path := ct.configDirPath()
+	path := ct.ConfigDirPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return os.MkdirAll(path, os.ModePerm)
 	}
@@ -118,9 +123,10 @@ func (ct *Cointop) makeConfigDir() error {
 	return nil
 }
 
+// MakeConfigFile creates a new config file
 func (ct *Cointop) makeConfigFile() error {
 	ct.debuglog("makeConfigFile()")
-	path := ct.configPath()
+	path := ct.ConfigFilePath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fo, err := os.Create(path)
 		if err != nil {
@@ -138,11 +144,12 @@ func (ct *Cointop) makeConfigFile() error {
 	return nil
 }
 
-func (ct *Cointop) saveConfig() error {
+// SaveConfig writes settings to the config file
+func (ct *Cointop) SaveConfig() error {
 	ct.debuglog("saveConfig()")
 	ct.saveMux.Lock()
 	defer ct.saveMux.Unlock()
-	path := ct.configPath()
+	path := ct.ConfigFilePath()
 	if _, err := os.Stat(path); err == nil {
 		b, err := ct.configToToml()
 		if err != nil {
@@ -156,10 +163,11 @@ func (ct *Cointop) saveConfig() error {
 	return nil
 }
 
+// ParseConfig decodes the toml config file
 func (ct *Cointop) parseConfig() error {
 	ct.debuglog("parseConfig()")
 	var conf config
-	path := ct.configPath()
+	path := ct.ConfigFilePath()
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
 		return err
 	}
@@ -168,6 +176,7 @@ func (ct *Cointop) parseConfig() error {
 	return nil
 }
 
+// ConfigToToml encodes config struct to TOML
 func (ct *Cointop) configToToml() ([]byte, error) {
 	ct.debuglog("configToToml()")
 	shortcutsIfcs := map[string]interface{}{}
@@ -232,6 +241,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	return b.Bytes(), nil
 }
 
+// LoadShortcutsFromConfig loads keyboard shortcuts from config file to struct
 func (ct *Cointop) loadShortcutsFromConfig() error {
 	ct.debuglog("loadShortcutsFromConfig()")
 	for k, ifc := range ct.config.Shortcuts {
@@ -248,6 +258,7 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 	return nil
 }
 
+// LoadCurrencyFromConfig loads currency from config file to struct
 func (ct *Cointop) loadCurrencyFromConfig() error {
 	ct.debuglog("loadCurrencyFromConfig()")
 	if currency, ok := ct.config.Currency.(string); ok {
@@ -256,6 +267,7 @@ func (ct *Cointop) loadCurrencyFromConfig() error {
 	return nil
 }
 
+// LoadDefaultViewFromConfig loads default view from config file to struct
 func (ct *Cointop) loadDefaultViewFromConfig() error {
 	ct.debuglog("loadDefaultViewFromConfig()")
 	if defaultView, ok := ct.config.DefaultView.(string); ok {
@@ -277,6 +289,7 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 	return nil
 }
 
+// LoadAPIKeysFromConfig loads API keys from config file to struct
 func (ct *Cointop) loadAPIKeysFromConfig() error {
 	ct.debuglog("loadAPIKeysFromConfig()")
 	for key, value := range ct.config.CoinMarketCap {
@@ -288,6 +301,7 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 	return nil
 }
 
+// LoadColorschemeFromConfig loads colorscheme name from config file to struct
 func (ct *Cointop) loadColorschemeFromConfig() error {
 	ct.debuglog("loadColorschemeFromConfig()")
 	if colorscheme, ok := ct.config.Colorscheme.(string); ok {
@@ -297,6 +311,7 @@ func (ct *Cointop) loadColorschemeFromConfig() error {
 	return nil
 }
 
+// LoadRefreshRateFromConfig loads refresh rate from config file to struct
 func (ct *Cointop) loadRefreshRateFromConfig() error {
 	ct.debuglog("loadRefreshRateFromConfig()")
 	if refreshRate, ok := ct.config.RefreshRate.(int64); ok {
@@ -306,6 +321,7 @@ func (ct *Cointop) loadRefreshRateFromConfig() error {
 	return nil
 }
 
+// GetColorschemeColors loads colors from colorsheme file to struct
 func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 	ct.debuglog("getColorschemeColors()")
 	var colors map[string]interface{}
@@ -337,6 +353,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 	return colors, nil
 }
 
+// LoadAPIChoiceFromConfig loads API choices from config file to struct
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
 	ct.debuglog("loadAPIKeysFromConfig()")
 	apiChoice, ok := ct.config.API.(string)
@@ -347,6 +364,7 @@ func (ct *Cointop) loadAPIChoiceFromConfig() error {
 	return nil
 }
 
+// LoadFavoritesFromConfig loads favorites data from config file to struct
 func (ct *Cointop) loadFavoritesFromConfig() error {
 	ct.debuglog("loadFavoritesFromConfig()")
 	for k, arr := range ct.config.Favorites {
@@ -368,6 +386,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 	return nil
 }
 
+// LoadPortfolioFromConfig loads portfolio data from config file to struct
 func (ct *Cointop) loadPortfolioFromConfig() error {
 	ct.debuglog("loadPortfolioFromConfig()")
 	for name, holdingsIfc := range ct.config.Portfolio {
@@ -379,7 +398,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 			}
 		}
 
-		if err := ct.setPortfolioEntry(name, holdings); err != nil {
+		if err := ct.SetPortfolioEntry(name, holdings); err != nil {
 			return err
 		}
 	}

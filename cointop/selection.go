@@ -1,6 +1,7 @@
 package cointop
 
-func (ct *Cointop) selectedCoinName() string {
+// SelectedCoinName returns the selected coin name
+func (ct *Cointop) SelectedCoinName() string {
 	ct.debuglog("selectedCoinName()")
 	coin := ct.State.selectedCoin
 	if coin != nil {
@@ -10,7 +11,8 @@ func (ct *Cointop) selectedCoinName() string {
 	return ""
 }
 
-func (ct *Cointop) selectedCoinSymbol() string {
+// SelectedCoinSymbol returns the selected coin symbol
+func (ct *Cointop) SelectedCoinSymbol() string {
 	ct.debuglog("selectedCoinSymbol()")
 	coin := ct.State.selectedCoin
 	if coin != nil {
