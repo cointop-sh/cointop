@@ -75,7 +75,7 @@ func (s *Server) ListenAndServe() error {
 			cmdCtx, cancelCmd := context.WithCancel(sshSession.Context())
 			defer cancelCmd()
 
-			cmd := exec.CommandContext(cmdCtx, s.executableBinary, "--reset", "--config", configPath)
+			cmd := exec.CommandContext(cmdCtx, s.executableBinary, "--reset", "--silent", "--config", configPath)
 			cmd.Env = append(sshSession.Environ(), fmt.Sprintf("TERM=%s", ptyReq.Term))
 
 			f, err := pty.Start(cmd)
