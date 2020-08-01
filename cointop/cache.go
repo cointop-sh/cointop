@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-
-	"github.com/miguelmota/cointop/cointop/common/filecache"
 )
 
 // CacheKey returns cached value given key
@@ -27,6 +25,6 @@ func (ct *Cointop) CacheAllCoinsSlugMap() {
 	if len(allCoinsSlugMap) != 0 {
 		cachekey := ct.CacheKey("allCoinsSlugMap")
 		ct.cache.Set(cachekey, allCoinsSlugMap, 10*time.Second)
-		filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
+		ct.filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
 	}
 }

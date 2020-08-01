@@ -42,6 +42,7 @@ dist
 bin
 main
 !main.go
+wasm
 
 # flatpak
 .flatpak-builder

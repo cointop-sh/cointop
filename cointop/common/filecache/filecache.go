@@ -15,24 +15,57 @@ import (
 	"time"
 )
 
-const cachedir = "/tmp"
+// DefaultCacheDir ...
+var DefaultCacheDir = "/tmp"
 
-var muts = make(map[string]*sync.Mutex)
+// FileCache ...
+type FileCache struct {
+	muts     map[string]*sync.Mutex
+	cacheDir string
+}
 
-// Set writes item to cache
-func Set(key string, data interface{}, expire time.Duration) error {
-	if _, ok := muts[key]; !ok {
-		muts[key] = new(sync.Mutex)
+// Config ...
+type Config struct {
+	CacheDir string
+}
+
+// NewFileCache ...
+func NewFileCache(config *Config) *FileCache {
+	if config == nil {
+		config = &Config{}
 	}
 
-	muts[key].Lock()
-	defer muts[key].Unlock()
+	cacheDir := DefaultCacheDir
+	if config.CacheDir != "" {
+		cacheDir = config.CacheDir
+	}
+
+	if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
+		if err := os.MkdirAll(cacheDir, 0700); err != nil {
+			panic(err)
+		}
+	}
+
+	return &FileCache{
+		muts:     make(map[string]*sync.Mutex),
+		cacheDir: cacheDir,
+	}
+}
+
+// Set writes item to cache
+func (f *FileCache) Set(key string, data interface{}, expire time.Duration) error {
+	if _, ok := f.muts[key]; !ok {
+		f.muts[key] = new(sync.Mutex)
+	}
+
+	f.muts[key].Lock()
+	defer f.muts[key].Unlock()
 
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
 	file := fmt.Sprintf("fcache.%s.%v", key, strconv.FormatInt(time.Now().Add(expire).Unix(), 10))
-	fpath := filepath.Join(cachedir, file)
+	fpath := filepath.Join(f.cacheDir, file)
 
-	clean(key)
+	f.clean(key)
 
 	serialized, err := serialize(data)
 	if err != nil {
@@ -56,9 +89,9 @@ func Set(key string, data interface{}, expire time.Duration) error {
 }
 
 // Get reads item from cache
-func Get(key string, dst interface{}) error {
+func (f *FileCache) Get(key string, dst interface{}) error {
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
-	pattern := filepath.Join(cachedir, fmt.Sprintf("fcache.%s.*", key))
+	pattern := filepath.Join(f.cacheDir, fmt.Sprintf("fcache.%s.*", key))
 	files, err := filepath.Glob(pattern)
 	if len(files) < 1 || err != nil {
 		return errors.New("fcache: no cache file found")
@@ -106,8 +139,8 @@ func Get(key string, dst interface{}) error {
 }
 
 // clean removes item from cache
-func clean(key string) error {
-	pattern := filepath.Join(cachedir, fmt.Sprintf("fcache.%s.*", key))
+func (f *FileCache) clean(key string) error {
+	pattern := filepath.Join(f.cacheDir, fmt.Sprintf("fcache.%s.*", key))
 	files, _ := filepath.Glob(pattern)
 	for _, file := range files {
 		if _, err := os.Stat(file); err == nil {

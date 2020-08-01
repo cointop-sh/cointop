@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
 	"github.com/miguelmota/cointop/cointop/common/timeutil"
 )
@@ -39,7 +38,7 @@ func ChartRanges() []string {
 	}
 }
 
-// ChartRanges returns map of chart range time ranges
+// ChartRangesMap returns map of chart range time ranges
 func ChartRangesMap() map[string]time.Duration {
 	return map[string]time.Duration{
 		"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
@@ -176,7 +175,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 		ct.cache.Set(cachekey, data, 10*time.Second)
 		go func() {
-			filecache.Set(cachekey, data, 24*time.Hour)
+			ct.filecache.Set(cachekey, data, 24*time.Hour)
 		}()
 	}
 
@@ -261,7 +260,7 @@ func (ct *Cointop) PortfolioChart() error {
 			graphData, _ = cached.([]float64)
 			ct.debuglog("soft cache hit")
 		} else {
-			filecache.Get(cachekey, &graphData)
+			ct.filecache.Get(cachekey, &graphData)
 
 			if len(graphData) == 0 {
 				time.Sleep(2 * time.Second)
@@ -279,7 +278,7 @@ func (ct *Cointop) PortfolioChart() error {
 
 			ct.cache.Set(cachekey, graphData, 10*time.Second)
 			go func() {
-				filecache.Set(cachekey, graphData, 24*time.Hour)
+				ct.filecache.Set(cachekey, graphData, 24*time.Hour)
 			}()
 		}
 

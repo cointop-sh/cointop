@@ -28,7 +28,7 @@ debug:
 	DEBUG=1 go run main.go
 
 build:
-	@go build -o bin/cointop main.go
+	go build -o bin/cointop main.go
 
 # http://macappstore.org/upx
 build-mac: clean-mac

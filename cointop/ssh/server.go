@@ -11,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"path/filepath"
 	"syscall"
 	"time"
 	"unsafe"
@@ -66,16 +65,18 @@ func (s *Server) ListenAndServe() error {
 				return
 			}
 
-			configPath, err := createTempConfig()
+			tempDir, err := createTempDir()
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 
+			configPath := fmt.Sprintf("%s/config", tempDir)
+
 			cmdCtx, cancelCmd := context.WithCancel(sshSession.Context())
 			defer cancelCmd()
 
-			cmd := exec.CommandContext(cmdCtx, s.executableBinary, "--reset", "--silent", "--config", configPath)
+			cmd := exec.CommandContext(cmdCtx, s.executableBinary, "--reset", "--silent", "--cache-dir", tempDir, "--config", configPath)
 			cmd.Env = append(sshSession.Environ(), fmt.Sprintf("TERM=%s", ptyReq.Term))
 
 			f, err := pty.Start(cmd)
@@ -139,14 +140,8 @@ func setWinsize(f *os.File, w, h int) {
 		uintptr(unsafe.Pointer(&struct{ h, w, x, y uint16 }{uint16(h), uint16(w), 0, 0})))
 }
 
-// createTempConfig ...
+// createTempDir ...
 // TODO: load saved configuration based on ssh public key hash
-func createTempConfig() (string, error) {
-	f, err := ioutil.TempFile("", "config")
-	if err != nil {
-		return "", err
-	}
-
-	f.Close()
-	return filepath.Clean(f.Name()), nil
+func createTempDir() (string, error) {
+	return ioutil.TempDir("", "")
 }

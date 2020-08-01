@@ -106,7 +106,7 @@ func (ct *Cointop) ConfigDirPath() string {
 	return strings.Join(parts[0:len(parts)-1], separator)
 }
 
-// ConfigPath return the config file path
+// ConfigFilePath return the config file path
 func (ct *Cointop) ConfigFilePath() string {
 	ct.debuglog("configFilePath()")
 	return NormalizePath(ct.configFilepath)

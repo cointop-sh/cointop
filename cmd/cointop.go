@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/miguelmota/cointop/cointop"
+	"github.com/miguelmota/cointop/cointop/common/filecache"
 	cssh "github.com/miguelmota/cointop/cointop/ssh"
 	"github.com/spf13/cobra"
 )
@@ -14,6 +15,7 @@ func Execute() {
 	var version, test, clean, reset, hideMarketbar, hideChart, hideStatusbar, onlyTable, silent bool
 	var refreshRate uint
 	var config, cmcAPIKey, apiChoice, colorscheme, coin, currency string
+	cacheDir := filecache.DefaultCacheDir
 
 	rootCmd := &cobra.Command{
 		Use:   "cointop",
@@ -65,6 +67,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 			}
 
 			ct, err := cointop.NewCointop(&cointop.Config{
+				CacheDir:            cacheDir,
 				ConfigFilepath:      config,
 				CoinMarketCapAPIKey: cmcAPIKey,
 				APIChoice:           apiChoice,
@@ -97,6 +100,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", cointop.CoinGecko, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", "Colorscheme to use (default \"cointop\"). To install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.config/cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors")
+	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", "/tmp", "Cache directory")
 
 	versionCmd := &cobra.Command{
 		Use:   "version",
@@ -114,10 +118,13 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// NOTE: if clean command, clean but don't run cointop
 			return cointop.Clean(&cointop.CleanConfig{
-				Log: true,
+				Log:      true,
+				CacheDir: cacheDir,
 			})
 		},
 	}
+
+	cleanCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, "Cache directory")
 
 	resetCmd := &cobra.Command{
 		Use:   "reset",
@@ -126,10 +133,13 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// NOTE: if reset command, reset but don't run cointop
 			return cointop.Reset(&cointop.ResetConfig{
-				Log: true,
+				Log:      true,
+				CacheDir: cacheDir,
 			})
 		},
 	}
+
+	resetCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, "Cache directory")
 
 	priceCmd := &cobra.Command{
 		Use:   "price",

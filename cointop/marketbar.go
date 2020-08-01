@@ -7,7 +7,6 @@ import (
 
 	types "github.com/miguelmota/cointop/cointop/common/api/types"
 	"github.com/miguelmota/cointop/cointop/common/color"
-	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/humanize"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
@@ -107,12 +106,12 @@ func (ct *Cointop) UpdateMarketbar() error {
 		if market.TotalMarketCapUSD == 0 {
 			market, err = ct.api.GetGlobalMarketData(ct.State.currencyConversion)
 			if err != nil {
-				filecache.Get(cachekey, &market)
+				ct.filecache.Get(cachekey, &market)
 			}
 
 			ct.cache.Set(cachekey, market, 10*time.Second)
 			go func() {
-				filecache.Set(cachekey, market, 24*time.Hour)
+				ct.filecache.Set(cachekey, market, 24*time.Hour)
 			}()
 		}
 

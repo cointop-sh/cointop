@@ -89,6 +89,7 @@ type Cointop struct {
 	colorschemeName  string
 	colorscheme      *Colorscheme
 	debug            bool
+	filecache        *filecache.FileCache
 	forceRefresh     chan bool
 	limiter          <-chan time.Time
 	maxTableWidth    int
@@ -121,6 +122,7 @@ type Portfolio struct {
 // Config config options
 type Config struct {
 	APIChoice           string
+	CacheDir            string
 	Colorscheme         string
 	ConfigFilepath      string
 	CoinMarketCapAPIKey string
@@ -150,6 +152,10 @@ func NewCointop(config *Config) (*Cointop, error) {
 		debug = true
 	}
 
+	if config == nil {
+		config = &Config{}
+	}
+
 	configFilepath := DefaultConfigFilepath
 
 	ct := &Cointop{
@@ -164,6 +170,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 		debug:          debug,
 		chartRangesMap: ChartRangesMap(),
 		limiter:        time.Tick(2 * time.Second),
+		filecache: filecache.NewFileCache(&filecache.Config{
+			CacheDir: config.CacheDir,
+		}),
 		State: &State{
 			allCoins:           []*Coin{},
 			currencyConversion: "USD",
@@ -280,7 +289,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 	allCoinsSlugMap := make(map[string]*Coin)
 	coinscachekey := ct.CacheKey("allCoinsSlugMap")
-	filecache.Get(coinscachekey, &allCoinsSlugMap)
+	ct.filecache.Get(coinscachekey, &allCoinsSlugMap)
 
 	for k, v := range allCoinsSlugMap {
 		ct.State.allCoinsSlugMap.Store(k, v)
@@ -319,12 +328,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 	var globaldata []float64
 	chartcachekey := ct.CacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
-	filecache.Get(chartcachekey, &globaldata)
+	ct.filecache.Get(chartcachekey, &globaldata)
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 
 	var market types.GlobalMarketData
 	marketcachekey := ct.CacheKey("market")
-	filecache.Get(marketcachekey, &market)
+	ct.filecache.Get(marketcachekey, &market)
 	ct.cache.Set(marketcachekey, market, 10*time.Second)
 
 	// TODO: notify offline status in status bar
@@ -394,21 +403,30 @@ func PrintPrice(config *PriceConfig) error {
 
 // CleanConfig is the config for the clean function
 type CleanConfig struct {
-	Log bool
+	Log      bool
+	CacheDir string
 }
 
 // Clean removes cache files
 func Clean(config *CleanConfig) error {
-	tmpPath := "/tmp"
-	if _, err := os.Stat(tmpPath); !os.IsNotExist(err) {
-		files, err := ioutil.ReadDir(tmpPath)
+	if config == nil {
+		config = &CleanConfig{}
+	}
+
+	cacheDir := filecache.DefaultCacheDir
+	if config.CacheDir != "" {
+		cacheDir = config.CacheDir
+	}
+
+	if _, err := os.Stat(cacheDir); !os.IsNotExist(err) {
+		files, err := ioutil.ReadDir(cacheDir)
 		if err != nil {
 			return err
 		}
 
 		for _, f := range files {
 			if strings.HasPrefix(f.Name(), "fcache.") {
-				file := fmt.Sprintf("%s/%s", tmpPath, f.Name())
+				file := fmt.Sprintf("%s/%s", cacheDir, f.Name())
 				if config.Log {
 					fmt.Printf("removing %s\n", file)
 				}
@@ -428,13 +446,19 @@ func Clean(config *CleanConfig) error {
 
 // ResetConfig is the config for the reset function
 type ResetConfig struct {
-	Log bool
+	Log      bool
+	CacheDir string
 }
 
 // Reset removes configuration and cache files
 func Reset(config *ResetConfig) error {
+	if config == nil {
+		config = &ResetConfig{}
+	}
+
 	if err := Clean(&CleanConfig{
-		Log: config.Log,
+		CacheDir: config.CacheDir,
+		Log:      config.Log,
 	}); err != nil {
 		return err
 	}
