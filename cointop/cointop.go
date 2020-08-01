@@ -157,6 +157,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	configFilepath := DefaultConfigFilepath
+	if config.ConfigFilepath != "" {
+		configFilepath = config.ConfigFilepath
+	}
 
 	ct := &Cointop{
 		apiChoice:      CoinGecko,
