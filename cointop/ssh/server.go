@@ -10,15 +10,18 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"path"
 	"syscall"
 	"time"
 	"unsafe"
 
 	"github.com/creack/pty"
 	"github.com/gliderlabs/ssh"
+	"github.com/miguelmota/cointop/cointop/common/pathutil"
 	gossh "golang.org/x/crypto/ssh"
 )
+
+// DefaultHostKeyFile ...
+var DefaultHostKeyFile = "~/.ssh/id_rsa"
 
 // Config ...
 type Config struct {
@@ -26,6 +29,7 @@ type Config struct {
 	Address          string
 	IdleTimeout      time.Duration
 	ExecutableBinary string
+	HostKeyFile      string
 }
 
 // Server ...
@@ -35,25 +39,29 @@ type Server struct {
 	idleTimeout      time.Duration
 	executableBinary string
 	sshServer        *ssh.Server
+	hostKeyFile      string
 }
 
 // NewServer ...
 func NewServer(config *Config) *Server {
+	hostKeyFile := DefaultHostKeyFile
+	if config.HostKeyFile != "" {
+		hostKeyFile = config.HostKeyFile
+	}
+
+	hostKeyFile = pathutil.NormalizePath(hostKeyFile)
+
 	return &Server{
 		port:             config.Port,
 		address:          config.Address,
 		idleTimeout:      config.IdleTimeout,
 		executableBinary: config.ExecutableBinary,
+		hostKeyFile:      hostKeyFile,
 	}
 }
 
 // ListenAndServe ...
 func (s *Server) ListenAndServe() error {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-
 	s.sshServer = &ssh.Server{
 		Addr:        fmt.Sprintf("%s:%v", s.address, s.port),
 		IdleTimeout: s.idleTimeout,
@@ -116,12 +124,11 @@ func (s *Server) ListenAndServe() error {
 		},
 	}
 
-	hostKeyFile := path.Join(homeDir, ".ssh", "id_rsa")
-	if _, err := os.Stat(hostKeyFile); os.IsNotExist(err) {
+	if _, err := os.Stat(s.hostKeyFile); os.IsNotExist(err) {
 		return errors.New("SSH key is required to start server")
 	}
 
-	err = s.sshServer.SetOption(ssh.HostKeyFile(hostKeyFile))
+	err := s.sshServer.SetOption(ssh.HostKeyFile(s.hostKeyFile))
 	if err != nil {
 		return err
 	}

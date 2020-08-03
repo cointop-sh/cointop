@@ -83,7 +83,7 @@ There are multiple ways you can install cointop depending on the platform you're
 Make sure to have [go](https://golang.org/) (1.12+) installed, then do:
 
 ```bash
-go get -u github.com/miguelmota/cointop
+go get github.com/miguelmota/cointop
 ```
 
 Make sure `$GOPATH/bin` is added to the `$PATH` variable.
@@ -597,6 +597,12 @@ SSH demo:
 
 ```bash
 ssh cointop.sh
+```
+
+Using docker to run SSH server:
+
+```bash
+docker run -p 2222:22 -v ~/.ssh:/keys --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
 ```
 
 ## FAQ

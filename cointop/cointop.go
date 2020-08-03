@@ -14,6 +14,7 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
 	"github.com/miguelmota/cointop/cointop/common/humanize"
+	"github.com/miguelmota/cointop/cointop/common/pathutil"
 	"github.com/miguelmota/cointop/cointop/common/table"
 	"github.com/miguelmota/gocui"
 	"github.com/patrickmn/go-cache"
@@ -467,7 +468,7 @@ func Reset(config *ResetConfig) error {
 	}
 
 	// default config path
-	configPath := fmt.Sprintf("%s%s", UserPreferredHomeDir(), "/.cointop")
+	configPath := fmt.Sprintf("%s%s", pathutil.UserPreferredHomeDir(), "/.cointop")
 	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
 		if config.Log {
 			fmt.Printf("removing %s\n", configPath)

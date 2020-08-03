@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
+	"github.com/miguelmota/cointop/cointop/common/pathutil"
 )
 
 var fileperm = os.FileMode(0644)
@@ -77,7 +78,7 @@ func (ct *Cointop) CreateConfigIfNotExists() error {
 	}
 
 	for _, previousConfigFilepath := range previousDefaultConfigPaths {
-		normalizedPath := NormalizePath(previousConfigFilepath)
+		normalizedPath := pathutil.NormalizePath(previousConfigFilepath)
 		if _, err := os.Stat(normalizedPath); err == nil {
 			ct.configFilepath = normalizedPath
 			return nil
@@ -100,7 +101,7 @@ func (ct *Cointop) CreateConfigIfNotExists() error {
 // ConfigDirPath returns the config directory path
 func (ct *Cointop) ConfigDirPath() string {
 	ct.debuglog("configDirPath()")
-	path := NormalizePath(ct.configFilepath)
+	path := pathutil.NormalizePath(ct.configFilepath)
 	separator := string(filepath.Separator)
 	parts := strings.Split(path, separator)
 	return strings.Join(parts[0:len(parts)-1], separator)
@@ -109,7 +110,7 @@ func (ct *Cointop) ConfigDirPath() string {
 // ConfigFilePath return the config file path
 func (ct *Cointop) ConfigFilePath() string {
 	ct.debuglog("configFilePath()")
-	return NormalizePath(ct.configFilepath)
+	return pathutil.NormalizePath(ct.configFilepath)
 }
 
 // ConfigPath return the config file path
@@ -331,7 +332,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 			return nil, err
 		}
 	} else {
-		path := NormalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemeName))
+		path := pathutil.NormalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemeName))
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
 			if ct.colorschemeName == "cointop" {

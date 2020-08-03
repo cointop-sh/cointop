@@ -171,6 +171,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	var address string = "0.0.0.0"
 	var idleTimeout uint = 60
 	var executableBinary string = "cointop"
+	var hostKeyFile string = cssh.DefaultHostKeyFile
 
 	serverCmd := &cobra.Command{
 		Use:   "server",
@@ -182,6 +183,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 				Port:             port,
 				IdleTimeout:      time.Duration(int(idleTimeout)) * time.Second,
 				ExecutableBinary: executableBinary,
+				HostKeyFile:      hostKeyFile,
 			})
 
 			fmt.Printf("Running SSH server on port %v\n", port)
@@ -192,7 +194,8 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	serverCmd.Flags().UintVarP(&port, "port", "p", port, "Port")
 	serverCmd.Flags().StringVarP(&address, "address", "a", address, "Address")
 	serverCmd.Flags().UintVarP(&idleTimeout, "idle-timeout", "t", idleTimeout, "Idle timeout in seconds")
-	serverCmd.Flags().StringVarP(&executableBinary, "binary", "b", executableBinary, "ExecutableBinary")
+	serverCmd.Flags().StringVarP(&executableBinary, "binary", "b", executableBinary, "Executable binary path")
+	serverCmd.Flags().StringVarP(&hostKeyFile, "host-key-file", "k", hostKeyFile, "Host key file")
 
 	rootCmd.AddCommand(versionCmd, cleanCmd, resetCmd, priceCmd, testCmd, serverCmd)
 
