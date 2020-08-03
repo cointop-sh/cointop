@@ -1,7 +1,6 @@
 builds:
   - binary: cointop
     goos:
-      - windows
       - darwin
       - linux
     goarch:
