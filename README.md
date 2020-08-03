@@ -1087,6 +1087,8 @@ See this [wiki](https://github.com/miguelmota/cointop/wiki/Deployment).
 
 Thank you for tips! 🙏
 
+Follow on twitter [@cointop_sh](https://twitter.com/cointop_sh)
+
 ## License
 
 Released under the [Apache 2.0](./LICENSE) license.
