@@ -108,12 +108,6 @@ tar -xvzf cointop_x.x.x_linux_amd64.tar.gz cointop
 sudo mv cointop /usr/local/bin/cointop
 ```
 
-### Docker
-
-```bash
-docker run -it cointop/cointop
-```
-
 ### Homebrew (macOS)
 
 cointop is available via [Homebrew](https://formulae.brew.sh/formula/cointop) for macOS:
@@ -128,27 +122,21 @@ Run
 cointop
 ```
 
-### Flatpak (Linux)
+### Snap (Ubuntu)
 
-cointop is available as a [Flatpak](https://flatpak.org/) package via the [Flathub](https://flathub.org/apps/details/com.github.miguelmota.Cointop) registry.
-
-Add the flathub repository (if not done so already)
+cointop is available as a [snap](https://snapcraft.io/cointop) for Linux users.
 
 ```bash
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+sudo snap install cointop --stable
 ```
 
-Install cointop flatpak
+Running snap:
 
 ```bash
-sudo flatpak install flathub com.github.miguelmota.Cointop
+sudo snap run cointop
 ```
 
-Run cointop flatpak
-
-```bash
-flatpak run com.github.miguelmota.Cointop
-```
+Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
 
 ### Copr (Fedora)
 
@@ -188,23 +176,29 @@ Using [yay](https://github.com/Jguer/yay)
 yay -S cointop
 ```
 
-### Snap (Ubuntu)
+### Flatpak (Linux)
 
-cointop is available as a [snap](https://snapcraft.io/cointop) for Linux users.
+cointop is available as a [Flatpak](https://flatpak.org/) package via the [Flathub](https://flathub.org/apps/details/com.github.miguelmota.Cointop) registry.
 
-```bash
-sudo snap install cointop --stable
-```
-
-Running snap:
+Add the flathub repository (if not done so already)
 
 ```bash
-sudo snap run cointop
+sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 ```
 
-Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.snapcraft.io/t/windows-subsystem-for-linux/216).
+Install cointop flatpak
 
-### FreeBSD
+```bash
+sudo flatpak install flathub com.github.miguelmota.Cointop
+```
+
+Run cointop flatpak
+
+```bash
+flatpak run com.github.miguelmota.Cointop
+```
+
+### FreshPorts (FreeBSD / OpenBSD)
 
 cointop is available as a [FreshPort](https://www.freshports.org/finance/cointop/) package.
 
@@ -221,6 +215,14 @@ go get -u github.com/miguelmota/cointop
 ```
 
 You'll need additional font support for Windows. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
+
+### Docker
+
+cointop is available on [Docker Hub](https://hub.docker.com/r/cointop/cointop).
+
+```bash
+docker run -it cointop/cointop
+```
 
 ### Binaries
 
