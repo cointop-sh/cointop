@@ -96,16 +96,14 @@ cointop
 
 ### Binary (all platforms)
 
-You can download the binary from the [releases](https://github.com/miguelmota/cointop/releases) page
+You can download the binary from the [releases](https://github.com/miguelmota/cointop/releases) page.
 
 ```bash
-# replace x.x.x with the latest version
-wget https://github.com/miguelmota/cointop/releases/download/x.x.x/cointop_x.x.x_linux_amd64.tar.gz
-tar -xvzf cointop_x.x.x_linux_amd64.tar.gz cointop
-./cointop
+curl -o- https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh | bash
+```
 
-# optionally move to bin path
-sudo mv cointop /usr/local/bin/cointop
+```bash
+wget -qO- https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh | bash
 ```
 
 ### Homebrew (macOS)
