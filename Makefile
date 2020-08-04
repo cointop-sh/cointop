@@ -28,18 +28,18 @@ debug:
 	DEBUG=1 go run main.go
 
 build:
-	go build -o bin/cointop main.go
+	go build -ldflags "-X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop main.go
 
 # http://macappstore.org/upx
 build-mac: clean-mac
-	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/macos/cointop && upx bin/macos/cointop
+	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/macos/cointop && upx bin/macos/cointop
 
 build-linux: clean-linux
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o bin/linux/cointop && upx bin/linux/cointop
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/linux/cointop && upx bin/linux/cointop
 
 build-multiple: clean
-	env GOARCH=amd64 go build -ldflags "-s -w" -o bin/cointop64 && upx bin/cointop64 && \
-	env GOARCH=386 go build -ldflags "-s -w" -o bin/cointop32 && upx bin/cointop32
+	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop64 && upx bin/cointop64 && \
+	env GOARCH=386 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop32 && upx bin/cointop32
 
 clean-mac:
 	go clean && \

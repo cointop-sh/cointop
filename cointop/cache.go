@@ -25,6 +25,8 @@ func (ct *Cointop) CacheAllCoinsSlugMap() {
 	if len(allCoinsSlugMap) != 0 {
 		cachekey := ct.CacheKey("allCoinsSlugMap")
 		ct.cache.Set(cachekey, allCoinsSlugMap, 10*time.Second)
-		ct.filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
+		if ct.filecache != nil {
+			ct.filecache.Set(cachekey, allCoinsSlugMap, 24*time.Hour)
+		}
 	}
 }

@@ -174,9 +174,11 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 		}
 
 		ct.cache.Set(cachekey, data, 10*time.Second)
-		go func() {
-			ct.filecache.Set(cachekey, data, 24*time.Hour)
-		}()
+		if ct.filecache != nil {
+			go func() {
+				ct.filecache.Set(cachekey, data, 24*time.Hour)
+			}()
+		}
 	}
 
 	chart.Data = data
@@ -260,7 +262,9 @@ func (ct *Cointop) PortfolioChart() error {
 			graphData, _ = cached.([]float64)
 			ct.debuglog("soft cache hit")
 		} else {
-			ct.filecache.Get(cachekey, &graphData)
+			if ct.filecache != nil {
+				ct.filecache.Get(cachekey, &graphData)
+			}
 
 			if len(graphData) == 0 {
 				time.Sleep(2 * time.Second)
@@ -277,9 +281,11 @@ func (ct *Cointop) PortfolioChart() error {
 			}
 
 			ct.cache.Set(cachekey, graphData, 10*time.Second)
-			go func() {
-				ct.filecache.Set(cachekey, graphData, 24*time.Hour)
-			}()
+			if ct.filecache != nil {
+				go func() {
+					ct.filecache.Set(cachekey, graphData, 24*time.Hour)
+				}()
+			}
 		}
 
 		for i := range graphData {

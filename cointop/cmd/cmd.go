@@ -12,7 +12,7 @@ import (
 
 // Execute executes the program
 func Execute() {
-	var version, test, clean, reset, hideMarketbar, hideChart, hideStatusbar, onlyTable, silent bool
+	var version, test, clean, reset, hideMarketbar, hideChart, hideStatusbar, onlyTable, silent, noCache bool
 	var refreshRate uint
 	var config, cmcAPIKey, apiChoice, colorscheme, coin, currency string
 	cacheDir := filecache.DefaultCacheDir
@@ -68,6 +68,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 
 			ct, err := cointop.NewCointop(&cointop.Config{
 				CacheDir:            cacheDir,
+				NoCache:             noCache,
 				ConfigFilepath:      config,
 				CoinMarketCapAPIKey: cmcAPIKey,
 				APIChoice:           apiChoice,
@@ -95,6 +96,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	rootCmd.Flags().BoolVarP(&hideStatusbar, "hide-statusbar", "", false, "Hide the bottom statusbar")
 	rootCmd.Flags().BoolVarP(&onlyTable, "only-table", "", false, "Show only the table. Hides the chart and top and bottom bars")
 	rootCmd.Flags().BoolVarP(&silent, "silent", "s", false, "Silence log ouput")
+	rootCmd.Flags().BoolVarP(&noCache, "no-cache", "", false, "No cache")
 	rootCmd.Flags().UintVarP(&refreshRate, "refresh-rate", "r", 60, "Refresh rate in seconds. Set to 0 to not auto-refresh")
 	rootCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")

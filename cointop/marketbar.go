@@ -106,13 +106,17 @@ func (ct *Cointop) UpdateMarketbar() error {
 		if market.TotalMarketCapUSD == 0 {
 			market, err = ct.api.GetGlobalMarketData(ct.State.currencyConversion)
 			if err != nil {
-				ct.filecache.Get(cachekey, &market)
+				if ct.filecache != nil {
+					ct.filecache.Get(cachekey, &market)
+				}
 			}
 
 			ct.cache.Set(cachekey, market, 10*time.Second)
-			go func() {
-				ct.filecache.Set(cachekey, market, 24*time.Hour)
-			}()
+			if ct.filecache != nil {
+				go func() {
+					ct.filecache.Set(cachekey, market, 24*time.Hour)
+				}()
+			}
 		}
 
 		timeframe := ct.State.selectedChartRange

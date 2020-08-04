@@ -131,6 +131,7 @@ type Config struct {
 	HideMarketbar       bool
 	HideChart           bool
 	HideStatusbar       bool
+	NoCache             bool
 	OnlyTable           bool
 	RefreshRate         *uint
 }
@@ -162,6 +163,13 @@ func NewCointop(config *Config) (*Cointop, error) {
 		configFilepath = config.ConfigFilepath
 	}
 
+	var fcache *filecache.FileCache
+	if !config.NoCache {
+		fcache = filecache.NewFileCache(&filecache.Config{
+			CacheDir: config.CacheDir,
+		})
+	}
+
 	ct := &Cointop{
 		apiChoice:      CoinGecko,
 		apiKeys:        new(APIKeys),
@@ -174,9 +182,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		debug:          debug,
 		chartRangesMap: ChartRangesMap(),
 		limiter:        time.Tick(2 * time.Second),
-		filecache: filecache.NewFileCache(&filecache.Config{
-			CacheDir: config.CacheDir,
-		}),
+		filecache:      fcache,
 		State: &State{
 			allCoins:           []*Coin{},
 			currencyConversion: "USD",
@@ -293,7 +299,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 	allCoinsSlugMap := make(map[string]*Coin)
 	coinscachekey := ct.CacheKey("allCoinsSlugMap")
-	ct.filecache.Get(coinscachekey, &allCoinsSlugMap)
+	if ct.filecache != nil {
+		ct.filecache.Get(coinscachekey, &allCoinsSlugMap)
+	}
 
 	for k, v := range allCoinsSlugMap {
 		ct.State.allCoinsSlugMap.Store(k, v)
@@ -332,12 +340,16 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 	var globaldata []float64
 	chartcachekey := ct.CacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
-	ct.filecache.Get(chartcachekey, &globaldata)
+	if ct.filecache != nil {
+		ct.filecache.Get(chartcachekey, &globaldata)
+	}
 	ct.cache.Set(chartcachekey, globaldata, 10*time.Second)
 
 	var market types.GlobalMarketData
 	marketcachekey := ct.CacheKey("market")
-	ct.filecache.Get(marketcachekey, &market)
+	if ct.filecache != nil {
+		ct.filecache.Get(marketcachekey, &market)
+	}
 	ct.cache.Set(marketcachekey, market, 10*time.Second)
 
 	// TODO: notify offline status in status bar
@@ -417,6 +429,8 @@ func Clean(config *CleanConfig) error {
 		config = &CleanConfig{}
 	}
 
+	cacheCleaned := false
+
 	cacheDir := filecache.DefaultCacheDir
 	if config.CacheDir != "" {
 		cacheDir = config.CacheDir
@@ -437,12 +451,16 @@ func Clean(config *CleanConfig) error {
 				if err := os.Remove(file); err != nil {
 					return err
 				}
+
+				cacheCleaned = true
 			}
 		}
 	}
 
 	if config.Log {
-		fmt.Println("cointop cache has been cleaned")
+		if cacheCleaned {
+			fmt.Println("cointop cache has been cleaned")
+		}
 	}
 
 	return nil
@@ -467,19 +485,33 @@ func Reset(config *ResetConfig) error {
 		return err
 	}
 
-	// default config path
-	configPath := fmt.Sprintf("%s%s", pathutil.UserPreferredHomeDir(), "/.cointop")
-	if _, err := os.Stat(configPath); !os.IsNotExist(err) {
-		if config.Log {
-			fmt.Printf("removing %s\n", configPath)
-		}
-		if err := os.RemoveAll(configPath); err != nil {
-			return err
+	configDeleted := false
+
+	possibleConfigPaths := []string{
+		"~/.config/cointop/config.toml",
+		"~/.config/cointop/config",
+		"~/.cointop/config",
+		"~/.cointop/config.toml",
+	}
+
+	for _, configPath := range possibleConfigPaths {
+		normalizedPath := pathutil.NormalizePath(configPath)
+		if _, err := os.Stat(normalizedPath); !os.IsNotExist(err) {
+			if config.Log {
+				fmt.Printf("removing %s\n", normalizedPath)
+			}
+			if err := os.RemoveAll(normalizedPath); err != nil {
+				return err
+			}
+
+			configDeleted = true
 		}
 	}
 
 	if config.Log {
-		fmt.Println("cointop has been reset")
+		if configDeleted {
+			fmt.Println("cointop has been reset")
+		}
 	}
 
 	return nil
