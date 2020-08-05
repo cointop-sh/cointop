@@ -188,7 +188,7 @@ release:
 	VERSION=$(VERSION) goreleaser
 
 docker-build:
-	docker build -t cointop/cointop .
+	docker build --build-arg VERSION=$(VERSION) -t cointop/cointop .
 
 docker-run:
 	docker run -it cointop/cointop
