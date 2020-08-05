@@ -74,7 +74,7 @@ snap-clean:
 
 snap-stage:
 	# https://github.com/elopio/go/issues/2
-	mv go.mod go.mod~ ;GO111MODULE=off snapcraft stage; mv go.mod~ go.mod
+	mv go.mod go.mod~ ;GO111MODULE=off GOFLAGS="-ldflags=-s -ldflags=-w -ldflags=-X=github.com/miguelmota/cointop/cointop.version=$(VERSION)" snapcraft stage; mv go.mod~ go.mod
 
 snap-install:
 	sudo apt install snapd

@@ -1,3 +1,4 @@
+name: cointop
 version: master
 version-script: git -C parts/cointop/build rev-parse --short HEAD
 summary: Interactive terminal based UI application for tracking cryptocurrencies
@@ -8,7 +9,7 @@ confinement: strict
 
 parts:
   go:
-    source-tag: go1.12
+    source-tag: go1.13
   cointop:
     after: [go]
     source: .
