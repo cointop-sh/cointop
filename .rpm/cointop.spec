@@ -1,14 +1,14 @@
-%define version     1.4.6
-%global commit      69391a7c6f3a920c175685b9917086d449f4c1ff72c5b98ab08118489f15c0a9
+%define version     1.5.1
+%global commit      8c225f598f8f3e32afaba7ac4f799577281a160088fec5183919a699e5b4c14e
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:           cointop
 Version:        %{version}
 Release:        6%{?dist}
-Summary:        Terminal based application for tracking cryptocurrencies
+Summary:        Interactive terminal based UI application for tracking cryptocurrencies
 License:        Apache-2.0
 URL:            https://cointop.sh
-Source0:        https://github.com/miguelmota/%{cointop}/archive/%{version}.tar.gz
+Source0:        https://github.com/miguelmota/%{cointop}/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  golang >= 1.13
@@ -24,7 +24,7 @@ mkdir -p ./_build/src/github.com/miguelmota
 ln -s $(pwd) ./_build/src/github.com/miguelmota/%{name}
 
 export GOPATH=$(pwd)/_build:%{gopath}
-GO111MODULE=off go build -ldflags="-linkmode=external -compressdwarf=false -X github.com/miguelmota/cointop/cointop.version=%{version}" -o x .
+GO111MODULE=off go build -ldflags="-linkmode=external -compressdwarf=false -X github.com/miguelmota/cointop/cointop.version=v%{version}" -o x .
 
 %install
 install -d %{buildroot}%{_bindir}

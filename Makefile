@@ -127,7 +127,7 @@ rpm-cp-specs:
 	cp .rpm/cointop.spec ~/rpmbuild/SPECS/
 
 rpm-build:
-	rpmbuild -ba ~/rpmbuild/SPECS/cointop.spec
+	rpmbuild --nodeps -ba ~/rpmbuild/SPECS/cointop.spec
 
 rpm-lint:
 	rpmlint ~/rpmbuild/SPECS/cointop.spec
@@ -143,6 +143,8 @@ rpm-download:
 copr-install-cli:
 	sudo dnf install -y copr-cli
 
+copr-deps: copr-install-cli rpm-install-deps
+
 copr-create-project:
 	copr-cli create cointop --chroot fedora-rawhide-x86_64
 
@@ -150,7 +152,8 @@ copr-build:
 	copr-cli build cointop ~/rpmbuild/SRPMS/cointop-*.rpm
 	rm -rf ~/rpmbuild/SRPMS/cointop-*.rpm
 
-copr-deploy: rpm-dirs rpm-cp-specs rpm-download rpm-build copr-build
+.PHONY: copr
+copr: rpm-dirs rpm-cp-specs rpm-download rpm-build copr-build
 
 brew-clean: brew-remove
 	brew cleanup --force cointop
