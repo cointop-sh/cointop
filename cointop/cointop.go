@@ -134,12 +134,16 @@ type Config struct {
 	NoCache             bool
 	OnlyTable           bool
 	RefreshRate         *uint
+	PerPage             uint
 }
 
 // APIKeys is api keys structure
 type APIKeys struct {
 	cmc string
 }
+
+// DefaultPerPage ...
+var DefaultPerPage uint = 100
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"
@@ -170,6 +174,11 @@ func NewCointop(config *Config) (*Cointop, error) {
 		})
 	}
 
+	perPage := DefaultPerPage
+	if config.PerPage != 0 {
+		perPage = config.PerPage
+	}
+
 	ct := &Cointop{
 		apiChoice:      CoinGecko,
 		apiKeys:        new(APIKeys),
@@ -198,7 +207,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			shortcutKeys:       DefaultShortcuts(),
 			sortBy:             "rank",
 			page:               0,
-			perPage:            100,
+			perPage:            int(perPage),
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry, 0),
 			},
