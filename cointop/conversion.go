@@ -166,6 +166,7 @@ func (ct *Cointop) UpdateConvertMenu() {
 	currencies := ct.SupportedCurrencyConversions()
 	for i, key := range keys {
 		currency := currencies[key]
+		symbol := CurrencySymbol(key)
 		if cnt%percol == 0 {
 			cnt = 0
 		}
@@ -178,7 +179,8 @@ func (ct *Cointop) UpdateConvertMenu() {
 			key = ct.colorscheme.Menu(key)
 			currency = ct.colorscheme.MenuLabel(currency)
 		}
-		item := fmt.Sprintf(" [ %1s ] %4s %-34s", shortcut, key, currency)
+
+		item := fmt.Sprintf(" [ %1s ] %4s %-36s", shortcut, key, fmt.Sprintf("%s %s", currency, symbol))
 		cols[cnt] = append(cols[cnt], item)
 		cnt = cnt + 1
 	}
@@ -231,12 +233,7 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 // CurrencySymbol returns the symbol for the currency conversion
 func (ct *Cointop) CurrencySymbol() string {
 	ct.debuglog("currencySymbol()")
-	symbol, ok := CurrencySymbolMap[strings.ToUpper(ct.State.currencyConversion)]
-	if ok {
-		return symbol
-	}
-
-	return "$"
+	return CurrencySymbol(ct.State.currencyConversion)
 }
 
 // ShowConvertMenu shows the convert menu view
@@ -284,5 +281,5 @@ func CurrencySymbol(currency string) string {
 		return symbol
 	}
 
-	return "$"
+	return "?"
 }
