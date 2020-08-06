@@ -31,7 +31,7 @@ func Execute() {
 
 Cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
-For more information, visit: https://github.com/miguelmota/cointop`,
+See git.io/cointop for more info.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if version {
 				cointop.PrintVersion()
@@ -104,7 +104,7 @@ For more information, visit: https://github.com/miguelmota/cointop`,
 	rootCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", cointop.CoinGecko, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
-	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", "Colorscheme to use (default \"cointop\"). To install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.config/cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors")
+	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", "Colorscheme to use (default \"cointop\"). To install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.config/cointop/colors\n\nSee git.io/cointop#colorschemes for more info.")
 	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", "/tmp", "Cache directory")
 
 	versionCmd := &cobra.Command{
