@@ -29,7 +29,7 @@ func (ct *Cointop) UpdateHelp() {
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxTableWidth-10, " ")))
 	cnt := 0
 	h := ct.Views.Help.Height()
-	percol := h - 6
+	percol := h - 11
 	cols := make([][]string, percol)
 	for i := range cols {
 		cols[i] = make([]string, 20)
@@ -53,11 +53,12 @@ func (ct *Cointop) UpdateHelp() {
 		}
 		body = fmt.Sprintf("%s%s\n", body, row)
 	}
-	body = fmt.Sprintf("%s\n", body)
 
-	infoline := " List of keyboard shortcuts\n\n"
-	versionline := pad.Left(fmt.Sprintf("v%s", ct.Version()), ct.maxTableWidth-5, " ")
-	content := header + infoline + body + versionline
+	versionLine := fmt.Sprintf("cointop %s - (C) 2017-2020 Miguel Mota", ct.Version())
+	licenseLine := "Released under the Apache 2.0 License."
+	instructionsLine := "List of keyboard shortcuts"
+	infoLine := "See git.io/cointop for more info.\n Press ESC to return."
+	content := fmt.Sprintf("%s %s\n %s\n\n %s\n\n%s\n %s", header, versionLine, licenseLine, instructionsLine, body, infoLine)
 
 	ct.Update(func() error {
 		if ct.Views.Help.Backing() == nil {
