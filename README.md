@@ -373,6 +373,8 @@ Key|Action
 <kbd>[</kbd>|Previous chart date range|
 <kbd>}</kbd>|Last chart date range|
 <kbd>{</kbd>|First chart date range|
+<kbd>\></kbd>|Go to next page|
+<kbd>\<</kbd>|Go to previous page|
 <kbd>\\</kbd>|Toggle table fullscreen|
 
 ## Colorschemes
@@ -443,6 +445,8 @@ refresh_rate = 60
   "]" = "next_chart_range"
   "{" = "first_chart_range"
   "}" = "last_chart_range"
+  "<" = "previous_page"
+  ">" = "next_page"
   C = "show_currency_convert_menu"
   E = "show_portfolio_edit_menu"
   G = "move_to_page_last_row"

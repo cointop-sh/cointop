@@ -74,6 +74,8 @@ func DefaultShortcuts() map[string]string {
 		"[":         "previous_chart_range",
 		"}":         "last_chart_range",
 		"{":         "first_chart_range",
+		">":         "next_page",
+		"<":         "previous_page",
 		"\\\\":      "toggle_table_fullscreen",
 	}
 }
