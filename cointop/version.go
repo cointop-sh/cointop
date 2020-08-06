@@ -2,12 +2,11 @@ package cointop
 
 import (
 	"fmt"
-	"os"
 	"runtime/debug"
 )
 
 // version is the cointop version which will be populated by ldflags
-var version string = "(unknown)"
+var version string
 
 // Version returns the cointop version
 func (ct *Cointop) Version() string {
@@ -16,7 +15,7 @@ func (ct *Cointop) Version() string {
 
 // Version returns cointop version
 func Version() string {
-	if version != "(unknown)" {
+	if version != "" {
 		return version
 	}
 
@@ -24,10 +23,10 @@ func Version() string {
 		return buildInfo.Main.Version
 	}
 
-	return version
+	return "(devel)"
 }
 
 // PrintVersion prints the version
 func PrintVersion() {
-	fmt.Fprint(os.Stdout, Version())
+	fmt.Println(Version())
 }
