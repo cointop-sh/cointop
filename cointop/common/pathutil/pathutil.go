@@ -3,22 +3,15 @@ package pathutil
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
 // UserPreferredHomeDir returns the preferred home directory for the user
 func UserPreferredHomeDir() (string, bool) {
-	var home string
 	var isConfigDir bool
 
-	if runtime.GOOS == "windows" {
-		home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
-		isConfigDir = false
-	} else if runtime.GOOS == "linux" {
-		home = os.Getenv("XDG_CONFIG_HOME")
-		isConfigDir = true
-	}
+	home, _ := os.UserConfigDir()
+	isConfigDir = true
 
 	if home == "" {
 		home, _ = os.UserHomeDir()
