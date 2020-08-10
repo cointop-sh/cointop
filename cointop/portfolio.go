@@ -184,7 +184,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 
 // PortfolioEntry returns a portfolio entry
 func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
-	//ct.debuglog("portfolioEntry()")
+	//ct.debuglog("portfolioEntry()") // too many
 	if c == nil {
 		return &PortfolioEntry{}, true
 	}
@@ -297,20 +297,28 @@ func (ct *Cointop) GetPortfolioTotal() float64 {
 	return total
 }
 
-// NormalizeFloatString normalizes a float as a string
-func normalizeFloatString(input string) string {
-	re := regexp.MustCompile(`(\d+\.\d+|\.\d+|\d+)`)
-	result := re.FindStringSubmatch(input)
-	if len(result) > 0 {
-		return result[0]
+// RefreshPortfolioCoins refreshes portfolio entry coin data
+func (ct *Cointop) RefreshPortfolioCoins() error {
+	ct.debuglog("refreshPortfolioCoins()")
+	holdings := ct.GetPortfolioSlice()
+	holdingCoins := make([]string, len(holdings))
+	for i, entry := range holdings {
+		holdingCoins[i] = entry.Name
 	}
 
-	return ""
+	coins, err := ct.api.GetCoinDataBatch(holdingCoins, ct.State.currencyConversion)
+	ct.processCoins(coins)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // PrintHoldingsTable prints the holdings in an ASCII table
 func (ct *Cointop) PrintHoldingsTable() error {
-	ct.UpdateCoins() // fetches latest data
+	ct.debuglog("printHoldingsTable()")
+	ct.RefreshPortfolioCoins()
 	holdings := ct.GetPortfolioSlice()
 	total := ct.GetPortfolioTotal()
 	data := make([][]string, len(holdings))
@@ -347,10 +355,22 @@ func (ct *Cointop) PrintHoldingsTable() error {
 
 // PrintTotalHoldings prints the total holdings amount
 func (ct *Cointop) PrintTotalHoldings() error {
-	ct.UpdateCoins() // fetches latest data
+	ct.debuglog("printTotalHoldings()")
+	ct.RefreshPortfolioCoins()
 	total := ct.GetPortfolioTotal()
 	symbol := ct.CurrencySymbol()
 
 	fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(total))
 	return nil
+}
+
+// NormalizeFloatString normalizes a float as a string
+func normalizeFloatString(input string) string {
+	re := regexp.MustCompile(`(\d+\.\d+|\.\d+|\d+)`)
+	result := re.FindStringSubmatch(input)
+	if len(result) > 0 {
+		return result[0]
+	}
+
+	return ""
 }

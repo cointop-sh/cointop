@@ -45,9 +45,8 @@ func (s *Service) Ping() error {
 	return nil
 }
 
-func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coin, error) {
+func (s *Service) getPaginatedCoinData(convert string, offset int, names []string) ([]apitypes.Coin, error) {
 	var ret []apitypes.Coin
-	ids := []string{}
 	page := offset
 	sparkline := false
 	pcp := geckoTypes.PriceChangePercentageObject
@@ -56,6 +55,12 @@ func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coi
 	convertTo := strings.ToLower(convert)
 	if convertTo == "" {
 		convertTo = "usd"
+	}
+
+	ids := make([]string, len(names))
+	for i, name := range names {
+		slug := util.NameToSlug(name)
+		ids[i] = slug
 	}
 	list, err := s.client.CoinsMarket(convertTo, ids, order, s.maxResultsPerPage, page, sparkline, priceChangePercentage)
 	if err != nil {
@@ -124,7 +129,7 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 				time.Sleep(1 * time.Second)
 			}
 
-			coins, err := s.getLimitedCoinData(convert, i)
+			coins, err := s.getPaginatedCoinData(convert, i, []string{})
 			if err != nil {
 				return
 			}
@@ -133,6 +138,27 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 		}
 	}()
 	return nil
+}
+
+// GetCoinData gets all data of a coin.
+func (s *Service) GetCoinData(name string, convert string) (apitypes.Coin, error) {
+	ret := apitypes.Coin{}
+	ids := []string{name}
+	coins, err := s.getPaginatedCoinData(convert, 0, ids)
+	if err != nil {
+		return ret, err
+	}
+
+	if len(coins) > 0 {
+		ret = coins[0]
+	}
+
+	return ret, nil
+}
+
+// GetCoinDataBatch gets all data of specified coins.
+func (s *Service) GetCoinDataBatch(names []string, convert string) ([]apitypes.Coin, error) {
+	return s.getPaginatedCoinData(convert, 0, names)
 }
 
 // GetCoinGraphData gets coin graph data

@@ -51,7 +51,7 @@ func (s *Service) Ping() error {
 	return nil
 }
 
-func (s *Service) getLimitedCoinData(convert string, offset int) ([]apitypes.Coin, error) {
+func (s *Service) getPaginatedCoinData(convert string, offset int) ([]apitypes.Coin, error) {
 	var ret []apitypes.Coin
 	max := 100
 
@@ -98,7 +98,7 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 				time.Sleep(1 * time.Second)
 			}
 
-			coins, err := s.getLimitedCoinData(convert, i)
+			coins, err := s.getPaginatedCoinData(convert, i)
 			if err != nil {
 				return
 			}
@@ -107,6 +107,43 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 		}
 	}()
 	return nil
+}
+
+// GetCoinData gets all data of a coin.
+func (s *Service) GetCoinData(name string, convert string) (apitypes.Coin, error) {
+	ret := apitypes.Coin{}
+	coins, err := s.getPaginatedCoinData(convert, 0)
+	if err != nil {
+		return ret, err
+	}
+
+	for _, coin := range coins {
+		if coin.Name == name {
+			return coin, nil
+		}
+	}
+
+	return ret, nil
+}
+
+// GetCoinDataBatch gets all data of specified coins.
+func (s *Service) GetCoinDataBatch(names []string, convert string) ([]apitypes.Coin, error) {
+	ret := []apitypes.Coin{}
+	coins, err := s.getPaginatedCoinData(convert, 0)
+	if err != nil {
+		return ret, err
+	}
+
+	for _, coin := range coins {
+		for _, name := range names {
+			if coin.Name == name {
+				ret = append(ret, coin)
+				break
+			}
+		}
+	}
+
+	return ret, nil
 }
 
 // GetCoinGraphData gets coin graph data

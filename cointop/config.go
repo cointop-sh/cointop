@@ -15,6 +15,14 @@ import (
 
 var fileperm = os.FileMode(0644)
 
+// NOTE: this is to support previous default config filepaths
+var possibleConfigPaths = []string{
+	"~/.config/cointop/config.toml",
+	"~/.config/cointop/config",
+	"~/.cointop/config",
+	"~/.cointop/config.toml",
+}
+
 type config struct {
 	Shortcuts     map[string]interface{}   `toml:"shortcuts"`
 	Favorites     map[string][]interface{} `toml:"favorites"`
@@ -42,9 +50,6 @@ func (ct *Cointop) SetupConfig() error {
 	if err := ct.loadFavoritesFromConfig(); err != nil {
 		return err
 	}
-	if err := ct.loadPortfolioFromConfig(); err != nil {
-		return err
-	}
 	if err := ct.loadCurrencyFromConfig(); err != nil {
 		return err
 	}
@@ -63,6 +68,9 @@ func (ct *Cointop) SetupConfig() error {
 	if err := ct.loadRefreshRateFromConfig(); err != nil {
 		return err
 	}
+	if err := ct.loadPortfolioFromConfig(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -71,14 +79,8 @@ func (ct *Cointop) SetupConfig() error {
 func (ct *Cointop) CreateConfigIfNotExists() error {
 	ct.debuglog("createConfigIfNotExists()")
 
-	// NOTE: this is to support previous default config filepaths
-	previousDefaultConfigPaths := []string{
-		"~/.cointop/config",
-		"~/.cointop/config.toml",
-	}
-
-	for _, previousConfigFilepath := range previousDefaultConfigPaths {
-		normalizedPath := pathutil.NormalizePath(previousConfigFilepath)
+	for _, configPath := range possibleConfigPaths {
+		normalizedPath := pathutil.NormalizePath(configPath)
 		if _, err := os.Stat(normalizedPath); err == nil {
 			ct.configFilepath = normalizedPath
 			return nil
@@ -218,8 +220,8 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
 	}
-	var apiChoiceIfc interface{} = ct.apiChoice
 
+	var apiChoiceIfc interface{} = ct.apiChoice
 	var inputs = &config{
 		API:           apiChoiceIfc,
 		Colorscheme:   colorschemeIfc,

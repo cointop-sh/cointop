@@ -19,7 +19,6 @@ func HoldingsCmd() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			ct, err := cointop.NewCointop(&cointop.Config{
 				ConfigFilepath: config,
-				APIChoice:      cointop.CoinGecko,
 				CacheDir:       cointop.DefaultCacheDir,
 			})
 			if err != nil {

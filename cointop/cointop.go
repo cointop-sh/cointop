@@ -507,13 +507,6 @@ func Reset(config *ResetConfig) error {
 
 	configDeleted := false
 
-	possibleConfigPaths := []string{
-		"~/.config/cointop/config.toml",
-		"~/.config/cointop/config",
-		"~/.cointop/config",
-		"~/.cointop/config.toml",
-	}
-
 	for _, configPath := range possibleConfigPaths {
 		normalizedPath := pathutil.NormalizePath(configPath)
 		if _, err := os.Stat(normalizedPath); !os.IsNotExist(err) {

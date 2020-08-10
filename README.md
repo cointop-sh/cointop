@@ -988,12 +988,21 @@ Frequently asked questions:
 
   - A: Cointop does not do any kind of mining.
 
+
 - Q: How can I run the cointop SSH server on port 22?
 
   - A: Port 22 is a privileged port so you need to run with `sudo`:
 
     ```bash
     sudo cointop server -p 22
+    ```
+
+- Q: Why doesn't the version number work when I install with `go get`?
+
+  - A: The version number is read from the git tag during the build process but this requires the `GO111MODULE` environment variable to be set in order for Go to read the build information:
+
+    ```bash
+    GO111MODULE=on go get github.com/miguelmota/cointop
     ```
 
 ## Mentioned in
