@@ -2,11 +2,15 @@ package cointop
 
 import (
 	"fmt"
+	"math"
+	"os"
 	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 
+	"github.com/miguelmota/cointop/cointop/common/asciitable"
+	"github.com/miguelmota/cointop/cointop/common/humanize"
 	"github.com/miguelmota/cointop/cointop/common/pad"
 )
 
@@ -302,4 +306,51 @@ func normalizeFloatString(input string) string {
 	}
 
 	return ""
+}
+
+// PrintHoldingsTable prints the holdings in an ASCII table
+func (ct *Cointop) PrintHoldingsTable() error {
+	ct.UpdateCoins() // fetches latest data
+	holdings := ct.GetPortfolioSlice()
+	total := ct.GetPortfolioTotal()
+	data := make([][]string, len(holdings))
+	symbol := ct.CurrencySymbol()
+
+	for _, entry := range holdings {
+		percentHoldings := (entry.Balance / total) * 1e2
+		if math.IsNaN(percentHoldings) {
+			percentHoldings = 0
+		}
+
+		data = append(data, []string{
+			entry.Name,
+			entry.Symbol,
+			humanize.Commaf(entry.Price),
+			humanize.Commaf(entry.Holdings),
+			humanize.Commaf(entry.Balance),
+			fmt.Sprintf("%.2f%%", entry.PercentChange24H),
+			fmt.Sprintf("%.2f%%", percentHoldings),
+		})
+	}
+
+	alignment := []int{-1, -1, 1, 1, 1, 1, 1}
+	headers := []string{"name", "symbol", fmt.Sprintf("%sprice", symbol), "holdings", fmt.Sprintf("%sbalance", symbol), "24h%", "%holdings"}
+	table := asciitable.NewAsciiTable(&asciitable.Input{
+		Data:      data,
+		Headers:   headers,
+		Alignment: alignment,
+	})
+
+	fmt.Println(table.String())
+	return nil
+}
+
+// PrintTotalHoldings prints the total holdings amount
+func (ct *Cointop) PrintTotalHoldings() error {
+	ct.UpdateCoins() // fetches latest data
+	total := ct.GetPortfolioTotal()
+	symbol := ct.CurrencySymbol()
+
+	fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(total))
+	return nil
 }

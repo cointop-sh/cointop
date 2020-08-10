@@ -11,7 +11,7 @@ func (ct *Cointop) Update(f func() error) {
 	ct.debuglog(fmt.Sprintf("Update()"))
 
 	if ct.g == nil {
-		panic("gocui is not initialized")
+		return
 	}
 
 	ct.g.Update(func(g *gocui.Gui) error {

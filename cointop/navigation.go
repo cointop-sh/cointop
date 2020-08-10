@@ -358,6 +358,9 @@ func (ct *Cointop) LastPage() error {
 // IsFirstRow returns true if cursor is on first row
 func (ct *Cointop) IsFirstRow() bool {
 	ct.debuglog("isFirstRow()")
+	if ct.Views.Table.Backing() == nil {
+		return false
+	}
 
 	_, y := ct.Views.Table.Backing().Origin()
 	_, cy := ct.Views.Table.Backing().Cursor()
@@ -368,6 +371,9 @@ func (ct *Cointop) IsFirstRow() bool {
 // IsLastRow returns true if cursor is on last row
 func (ct *Cointop) IsLastRow() bool {
 	ct.debuglog("isLastRow()")
+	if ct.Views.Table.Backing() == nil {
+		return false
+	}
 
 	_, y := ct.Views.Table.Backing().Origin()
 	_, cy := ct.Views.Table.Backing().Cursor()
@@ -391,6 +397,9 @@ func (ct *Cointop) IsLastPage() bool {
 // IsPageFirstLine returns true if the cursor is on the visible first row
 func (ct *Cointop) IsPageFirstLine() bool {
 	ct.debuglog("isPageFirstLine()")
+	if ct.Views.Table.Backing() == nil {
+		return false
+	}
 
 	_, cy := ct.Views.Table.Backing().Cursor()
 	return cy == 0
@@ -399,6 +408,9 @@ func (ct *Cointop) IsPageFirstLine() bool {
 // IsPageMiddleLine returns true if the cursor is on the visible middle row
 func (ct *Cointop) IsPageMiddleLine() bool {
 	ct.debuglog("isPageMiddleLine()")
+	if ct.Views.Table.Backing() == nil {
+		return false
+	}
 
 	_, cy := ct.Views.Table.Backing().Cursor()
 	_, sy := ct.Views.Table.Backing().Size()
@@ -443,6 +455,10 @@ func (ct *Cointop) GoToGlobalIndex(idx int) error {
 // HighlightRow highlights the row at index
 func (ct *Cointop) HighlightRow(idx int) error {
 	ct.debuglog("highlightRow()")
+	if ct.Views.Table.Backing() == nil {
+		return nil
+	}
+
 	ct.Views.Table.Backing().SetOrigin(0, 0)
 	ct.Views.Table.Backing().SetCursor(0, 0)
 	ox, _ := ct.Views.Table.Backing().Origin()

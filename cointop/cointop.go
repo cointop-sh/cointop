@@ -65,6 +65,7 @@ type State struct {
 	portfolioVisible           bool
 	portfolioUpdateMenuVisible bool
 	refreshRate                time.Duration
+	running                    bool
 	searchFieldVisible         bool
 	selectedCoin               *Coin
 	selectedChartRange         string
@@ -150,6 +151,9 @@ var DefaultColorscheme = "cointop"
 
 // DefaultConfigFilepath ...
 var DefaultConfigFilepath = "~/.config/cointop/config.toml"
+
+// DefaultCacheDir ...
+var DefaultCacheDir = filecache.DefaultCacheDir
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
@@ -390,11 +394,18 @@ func (ct *Cointop) Run() error {
 	if err := ct.Keybindings(g); err != nil {
 		return fmt.Errorf("keybindings: %v", err)
 	}
+
+	ct.State.running = true
 	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return fmt.Errorf("main loop: %v", err)
 	}
 
 	return nil
+}
+
+// IsRunning returns true if cointop is running
+func (ct *Cointop) IsRunning() bool {
+	return ct.State.running
 }
 
 // PriceConfig is the config options for the price command
@@ -421,7 +432,7 @@ func PrintPrice(config *PriceConfig) error {
 	}
 
 	symbol := CurrencySymbol(config.Currency)
-	fmt.Fprintf(os.Stdout, "%s%s", symbol, humanize.Commaf(price))
+	fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(price))
 
 	return nil
 }
@@ -440,7 +451,7 @@ func Clean(config *CleanConfig) error {
 
 	cacheCleaned := false
 
-	cacheDir := filecache.DefaultCacheDir
+	cacheDir := DefaultCacheDir
 	if config.CacheDir != "" {
 		cacheDir = config.CacheDir
 	}

@@ -3,6 +3,10 @@ package cointop
 // Size returns window width and height
 func (ct *Cointop) size() (int, int) {
 	ct.debuglog("size()")
+	if ct.g == nil {
+		return 0, 0
+	}
+
 	return ct.g.Size()
 }
 

@@ -240,11 +240,12 @@ go get -u github.com/miguelmota/cointop
 brew uninstall cointop && brew install cointop
 ```
 
-### Flatpak (Linux)
+### Snap (Ubuntu)
+
+Use the `refresh` command to update snap.
 
 ```bash
-sudo flatpak uninstall com.github.miguelmota.Cointop
-sudo flatpak install flathub com.github.miguelmota.Cointop
+sudo snap refresh cointop
 ```
 
 ### Copr (Fedora)
@@ -253,12 +254,17 @@ sudo flatpak install flathub com.github.miguelmota.Cointop
 sudo dnf update cointop
 ```
 
-### Snap (Ubuntu)
-
-Use the `refresh` command to update snap.
+### AUR (Arch Linux)
 
 ```bash
-sudo snap refresh cointop --stable
+yay -S cointop
+```
+
+### Flatpak (Linux)
+
+```bash
+sudo flatpak uninstall com.github.miguelmota.Cointop
+sudo flatpak install flathub com.github.miguelmota.Cointop
 ```
 
 ## Getting started

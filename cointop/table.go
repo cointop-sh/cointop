@@ -288,6 +288,10 @@ func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 // HighlightedRowIndex returns the index of the highlighted row
 func (ct *Cointop) HighlightedRowIndex() int {
 	ct.debuglog("HighlightedRowIndex()")
+	if ct.Views.Table.Backing() == nil {
+		return 0
+	}
+
 	_, y := ct.Views.Table.Backing().Origin()
 	_, cy := ct.Views.Table.Backing().Cursor()
 	idx := y + cy
