@@ -81,7 +81,7 @@ type MapListing struct {
 
 // ConvertListing is the converted listing structure
 type ConvertListing struct {
-	ID          string                   `json:"id"`
+	ID          int                      `json:"id"`
 	Name        string                   `json:"name"`
 	Symbol      string                   `json:"symbol"`
 	Amount      float64                  `json:"amount"`

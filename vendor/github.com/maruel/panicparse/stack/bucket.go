@@ -26,7 +26,7 @@ const (
 // Aggregate merges similar goroutines into buckets.
 //
 // The buckets are ordered in library provided order of relevancy. You can
-// reorder at your chosing.
+// reorder at your choosing.
 func Aggregate(goroutines []*Goroutine, similar Similarity) []*Bucket {
 	type count struct {
 		ids   []int
@@ -71,6 +71,7 @@ func Aggregate(goroutines []*Goroutine, similar Similarity) []*Bucket {
 // Bucket is a stack trace signature and the list of goroutines that fits this
 // signature.
 type Bucket struct {
+	// Signature is the generalized signature for this bucket.
 	Signature
 	// IDs is the ID of each Goroutine with this Signature.
 	IDs []int
