@@ -17,6 +17,7 @@ func HoldingsCmd() *cobra.Command {
 	var sortDesc bool
 	var format string = "table"
 	var humanReadable bool
+	var filter []string
 
 	holdingsCmd := &cobra.Command{
 		Use:   "holdings",
@@ -39,6 +40,7 @@ func HoldingsCmd() *cobra.Command {
 				return ct.PrintTotalHoldings(&cointop.TablePrintOptions{
 					HumanReadable: humanReadable,
 					Format:        format,
+					Filter:        filter,
 				})
 			}
 
@@ -47,6 +49,7 @@ func HoldingsCmd() *cobra.Command {
 				SortDesc:      sortDesc,
 				HumanReadable: humanReadable,
 				Format:        format,
+				Filter:        filter,
 			})
 		},
 	}
@@ -58,7 +61,8 @@ func HoldingsCmd() *cobra.Command {
 	holdingsCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	holdingsCmd.Flags().StringVarP(&sortBy, "sort-by", "s", sortBy, `Sort by column. Options are "name", "symbol", "price", "holdings", "balance", "24h"`)
 	holdingsCmd.Flags().BoolVarP(&sortDesc, "sort-desc", "d", sortDesc, "Sort in descending order")
-	holdingsCmd.Flags().StringVarP(&format, "format", "f", format, `Ouput format. Options are "table", "csv", "json"`)
+	holdingsCmd.Flags().StringVarP(&format, "format", "", format, `Ouput format. Options are "table", "csv", "json"`)
+	holdingsCmd.Flags().StringSliceVarP(&filter, "filter", "f", filter, `Filter portfolio entries by coin name or symbol, comma separated. Example: "btc,eth,doge"`)
 
 	return holdingsCmd
 }

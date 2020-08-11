@@ -323,6 +323,7 @@ type TablePrintOptions struct {
 	SortDesc      bool
 	HumanReadable bool
 	Format        string
+	Filter        []string
 }
 
 // outputFormats is list of valid output formats
@@ -355,6 +356,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	sortDesc := options.SortDesc
 	format := options.Format
 	humanReadable := options.HumanReadable
+	filter := options.Filter
 	holdings := ct.GetPortfolioSlice()
 
 	if format == "" {
@@ -378,6 +380,20 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	symbol := ct.CurrencySymbol()
 
 	for i, entry := range holdings {
+		if filter != nil && len(filter) > 0 {
+			found := false
+			for _, item := range filter {
+				item = strings.ToLower(strings.TrimSpace(item))
+				if strings.ToLower(entry.Symbol) == item || strings.ToLower(entry.Name) == item {
+					found = true
+					break
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+
 		percentHoldings := (entry.Balance / total) * 1e2
 		if math.IsNaN(percentHoldings) {
 			percentHoldings = 0
@@ -467,9 +483,28 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	ct.RefreshPortfolioCoins()
 
 	humanReadable := options.HumanReadable
-	total := ct.GetPortfolioTotal()
 	symbol := ct.CurrencySymbol()
 	format := options.Format
+	filter := options.Filter
+	portfolio := ct.GetPortfolioSlice()
+	var total float64
+	for _, entry := range portfolio {
+		if filter != nil && len(filter) > 0 {
+			found := false
+			for _, item := range filter {
+				item = strings.ToLower(strings.TrimSpace(item))
+				if strings.ToLower(entry.Symbol) == item || strings.ToLower(entry.Name) == item {
+					found = true
+					break
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+
+		total += entry.Balance
+	}
 
 	value := strconv.FormatFloat(total, 'f', -1, 64)
 
