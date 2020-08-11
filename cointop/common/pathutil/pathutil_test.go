@@ -15,15 +15,9 @@ func TestNormalizePath(t *testing.T) {
 	}{
 		{"~/.config/cointop/config.toml", filepath.Join(configDir, "/cointop/config.toml")},
 		{"~/.config/cointop/config.toml", filepath.Join(home, ".config/cointop/config.toml")},
-		{"~/.config/cointop/config.toml", filepath.Join(configDir, "/cointop/config.toml")},
-		{"~/.config/cointop/config.toml", filepath.Join(home, ".config/cointop/config.toml")},
 	}
-	for i, c := range cases {
+	for _, c := range cases {
 		got := NormalizePath(c.in)
-		if i > 1 {
-			home = ""
-			configDir = ""
-		}
 		if got != c.want {
 			t.Errorf("NormalizePath(%q) == %q, want %q", c.in, got, c.want)
 		}
