@@ -1,6 +1,8 @@
 package cointop
 
 import (
+	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"math"
 	"os"
@@ -320,9 +322,17 @@ type TablePrintOptions struct {
 	SortBy        string
 	SortDesc      bool
 	HumanReadable bool
+	Format        string
 }
 
-// portfolioColumns is list of column keys for portfolio
+// outputFormats is list of valid output formats
+var outputFormats = map[string]bool{
+	"table": true,
+	"csv":   true,
+	"json":  true,
+}
+
+// portfolioColumns is list of valid column keys for portfolio
 var portfolioColumns = map[string]bool{
 	"name":     true,
 	"symbol":   true,
@@ -335,34 +345,46 @@ var portfolioColumns = map[string]bool{
 // PrintHoldingsTable prints the holdings in an ASCII table
 func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	ct.debuglog("printHoldingsTable()")
-	ct.RefreshPortfolioCoins()
-
 	if options == nil {
 		options = &TablePrintOptions{}
 	}
 
+	ct.RefreshPortfolioCoins()
+
+	sortBy := options.SortBy
+	sortDesc := options.SortDesc
+	format := options.Format
+	humanReadable := options.HumanReadable
 	holdings := ct.GetPortfolioSlice()
 
-	if options.SortBy != "" {
-		if _, ok := portfolioColumns[options.SortBy]; !ok {
-			return fmt.Errorf("The option %q is not a valid column name", options.SortBy)
+	if format == "" {
+		format = "table"
+	}
+
+	if sortBy != "" {
+		if _, ok := portfolioColumns[sortBy]; !ok {
+			return fmt.Errorf("The option %q is not a valid column name", sortBy)
 		}
 
-		ct.Sort(options.SortBy, options.SortDesc, holdings, true)
+		ct.Sort(sortBy, sortDesc, holdings, true)
+	}
+
+	if _, ok := outputFormats[format]; !ok {
+		return fmt.Errorf("The option %q is not a valid format type", format)
 	}
 
 	total := ct.GetPortfolioTotal()
-	data := make([][]string, len(holdings))
+	records := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
 
-	for _, entry := range holdings {
+	for i, entry := range holdings {
 		percentHoldings := (entry.Balance / total) * 1e2
 		if math.IsNaN(percentHoldings) {
 			percentHoldings = 0
 		}
 
-		if options.HumanReadable {
-			data = append(data, []string{
+		if humanReadable {
+			records[i] = []string{
 				entry.Name,
 				entry.Symbol,
 				fmt.Sprintf("%s%s", symbol, humanize.Commaf(entry.Price)),
@@ -370,9 +392,9 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 				fmt.Sprintf("%s%s", symbol, humanize.Commaf(entry.Balance)),
 				fmt.Sprintf("%.2f%%", entry.PercentChange24H),
 				fmt.Sprintf("%.2f%%", percentHoldings),
-			})
+			}
 		} else {
-			data = append(data, []string{
+			records[i] = []string{
 				entry.Name,
 				entry.Symbol,
 				strconv.FormatFloat(entry.Price, 'f', -1, 64),
@@ -380,14 +402,53 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 				strconv.FormatFloat(entry.Balance, 'f', -1, 64),
 				fmt.Sprintf("%.2f", entry.PercentChange24H),
 				fmt.Sprintf("%.2f", percentHoldings),
-			})
+			}
 		}
 	}
 
-	alignment := []int{-1, -1, 1, 1, 1, 1, 1}
 	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
+
+	if format == "csv" {
+		csvWriter := csv.NewWriter(os.Stdout)
+		if err := csvWriter.Write(headers); err != nil {
+			return err
+		}
+
+		for _, record := range records {
+			if err := csvWriter.Write(record); err != nil {
+				return err
+			}
+		}
+
+		csvWriter.Flush()
+		if err := csvWriter.Error(); err != nil {
+			return err
+		}
+
+		return nil
+	} else if format == "json" {
+		list := make([]map[string]string, len(records))
+		for i, record := range records {
+			obj := make(map[string]string, len(record))
+			for j, column := range record {
+				obj[headers[j]] = column
+			}
+
+			list[i] = obj
+		}
+
+		output, err := json.Marshal(list)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(output))
+		return nil
+	}
+
+	alignment := []int{-1, -1, 1, 1, 1, 1, 1}
 	table := asciitable.NewAsciiTable(&asciitable.Input{
-		Data:      data,
+		Data:      records,
 		Headers:   headers,
 		Alignment: alignment,
 	})
@@ -404,14 +465,45 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	}
 
 	ct.RefreshPortfolioCoins()
+
+	humanReadable := options.HumanReadable
 	total := ct.GetPortfolioTotal()
 	symbol := ct.CurrencySymbol()
+	format := options.Format
 
-	if options.HumanReadable {
-		fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(total))
-	} else {
-		fmt.Fprintf(os.Stdout, "%s\n", strconv.FormatFloat(total, 'f', -1, 64))
+	value := strconv.FormatFloat(total, 'f', -1, 64)
+
+	if humanReadable {
+		value = fmt.Sprintf("%s%s", symbol, humanize.Commaf(total))
 	}
+
+	if format == "csv" {
+		csvWriter := csv.NewWriter(os.Stdout)
+		if err := csvWriter.Write([]string{"total"}); err != nil {
+			return err
+		}
+		if err := csvWriter.Write([]string{value}); err != nil {
+			return err
+		}
+
+		csvWriter.Flush()
+		if err := csvWriter.Error(); err != nil {
+			return err
+		}
+
+		return nil
+	} else if format == "json" {
+		obj := map[string]string{"total": value}
+		output, err := json.Marshal(obj)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(output))
+		return nil
+	}
+
+	fmt.Println(value)
 
 	return nil
 }

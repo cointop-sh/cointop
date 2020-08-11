@@ -15,6 +15,7 @@ func HoldingsCmd() *cobra.Command {
 	var config string
 	var sortBy string
 	var sortDesc bool
+	var format string = "table"
 	var humanReadable bool
 
 	holdingsCmd := &cobra.Command{
@@ -37,6 +38,7 @@ func HoldingsCmd() *cobra.Command {
 			if total {
 				return ct.PrintTotalHoldings(&cointop.TablePrintOptions{
 					HumanReadable: humanReadable,
+					Format:        format,
 				})
 			}
 
@@ -44,6 +46,7 @@ func HoldingsCmd() *cobra.Command {
 				SortBy:        sortBy,
 				SortDesc:      sortDesc,
 				HumanReadable: humanReadable,
+				Format:        format,
 			})
 		},
 	}
@@ -55,6 +58,7 @@ func HoldingsCmd() *cobra.Command {
 	holdingsCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	holdingsCmd.Flags().StringVarP(&sortBy, "sort-by", "s", sortBy, `Sort by column. Options are "name", "symbol", "price", "holdings", "balance", "24h"`)
 	holdingsCmd.Flags().BoolVarP(&sortDesc, "sort-desc", "d", sortDesc, "Sort in descending order")
+	holdingsCmd.Flags().StringVarP(&format, "format", "f", format, `Ouput format. Options are "table", "csv", "json"`)
 
 	return holdingsCmd
 }

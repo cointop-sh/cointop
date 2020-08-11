@@ -275,6 +275,12 @@ Just run the `cointop` command to get started:
 $ cointop
 ```
 
+To see all the available commands and options run `help` flag:
+
+```bash
+$ cointop --help
+```
+
 ### Navigation
 
 - Easiest way to navigate up and down is using the arrow keys <kbd>↑</kbd> and <kbd>↓</kbd>, respectively

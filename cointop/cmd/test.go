@@ -9,7 +9,7 @@ import (
 func TestCmd() *cobra.Command {
 	testCmd := &cobra.Command{
 		Use:   "test",
-		Short: "Runs tests",
+		Short: "Runs tests for Homebrew",
 		Long:  `The test command runs tests for Homebrew`,
 		Run: func(cmd *cobra.Command, args []string) {
 			doTest()
