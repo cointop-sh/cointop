@@ -7,8 +7,9 @@ func Execute() {
 		VersionCmd(),
 		CleanCmd(),
 		ResetCmd(),
-		PriceCmd(),
 		HoldingsCmd(),
+		PriceCmd(),
+		DominanceCmd(),
 		ServerCmd(),
 		TestCmd(),
 	)

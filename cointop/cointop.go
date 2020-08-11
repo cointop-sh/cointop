@@ -13,7 +13,6 @@ import (
 	"github.com/miguelmota/cointop/cointop/common/api/types"
 	"github.com/miguelmota/cointop/cointop/common/filecache"
 	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
-	"github.com/miguelmota/cointop/cointop/common/humanize"
 	"github.com/miguelmota/cointop/cointop/common/pathutil"
 	"github.com/miguelmota/cointop/cointop/common/table"
 	"github.com/miguelmota/gocui"
@@ -406,35 +405,6 @@ func (ct *Cointop) Run() error {
 // IsRunning returns true if cointop is running
 func (ct *Cointop) IsRunning() bool {
 	return ct.State.running
-}
-
-// PriceConfig is the config options for the price command
-type PriceConfig struct {
-	Coin      string
-	Currency  string
-	APIChoice string
-}
-
-// PrintPrice outputs the current price of the coin
-func PrintPrice(config *PriceConfig) error {
-	var priceAPI api.Interface
-	if config.APIChoice == CoinMarketCap {
-		priceAPI = api.NewCMC("")
-	} else if config.APIChoice == CoinGecko {
-		priceAPI = api.NewCG()
-	} else {
-		return ErrInvalidAPIChoice
-	}
-
-	price, err := priceAPI.Price(config.Coin, config.Currency)
-	if err != nil {
-		return err
-	}
-
-	symbol := CurrencySymbol(config.Currency)
-	fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(price))
-
-	return nil
 }
 
 // CleanConfig is the config for the clean function

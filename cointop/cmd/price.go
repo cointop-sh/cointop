@@ -22,8 +22,8 @@ func PriceCmd() *cobra.Command {
 		},
 	}
 
-	priceCmd.Flags().StringVarP(&coin, "coin", "c", "bitcoin", "Full name of the coin (default \"bitcoin\")")
-	priceCmd.Flags().StringVarP(&currency, "currency", "f", "USD", "The currency to convert to (default \"USD\")")
+	priceCmd.Flags().StringVarP(&coin, "coin", "c", "bitcoin", "Full name of the coin")
+	priceCmd.Flags().StringVarP(&currency, "currency", "f", "USD", "The currency to convert to")
 	priceCmd.Flags().StringVarP(&apiChoice, "api", "a", cointop.CoinGecko, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 
 	return priceCmd
