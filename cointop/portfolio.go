@@ -315,11 +315,42 @@ func (ct *Cointop) RefreshPortfolioCoins() error {
 	return nil
 }
 
+// TablePrintOptions are options for ascii table output.
+type TablePrintOptions struct {
+	SortBy        string
+	SortDesc      bool
+	HumanReadable bool
+}
+
+// portfolioColumns is list of column keys for portfolio
+var portfolioColumns = map[string]bool{
+	"name":     true,
+	"symbol":   true,
+	"price":    true,
+	"holdings": true,
+	"balance":  true,
+	"24h":      true,
+}
+
 // PrintHoldingsTable prints the holdings in an ASCII table
-func (ct *Cointop) PrintHoldingsTable() error {
+func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	ct.debuglog("printHoldingsTable()")
 	ct.RefreshPortfolioCoins()
+
+	if options == nil {
+		options = &TablePrintOptions{}
+	}
+
 	holdings := ct.GetPortfolioSlice()
+
+	if options.SortBy != "" {
+		if _, ok := portfolioColumns[options.SortBy]; !ok {
+			return fmt.Errorf("The option %q is not a valid column name", options.SortBy)
+		}
+
+		ct.Sort(options.SortBy, options.SortDesc, holdings, true)
+	}
+
 	total := ct.GetPortfolioTotal()
 	data := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
@@ -330,19 +361,31 @@ func (ct *Cointop) PrintHoldingsTable() error {
 			percentHoldings = 0
 		}
 
-		data = append(data, []string{
-			entry.Name,
-			entry.Symbol,
-			humanize.Commaf(entry.Price),
-			humanize.Commaf(entry.Holdings),
-			humanize.Commaf(entry.Balance),
-			fmt.Sprintf("%.2f%%", entry.PercentChange24H),
-			fmt.Sprintf("%.2f%%", percentHoldings),
-		})
+		if options.HumanReadable {
+			data = append(data, []string{
+				entry.Name,
+				entry.Symbol,
+				fmt.Sprintf("%s%s", symbol, humanize.Commaf(entry.Price)),
+				humanize.Commaf(entry.Holdings),
+				fmt.Sprintf("%s%s", symbol, humanize.Commaf(entry.Balance)),
+				fmt.Sprintf("%.2f%%", entry.PercentChange24H),
+				fmt.Sprintf("%.2f%%", percentHoldings),
+			})
+		} else {
+			data = append(data, []string{
+				entry.Name,
+				entry.Symbol,
+				strconv.FormatFloat(entry.Price, 'f', -1, 64),
+				strconv.FormatFloat(entry.Holdings, 'f', -1, 64),
+				strconv.FormatFloat(entry.Balance, 'f', -1, 64),
+				fmt.Sprintf("%.2f", entry.PercentChange24H),
+				fmt.Sprintf("%.2f", percentHoldings),
+			})
+		}
 	}
 
 	alignment := []int{-1, -1, 1, 1, 1, 1, 1}
-	headers := []string{"name", "symbol", fmt.Sprintf("%sprice", symbol), "holdings", fmt.Sprintf("%sbalance", symbol), "24h%", "%holdings"}
+	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
 	table := asciitable.NewAsciiTable(&asciitable.Input{
 		Data:      data,
 		Headers:   headers,
@@ -354,13 +397,22 @@ func (ct *Cointop) PrintHoldingsTable() error {
 }
 
 // PrintTotalHoldings prints the total holdings amount
-func (ct *Cointop) PrintTotalHoldings() error {
+func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	ct.debuglog("printTotalHoldings()")
+	if options == nil {
+		options = &TablePrintOptions{}
+	}
+
 	ct.RefreshPortfolioCoins()
 	total := ct.GetPortfolioTotal()
 	symbol := ct.CurrencySymbol()
 
-	fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(total))
+	if options.HumanReadable {
+		fmt.Fprintf(os.Stdout, "%s%s\n", symbol, humanize.Commaf(total))
+	} else {
+		fmt.Fprintf(os.Stdout, "%s\n", strconv.FormatFloat(total, 'f', -1, 64))
+	}
+
 	return nil
 }
 

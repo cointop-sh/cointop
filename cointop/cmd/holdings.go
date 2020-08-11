@@ -9,14 +9,23 @@ import (
 
 // HoldingsCmd ...
 func HoldingsCmd() *cobra.Command {
-	var total, noCache bool
+	var help bool
+	var total bool
+	var noCache bool
 	var config string
+	var sortBy string
+	var sortDesc bool
+	var humanReadable bool
 
 	holdingsCmd := &cobra.Command{
 		Use:   "holdings",
 		Short: "Displays current holdings",
 		Long:  `The holdings command shows your current holdings`,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if help {
+				return cmd.Help()
+			}
+
 			ct, err := cointop.NewCointop(&cointop.Config{
 				ConfigFilepath: config,
 				CacheDir:       cointop.DefaultCacheDir,
@@ -26,16 +35,26 @@ func HoldingsCmd() *cobra.Command {
 			}
 
 			if total {
-				return ct.PrintTotalHoldings()
+				return ct.PrintTotalHoldings(&cointop.TablePrintOptions{
+					HumanReadable: humanReadable,
+				})
 			}
 
-			return ct.PrintHoldingsTable()
+			return ct.PrintHoldingsTable(&cointop.TablePrintOptions{
+				SortBy:        sortBy,
+				SortDesc:      sortDesc,
+				HumanReadable: humanReadable,
+			})
 		},
 	}
 
-	holdingsCmd.Flags().BoolVarP(&total, "total", "t", false, "Show total only")
-	holdingsCmd.Flags().BoolVarP(&noCache, "no-cache", "", false, "No cache")
+	holdingsCmd.Flags().BoolVarP(&help, "help", "", help, "Help for holdings")
+	holdingsCmd.Flags().BoolVarP(&total, "total", "t", total, "Show total only")
+	holdingsCmd.Flags().BoolVarP(&noCache, "no-cache", "", noCache, "No cache")
+	holdingsCmd.Flags().BoolVarP(&humanReadable, "human", "h", humanReadable, "Human readable output")
 	holdingsCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
+	holdingsCmd.Flags().StringVarP(&sortBy, "sort-by", "s", sortBy, `Sort by column. Options are "name", "symbol", "price", "holdings", "balance", "24h"`)
+	holdingsCmd.Flags().BoolVarP(&sortDesc, "sort-desc", "d", sortDesc, "Sort in descending order")
 
 	return holdingsCmd
 }
