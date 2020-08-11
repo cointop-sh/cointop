@@ -21,7 +21,7 @@ require (
 	github.com/tomnomnom/xtermcolor v0.0.0-20160428124646-b78803f00a7e
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
-	golang.org/x/sys v0.0.0-20200808120158-1030fc2bf1d9 // indirect
+	golang.org/x/sys v0.0.0-20200810151505-1b9f1253b3ed // indirect
 	golang.org/x/text v0.3.3
 )
 

@@ -53,7 +53,7 @@ golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
 # golang.org/x/net v0.0.0-20200707034311-ab3426394381
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20200808120158-1030fc2bf1d9
+# golang.org/x/sys v0.0.0-20200810151505-1b9f1253b3ed
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
