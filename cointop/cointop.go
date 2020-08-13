@@ -149,7 +149,7 @@ var DefaultPerPage uint = 100
 var DefaultColorscheme = "cointop"
 
 // DefaultConfigFilepath ...
-var DefaultConfigFilepath = "~/.config/cointop/config.toml"
+var DefaultConfigFilepath = pathutil.NormalizePath(":PREFERRED_CONFIG_HOME:/cointop/config.toml")
 
 // DefaultCacheDir ...
 var DefaultCacheDir = filecache.DefaultCacheDir
@@ -498,4 +498,9 @@ func Reset(config *ResetConfig) error {
 	}
 
 	return nil
+}
+
+// ColorschemeHelpString ...
+func ColorschemeHelpString() string {
+	return fmt.Sprintf("To install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git %s\n\nSee git.io/cointop#colorschemes for more info.", pathutil.NormalizePath(":PREFERRED_CONFIG_HOME:/cointop/colors"))
 }
