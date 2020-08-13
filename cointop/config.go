@@ -17,10 +17,11 @@ var fileperm = os.FileMode(0644)
 
 // NOTE: this is to support previous default config filepaths
 var possibleConfigPaths = []string{
-	"~/.config/cointop/config.toml",
-	"~/.config/cointop/config",
-	"~/.cointop/config",
-	"~/.cointop/config.toml",
+	":PREFERRED_CONFIG_HOME:/cointop/config.toml",
+	":HOME:/.config/cointop/config.toml",
+	":HOME:/.config/cointop/config",
+	":HOME:/.cointop/config",
+	":HOME:/.cointop/config.toml",
 }
 
 type config struct {
@@ -334,7 +335,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 			return nil, err
 		}
 	} else {
-		path := pathutil.NormalizePath(fmt.Sprintf("~/.cointop/colors/%s.toml", ct.colorschemeName))
+		path := fmt.Sprintf("%s/colors/%s.toml", ct.ConfigDirPath(), ct.colorschemeName)
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
 			if ct.colorschemeName == "cointop" {
@@ -345,7 +346,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 				return colors, nil
 			}
 
-			return nil, fmt.Errorf("The colorscheme file %q was not found.\n\nTo install standard themes, do:\n\ngit clone git@github.com:cointop-sh/colors.git ~/.config/cointop/colors\n\nFor additional instructions, visit: https://github.com/cointop-sh/colors", path)
+			return nil, fmt.Errorf("The colorscheme file %q was not found.\n%s", path, ColorschemeHelpString())
 		}
 
 		if _, err := toml.DecodeFile(path, &colors); err != nil {
