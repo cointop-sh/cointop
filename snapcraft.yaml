@@ -9,7 +9,7 @@ confinement: strict
 
 parts:
   go:
-    source-tag: go1.13
+    source-tag: go1.14
   cointop:
     after: [go]
     source: .

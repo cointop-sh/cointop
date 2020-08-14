@@ -1,5 +1,5 @@
-%define version     1.5.1
-%global commit      8c225f598f8f3e32afaba7ac4f799577281a160088fec5183919a699e5b4c14e
+%define version     1.5.2
+%global commit      556dba09374f9a7847e9a8d18afa5240f97e2ab7dd3b0d1ba6397f885b20b3ff
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
 Name:           cointop
@@ -11,7 +11,7 @@ URL:            https://cointop.sh
 Source0:        https://github.com/miguelmota/%{cointop}/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
-BuildRequires:  golang >= 1.13
+BuildRequires:  golang >= 1.14
 
 %description
 cointop is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
