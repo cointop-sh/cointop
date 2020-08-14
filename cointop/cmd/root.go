@@ -101,7 +101,7 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", "", "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
-	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", fmt.Sprintf("Colorscheme to use (default \"cointop\").\n%s", cointop.ColorschemeHelpString))
+	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", fmt.Sprintf("Colorscheme to use (default \"cointop\").\n%s", cointop.ColorschemeHelpString()))
 	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, "Cache directory")
 
 	return rootCmd
