@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2020-08-14
+### Fixed
+- Build error
+
 ## [1.5.2] - 2020-08-13
 ### Fixed
-- XDG_CONFIG_HOME config path
+- `XDG_CONFIG_HOME` config path
 
 ### Added
 - Holdings command with sorting and filter options
