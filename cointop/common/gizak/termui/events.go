@@ -5,6 +5,7 @@
 package termui
 
 import (
+	"fmt"
 	"path"
 	"strconv"
 	"sync"
@@ -48,7 +49,7 @@ func evtKbd(e termbox.Event) EvtKbd {
 
 		if e.Key <= 0x7F {
 			pre = "C-"
-			k = string('a' - 1 + int(e.Key))
+			k = fmt.Sprintf("%v", 'a'-1+int(e.Key))
 			kmap := map[termbox.Key][2]string{
 				termbox.KeyCtrlSpace:     {"C-", "<space>"},
 				termbox.KeyBackspace:     {"", "<backspace>"},
