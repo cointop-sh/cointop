@@ -1,5 +1,10 @@
 package cmd
 
+import (
+	"fmt"
+	"os"
+)
+
 // Execute executes the program
 func Execute() {
 	rootCmd := RootCmd()
@@ -15,6 +20,7 @@ func Execute() {
 	)
 
 	if err := rootCmd.Execute(); err != nil {
-		panic(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
