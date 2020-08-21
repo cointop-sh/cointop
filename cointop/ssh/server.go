@@ -66,6 +66,7 @@ func (s *Server) ListenAndServe() error {
 		Addr:        fmt.Sprintf("%s:%v", s.address, s.port),
 		IdleTimeout: s.idleTimeout,
 		Handler: func(sshSession ssh.Session) {
+			userCmd := sshSession.Command()
 			ptyReq, winCh, isPty := sshSession.Pty()
 			if !isPty {
 				io.WriteString(sshSession, "Error: Non-interactive terminals are not supported")
@@ -84,7 +85,24 @@ func (s *Server) ListenAndServe() error {
 			cmdCtx, cancelCmd := context.WithCancel(sshSession.Context())
 			defer cancelCmd()
 
-			cmd := exec.CommandContext(cmdCtx, s.executableBinary, "--reset", "--silent", "--cache-dir", tempDir, "--config", configPath)
+			flags := []string{
+				"--reset",
+				"--silent",
+				"--cache-dir",
+				tempDir,
+				"--config",
+				configPath,
+			}
+
+			for _, arg := range userCmd {
+				if arg == "cointop" {
+					continue
+				}
+
+				flags = append(flags, arg)
+			}
+
+			cmd := exec.CommandContext(cmdCtx, s.executableBinary, flags...)
 			cmd.Env = append(sshSession.Environ(), fmt.Sprintf("TERM=%s", ptyReq.Term))
 
 			f, err := pty.Start(cmd)
