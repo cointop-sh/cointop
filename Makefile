@@ -41,6 +41,9 @@ build-multiple: clean
 	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop64 && upx bin/cointop64 && \
 	env GOARCH=386 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop32 && upx bin/cointop32
 
+install: build
+	sudo mv bin/cointop /usr/local/bin
+
 clean-mac:
 	go clean && \
 	rm -rf bin/mac

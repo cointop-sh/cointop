@@ -46,5 +46,5 @@ func NormalizePath(path string) string {
 	path = strings.Replace(path, ":PREFERRED_CONFIG_HOME:", userConfigHome, -1)
 	path = strings.Replace(path, "/", string(filepath.Separator), -1)
 
-	return path
+	return filepath.Clean(path)
 }

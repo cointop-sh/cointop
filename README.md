@@ -615,6 +615,12 @@ SSH demo:
 ssh cointop.sh
 ```
 
+Passing arguments to SSH server:
+
+```bash
+ssh cointop.sh -t cointop --colorscheme synthwave
+```
+
 Using docker to run SSH server:
 
 ```bash

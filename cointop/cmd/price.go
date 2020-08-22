@@ -7,7 +7,9 @@ import (
 
 // PriceCmd ...
 func PriceCmd() *cobra.Command {
-	var apiChoice, coin, currency string
+	var apiChoice string
+	var coin string
+	var currency string
 
 	priceCmd := &cobra.Command{
 		Use:   "price",

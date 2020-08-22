@@ -66,7 +66,7 @@ func (s *Server) ListenAndServe() error {
 		Addr:        fmt.Sprintf("%s:%v", s.address, s.port),
 		IdleTimeout: s.idleTimeout,
 		Handler: func(sshSession ssh.Session) {
-			userCmd := sshSession.Command()
+			cmdUserArgs := sshSession.Command()
 			ptyReq, winCh, isPty := sshSession.Pty()
 			if !isPty {
 				io.WriteString(sshSession, "Error: Non-interactive terminals are not supported")
@@ -81,6 +81,7 @@ func (s *Server) ListenAndServe() error {
 			}
 
 			configPath := fmt.Sprintf("%s/config", tempDir)
+			colorsDir := pathutil.NormalizePath("~/.config/cointop/colors")
 
 			cmdCtx, cancelCmd := context.WithCancel(sshSession.Context())
 			defer cancelCmd()
@@ -92,10 +93,12 @@ func (s *Server) ListenAndServe() error {
 				tempDir,
 				"--config",
 				configPath,
+				"--colors-dir",
+				colorsDir,
 			}
 
-			for _, arg := range userCmd {
-				if arg == "cointop" {
+			for i, arg := range cmdUserArgs {
+				if i == 0 {
 					continue
 				}
 

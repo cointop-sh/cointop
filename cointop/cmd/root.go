@@ -9,11 +9,24 @@ import (
 
 // RootCmd ...
 func RootCmd() *cobra.Command {
-	var version, test, clean, reset, hideMarketbar, hideChart, hideStatusbar, onlyTable, silent, noCache bool
+	var version bool
+	var test bool
+	var clean bool
+	var reset bool
+	var hideMarketbar bool
+	var hideChart bool
+	var hideStatusbar bool
+	var onlyTable bool
+	var silent bool
+	var noCache bool
 	var refreshRate uint
-	var config, cmcAPIKey, apiChoice, colorscheme string
-	perPage := cointop.DefaultPerPage
-	cacheDir := cointop.DefaultCacheDir
+	var config string
+	var cmcAPIKey string
+	var apiChoice string
+	var colorscheme string
+	var perPage = cointop.DefaultPerPage
+	var cacheDir = cointop.DefaultCacheDir
+	var colorsDir string
 
 	rootCmd := &cobra.Command{
 		Use:   "cointop",
@@ -66,6 +79,7 @@ See git.io/cointop for more info.`,
 
 			ct, err := cointop.NewCointop(&cointop.Config{
 				CacheDir:            cacheDir,
+				ColorsDir:           colorsDir,
 				NoCache:             noCache,
 				ConfigFilepath:      config,
 				CoinMarketCapAPIKey: cmcAPIKey,
@@ -103,6 +117,7 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", "", "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", fmt.Sprintf("Colorscheme to use (default \"cointop\").\n%s", cointop.ColorschemeHelpString()))
 	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, "Cache directory")
+	rootCmd.Flags().StringVarP(&colorsDir, "colors-dir", "", colorsDir, "Colorschemes directory")
 
 	return rootCmd
 }
