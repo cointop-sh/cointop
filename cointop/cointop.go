@@ -81,6 +81,7 @@ type Cointop struct {
 	ActionsMap       map[string]bool
 	apiKeys          *APIKeys
 	cache            *cache.Cache
+	colorsDir        string
 	config           config // toml config
 	configFilepath   string
 	api              api.Interface
@@ -124,6 +125,7 @@ type Portfolio struct {
 type Config struct {
 	APIChoice           string
 	CacheDir            string
+	ColorsDir           string
 	Colorscheme         string
 	ConfigFilepath      string
 	CoinMarketCapAPIKey string
@@ -153,6 +155,9 @@ var DefaultConfigFilepath = pathutil.NormalizePath(":PREFERRED_CONFIG_HOME:/coin
 
 // DefaultCacheDir ...
 var DefaultCacheDir = filecache.DefaultCacheDir
+
+// DefaultColorsDir ...
+var DefaultColorsDir = fmt.Sprintf("%s/colors", DefaultConfigFilepath)
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
@@ -189,6 +194,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		maxTableWidth:  175,
 		ActionsMap:     ActionsMap(),
 		cache:          cache.New(1*time.Minute, 2*time.Minute),
+		colorsDir:      config.ColorsDir,
 		configFilepath: configFilepath,
 		chartRanges:    ChartRanges(),
 		debug:          debug,

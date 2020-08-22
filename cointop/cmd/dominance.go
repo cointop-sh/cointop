@@ -7,7 +7,8 @@ import (
 
 // DominanceCmd ...
 func DominanceCmd() *cobra.Command {
-	var apiChoice, currency string
+	var apiChoice string
+	var currency string
 
 	dominanceCmd := &cobra.Command{
 		Use:   "dominance",

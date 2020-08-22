@@ -335,7 +335,12 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 			return nil, err
 		}
 	} else {
-		path := fmt.Sprintf("%s/colors/%s.toml", ct.ConfigDirPath(), ct.colorschemeName)
+		colorsDir := fmt.Sprintf("%s/colors", ct.ConfigDirPath())
+		if ct.colorsDir != "" {
+			colorsDir = pathutil.NormalizePath(ct.colorsDir)
+		}
+
+		path := fmt.Sprintf("%s/%s.toml", colorsDir, ct.colorschemeName)
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
 			if ct.colorschemeName == "cointop" {
