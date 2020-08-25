@@ -321,6 +321,17 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ct.filecache.Get(coinscachekey, &allCoinsSlugMap)
 	}
 
+	// fix for https://github.com/miguelmota/cointop/issues/59
+	// can remove this after everyone has cleared their cache
+	for _, v := range allCoinsSlugMap {
+		// Some APIs returns rank 0 for new coins
+		// or coins with low activity so we need to put them
+		// at the end of the list.
+		if v.Rank == 0 {
+			v.Rank = 10000
+		}
+	}
+
 	for k, v := range allCoinsSlugMap {
 		ct.State.allCoinsSlugMap.Store(k, v)
 	}

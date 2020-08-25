@@ -20,7 +20,6 @@ func (ct *Cointop) UpdateCoins() error {
 	var err error
 	var allCoinsSlugMap map[string]types.Coin
 	cached, found := ct.cache.Get(cachekey)
-	_ = cached
 	if found {
 		// cache hit
 		allCoinsSlugMap, _ = cached.(map[string]types.Coin)
@@ -49,6 +48,7 @@ func (ct *Cointop) UpdateCoins() error {
 // ProcessCoinsMap processes coins map
 func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 	ct.debuglog("processCoinsMap()")
+
 	var coins []types.Coin
 	for _, v := range coinsMap {
 		coins = append(coins, v)
@@ -67,6 +67,15 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 
 	for _, v := range coins {
 		k := v.Name
+
+		// Fix for https://github.com/miguelmota/cointop/issues/59
+		// some APIs returns rank 0 for new coins
+		// or coins with low activity so we need to put them
+		// at the end of the list
+		if v.Rank == 0 {
+			v.Rank = 10000
+		}
+
 		ilast, _ := ct.State.allCoinsSlugMap.Load(k)
 		ct.State.allCoinsSlugMap.Store(k, &Coin{
 			ID:               v.ID,
