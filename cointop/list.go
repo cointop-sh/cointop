@@ -70,7 +70,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 
 		// Fix for https://github.com/miguelmota/cointop/issues/59
 		// some APIs returns rank 0 for new coins
-		// or coins with low activity so we need to put them
+		// or coins with low market cap data so we need to put them
 		// at the end of the list
 		if v.Rank == 0 {
 			v.Rank = 10000
