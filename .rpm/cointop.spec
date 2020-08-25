@@ -24,7 +24,7 @@ mkdir -p ./_build/src/github.com/miguelmota
 ln -s $(pwd) ./_build/src/github.com/miguelmota/%{name}
 
 export GOPATH=$(pwd)/_build:%{gopath}
-GO111MODULE=off go build -ldflags="-linkmode=external -compressdwarf=false -X github.com/miguelmota/cointop/cointop.version=v%{version}" -o x .
+GO111MODULE=off go build -ldflags="-linkmode=external -compressdwarf=false -X github.com/miguelmota/cointop/cointop.version=%{version}" -o x .
 
 %install
 install -d %{buildroot}%{_bindir}
