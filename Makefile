@@ -74,6 +74,7 @@ cointop-reset:
 snap-clean:
 	snapcraft clean
 	rm -f cointop_*.snap
+	rm -f cointop_*.tar.bz2
 
 snap-stage:
 	# https://github.com/elopio/go/issues/2
@@ -82,6 +83,15 @@ snap-stage:
 snap-install:
 	sudo apt install snapd
 	sudo snap install snapcraft --classic
+
+snap-install-arch:
+	yay -S snapd
+	sudo snap install snapcraft --classic
+	sudo ln -s /var/lib/snapd/snap /snap # enable classic snap support
+	sudo snap install hello-world
+
+snap-install-local:
+	sudo snap install --dangerous cointop_master_amd64.snap
 
 snap-build: snap-clean snap-stage
 	snapcraft snap
@@ -106,14 +116,20 @@ flatpak-run-test:
 flatpak-repo:
 	flatpak-builder --repo=repo --force-clean build-dir com.github.miguelmota.Cointop.json
 
-flatpak-add:
+flatpak-add-repo:
 	flatpak --user remote-add --no-gpg-verify cointop-repo repo
+
+flatpak-add-flathub:
+	sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 flatpak-remove:
 	flatpak --user remote-delete cointop-repo
 
 flatpak-install:
 	flatpak --user install cointop-repo com.github.miguelmota.Cointop
+
+flatpak-install-local:
+	flatpak-builder --force-clean --install --install-deps-from=flathub --user build-dir com.github.miguelmota.Cointop.json
 
 flatpak-run:
 	flatpak run com.github.miguelmota.Cointop

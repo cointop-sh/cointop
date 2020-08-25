@@ -44,6 +44,7 @@ main
 !main.go
 wasm
 .config
+.bz2
 
 # flatpak
 .flatpak-builder
