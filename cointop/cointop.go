@@ -265,7 +265,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			CacheDir: ct.State.cacheDir,
 		})
 		if err != nil {
-			fmt.Printf("error: %s\nproceeding without filecache.", err)
+			fmt.Printf("error: %s\nyou may change the cache directory with --cache-dir flag.\nproceeding without filecache.\n", err)
 		}
 
 		ct.filecache = fcache
