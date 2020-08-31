@@ -16,7 +16,7 @@ import (
 )
 
 // DefaultCacheDir ...
-var DefaultCacheDir = "/tmp"
+var DefaultCacheDir = "/tmp1"
 
 // FileCache ...
 type FileCache struct {
@@ -30,7 +30,7 @@ type Config struct {
 }
 
 // NewFileCache ...
-func NewFileCache(config *Config) *FileCache {
+func NewFileCache(config *Config) (*FileCache, error) {
 	if config == nil {
 		config = &Config{}
 	}
@@ -42,14 +42,14 @@ func NewFileCache(config *Config) *FileCache {
 
 	if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(cacheDir, 0700); err != nil {
-			panic(err)
+			return nil, err
 		}
 	}
 
 	return &FileCache{
 		muts:     make(map[string]*sync.Mutex),
 		cacheDir: cacheDir,
-	}
+	}, nil
 }
 
 // Set writes item to cache

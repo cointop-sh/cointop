@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Rank order for low market cap coins
 
+### Added
+- Colorschemes directory flag
+
 ## [1.5.3] - 2020-08-14
 ### Fixed
 - Build error

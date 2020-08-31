@@ -42,6 +42,7 @@ type Views struct {
 type State struct {
 	allCoins           []*Coin
 	allCoinsSlugMap    sync.Map
+	cacheDir           string
 	coins              []*Coin
 	chartPoints        [][]termui.Cell
 	currencyConversion string
@@ -175,13 +176,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		configFilepath = config.ConfigFilepath
 	}
 
-	var fcache *filecache.FileCache
-	if !config.NoCache {
-		fcache = filecache.NewFileCache(&filecache.Config{
-			CacheDir: config.CacheDir,
-		})
-	}
-
 	perPage := DefaultPerPage
 	if config.PerPage != 0 {
 		perPage = config.PerPage
@@ -200,9 +194,10 @@ func NewCointop(config *Config) (*Cointop, error) {
 		debug:          debug,
 		chartRangesMap: ChartRangesMap(),
 		limiter:        time.Tick(2 * time.Second),
-		filecache:      fcache,
+		filecache:      nil,
 		State: &State{
 			allCoins:           []*Coin{},
+			cacheDir:           DefaultCacheDir,
 			currencyConversion: "USD",
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 			favoritesBySymbol:  make(map[string]bool),
@@ -256,6 +251,24 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ct.refreshTicker.Stop()
 	} else {
 		ct.refreshTicker = time.NewTicker(ct.State.refreshRate)
+	}
+
+	if config.CacheDir != "" {
+		ct.State.cacheDir = pathutil.NormalizePath(config.CacheDir)
+		if err := ct.SaveConfig(); err != nil {
+			return nil, err
+		}
+	}
+
+	if !config.NoCache {
+		fcache, err := filecache.NewFileCache(&filecache.Config{
+			CacheDir: ct.State.cacheDir,
+		})
+		if err != nil {
+			fmt.Printf("error: %s\nproceeding without filecache.", err)
+		}
+
+		ct.filecache = fcache
 	}
 
 	// prompt for CoinMarketCap api key if not found
@@ -440,7 +453,7 @@ func Clean(config *CleanConfig) error {
 
 	cacheDir := DefaultCacheDir
 	if config.CacheDir != "" {
-		cacheDir = config.CacheDir
+		cacheDir = pathutil.NormalizePath(config.CacheDir)
 	}
 
 	if _, err := os.Stat(cacheDir); !os.IsNotExist(err) {

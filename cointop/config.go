@@ -34,6 +34,7 @@ type config struct {
 	API           interface{}              `toml:"api"`
 	Colorscheme   interface{}              `toml:"colorscheme"`
 	RefreshRate   interface{}              `toml:"refresh_rate"`
+	CacheDir      interface{}              `toml:"cache_dir"`
 }
 
 // SetupConfig loads config file
@@ -67,6 +68,9 @@ func (ct *Cointop) SetupConfig() error {
 		return err
 	}
 	if err := ct.loadRefreshRateFromConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadCacheDirFromConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadPortfolioFromConfig(); err != nil {
@@ -217,6 +221,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	var defaultViewIfc interface{} = ct.State.defaultView
 	var colorschemeIfc interface{} = ct.colorschemeName
 	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
+	var cacheDirIfc interface{} = ct.State.cacheDir
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
@@ -233,6 +238,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		RefreshRate:   refreshRateIfc,
 		Shortcuts:     shortcutsIfcs,
 		Portfolio:     portfolioIfc,
+		CacheDir:      cacheDirIfc,
 	}
 
 	var b bytes.Buffer
@@ -320,6 +326,16 @@ func (ct *Cointop) loadRefreshRateFromConfig() error {
 	ct.debuglog("loadRefreshRateFromConfig()")
 	if refreshRate, ok := ct.config.RefreshRate.(int64); ok {
 		ct.State.refreshRate = time.Duration(uint(refreshRate)) * time.Second
+	}
+
+	return nil
+}
+
+// LoadCacheDirFromConfig loads cache dir from config file to struct
+func (ct *Cointop) loadCacheDirFromConfig() error {
+	ct.debuglog("loadCacheDirFromConfig()")
+	if cacheDir, ok := ct.config.CacheDir.(string); ok {
+		ct.State.cacheDir = cacheDir
 	}
 
 	return nil

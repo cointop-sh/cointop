@@ -25,7 +25,7 @@ func RootCmd() *cobra.Command {
 	var apiChoice string
 	var colorscheme string
 	var perPage = cointop.DefaultPerPage
-	var cacheDir = cointop.DefaultCacheDir
+	var cacheDir string
 	var colorsDir string
 
 	rootCmd := &cobra.Command{
@@ -116,7 +116,7 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", "", "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", "", fmt.Sprintf("Colorscheme to use (default \"cointop\").\n%s", cointop.ColorschemeHelpString()))
-	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, "Cache directory")
+	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, fmt.Sprintf("Cache directory (default %s)", cointop.DefaultCacheDir))
 	rootCmd.Flags().StringVarP(&colorsDir, "colors-dir", "", colorsDir, "Colorschemes directory")
 
 	return rootCmd
