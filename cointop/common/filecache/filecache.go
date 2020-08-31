@@ -16,7 +16,7 @@ import (
 )
 
 // DefaultCacheDir ...
-var DefaultCacheDir = "/tmp1"
+var DefaultCacheDir = "/tmp"
 
 // FileCache ...
 type FileCache struct {

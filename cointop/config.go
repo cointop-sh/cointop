@@ -335,7 +335,7 @@ func (ct *Cointop) loadRefreshRateFromConfig() error {
 func (ct *Cointop) loadCacheDirFromConfig() error {
 	ct.debuglog("loadCacheDirFromConfig()")
 	if cacheDir, ok := ct.config.CacheDir.(string); ok {
-		ct.State.cacheDir = cacheDir
+		ct.State.cacheDir = pathutil.NormalizePath(cacheDir)
 	}
 
 	return nil
