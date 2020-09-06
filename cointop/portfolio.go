@@ -324,6 +324,7 @@ type TablePrintOptions struct {
 	HumanReadable bool
 	Format        string
 	Filter        []string
+	Convert       string
 }
 
 // outputFormats is list of valid output formats
@@ -348,6 +349,10 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	ct.debuglog("printHoldingsTable()")
 	if options == nil {
 		options = &TablePrintOptions{}
+	}
+
+	if err := ct.SetCurrencyConverstion(options.Convert); err != nil {
+		return err
 	}
 
 	ct.RefreshPortfolioCoins()
@@ -478,6 +483,10 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	ct.debuglog("printTotalHoldings()")
 	if options == nil {
 		options = &TablePrintOptions{}
+	}
+
+	if err := ct.SetCurrencyConverstion(options.Convert); err != nil {
+		return err
 	}
 
 	ct.RefreshPortfolioCoins()

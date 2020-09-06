@@ -1,6 +1,7 @@
 package cointop
 
 import (
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -113,6 +114,13 @@ func NewConvertMenuView() *ConvertMenuView {
 	return &ConvertMenuView{NewView("convertmenu")}
 }
 
+// IsSupportedCurrencyConversion returns true if it's a supported currency conversion
+func (ct *Cointop) IsSupportedCurrencyConversion(convert string) bool {
+	conversions := ct.SupportedCurrencyConversions()
+	_, ok := conversions[convert]
+	return ok
+}
+
 // SupportedCurrencyConversions returns a map of all supported currencies for conversion
 func (ct *Cointop) SupportedCurrencyConversions() map[string]string {
 	all := map[string]string{}
@@ -208,18 +216,35 @@ func (ct *Cointop) UpdateConvertMenu() {
 	})
 }
 
+// SetCurrencyConverstion sets the currency conversion
+func (ct *Cointop) SetCurrencyConverstion(convert string) error {
+	convert = strings.ToUpper(convert)
+	if convert == "" {
+		return nil
+	}
+
+	if !ct.IsSupportedCurrencyConversion(convert) {
+		return errors.New("unsupported currency conversion")
+	}
+
+	// NOTE: return if the currency selection wasn't changed
+	if ct.State.currencyConversion == convert {
+		return nil
+	}
+
+	ct.State.currencyConversion = convert
+	return nil
+}
+
 // SetCurrencyConverstionFn sets the currency conversion function
 func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 	ct.debuglog("setCurrencyConverstionFn()")
 	return func() error {
 		ct.HideConvertMenu()
 
-		// NOTE: return if the currency selection wasn't changed
-		if ct.State.currencyConversion == convert {
-			return nil
+		if err := ct.SetCurrencyConverstion(convert); err != nil {
+			return err
 		}
-
-		ct.State.currencyConversion = convert
 
 		if err := ct.Save(); err != nil {
 			return err
