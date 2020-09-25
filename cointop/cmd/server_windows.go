@@ -3,16 +3,17 @@
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/spf13/cobra"
 )
 
+// ServerCmd ...
+// TODO: implement pty ssh server for Windows
 func ServerCmd() *cobra.Command {
 	return &cobra.Command{
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Println("//TODO: implement pty ssh server for Windows")
-			return nil
+			return errors.New("Not implemented")
 		},
 	}
 }
