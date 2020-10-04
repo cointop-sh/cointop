@@ -67,6 +67,7 @@ func DefaultShortcuts() map[string]string {
 		"v":         "sort_column_24h_volume",
 		"q":         "quit_view",
 		"Q":         "quit_view",
+		"%":         "sort_column_percentholdings",
 		"$":         "last_page",
 		"?":         "help",
 		"/":         "open_search",
