@@ -105,7 +105,7 @@ func (ct *Cointop) RefreshTable() error {
 				ct.colorscheme.TableRow(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
 				colorbalance(fmt.Sprintf("%15s", humanize.Commaf(coin.Balance))),
 				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
-				ct.colorscheme.TableRow(fmt.Sprintf("%10.2f%%", percentHoldings)),
+				ct.colorscheme.TableRow(fmt.Sprintf("%12.2f%%", percentHoldings)),
 				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%17s", lastUpdated), 80, " ")),
 			)
 		}
