@@ -30,21 +30,21 @@ func (ct *Cointop) UpdateTableHeader() {
 
 	baseColor := ct.colorscheme.TableHeaderSprintf()
 	cm := map[string]*t{
-		"rank":            &t{baseColor, "[r]ank", 0, 1, " "},
-		"name":            &t{baseColor, "[n]ame", 0, 11, " "},
-		"symbol":          &t{baseColor, "[s]ymbol", 4, 0, " "},
-		"price":           &t{baseColor, "[p]rice", 2, 0, " "},
-		"holdings":        &t{baseColor, "[h]oldings", 5, 0, " "},
-		"balance":         &t{baseColor, "[b]alance", 5, 0, " "},
-		"marketcap":       &t{baseColor, "[m]arket cap", 5, 0, " "},
-		"24hvolume":       &t{baseColor, "24H [v]olume", 3, 0, " "},
-		"1hchange":        &t{baseColor, "[1]H%", 5, 0, " "},
-		"24hchange":       &t{baseColor, "[2]4H%", 3, 0, " "},
-		"7dchange":        &t{baseColor, "[7]D%", 4, 0, " "},
-		"totalsupply":     &t{baseColor, "[t]otal supply", 7, 0, " "},
-		"availablesupply": &t{baseColor, "[a]vailable supply", 0, 0, " "},
-		"percentholdings": &t{baseColor, "%holdings", 2, 0, " "},
-		"lastupdated":     &t{baseColor, "last [u]pdated", 3, 0, " "},
+		"rank":            {baseColor, "[r]ank", 0, 1, " "},
+		"name":            {baseColor, "[n]ame", 0, 11, " "},
+		"symbol":          {baseColor, "[s]ymbol", 4, 0, " "},
+		"price":           {baseColor, "[p]rice", 2, 0, " "},
+		"holdings":        {baseColor, "[h]oldings", 5, 0, " "},
+		"balance":         {baseColor, "[b]alance", 5, 0, " "},
+		"marketcap":       {baseColor, "[m]arket cap", 5, 0, " "},
+		"24hvolume":       {baseColor, "24H [v]olume", 3, 0, " "},
+		"1hchange":        {baseColor, "[1]H%", 5, 0, " "},
+		"24hchange":       {baseColor, "[2]4H%", 3, 0, " "},
+		"7dchange":        {baseColor, "[7]D%", 4, 0, " "},
+		"totalsupply":     {baseColor, "[t]otal supply", 7, 0, " "},
+		"availablesupply": {baseColor, "[a]vailable supply", 0, 0, " "},
+		"percentholdings": {baseColor, "[%]holdings", 2, 0, " "},
+		"lastupdated":     {baseColor, "last [u]pdated", 3, 0, " "},
 	}
 
 	for k := range cm {

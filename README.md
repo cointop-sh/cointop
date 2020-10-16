@@ -377,6 +377,7 @@ Key|Action
 <kbd>t</kbd>|Sort table by *[t]otal supply*
 <kbd>u</kbd>|Sort table by *last [u]pdated*
 <kbd>v</kbd>|Sort table by *24 hour [v]olume*
+<kbd>%</kbd>|Sort table by *[%]holdings*
 <kbd>q</kbd>|Quit view
 <kbd>$</kbd>|Go to last page (vim inspired)
 <kbd>?</kbd>|Show help|

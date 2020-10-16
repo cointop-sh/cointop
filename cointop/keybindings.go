@@ -295,6 +295,8 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			fn = ct.Sortfn("balance", true)
 		case "sort_column_holdings":
 			fn = ct.Sortfn("holdings", true)
+		case "sort_column_percent_holdings":
+			fn = ct.Sortfn("percentholdings", true)
 		case "last_page":
 			fn = ct.Keyfn(ct.LastPage)
 		case "open_search":
