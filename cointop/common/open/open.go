@@ -37,9 +37,9 @@ func init() {
 }
 
 // URL open url
-func URL(s string) error {
+func URL(url string) error {
 	if openCmd != "" {
-		exec.Command(openCmd, s).Output()
+		return exec.Command(openCmd, url).Run()
 	}
 	return nil
 }
