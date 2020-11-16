@@ -22,6 +22,7 @@ snap
 stage
 *.snap
 *.xdelta3
+meta/metrics/snapcraft.cfg
 
 # flatpak files
 .flatpak-builder
