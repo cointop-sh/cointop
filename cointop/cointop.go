@@ -9,12 +9,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/cointop/common/api"
-	"github.com/miguelmota/cointop/cointop/common/api/types"
-	"github.com/miguelmota/cointop/cointop/common/filecache"
-	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
-	"github.com/miguelmota/cointop/cointop/common/pathutil"
-	"github.com/miguelmota/cointop/cointop/common/table"
+	"github.com/miguelmota/cointop/pkg/api"
+	"github.com/miguelmota/cointop/pkg/api/types"
+	"github.com/miguelmota/cointop/pkg/filecache"
+	"github.com/miguelmota/cointop/pkg/pathutil"
+	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/miguelmota/cointop/pkg/ui"
 	"github.com/miguelmota/gocui"
 	"github.com/patrickmn/go-cache"
 )
@@ -44,7 +44,7 @@ type State struct {
 	allCoinsSlugMap    sync.Map
 	cacheDir           string
 	coins              []*Coin
-	chartPoints        [][]termui.Cell
+	chartPoints        [][]rune
 	currencyConversion string
 	convertMenuVisible bool
 	defaultView        string
@@ -79,6 +79,7 @@ type State struct {
 // Cointop cointop
 type Cointop struct {
 	g                *gocui.Gui
+	ui               *ui.UI
 	ActionsMap       map[string]bool
 	apiKeys          *APIKeys
 	cache            *cache.Cache
@@ -406,26 +407,27 @@ func NewCointop(config *Config) (*Cointop, error) {
 // Run runs cointop
 func (ct *Cointop) Run() error {
 	ct.debuglog("run()")
-	g, err := gocui.NewGui(gocui.Output256)
+	ui, err := ui.NewUI()
 	if err != nil {
-		return fmt.Errorf("new gocui: %v", err)
+		return err
 	}
 
-	g.FgColor = ct.colorscheme.BaseFg()
-	g.BgColor = ct.colorscheme.BaseBg()
-	ct.g = g
-	defer g.Close()
+	ui.SetFgColor(ct.colorscheme.BaseFg())
+	ui.SetBgColor(ct.colorscheme.BaseBg())
+	ct.ui = ui
+	ct.g = ui.GetGocui()
+	defer ui.Close()
 
-	g.InputEsc = true
-	g.Mouse = true
-	g.Highlight = true
-	g.SetManagerFunc(ct.layout)
-	if err := ct.Keybindings(g); err != nil {
+	ui.SetInputEsc(true)
+	ui.SetMouse(true)
+	ui.SetHighlight(true)
+	ui.SetManagerFunc(ct.layout)
+	if err := ct.Keybindings(ct.g); err != nil {
 		return fmt.Errorf("keybindings: %v", err)
 	}
 
 	ct.State.running = true
-	if err := g.MainLoop(); err != nil && err != gocui.ErrQuit {
+	if err := ui.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return fmt.Errorf("main loop: %v", err)
 	}
 

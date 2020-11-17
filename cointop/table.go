@@ -8,19 +8,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miguelmota/cointop/cointop/common/humanize"
-	"github.com/miguelmota/cointop/cointop/common/pad"
-	"github.com/miguelmota/cointop/cointop/common/table"
+	"github.com/miguelmota/cointop/pkg/humanize"
+	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // TableView is structure for table view
-type TableView struct {
-	*View
-}
+type TableView = ui.View
 
 // NewTableView returns a new table view
 func NewTableView() *TableView {
-	return &TableView{NewView("table")}
+	var view *TableView = ui.NewView("table")
+	return view
 }
 
 // TableColumnOrder returns the default order of the table columns
@@ -193,12 +193,8 @@ func (ct *Cointop) RefreshTable() error {
 		ct.HighlightRow(currentrow)
 	}
 
-	ct.Update(func() error {
-		if ct.Views.Table.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.Table.Backing().Clear()
+	ct.UpdateUI(func() error {
+		ct.Views.Table.Clear()
 		ct.table.Format().Fprint(ct.Views.Table.Backing())
 		go ct.RowChanged()
 		go ct.UpdateTableHeader()
@@ -288,13 +284,9 @@ func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 // HighlightedRowIndex returns the index of the highlighted row
 func (ct *Cointop) HighlightedRowIndex() int {
 	ct.debuglog("HighlightedRowIndex()")
-	if ct.Views.Table.Backing() == nil {
-		return 0
-	}
-
-	_, y := ct.Views.Table.Backing().Origin()
-	_, cy := ct.Views.Table.Backing().Cursor()
-	idx := y + cy
+	oy := ct.Views.Table.OriginY()
+	cy := ct.Views.Table.CursorY()
+	idx := oy + cy
 	if idx < 0 {
 		idx = 0
 	}
@@ -317,7 +309,7 @@ func (ct *Cointop) HighlightedRowCoin() *Coin {
 // HighlightedPageRowIndex returns the index of page row of the highlighted row
 func (ct *Cointop) HighlightedPageRowIndex() int {
 	ct.debuglog("HighlightedPageRowIndex()")
-	_, cy := ct.Views.Table.Backing().Cursor()
+	cy := ct.Views.Table.CursorY()
 	idx := cy
 	if idx < 0 {
 		idx = 0

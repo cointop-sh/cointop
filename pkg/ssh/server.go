@@ -16,7 +16,7 @@ import (
 
 	"github.com/creack/pty"
 	"github.com/gliderlabs/ssh"
-	"github.com/miguelmota/cointop/cointop/common/pathutil"
+	"github.com/miguelmota/cointop/pkg/pathutil"
 	gossh "golang.org/x/crypto/ssh"
 )
 

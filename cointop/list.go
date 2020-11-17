@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	types "github.com/miguelmota/cointop/cointop/common/api/types"
+	types "github.com/miguelmota/cointop/pkg/api/types"
 )
 
 var coinslock sync.Mutex

@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/BurntSushi/toml"
-	"github.com/miguelmota/cointop/cointop/common/pathutil"
+	"github.com/miguelmota/cointop/pkg/pathutil"
 )
 
 var fileperm = os.FileMode(0644)

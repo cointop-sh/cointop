@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	cssh "github.com/miguelmota/cointop/cointop/ssh"
+	cssh "github.com/miguelmota/cointop/pkg/ssh"
 	"github.com/spf13/cobra"
 )
 

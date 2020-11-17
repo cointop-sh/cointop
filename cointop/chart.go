@@ -6,18 +6,18 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/cointop/common/gizak/termui"
-	"github.com/miguelmota/cointop/cointop/common/timeutil"
+	"github.com/miguelmota/cointop/pkg/chartplot"
+	"github.com/miguelmota/cointop/pkg/timeutil"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // ChartView is structure for chart view
-type ChartView struct {
-	*View
-}
+type ChartView = ui.View
 
 // NewChartView returns a new chart view
 func NewChartView() *ChartView {
-	return &ChartView{NewView("chart")}
+	var view *ChartView = ui.NewView("chart")
+	return view
 }
 
 var chartLock sync.Mutex
@@ -58,10 +58,6 @@ func ChartRangesMap() map[string]time.Duration {
 // UpdateChart updates the chart view
 func (ct *Cointop) UpdateChart() error {
 	ct.debuglog("UpdateChart()")
-	if ct.Views.Chart.Backing() == nil {
-		return nil
-	}
-
 	chartLock.Lock()
 	defer chartLock.Unlock()
 
@@ -83,21 +79,15 @@ func (ct *Cointop) UpdateChart() error {
 			var s string
 			for j := range ct.State.chartPoints[i] {
 				p := ct.State.chartPoints[i][j]
-				s = fmt.Sprintf("%s%c", s, p.Ch)
+				s = fmt.Sprintf("%s%c", s, p)
 			}
 			body = fmt.Sprintf("%s%s\n", body, s)
 
 		}
 	}
 
-	ct.Update(func() error {
-		if ct.Views.Chart.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.Chart.Backing().Clear()
-		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(body))
-		return nil
+	ct.UpdateUI(func() error {
+		return ct.Views.Chart.Update(ct.colorscheme.Chart(body))
 	})
 
 	return nil
@@ -114,12 +104,8 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	// TODO: not do this (SoC)
 	go ct.UpdateMarketbar()
 
-	chart := termui.NewLineChart()
-	chart.Height = ct.State.chartHeight
-	chart.Border = false
-
-	// NOTE: empty list means don't show x-axis labels
-	chart.DataLabels = []string{""}
+	chart := chartplot.NewChartPlot()
+	chart.SetHeight(ct.State.chartHeight)
 
 	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
 	if ct.State.selectedChartRange == "YTD" {
@@ -165,8 +151,6 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 				return nil
 			}
 
-			// NOTE: edit `termui.LineChart.shortenFloatVal(float64)` to not
-			// use exponential notation.
 			for i := range graphData.Price {
 				price := graphData.Price[i][1]
 				data = append(data, price)
@@ -181,32 +165,8 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 		}
 	}
 
-	chart.Data = data
-	termui.Body = termui.NewGrid()
-	termui.Body.Width = maxX
-	termui.Body.AddRows(
-		termui.NewRow(
-			termui.NewCol(12, 0, chart),
-		),
-	)
-
-	var points [][]termui.Cell
-	// calculate layout
-	termui.Body.Align()
-	w := termui.Body.Width
-	h := chart.Height
-	row := termui.Body.Rows[0]
-	b := row.Buffer()
-	for i := 0; i < h; i = i + 1 {
-		var rowpoints []termui.Cell
-		for j := 0; j < w; j = j + 1 {
-			p := b.At(j, i)
-			rowpoints = append(rowpoints, p)
-		}
-		points = append(points, rowpoints)
-	}
-
-	ct.State.chartPoints = points
+	chart.SetData(data)
+	ct.State.chartPoints = chart.GetChartPoints(maxX)
 
 	return nil
 }
@@ -221,12 +181,8 @@ func (ct *Cointop) PortfolioChart() error {
 	// TODO: not do this (SoC)
 	go ct.UpdateMarketbar()
 
-	chart := termui.NewLineChart()
-	chart.Height = ct.State.chartHeight
-	chart.Border = false
-
-	// NOTE: empty list means don't show x-axis labels
-	chart.DataLabels = []string{""}
+	chart := chartplot.NewChartPlot()
+	chart.SetHeight(ct.State.chartHeight)
 
 	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
 	if ct.State.selectedChartRange == "YTD" {
@@ -298,32 +254,8 @@ func (ct *Cointop) PortfolioChart() error {
 		}
 	}
 
-	chart.Data = data
-	termui.Body = termui.NewGrid()
-	termui.Body.Width = maxX
-	termui.Body.AddRows(
-		termui.NewRow(
-			termui.NewCol(12, 0, chart),
-		),
-	)
-
-	var points [][]termui.Cell
-	// calculate layout
-	termui.Body.Align()
-	w := termui.Body.Width
-	h := chart.Height
-	row := termui.Body.Rows[0]
-	b := row.Buffer()
-	for i := 0; i < h; i = i + 1 {
-		var rowpoints []termui.Cell
-		for j := 0; j < w; j = j + 1 {
-			p := b.At(j, i)
-			rowpoints = append(rowpoints, p)
-		}
-		points = append(points, rowpoints)
-	}
-
-	ct.State.chartPoints = points
+	chart.SetData(data)
+	ct.State.chartPoints = chart.GetChartPoints(maxX)
 
 	return nil
 }
@@ -434,15 +366,9 @@ func (ct *Cointop) ToggleCoinChart() error {
 // ShowChartLoader shows chart loading indicator
 func (ct *Cointop) ShowChartLoader() error {
 	ct.debuglog("ShowChartLoader()")
-	ct.Update(func() error {
-		if ct.Views.Chart.Backing() == nil {
-			return nil
-		}
-
+	ct.UpdateUI(func() error {
 		content := "\n\nLoading..."
-		ct.Views.Chart.Backing().Clear()
-		fmt.Fprint(ct.Views.Chart.Backing(), ct.colorscheme.Chart(content))
-		return nil
+		return ct.Views.Chart.Update(ct.colorscheme.Chart(content))
 	})
 
 	return nil

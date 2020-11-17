@@ -5,7 +5,7 @@ import (
 	"encoding/gob"
 	"strings"
 
-	"github.com/miguelmota/cointop/cointop/common/open"
+	"github.com/miguelmota/cointop/pkg/open"
 )
 
 // OpenLink opens the url in a browser

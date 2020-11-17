@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/miguelmota/cointop/cointop/common/pad"
+	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // HelpView is structure for help view
-type HelpView struct {
-	*View
-}
+type HelpView = ui.View
 
 // NewHelpView returns a new help view
 func NewHelpView() *HelpView {
-	return &HelpView{NewView("help")}
+	var view *HelpView = ui.NewView("help")
+	return view
 }
 
 // UpdateHelp updates the help views
@@ -60,15 +60,9 @@ func (ct *Cointop) UpdateHelp() {
 	infoLine := "See git.io/cointop for more info.\n Press ESC to return."
 	content := fmt.Sprintf("%s %s\n %s\n\n %s\n\n%s\n %s", header, versionLine, licenseLine, instructionsLine, body, infoLine)
 
-	ct.Update(func() error {
-		if ct.Views.Help.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.Help.Backing().Clear()
-		ct.Views.Help.Backing().Frame = true
-		fmt.Fprintln(ct.Views.Help.Backing(), content)
-		return nil
+	ct.UpdateUI(func() error {
+		ct.Views.Help.SetFrame(true)
+		return ct.Views.Help.Update(content)
 	})
 }
 
@@ -85,17 +79,11 @@ func (ct *Cointop) ShowHelp() error {
 func (ct *Cointop) HideHelp() error {
 	ct.debuglog("hideHelp()")
 	ct.State.helpVisible = false
-	ct.SetViewOnBottom(ct.Views.Help.Name())
+	ct.ui.SetViewOnBottom(ct.Views.Help)
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.Update(func() error {
-		if ct.Views.Help.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.Help.Backing().Clear()
-		ct.Views.Help.Backing().Frame = false
-		fmt.Fprintln(ct.Views.Help.Backing(), "")
-		return nil
+	ct.UpdateUI(func() error {
+		ct.Views.Help.SetFrame(false)
+		return ct.Views.Help.Update("")
 	})
 	return nil
 }

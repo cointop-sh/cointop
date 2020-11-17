@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/miguelmota/cointop/cointop"
-	"github.com/miguelmota/cointop/cointop/common/filecache"
+	"github.com/miguelmota/cointop/pkg/filecache"
 	"github.com/spf13/cobra"
 )
 

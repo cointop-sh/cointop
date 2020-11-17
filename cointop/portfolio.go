@@ -11,19 +11,19 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/miguelmota/cointop/cointop/common/asciitable"
-	"github.com/miguelmota/cointop/cointop/common/humanize"
-	"github.com/miguelmota/cointop/cointop/common/pad"
+	"github.com/miguelmota/cointop/pkg/asciitable"
+	"github.com/miguelmota/cointop/pkg/humanize"
+	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // PortfolioUpdateMenuView is structure for portfolio update menu view
-type PortfolioUpdateMenuView struct {
-	*View
-}
+type PortfolioUpdateMenuView = ui.View
 
 // NewPortfolioUpdateMenuView returns a new portfolio update menu view
 func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
-	return &PortfolioUpdateMenuView{NewView("portfolioupdatemenu")}
+	var view *PortfolioUpdateMenuView = ui.NewView("portfolioupdatemenu")
+	return view
 }
 
 // TogglePortfolio toggles the portfolio view
@@ -71,7 +71,7 @@ func (ct *Cointop) CoinHoldings(coin *Coin) float64 {
 }
 
 // UpdatePortfolioUpdateMenu updates the portfolio update menu view
-func (ct *Cointop) UpdatePortfolioUpdateMenu() {
+func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 	ct.debuglog("updatePortfolioUpdateMenu()")
 	coin := ct.HighlightedRowCoin()
 	exists := ct.PortfolioEntryExists(coin)
@@ -92,14 +92,14 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() {
 	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
-	ct.Update(func() error {
-		ct.Views.PortfolioUpdateMenu.Backing().Clear()
-		ct.Views.PortfolioUpdateMenu.Backing().Frame = true
-		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing(), content)
-		fmt.Fprintln(ct.Views.Input.Backing(), value)
-		ct.Views.Input.Backing().SetCursor(len(value), 0)
+	ct.UpdateUI(func() error {
+		ct.Views.PortfolioUpdateMenu.SetFrame(true)
+		ct.Views.PortfolioUpdateMenu.Update(content)
+		ct.Views.Input.Write(value)
+		ct.Views.Input.SetCursor(len(value), 0)
 		return nil
 	})
+	return nil
 }
 
 // ShowPortfolioUpdateMenu shows the portfolio update menu
@@ -122,20 +122,13 @@ func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 func (ct *Cointop) HidePortfolioUpdateMenu() error {
 	ct.debuglog("hidePortfolioUpdateMenu()")
 	ct.State.portfolioUpdateMenuVisible = false
-	ct.SetViewOnBottom(ct.Views.PortfolioUpdateMenu.Name())
-	ct.SetViewOnBottom(ct.Views.Input.Name())
+	ct.ui.SetViewOnBottom(ct.Views.PortfolioUpdateMenu)
+	ct.ui.SetViewOnBottom(ct.Views.Input)
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.Update(func() error {
-		if ct.Views.PortfolioUpdateMenu.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.PortfolioUpdateMenu.Backing().Clear()
-		ct.Views.PortfolioUpdateMenu.Backing().Frame = false
-		fmt.Fprintln(ct.Views.PortfolioUpdateMenu.Backing(), "")
-
-		ct.Views.Input.Backing().Clear()
-		fmt.Fprintln(ct.Views.Input.Backing(), "")
+	ct.UpdateUI(func() error {
+		ct.Views.PortfolioUpdateMenu.SetFrame(false)
+		ct.Views.PortfolioUpdateMenu.Update("")
+		ct.Views.Input.Update("")
 		return nil
 	})
 
@@ -150,7 +143,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 
 	// read input field
 	b := make([]byte, 100)
-	n, err := ct.Views.Input.Backing().Read(b)
+	n, err := ct.Views.Input.Read(b)
 	if err != nil {
 		return err
 	}

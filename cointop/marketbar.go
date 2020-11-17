@@ -5,29 +5,25 @@ import (
 	"math"
 	"time"
 
-	types "github.com/miguelmota/cointop/cointop/common/api/types"
-	"github.com/miguelmota/cointop/cointop/common/color"
-	"github.com/miguelmota/cointop/cointop/common/humanize"
-	"github.com/miguelmota/cointop/cointop/common/pad"
+	types "github.com/miguelmota/cointop/pkg/api/types"
+	"github.com/miguelmota/cointop/pkg/color"
+	"github.com/miguelmota/cointop/pkg/humanize"
+	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // MarketbarView is structure for marketbar view
-type MarketbarView struct {
-	*View
-}
+type MarketbarView = ui.View
 
 // NewMarketbarView returns a new marketbar view
 func NewMarketbarView() *MarketbarView {
-	return &MarketbarView{NewView("marketbar")}
+	var view *MarketbarView = ui.NewView("marketbar")
+	return view
 }
 
 // UpdateMarketbar updates the market bar view
 func (ct *Cointop) UpdateMarketbar() error {
 	ct.debuglog("updateMarketbar()")
-	if ct.Views.Marketbar.Backing() == nil {
-		return nil
-	}
-
 	maxX := ct.width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemeName == "cointop" {
@@ -147,14 +143,8 @@ func (ct *Cointop) UpdateMarketbar() error {
 	content = pad.Right(content, maxX, " ")
 	content = ct.colorscheme.Marketbar(content)
 
-	ct.Update(func() error {
-		if ct.Views.Marketbar.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.Marketbar.Backing().Clear()
-		fmt.Fprintln(ct.Views.Marketbar.Backing(), content)
-		return nil
+	ct.UpdateUI(func() error {
+		return ct.Views.Marketbar.Update(content)
 	})
 
 	return nil

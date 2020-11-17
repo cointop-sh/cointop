@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/miguelmota/cointop/cointop/cmd"
+	cmd "github.com/miguelmota/cointop/cmd/commands"
 )
 
 func main() {

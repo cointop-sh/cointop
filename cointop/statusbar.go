@@ -3,30 +3,18 @@ package cointop
 import (
 	"fmt"
 
-	"github.com/miguelmota/cointop/cointop/common/open"
-	"github.com/miguelmota/cointop/cointop/common/pad"
+	"github.com/miguelmota/cointop/pkg/open"
+	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // StatusbarView is structure for statusbar view
-type StatusbarView struct {
-	*View
-}
+type StatusbarView = ui.View
 
 // NewStatusbarView returns a new statusbar view
 func NewStatusbarView() *StatusbarView {
-	return &StatusbarView{NewView("statusbar")}
-}
-
-// Update updates the content of the statusbar
-func (statusbar *StatusbarView) Update(str string) error {
-	if statusbar.Backing() == nil {
-		return nil
-	}
-
-	statusbar.Backing().Clear()
-	fmt.Fprintln(statusbar.Backing(), str)
-
-	return nil
+	var view *StatusbarView = ui.NewView("statusbar")
+	return view
 }
 
 // UpdateStatusbar updates the statusbar view
@@ -63,9 +51,8 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 
 	str = str[:end] + v
 
-	ct.Update(func() error {
-		ct.Views.Statusbar.Update(str)
-		return nil
+	ct.UpdateUI(func() error {
+		return ct.Views.Statusbar.Update(str)
 	})
 
 	return nil

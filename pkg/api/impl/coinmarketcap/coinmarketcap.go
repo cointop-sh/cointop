@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	apitypes "github.com/miguelmota/cointop/cointop/common/api/types"
-	util "github.com/miguelmota/cointop/cointop/common/api/util"
+	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	util "github.com/miguelmota/cointop/pkg/api/util"
 	cmc "github.com/miguelmota/go-coinmarketcap/pro/v1"
 	cmcv2 "github.com/miguelmota/go-coinmarketcap/v2"
 )

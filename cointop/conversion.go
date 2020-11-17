@@ -6,8 +6,9 @@ import (
 	"sort"
 	"strings"
 
-	color "github.com/miguelmota/cointop/cointop/common/color"
-	"github.com/miguelmota/cointop/cointop/common/pad"
+	color "github.com/miguelmota/cointop/pkg/color"
+	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // FiatCurrencyNames is a mpa of currency symbols to names.
@@ -105,13 +106,12 @@ var CurrencySymbolMap = map[string]string{
 var alphanumericcharacters = []rune{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'}
 
 // ConvertMenuView is structure for convert menu view
-type ConvertMenuView struct {
-	*View
-}
+type ConvertMenuView = ui.View
 
 // NewConvertMenuView returns a new convert menu view
 func NewConvertMenuView() *ConvertMenuView {
-	return &ConvertMenuView{NewView("convertmenu")}
+	var view *ConvertMenuView = ui.NewView("convertmenu")
+	return view
 }
 
 // IsSupportedCurrencyConversion returns true if it's a supported currency conversion
@@ -158,7 +158,7 @@ func (ct *Cointop) SortedSupportedCurrencyConversions() []string {
 }
 
 // UpdateConvertMenu updates the convert menu
-func (ct *Cointop) UpdateConvertMenu() {
+func (ct *Cointop) UpdateConvertMenu() error {
 	ct.debuglog("updateConvertMenu()")
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close menu ", ct.maxTableWidth-20, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
@@ -204,16 +204,12 @@ func (ct *Cointop) UpdateConvertMenu() {
 	}
 
 	content := fmt.Sprintf("%s%s%s", header, helpline, body)
-	ct.Update(func() error {
-		if ct.Views.ConvertMenu.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.ConvertMenu.Backing().Clear()
-		ct.Views.ConvertMenu.Backing().Frame = true
-		fmt.Fprintln(ct.Views.ConvertMenu.Backing(), content)
-		return nil
+	ct.UpdateUI(func() error {
+		ct.Views.ConvertMenu.SetFrame(true)
+		return ct.Views.ConvertMenu.Update(content)
 	})
+
+	return nil
 }
 
 // SetCurrencyConverstion sets the currency conversion
@@ -274,16 +270,11 @@ func (ct *Cointop) ShowConvertMenu() error {
 func (ct *Cointop) HideConvertMenu() error {
 	ct.debuglog("hideConvertMenu()")
 	ct.State.convertMenuVisible = false
-	ct.SetViewOnBottom(ct.Views.ConvertMenu.Name())
+	ct.ui.SetViewOnBottom(ct.Views.ConvertMenu)
 	ct.SetActiveView(ct.Views.Table.Name())
-	ct.Update(func() error {
-		if ct.Views.ConvertMenu.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.ConvertMenu.Backing().Clear()
-		ct.Views.ConvertMenu.Backing().Frame = false
-		fmt.Fprintln(ct.Views.ConvertMenu.Backing(), "")
+	ct.UpdateUI(func() error {
+		ct.Views.ConvertMenu.SetFrame(false)
+		return ct.Views.ConvertMenu.Update("")
 		return nil
 	})
 	return nil

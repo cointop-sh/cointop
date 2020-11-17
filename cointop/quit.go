@@ -22,7 +22,7 @@ func (ct *Cointop) QuitView() error {
 		ct.State.filterByFavorites = false
 		return ct.UpdateTable()
 	}
-	if ct.ActiveViewName() == ct.Views.Table.Name() {
+	if ct.ui.ActiveViewName() == ct.Views.Table.Name() {
 		return ct.Quit()
 	}
 

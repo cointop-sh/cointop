@@ -41,21 +41,16 @@ func (ct *Cointop) SetPage(page int) int {
 // CursorDown moves the cursor one row down
 func (ct *Cointop) CursorDown() error {
 	ct.debuglog("cursorDown()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the bottom
 	if ct.IsLastRow() {
 		return nil
 	}
 
-	cx, cy := ct.Views.Table.Backing().Cursor()
-
-	if err := ct.Views.Table.Backing().SetCursor(cx, cy+1); err != nil {
-		ox, oy := ct.Views.Table.Backing().Origin()
+	cx, cy := ct.Views.Table.Cursor()
+	if err := ct.Views.Table.SetCursor(cx, cy+1); err != nil {
+		ox, oy := ct.Views.Table.Origin()
 		// set origin scrolls
-		if err := ct.Views.Table.Backing().SetOrigin(ox, oy+1); err != nil {
+		if err := ct.Views.Table.SetOrigin(ox, oy+1); err != nil {
 			return err
 		}
 	}
@@ -66,21 +61,17 @@ func (ct *Cointop) CursorDown() error {
 // CursorUp moves the cursor one row up
 func (ct *Cointop) CursorUp() error {
 	ct.debuglog("cursorUp()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the top
 	if ct.IsFirstRow() {
 		return nil
 	}
 
-	ox, oy := ct.Views.Table.Backing().Origin()
-	cx, cy := ct.Views.Table.Backing().Cursor()
+	ox, oy := ct.Views.Table.Origin()
+	cx, cy := ct.Views.Table.Cursor()
 
-	if err := ct.Views.Table.Backing().SetCursor(cx, cy-1); err != nil && oy > 0 {
+	if err := ct.Views.Table.SetCursor(cx, cy-1); err != nil && oy > 0 {
 		// set origin scrolls
-		if err := ct.Views.Table.Backing().SetOrigin(ox, oy-1); err != nil {
+		if err := ct.Views.Table.SetOrigin(ox, oy-1); err != nil {
 			return err
 		}
 	}
@@ -91,18 +82,14 @@ func (ct *Cointop) CursorUp() error {
 // PageDown moves the cursor one page down
 func (ct *Cointop) PageDown() error {
 	ct.debuglog("pageDown()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the bottom
 	if ct.IsLastRow() {
 		return nil
 	}
 
-	ox, oy := ct.Views.Table.Backing().Origin() // this is prev origin position
-	cx, _ := ct.Views.Table.Backing().Cursor()  // relative cursor position
-	_, sy := ct.Views.Table.Backing().Size()    // rows in visible view
+	ox, oy := ct.Views.Table.Origin() // this is prev origin position
+	cx := ct.Views.Table.CursorX()    // relative cursor position
+	sy := ct.Views.Table.Height()     // rows in visible view
 	k := oy + sy
 	l := len(ct.State.coins)
 	// end of table
@@ -115,12 +102,13 @@ func (ct *Cointop) PageDown() error {
 		sy = l
 	}
 
-	if err := ct.Views.Table.Backing().SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.SetOrigin(ox, k); err != nil {
 		return err
 	}
+
 	// move cursor to last line if can't scroll further
 	if k == oy {
-		if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
+		if err := ct.Views.Table.SetCursor(cx, sy-1); err != nil {
 			return err
 		}
 	}
@@ -131,28 +119,24 @@ func (ct *Cointop) PageDown() error {
 // PageUp moves the cursor one page up
 func (ct *Cointop) PageUp() error {
 	ct.debuglog("pageUp()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the top
 	if ct.IsFirstRow() {
 		return nil
 	}
 
-	ox, oy := ct.Views.Table.Backing().Origin()
-	cx, _ := ct.Views.Table.Backing().Cursor() // relative cursor position
-	_, sy := ct.Views.Table.Backing().Size()   // rows in visible view
+	ox, oy := ct.Views.Table.Origin()
+	cx := ct.Views.Table.CursorX() // relative cursor position
+	sy := ct.Views.Table.Height()  // rows in visible view
 	k := oy - sy
 	if k < 0 {
 		k = 0
 	}
-	if err := ct.Views.Table.Backing().SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.SetOrigin(ox, k); err != nil {
 		return err
 	}
 	// move cursor to first line if can't scroll further
 	if k == oy {
-		if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
+		if err := ct.Views.Table.SetCursor(cx, 0); err != nil {
 			return err
 		}
 	}
@@ -163,21 +147,17 @@ func (ct *Cointop) PageUp() error {
 // NavigateFirstLine moves the cursor to the first row of the table
 func (ct *Cointop) NavigateFirstLine() error {
 	ct.debuglog("navigateFirstLine()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the top
 	if ct.IsFirstRow() {
 		return nil
 	}
 
-	ox, _ := ct.Views.Table.Backing().Origin()
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	if err := ct.Views.Table.Backing().SetOrigin(ox, 0); err != nil {
+	ox := ct.Views.Table.OriginX()
+	cx := ct.Views.Table.CursorX()
+	if err := ct.Views.Table.SetOrigin(ox, 0); err != nil {
 		return err
 	}
-	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
+	if err := ct.Views.Table.SetCursor(cx, 0); err != nil {
 		return err
 	}
 
@@ -188,24 +168,20 @@ func (ct *Cointop) NavigateFirstLine() error {
 // NavigateLastLine moves the cursor to the last row of the table
 func (ct *Cointop) NavigateLastLine() error {
 	ct.debuglog("navigateLastLine()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the bottom
 	if ct.IsLastRow() {
 		return nil
 	}
 
-	ox, _ := ct.Views.Table.Backing().Origin()
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	_, sy := ct.Views.Table.Backing().Size()
+	ox := ct.Views.Table.OriginX()
+	cx := ct.Views.Table.CursorX()
+	sy := ct.Views.Table.Height()
 	l := len(ct.State.coins)
 	k := l - sy
-	if err := ct.Views.Table.Backing().SetOrigin(ox, k); err != nil {
+	if err := ct.Views.Table.SetOrigin(ox, k); err != nil {
 		return err
 	}
-	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
+	if err := ct.Views.Table.SetCursor(cx, sy-1); err != nil {
 		return err
 	}
 
@@ -216,17 +192,13 @@ func (ct *Cointop) NavigateLastLine() error {
 // NavigatePageFirstLine moves the cursor to the visible first row of the table
 func (ct *Cointop) NavigatePageFirstLine() error {
 	ct.debuglog("navigatePageFirstLine()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the correct line
 	if ct.IsPageFirstLine() {
 		return nil
 	}
 
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	if err := ct.Views.Table.Backing().SetCursor(cx, 0); err != nil {
+	cx := ct.Views.Table.CursorX()
+	if err := ct.Views.Table.SetCursor(cx, 0); err != nil {
 		return err
 	}
 	ct.RowChanged()
@@ -236,18 +208,14 @@ func (ct *Cointop) NavigatePageFirstLine() error {
 // NavigatePageMiddleLine moves the cursor to the visible middle row of the table
 func (ct *Cointop) NavigatePageMiddleLine() error {
 	ct.debuglog("navigatePageMiddleLine()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the correct line
 	if ct.IsPageMiddleLine() {
 		return nil
 	}
 
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	_, sy := ct.Views.Table.Backing().Size()
-	if err := ct.Views.Table.Backing().SetCursor(cx, (sy/2)-1); err != nil {
+	cx := ct.Views.Table.CursorX()
+	sy := ct.Views.Table.Height()
+	if err := ct.Views.Table.SetCursor(cx, (sy/2)-1); err != nil {
 		return err
 	}
 	ct.RowChanged()
@@ -257,18 +225,14 @@ func (ct *Cointop) NavigatePageMiddleLine() error {
 // NavigatePageLastLine moves the cursor to the visible last row of the table
 func (ct *Cointop) navigatePageLastLine() error {
 	ct.debuglog("navigatePageLastLine()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
 	// NOTE: return if already at the correct line
 	if ct.IsPageLastLine() {
 		return nil
 	}
 
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	_, sy := ct.Views.Table.Backing().Size()
-	if err := ct.Views.Table.Backing().SetCursor(cx, sy-1); err != nil {
+	cx, _ := ct.Views.Table.Cursor()
+	sy := ct.Views.Table.Height()
+	if err := ct.Views.Table.SetCursor(cx, sy-1); err != nil {
 		return err
 	}
 	ct.RowChanged()
@@ -358,28 +322,20 @@ func (ct *Cointop) LastPage() error {
 // IsFirstRow returns true if cursor is on first row
 func (ct *Cointop) IsFirstRow() bool {
 	ct.debuglog("isFirstRow()")
-	if ct.Views.Table.Backing() == nil {
-		return false
-	}
+	oy := ct.Views.Table.OriginY()
+	cy := ct.Views.Table.CursorY()
 
-	_, y := ct.Views.Table.Backing().Origin()
-	_, cy := ct.Views.Table.Backing().Cursor()
-
-	return (cy + y) == 0
+	return (cy + oy) == 0
 }
 
 // IsLastRow returns true if cursor is on last row
 func (ct *Cointop) IsLastRow() bool {
 	ct.debuglog("isLastRow()")
-	if ct.Views.Table.Backing() == nil {
-		return false
-	}
-
-	_, y := ct.Views.Table.Backing().Origin()
-	_, cy := ct.Views.Table.Backing().Cursor()
+	oy := ct.Views.Table.OriginY()
+	cy := ct.Views.Table.CursorY()
 	numRows := len(ct.State.coins) - 1
 
-	return (cy + y + 1) > numRows
+	return (cy + oy + 1) > numRows
 }
 
 // IsFirstPage returns true if cursor is on the first page
@@ -397,23 +353,16 @@ func (ct *Cointop) IsLastPage() bool {
 // IsPageFirstLine returns true if the cursor is on the visible first row
 func (ct *Cointop) IsPageFirstLine() bool {
 	ct.debuglog("isPageFirstLine()")
-	if ct.Views.Table.Backing() == nil {
-		return false
-	}
 
-	_, cy := ct.Views.Table.Backing().Cursor()
+	cy := ct.Views.Table.CursorY()
 	return cy == 0
 }
 
 // IsPageMiddleLine returns true if the cursor is on the visible middle row
 func (ct *Cointop) IsPageMiddleLine() bool {
 	ct.debuglog("isPageMiddleLine()")
-	if ct.Views.Table.Backing() == nil {
-		return false
-	}
-
-	_, cy := ct.Views.Table.Backing().Cursor()
-	_, sy := ct.Views.Table.Backing().Size()
+	cy := ct.Views.Table.CursorY()
+	sy := ct.Views.Table.Height()
 	return (sy/2)-1 == cy
 }
 
@@ -421,19 +370,16 @@ func (ct *Cointop) IsPageMiddleLine() bool {
 func (ct *Cointop) IsPageLastLine() bool {
 	ct.debuglog("isPageLastLine()")
 
-	_, cy := ct.Views.Table.Backing().Cursor()
-	_, sy := ct.Views.Table.Backing().Size()
+	cy := ct.Views.Table.CursorY()
+	sy := ct.Views.Table.Height()
 	return cy+1 == sy
 }
 
 // GoToPageRowIndex navigates to the selected row index of the page
 func (ct *Cointop) GoToPageRowIndex(idx int) error {
 	ct.debuglog("goToPageRowIndex()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	if err := ct.Views.Table.Backing().SetCursor(cx, idx); err != nil {
+	cx := ct.Views.Table.CursorX()
+	if err := ct.Views.Table.SetCursor(cx, idx); err != nil {
 		return err
 	}
 	ct.RowChanged()
@@ -455,23 +401,19 @@ func (ct *Cointop) GoToGlobalIndex(idx int) error {
 // HighlightRow highlights the row at index
 func (ct *Cointop) HighlightRow(idx int) error {
 	ct.debuglog("highlightRow()")
-	if ct.Views.Table.Backing() == nil {
-		return nil
-	}
-
-	ct.Views.Table.Backing().SetOrigin(0, 0)
-	ct.Views.Table.Backing().SetCursor(0, 0)
-	ox, _ := ct.Views.Table.Backing().Origin()
-	cx, _ := ct.Views.Table.Backing().Cursor()
-	_, sy := ct.Views.Table.Backing().Size()
+	ct.Views.Table.SetOrigin(0, 0)
+	ct.Views.Table.SetCursor(0, 0)
+	ox := ct.Views.Table.OriginX()
+	cx := ct.Views.Table.CursorX()
+	sy := ct.Views.Table.Height()
 	perpage := ct.TotalPerPage()
 	p := idx % perpage
 	oy := (p / sy) * sy
 	cy := p % sy
 	if oy > 0 {
-		ct.Views.Table.Backing().SetOrigin(ox, oy)
+		ct.Views.Table.SetOrigin(ox, oy)
 	}
-	ct.Views.Table.Backing().SetCursor(cx, cy)
+	ct.Views.Table.SetCursor(cx, cy)
 
 	return nil
 }

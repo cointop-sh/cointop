@@ -4,27 +4,26 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/miguelmota/cointop/cointop/common/levenshtein"
+	"github.com/miguelmota/cointop/pkg/levenshtein"
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // SearchFieldView is structure for search field view
-type SearchFieldView struct {
-	*View
-}
+type SearchFieldView = ui.View
 
 // NewSearchFieldView returns a new search field view
 func NewSearchFieldView() *SearchFieldView {
-	return &SearchFieldView{NewView("searchfield")}
+	var view *SearchFieldView = ui.NewView("searchfield")
+	return view
 }
 
 // InputView is structure for help view
-type InputView struct {
-	*View
-}
+type InputView = ui.View
 
 // NewInputView returns a new help view
 func NewInputView() *InputView {
-	return &InputView{NewView("input")}
+	var view *InputView = ui.NewView("input")
+	return view
 }
 
 // OpenSearch opens the search field
@@ -46,9 +45,12 @@ func (ct *Cointop) CancelSearch() error {
 // DoSearch triggers the search and sets views
 func (ct *Cointop) DoSearch() error {
 	ct.debuglog("doSearch()")
-	ct.Views.SearchField.Backing().Rewind()
+	ct.Views.SearchField.Rewind()
 	b := make([]byte, 100)
-	n, err := ct.Views.SearchField.Backing().Read(b)
+	n, err := ct.Views.SearchField.Read(b)
+	if err != nil {
+		return err
+	}
 
 	// TODO: do this a better way (SoC)
 	ct.State.filterByFavorites = false

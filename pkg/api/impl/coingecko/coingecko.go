@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	gecko "github.com/miguelmota/cointop/cointop/api/coingecko/v3"
-	geckoTypes "github.com/miguelmota/cointop/cointop/api/coingecko/v3/types"
-	apitypes "github.com/miguelmota/cointop/cointop/common/api/types"
-	util "github.com/miguelmota/cointop/cointop/common/api/util"
+	apitypes "github.com/miguelmota/cointop/pkg/api/types"
+	util "github.com/miguelmota/cointop/pkg/api/util"
+	gecko "github.com/miguelmota/cointop/pkg/api/vendors/coingecko/v3"
+	geckoTypes "github.com/miguelmota/cointop/pkg/api/vendors/coingecko/v3/types"
 )
 
 // ErrPingFailed is the error for when pinging the API fails

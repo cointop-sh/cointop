@@ -3,8 +3,8 @@ package cointop
 import (
 	"fmt"
 
-	"github.com/miguelmota/cointop/cointop/common/api"
-	"github.com/miguelmota/cointop/cointop/common/humanize"
+	"github.com/miguelmota/cointop/pkg/api"
+	"github.com/miguelmota/cointop/pkg/humanize"
 )
 
 // PriceConfig is the config options for the price command

@@ -229,18 +229,6 @@ func (c *Colorscheme) TableRowFavoriteSprintf() ISprintf {
 	return c.toSprintf("table_row_favorite")
 }
 
-// SetViewColor ...
-func (c *Colorscheme) SetViewColor(view *gocui.View, name string) {
-	view.FgColor = c.gocuiFgColor(name)
-	view.BgColor = c.gocuiBgColor(name)
-}
-
-// SetViewActiveColor ...
-func (c *Colorscheme) SetViewActiveColor(view *gocui.View, name string) {
-	view.SelFgColor = c.gocuiFgColor(name)
-	view.SelBgColor = c.gocuiBgColor(name)
-}
-
 func (c *Colorscheme) toSprintf(name string) ISprintf {
 	if cached, ok := c.cache[name]; ok {
 		return cached

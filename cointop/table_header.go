@@ -3,20 +3,21 @@ package cointop
 import (
 	"fmt"
 	"strings"
+
+	"github.com/miguelmota/cointop/pkg/ui"
 )
 
 // TableHeaderView is structure for table header view
-type TableHeaderView struct {
-	*View
-}
+type TableHeaderView = ui.View
 
 // NewTableHeaderView returns a new table header view
 func NewTableHeaderView() *TableHeaderView {
-	return &TableHeaderView{NewView("header")}
+	var view *TableHeaderView = ui.NewView("table_header")
+	return view
 }
 
 // UpdateTableHeader renders the table header
-func (ct *Cointop) UpdateTableHeader() {
+func (ct *Cointop) UpdateTableHeader() error {
 	ct.debuglog("UpdateTableHeader()")
 	var cols []string
 
@@ -89,13 +90,9 @@ func (ct *Cointop) UpdateTableHeader() {
 		headers = append(headers, str)
 	}
 
-	ct.Update(func() error {
-		if ct.Views.TableHeader.Backing() == nil {
-			return nil
-		}
-
-		ct.Views.TableHeader.Backing().Clear()
-		fmt.Fprintln(ct.Views.TableHeader.Backing(), strings.Join(headers, ""))
-		return nil
+	ct.UpdateUI(func() error {
+		return ct.Views.TableHeader.Update(strings.Join(headers, ""))
 	})
+
+	return nil
 }

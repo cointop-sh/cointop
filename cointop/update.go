@@ -6,9 +6,9 @@ import (
 	"github.com/miguelmota/gocui"
 )
 
-// Update takes a callback which updates the view
-func (ct *Cointop) Update(f func() error) {
-	ct.debuglog(fmt.Sprintf("Update()"))
+// UpdateUI takes a callback which updates the view
+func (ct *Cointop) UpdateUI(f func() error) {
+	ct.debuglog(fmt.Sprintf("UpdateUI()"))
 
 	if ct.g == nil {
 		return
