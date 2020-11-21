@@ -1,5 +1,9 @@
 package cointop
 
+import (
+	"math"
+)
+
 // CurrentPage returns the current page
 func (ct *Cointop) CurrentPage() int {
 	ct.debuglog("currentPage()")
@@ -459,5 +463,56 @@ func (ct *Cointop) CursorUpOrPreviousPage() error {
 		return err
 	}
 
+	return nil
+}
+
+// TableScrollLeft scrolls the table to the left
+func (ct *Cointop) TableScrollLeft() error {
+	ct.State.tableOffsetX++
+	if ct.State.tableOffsetX >= 0 {
+		ct.State.tableOffsetX = 0
+	}
+	ct.UpdateTable()
+	return nil
+}
+
+// TableScrollRight scrolls the the table to the right
+func (ct *Cointop) TableScrollRight() error {
+	ct.State.tableOffsetX--
+	maxX := int(math.Min(float64(1-(ct.maxTableWidth-ct.width())), 0))
+	if ct.State.tableOffsetX <= maxX {
+		ct.State.tableOffsetX = maxX
+	}
+	ct.UpdateTable()
+	return nil
+}
+
+// MouseRelease is called on mouse releae event
+func (ct *Cointop) MouseRelease() error {
+	return nil
+}
+
+// MouseLeftClick is called on mouse left click event
+func (ct *Cointop) MouseLeftClick() error {
+	return nil
+}
+
+// MouseMiddleClick is called on mouse middle click event
+func (ct *Cointop) MouseMiddleClick() error {
+	return nil
+}
+
+// MouseRightClick is called on mouse right click event
+func (ct *Cointop) MouseRightClick() error {
+	return ct.OpenLink()
+}
+
+// MouseWheelUp is called on mouse wheel up event
+func (ct *Cointop) MouseWheelUp() error {
+	return nil
+}
+
+// MouseWheelDown is called on mouse wheel down event
+func (ct *Cointop) MouseWheelDown() error {
 	return nil
 }

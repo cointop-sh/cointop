@@ -6,14 +6,14 @@ import (
 	"github.com/miguelmota/gocui"
 )
 
-// IView is a cointop view
+// IView is the view interface
 type IView interface {
 	Backing() *gocui.View
 	SetBacking(gocuiView *gocui.View)
 	Name() string
 }
 
-// View is a cointop view
+// View is a view sruct
 type View struct {
 	backing *gocui.View
 	name    string

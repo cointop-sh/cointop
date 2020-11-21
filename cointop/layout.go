@@ -90,8 +90,9 @@ func (ct *Cointop) layout() error {
 		}
 	}
 
+	tableOffsetX := ct.State.tableOffsetX
 	topOffset = topOffset + chartHeight
-	if err := ct.ui.SetView(ct.Views.TableHeader, 0, topOffset, ct.maxTableWidth, topOffset+2); err != nil {
+	if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset, ct.maxTableWidth, topOffset+2); err != nil {
 		ct.Views.TableHeader.SetFrame(false)
 		ct.Views.TableHeader.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.TableHeader.Name()))
 		ct.Views.TableHeader.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.TableHeader.Name()))
@@ -99,7 +100,7 @@ func (ct *Cointop) layout() error {
 	}
 
 	topOffset = topOffset + headerHeight
-	if err := ct.ui.SetView(ct.Views.Table, 0, topOffset, ct.maxTableWidth, maxY-statusbarHeight); err != nil {
+	if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset, ct.maxTableWidth, maxY-statusbarHeight); err != nil {
 		ct.Views.Table.SetFrame(false)
 		ct.Views.Table.SetHighlight(true)
 		ct.Views.Table.SetSelFgColor(ct.colorscheme.gocuiFgColor("table_row_active"))

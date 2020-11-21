@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/ui"
 )
@@ -49,20 +48,10 @@ const dots = "..."
 func (ct *Cointop) RefreshTable() error {
 	ct.debuglog("refreshTable()")
 	maxX := ct.width()
-	ct.table = table.New().SetWidth(maxX)
+	ct.table = table.NewTable().SetWidth(maxX)
 	ct.table.HideColumHeaders = true
 
 	if ct.State.portfolioVisible {
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-
 		total := ct.GetPortfolioTotal()
 
 		for _, coin := range ct.State.coins {
@@ -76,15 +65,11 @@ func (ct *Cointop) RefreshTable() error {
 			if coin.PercentChange24H < 0 {
 				color24h = ct.colorscheme.TableColumnChangeDown
 			}
-			name := coin.Name
+			name := TruncateString(coin.Name, 20)
+			symbol := TruncateString(coin.Symbol, 6)
 			star := ct.colorscheme.TableRow(" ")
 			if coin.Favorite {
 				star = ct.colorscheme.TableRowFavorite("*")
-			}
-
-			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
-			if len(name) > 20 {
-				name = fmt.Sprintf("%s%s", name[0:18], dots)
 			}
 
 			namecolor := ct.colorscheme.TableRow
@@ -97,31 +82,75 @@ func (ct *Cointop) RefreshTable() error {
 				percentHoldings = 0
 			}
 
-			ct.table.AddRow(
-				rank,
-				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), 5, " ")),
-				ct.colorscheme.TableRow(fmt.Sprintf("%13s", humanize.Commaf(coin.Price))),
-				ct.colorscheme.TableRow(fmt.Sprintf("%15s", strconv.FormatFloat(coin.Holdings, 'f', -1, 64))),
-				colorbalance(fmt.Sprintf("%15s", humanize.Commaf(coin.Balance))),
-				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
-				ct.colorscheme.TableRow(fmt.Sprintf("%12.2f%%", percentHoldings)),
-				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%17s", lastUpdated), 80, " ")),
+			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
+
+			ct.table.AddRowCells(
+				&table.RowCell{
+					LeftMargin: 0,
+					Width:      6,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.Default,
+					Text:       rank,
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      22,
+					LeftAlign:  true,
+					Color:      namecolor,
+					Text:       name,
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      6,
+					LeftAlign:  true,
+					Color:      ct.colorscheme.TableRow,
+					Text:       symbol,
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      14,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       humanize.Commaf(coin.Price),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      16,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       strconv.FormatFloat(coin.Holdings, 'f', -1, 64),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      16,
+					LeftAlign:  false,
+					Color:      colorbalance,
+					Text:       humanize.Commaf(coin.Balance),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      10,
+					LeftAlign:  false,
+					Color:      color24h,
+					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange24H),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      14,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       fmt.Sprintf("%.2f%%", percentHoldings),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      18,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       lastUpdated,
+				},
 			)
 		}
 	} else {
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
-		ct.table.AddCol("")
 		for _, coin := range ct.State.coins {
 			if coin == nil {
 				continue
@@ -153,35 +182,106 @@ func (ct *Cointop) RefreshTable() error {
 			if coin.PercentChange7D < 0 {
 				color7d = ct.colorscheme.TableColumnChangeDown
 			}
-			name := coin.Name
+			name := TruncateString(coin.Name, 20)
+			symbol := TruncateString(coin.Symbol, 6)
 			star := ct.colorscheme.TableRow(" ")
 			if coin.Favorite {
 				star = ct.colorscheme.TableRowFavorite("*")
 			}
-			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
-			if len(name) > 20 {
-				name = fmt.Sprintf("%s%s", name[0:18], dots)
-			}
 
-			symbolpadding := 5
+			symbolpadding := 8
 			// NOTE: this is to adjust padding by 1 because when all name rows are
 			// yellow it messes the spacing (need to debug)
 			if ct.State.filterByFavorites {
-				symbolpadding = 6
+				symbolpadding++
 			}
-			ct.table.AddRow(
-				rank,
-				namecolor(pad.Right(fmt.Sprintf("%.22s", name), 21, " ")),
-				ct.colorscheme.TableRow(pad.Right(fmt.Sprintf("%.6s", coin.Symbol), symbolpadding, " ")),
-				ct.colorscheme.TableColumnPrice(fmt.Sprintf("%13s", humanize.Commaf(coin.Price))),
-				ct.colorscheme.TableRow(fmt.Sprintf("%17s", humanize.Commaf(coin.MarketCap))),
-				ct.colorscheme.TableRow(fmt.Sprintf("%15s", humanize.Commaf(coin.Volume24H))),
-				color1h(fmt.Sprintf("%8.2f%%", coin.PercentChange1H)),
-				color24h(fmt.Sprintf("%8.2f%%", coin.PercentChange24H)),
-				color7d(fmt.Sprintf("%8.2f%%", coin.PercentChange7D)),
-				ct.colorscheme.TableRow(fmt.Sprintf("%21s", humanize.Commaf(coin.TotalSupply))),
-				ct.colorscheme.TableRow(fmt.Sprintf("%18s", humanize.Commaf(coin.AvailableSupply))),
-				ct.colorscheme.TableRow(fmt.Sprintf("%18s", lastUpdated)),
+
+			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
+			ct.table.AddRowCells(
+				&table.RowCell{
+					LeftMargin: 0,
+					Width:      6,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.Default,
+					Text:       rank,
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      22,
+					LeftAlign:  true,
+					Color:      namecolor,
+					Text:       name,
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      symbolpadding,
+					LeftAlign:  true,
+					Color:      ct.colorscheme.TableRow,
+					Text:       symbol,
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      12,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableColumnPrice,
+					Text:       humanize.Commaf(coin.Price),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      18,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       humanize.Commaf(coin.MarketCap),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      16,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       humanize.Commaf(coin.Volume24H),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      11,
+					LeftAlign:  false,
+					Color:      color1h,
+					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange1H),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      10,
+					LeftAlign:  false,
+					Color:      color24h,
+					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange24H),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      10,
+					LeftAlign:  false,
+					Color:      color7d,
+					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange7D),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      22,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       humanize.Commaf(coin.TotalSupply),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      19,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       humanize.Commaf(coin.AvailableSupply),
+				},
+				&table.RowCell{
+					LeftMargin: 1,
+					Width:      18,
+					LeftAlign:  false,
+					Color:      ct.colorscheme.TableRow,
+					Text:       lastUpdated,
+				},
 				// TODO: add %percent of cap
 			)
 		}

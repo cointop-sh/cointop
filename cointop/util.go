@@ -3,6 +3,7 @@ package cointop
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"strings"
 
 	"github.com/miguelmota/cointop/pkg/open"
@@ -30,4 +31,13 @@ func GetBytes(key interface{}) ([]byte, error) {
 func Slugify(s string) string {
 	s = strings.TrimSpace(strings.ToLower(s))
 	return s
+}
+
+// TruncateString returns a truncated string
+func TruncateString(value string, maxLen int) string {
+	dots := "..."
+	if len(value) > maxLen {
+		value = fmt.Sprintf("%s%s", value[0:maxLen-3], dots)
+	}
+	return value
 }

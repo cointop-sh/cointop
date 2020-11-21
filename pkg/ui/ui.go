@@ -4,12 +4,12 @@ import (
 	"github.com/miguelmota/gocui"
 )
 
-// UI ...
+// UI is the UI view struct
 type UI struct {
 	g *gocui.Gui
 }
 
-// NewUI ...
+// NewUI returns a new UI instance
 func NewUI() (*UI, error) {
 	g, err := gocui.NewGui(gocui.Output256)
 	if err != nil {
@@ -21,44 +21,44 @@ func NewUI() (*UI, error) {
 	}, nil
 }
 
-// GetGocui ...
+// GetGocui returns the underlying gocui instance
 func (ui *UI) GetGocui() *gocui.Gui {
 	return ui.g
 }
 
-// SetFgColor ...
+// SetFgColor sets the foreground color
 func (ui *UI) SetFgColor(fgColor gocui.Attribute) {
 	ui.g.FgColor = fgColor
 }
 
-// SetBgColor ...
+// SetBgColor sets the background color
 func (ui *UI) SetBgColor(bgColor gocui.Attribute) {
 	ui.g.BgColor = bgColor
 }
 
-// SetInputEsc ...
+// SetInputEsc enables the escape key
 func (ui *UI) SetInputEsc(enabled bool) {
 	ui.g.InputEsc = true
 }
 
-// SetMouse ...
+// SetMouse enables the mouse
 func (ui *UI) SetMouse(enabled bool) {
 	ui.g.Mouse = true
 }
 
-// SetHighlight ...
+// SetHighlight enables the highlight active state
 func (ui *UI) SetHighlight(enabled bool) {
 	ui.g.Highlight = true
 }
 
-// SetManagerFunc ...
+// SetManagerFunc sets the function to call for rendering UI
 func (ui *UI) SetManagerFunc(fn func() error) {
 	ui.g.SetManagerFunc(func(*gocui.Gui) error {
 		return fn()
 	})
 }
 
-// MainLoop ...
+// MainLoop starts the UI render loop
 func (ui *UI) MainLoop() error {
 	return ui.g.MainLoop()
 }
@@ -68,7 +68,7 @@ func (ui *UI) Close() {
 	ui.g.Close()
 }
 
-// SetView ...
+// SetView sets the view layout
 func (ui *UI) SetView(view interface{}, x, y, w, h int) error {
 	if v, ok := view.(*View); ok {
 		gv, err := ui.g.SetView(v.Name(), x, y, w, h)

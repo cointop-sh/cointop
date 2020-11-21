@@ -458,8 +458,8 @@ refresh_rate = 60
   "]" = "next_chart_range"
   "{" = "first_chart_range"
   "}" = "last_chart_range"
-  "<" = "previous_page"
-  ">" = "next_page"
+  "<" = "scroll_left"
+  ">" = "scroll_right"
   C = "show_currency_convert_menu"
   E = "show_portfolio_edit_menu"
   G = "move_to_page_last_row"
@@ -566,6 +566,8 @@ Action|Description
 `quit_view`|Quit view
 `refresh`|Do a manual refresh on the data
 `save`|Save config
+`scroll_left`|Scroll table to the left
+`scroll_right`|Scroll table to the right
 `shorten_chart`|Decrease chart height
 `show_currency_convert_menu`|Show currency convert menu
 `show_favorites`|Show favorites
@@ -958,6 +960,10 @@ Frequently asked questions:
 - Q: How can I hide the bottom statusbar?
 
   - A: Run cointop with the `--hide-statusbar` flag.
+
+- Q: How do I scroll the table horizontally left or right?
+
+  - A: Use the keys <kbd><</kbd> to scroll the table to the left and <kbd><</kbd> to scroll the table to the right.
 
 - Q: How can I delete the cache?
 

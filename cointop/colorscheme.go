@@ -1,6 +1,7 @@
 package cointop
 
 import (
+	"fmt"
 	"strconv"
 
 	fcolor "github.com/fatih/color"
@@ -227,6 +228,11 @@ func (c *Colorscheme) TableRowFavorite(a ...interface{}) string {
 // TableRowFavoriteSprintf ...
 func (c *Colorscheme) TableRowFavoriteSprintf() ISprintf {
 	return c.toSprintf("table_row_favorite")
+}
+
+// Default ...
+func (c *Colorscheme) Default(a ...interface{}) string {
+	return fmt.Sprintf(a[0].(string), a[1:]...)
 }
 
 func (c *Colorscheme) toSprintf(name string) ISprintf {

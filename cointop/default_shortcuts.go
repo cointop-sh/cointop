@@ -2,7 +2,8 @@ package cointop
 
 // DefaultShortcuts is a map of the default shortcuts
 func DefaultShortcuts() map[string]string {
-	return map[string]string{"up": "move_up",
+	return map[string]string{
+		"up":        "move_up",
 		"down":      "move_down",
 		"left":      "previous_page",
 		"right":     "next_page",
@@ -75,8 +76,8 @@ func DefaultShortcuts() map[string]string {
 		"[":         "previous_chart_range",
 		"}":         "last_chart_range",
 		"{":         "first_chart_range",
-		">":         "next_page",
-		"<":         "previous_page",
+		">":         "scroll_right",
+		"<":         "scroll_left",
 		"\\\\":      "toggle_table_fullscreen",
 	}
 }

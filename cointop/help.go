@@ -39,7 +39,7 @@ func (ct *Cointop) UpdateHelp() {
 		if cnt%percol == 0 {
 			cnt = 0
 		}
-		item := fmt.Sprintf("%10s %-40s", k, ct.colorscheme.MenuLabel(v))
+		item := fmt.Sprintf("%10s %-45s", k, ct.colorscheme.MenuLabel(v))
 		cols[cnt] = append(cols[cnt], item)
 		cnt = cnt + 1
 	}

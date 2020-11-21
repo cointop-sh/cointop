@@ -279,6 +279,10 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			fn = ct.Sortfn("marketcap", true)
 		case "move_to_page_visible_middle_row":
 			fn = ct.Keyfn(ct.NavigatePageMiddleLine)
+		case "scroll_left":
+			fn = ct.Keyfn(ct.TableScrollLeft)
+		case "scroll_right":
+			fn = ct.Keyfn(ct.TableScrollRight)
 		case "sort_column_name":
 			fn = ct.Sortfn("name", false)
 		case "sort_column_price":
@@ -374,6 +378,14 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 	// keys to quit convert menu when open
 	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.ConvertMenu.Name())
 	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.ConvertMenu.Name())
+
+	// mouse events
+	ct.SetKeybindingMod(gocui.MouseRelease, gocui.ModNone, ct.Keyfn(ct.MouseRelease), "")
+	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.MouseLeftClick), "")
+	ct.SetKeybindingMod(gocui.MouseMiddle, gocui.ModNone, ct.Keyfn(ct.MouseMiddleClick), "")
+	ct.SetKeybindingMod(gocui.MouseRight, gocui.ModNone, ct.Keyfn(ct.MouseRightClick), "")
+	ct.SetKeybindingMod(gocui.MouseWheelUp, gocui.ModNone, ct.Keyfn(ct.MouseWheelUp), "")
+	ct.SetKeybindingMod(gocui.MouseWheelDown, gocui.ModNone, ct.Keyfn(ct.MouseWheelDown), "")
 
 	// character key press to select option
 	// TODO: use scrolling table

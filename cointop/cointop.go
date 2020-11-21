@@ -72,6 +72,7 @@ type State struct {
 	shortcutKeys               map[string]string
 	sortDesc                   bool
 	sortBy                     string
+	tableOffsetX               int
 	onlyTable                  bool
 	chartHeight                int
 }
@@ -216,7 +217,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry, 0),
 			},
-			chartHeight: 10,
+			chartHeight:  10,
+			tableOffsetX: 0,
 		},
 		TableColumnOrder: TableColumnOrder(),
 		Views: &Views{

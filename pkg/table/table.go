@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table/align"
 )
 
@@ -18,8 +19,8 @@ type Table struct {
 	HideColumHeaders bool
 }
 
-// New new table
-func New() *Table {
+// NewTable new table
+func NewTable() *Table {
 	return &Table{}
 }
 
@@ -41,6 +42,23 @@ func (t *Table) AddRow(v ...interface{}) *Row {
 	r := &Row{table: t, values: v, strValues: make([]string, len(v))}
 	t.rows = append(t.rows, r)
 	return r
+}
+
+// AddRowCells add row using cells
+func (t *Table) AddRowCells(cells ...*RowCell) *Row {
+	t.SetNumCol(len(cells))
+	v := make([]interface{}, len(cells))
+	for i, item := range cells {
+		v[i] = item.String()
+	}
+	return t.AddRow(v...)
+}
+
+// SetNumCol sets the number of columns
+func (t *Table) SetNumCol(count int) {
+	for i := 0; i < count; i++ {
+		t.AddCol("")
+	}
 }
 
 // SortAscFn sort ascending function
@@ -126,11 +144,11 @@ func (t *Table) Format() *Table {
 			}
 
 			if c.formatFn != nil {
-				r.strValues[j] = fmt.Sprintf("%s", c.formatFn(v)) + " "
+				r.strValues[j] = fmt.Sprintf("%s", c.formatFn(v))
 			} else if c.format != "" {
-				r.strValues[j] = fmt.Sprintf(c.format, v) + " "
+				r.strValues[j] = fmt.Sprintf(c.format, v)
 			} else {
-				r.strValues[j] = fmt.Sprintf("%v", v) + " "
+				r.strValues[j] = fmt.Sprintf("%v", v)
 			}
 
 			if len(r.strValues[j]) > t.cols[j].width {
@@ -163,7 +181,10 @@ func (t *Table) Format() *Table {
 
 		break
 	}
-	t.cols[i].width += t.width - t.colWidth()
+
+	if len(t.cols) > 0 {
+		t.cols[i].width += t.width - t.colWidth()
+	}
 
 	return t
 }
@@ -222,4 +243,24 @@ func (t *Table) Fprint(w io.Writer) {
 		}
 		fmt.Fprintf(w, "\n")
 	}
+}
+
+// RowCell is a row cell struct
+type RowCell struct {
+	LeftMargin int
+	Width      int
+	LeftAlign  bool
+	Color      func(a ...interface{}) string
+	Text       string
+}
+
+// String returns row cell as string
+func (rc *RowCell) String() string {
+	t := strings.Repeat(" ", rc.LeftMargin) + rc.Text
+	if rc.LeftAlign {
+		t = pad.Right(t, rc.Width, " ")
+	} else {
+		t = fmt.Sprintf("%"+fmt.Sprintf("%v", rc.Width)+"s", t)
+	}
+	return rc.Color(t)
 }
