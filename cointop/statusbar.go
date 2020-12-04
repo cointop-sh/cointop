@@ -25,17 +25,17 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 	var quitText string
 	var favoritesText string
 	var portfolioText string
-	if ct.State.portfolioVisible || ct.State.filterByFavorites {
+	if ct.IsPortfolioVisible() || ct.IsFavoritesVisible() {
 		quitText = "Return"
 	} else {
 		quitText = "Quit"
 	}
-	if ct.State.portfolioVisible {
+	if ct.IsPortfolioVisible() {
 		portfolioText = "[E]Edit"
 	} else {
 		portfolioText = "[P]Portfolio"
 	}
-	if ct.State.filterByFavorites {
+	if ct.IsFavoritesVisible() {
 		favoritesText = "[Space]Unfavorite"
 	} else {
 		favoritesText = "[F]Favorites"

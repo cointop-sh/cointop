@@ -30,7 +30,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 	}
 
 	baseColor := ct.colorscheme.TableHeaderSprintf()
-	cm := map[string]*t{
+	possibleHeaders := map[string]*t{
 		"rank":            {baseColor, "[r]ank", 0, 1, " "},
 		"name":            {baseColor, "[n]ame", 0, 11, " "},
 		"symbol":          {baseColor, "[s]ymbol", 4, 0, " "},
@@ -48,30 +48,27 @@ func (ct *Cointop) UpdateTableHeader() error {
 		"lastupdated":     {baseColor, "last [u]pdated", 3, 0, " "},
 	}
 
-	for k := range cm {
-		cm[k].arrow = " "
+	for k := range possibleHeaders {
+		possibleHeaders[k].arrow = " "
 		if ct.State.sortBy == k {
-			cm[k].colorfn = ct.colorscheme.TableHeaderColumnActiveSprintf()
+			possibleHeaders[k].colorfn = ct.colorscheme.TableHeaderColumnActiveSprintf()
 			if ct.State.sortDesc {
-				cm[k].arrow = "▼"
+				possibleHeaders[k].arrow = "▼"
 			} else {
-				cm[k].arrow = "▲"
+				possibleHeaders[k].arrow = "▲"
 			}
 		}
 	}
 
-	if ct.State.portfolioVisible {
-		cols = []string{"rank", "name", "symbol", "price",
-			"holdings", "balance", "24hchange", "percentholdings", "lastupdated"}
+	if ct.IsPortfolioVisible() {
+		cols = ct.GetPortfolioTableHeaders()
 	} else {
-		cols = []string{"rank", "name", "symbol", "price",
-			"marketcap", "24hvolume", "1hchange", "24hchange",
-			"7dchange", "totalsupply", "availablesupply", "lastupdated"}
+		cols = ct.GetCoinsTableHeaders()
 	}
 
 	var headers []string
 	for _, v := range cols {
-		s, ok := cm[v]
+		s, ok := possibleHeaders[v]
 		if !ok {
 			continue
 		}

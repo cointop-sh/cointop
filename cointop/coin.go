@@ -26,7 +26,7 @@ type Coin struct {
 // AllCoins returns a slice of all the coins
 func (ct *Cointop) AllCoins() []*Coin {
 	ct.debuglog("AllCoins()")
-	if ct.State.filterByFavorites {
+	if ct.IsFavoritesVisible() {
 		var list []*Coin
 		for i := range ct.State.allCoins {
 			coin := ct.State.allCoins[i]
@@ -37,7 +37,7 @@ func (ct *Cointop) AllCoins() []*Coin {
 		return list
 	}
 
-	if ct.State.portfolioVisible {
+	if ct.IsPortfolioVisible() {
 		var list []*Coin
 		for i := range ct.State.allCoins {
 			coin := ct.State.allCoins[i]

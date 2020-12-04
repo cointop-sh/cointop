@@ -308,6 +308,8 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			view = ""
 		case "toggle_favorite":
 			fn = ct.Keyfn(ct.ToggleFavorite)
+		case "toggle_favorites":
+			fn = ct.Keyfn(ct.ToggleFavorites)
 		case "toggle_show_favorites":
 			fn = ct.Keyfn(ct.ToggleShowFavorites)
 		case "save":
@@ -419,7 +421,7 @@ func (ct *Cointop) Keyfn(fn func() error) func(g *gocui.Gui, v *gocui.View) erro
 // handleHkey handles the h key
 func (ct *Cointop) handleHkey(key interface{}) func(g *gocui.Gui, v *gocui.View) error {
 	return func(g *gocui.Gui, v *gocui.View) error {
-		if k, ok := key.(rune); ok && k == 'h' && ct.State.portfolioVisible {
+		if k, ok := key.(rune); ok && k == 'h' && ct.IsPortfolioVisible() {
 			ct.SortToggle("holdings", true)
 		} else {
 			ct.PrevPage()

@@ -1,6 +1,8 @@
 package cointop
 
-import "sort"
+import (
+	"sort"
+)
 
 // ToggleFavorite toggles coin as favorite
 func (ct *Cointop) ToggleFavorite() error {
@@ -28,11 +30,18 @@ func (ct *Cointop) ToggleFavorite() error {
 	return nil
 }
 
-// ToggleShowFavorites toggles the favorites view
+// ToggleFavorites toggles the favorites view
+func (ct *Cointop) ToggleFavorites() error {
+	ct.debuglog("toggleFavorites()")
+	ct.ToggleSelectedView(FavoritesView)
+	go ct.UpdateTable()
+	return nil
+}
+
+// ToggleShowFavorites shows the favorites view
 func (ct *Cointop) ToggleShowFavorites() error {
 	ct.debuglog("toggleShowFavorites()")
-	ct.State.portfolioVisible = false
-	ct.State.filterByFavorites = !ct.State.filterByFavorites
+	ct.ToggleSelectedView(FavoritesView)
 	go ct.UpdateTable()
 	return nil
 }
@@ -57,4 +66,9 @@ func (ct *Cointop) GetFavoritesSlice() []*Coin {
 	}
 
 	return sliced
+}
+
+// IsFavoritesVisible returns true if favorites view is visible
+func (ct *Cointop) IsFavoritesVisible() bool {
+	return ct.State.selectedView == FavoritesView
 }

@@ -10,10 +10,12 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/miguelmota/cointop/pkg/asciitable"
 	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/ui"
 )
 
@@ -26,17 +28,137 @@ func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
 	return view
 }
 
+// GetPortfolioTableHeaders returns the portfolio table headers
+func (ct *Cointop) GetPortfolioTableHeaders() []string {
+	return []string{
+		"rank",
+		"name",
+		"symbol",
+		"price",
+		"holdings",
+		"balance",
+		"24hchange",
+		"percentholdings",
+		"lastupdated",
+	}
+}
+
+// GetPortfolioTable returns the table for displaying portfolio holdings
+func (ct *Cointop) GetPortfolioTable() *table.Table {
+	total := ct.GetPortfolioTotal()
+	maxX := ct.width()
+	t := table.NewTable().SetWidth(maxX)
+
+	for _, coin := range ct.State.coins {
+		star := ct.colorscheme.TableRow(" ")
+		name := TruncateString(coin.Name, 20)
+		symbol := TruncateString(coin.Symbol, 6)
+		if coin.Favorite {
+			star = ct.colorscheme.TableRowFavorite("*")
+		}
+		rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
+
+		namecolor := ct.colorscheme.TableRow
+		if coin.Favorite {
+			namecolor = ct.colorscheme.TableRowFavorite
+		}
+
+		colorbalance := ct.colorscheme.TableColumnPrice
+		color24h := ct.colorscheme.TableColumnChange
+		if coin.PercentChange24H > 0 {
+			color24h = ct.colorscheme.TableColumnChangeUp
+		}
+		if coin.PercentChange24H < 0 {
+			color24h = ct.colorscheme.TableColumnChangeDown
+		}
+
+		percentHoldings := (coin.Balance / total) * 1e2
+		if math.IsNaN(percentHoldings) {
+			percentHoldings = 0
+		}
+		unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
+		lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
+
+		t.AddRowCells(
+			&table.RowCell{
+				LeftMargin: 0,
+				Width:      6,
+				LeftAlign:  false,
+				Color:      ct.colorscheme.Default,
+				Text:       rank,
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      22,
+				LeftAlign:  true,
+				Color:      namecolor,
+				Text:       name,
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      6,
+				LeftAlign:  true,
+				Color:      ct.colorscheme.TableRow,
+				Text:       symbol,
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      14,
+				LeftAlign:  false,
+				Color:      ct.colorscheme.TableRow,
+				Text:       humanize.Commaf(coin.Price),
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      16,
+				LeftAlign:  false,
+				Color:      ct.colorscheme.TableRow,
+				Text:       strconv.FormatFloat(coin.Holdings, 'f', -1, 64),
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      16,
+				LeftAlign:  false,
+				Color:      colorbalance,
+				Text:       humanize.Commaf(coin.Balance),
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      10,
+				LeftAlign:  false,
+				Color:      color24h,
+				Text:       fmt.Sprintf("%.2f%%", coin.PercentChange24H),
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      14,
+				LeftAlign:  false,
+				Color:      ct.colorscheme.TableRow,
+				Text:       fmt.Sprintf("%.2f%%", percentHoldings),
+			},
+			&table.RowCell{
+				LeftMargin: 1,
+				Width:      18,
+				LeftAlign:  false,
+				Color:      ct.colorscheme.TableRow,
+				Text:       lastUpdated,
+			},
+		)
+	}
+
+	return t
+}
+
 // TogglePortfolio toggles the portfolio view
 func (ct *Cointop) TogglePortfolio() error {
 	ct.debuglog("togglePortfolio()")
-	if ct.State.portfolioVisible {
+	if ct.IsPortfolioVisible() {
 		ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
 	} else {
 		ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	}
 
-	ct.State.filterByFavorites = false
-	ct.State.portfolioVisible = !ct.State.portfolioVisible
+	ct.ToggleSelectedView(PortfolioView)
 
 	go ct.UpdateChart()
 	go ct.UpdateTable()
@@ -46,8 +168,7 @@ func (ct *Cointop) TogglePortfolio() error {
 // ToggleShowPortfolio shows the portfolio view
 func (ct *Cointop) ToggleShowPortfolio() error {
 	ct.debuglog("toggleShowPortfolio()")
-	ct.State.filterByFavorites = false
-	ct.State.portfolioVisible = true
+	ct.SetSelectedView(PortfolioView)
 	go ct.UpdateChart()
 	go ct.UpdateTable()
 	return nil
@@ -543,6 +664,11 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	fmt.Println(value)
 
 	return nil
+}
+
+// IsPortfolioVisible returns true if portfolio view is visible
+func (ct *Cointop) IsPortfolioVisible() bool {
+	return ct.State.selectedView == PortfolioView
 }
 
 // NormalizeFloatString normalizes a float as a string

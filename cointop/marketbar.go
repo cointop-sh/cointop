@@ -31,7 +31,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 	}
 	var content string
 
-	if ct.State.portfolioVisible {
+	if ct.IsPortfolioVisible() {
 		total := ct.GetPortfolioTotal()
 		totalstr := humanize.Commaf(total)
 		if !(ct.State.currencyConversion == "BTC" || ct.State.currencyConversion == "ETH" || total < 1) {

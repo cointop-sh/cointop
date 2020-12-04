@@ -4,12 +4,8 @@ import (
 	"fmt"
 	"math"
 	"net/url"
-	"strconv"
 	"strings"
-	"time"
 
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/ui"
 )
 
@@ -47,245 +43,14 @@ const dots = "..."
 // RefreshTable refreshes the table
 func (ct *Cointop) RefreshTable() error {
 	ct.debuglog("refreshTable()")
-	maxX := ct.width()
-	ct.table = table.NewTable().SetWidth(maxX)
-	ct.table.HideColumHeaders = true
 
-	if ct.State.portfolioVisible {
-		total := ct.GetPortfolioTotal()
-
-		for _, coin := range ct.State.coins {
-			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
-			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
-			colorbalance := ct.colorscheme.TableColumnPrice
-			color24h := ct.colorscheme.TableColumnChange
-			if coin.PercentChange24H > 0 {
-				color24h = ct.colorscheme.TableColumnChangeUp
-			}
-			if coin.PercentChange24H < 0 {
-				color24h = ct.colorscheme.TableColumnChangeDown
-			}
-			name := TruncateString(coin.Name, 20)
-			symbol := TruncateString(coin.Symbol, 6)
-			star := ct.colorscheme.TableRow(" ")
-			if coin.Favorite {
-				star = ct.colorscheme.TableRowFavorite("*")
-			}
-
-			namecolor := ct.colorscheme.TableRow
-			if coin.Favorite {
-				namecolor = ct.colorscheme.TableRowFavorite
-			}
-
-			percentHoldings := (coin.Balance / total) * 1e2
-			if math.IsNaN(percentHoldings) {
-				percentHoldings = 0
-			}
-
-			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
-
-			ct.table.AddRowCells(
-				&table.RowCell{
-					LeftMargin: 0,
-					Width:      6,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.Default,
-					Text:       rank,
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      22,
-					LeftAlign:  true,
-					Color:      namecolor,
-					Text:       name,
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      6,
-					LeftAlign:  true,
-					Color:      ct.colorscheme.TableRow,
-					Text:       symbol,
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      14,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       humanize.Commaf(coin.Price),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      16,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       strconv.FormatFloat(coin.Holdings, 'f', -1, 64),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      16,
-					LeftAlign:  false,
-					Color:      colorbalance,
-					Text:       humanize.Commaf(coin.Balance),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      10,
-					LeftAlign:  false,
-					Color:      color24h,
-					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange24H),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      14,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       fmt.Sprintf("%.2f%%", percentHoldings),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      18,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       lastUpdated,
-				},
-			)
-		}
+	if ct.IsPortfolioVisible() {
+		ct.table = ct.GetPortfolioTable()
 	} else {
-		for _, coin := range ct.State.coins {
-			if coin == nil {
-				continue
-			}
-			unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
-			lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
-			namecolor := ct.colorscheme.TableRow
-			color1h := ct.colorscheme.TableColumnChange
-			color24h := ct.colorscheme.TableColumnChange
-			color7d := ct.colorscheme.TableColumnChange
-			if coin.Favorite {
-				namecolor = ct.colorscheme.TableRowFavorite
-			}
-			if coin.PercentChange1H > 0 {
-				color1h = ct.colorscheme.TableColumnChangeUp
-			}
-			if coin.PercentChange1H < 0 {
-				color1h = ct.colorscheme.TableColumnChangeDown
-			}
-			if coin.PercentChange24H > 0 {
-				color24h = ct.colorscheme.TableColumnChangeUp
-			}
-			if coin.PercentChange24H < 0 {
-				color24h = ct.colorscheme.TableColumnChangeDown
-			}
-			if coin.PercentChange7D > 0 {
-				color7d = ct.colorscheme.TableColumnChangeUp
-			}
-			if coin.PercentChange7D < 0 {
-				color7d = ct.colorscheme.TableColumnChangeDown
-			}
-			name := TruncateString(coin.Name, 20)
-			symbol := TruncateString(coin.Symbol, 6)
-			star := ct.colorscheme.TableRow(" ")
-			if coin.Favorite {
-				star = ct.colorscheme.TableRowFavorite("*")
-			}
-
-			symbolpadding := 8
-			// NOTE: this is to adjust padding by 1 because when all name rows are
-			// yellow it messes the spacing (need to debug)
-			if ct.State.filterByFavorites {
-				symbolpadding++
-			}
-
-			rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
-			ct.table.AddRowCells(
-				&table.RowCell{
-					LeftMargin: 0,
-					Width:      6,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.Default,
-					Text:       rank,
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      22,
-					LeftAlign:  true,
-					Color:      namecolor,
-					Text:       name,
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      symbolpadding,
-					LeftAlign:  true,
-					Color:      ct.colorscheme.TableRow,
-					Text:       symbol,
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      12,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableColumnPrice,
-					Text:       humanize.Commaf(coin.Price),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      18,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       humanize.Commaf(coin.MarketCap),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      16,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       humanize.Commaf(coin.Volume24H),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      11,
-					LeftAlign:  false,
-					Color:      color1h,
-					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange1H),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      10,
-					LeftAlign:  false,
-					Color:      color24h,
-					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange24H),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      10,
-					LeftAlign:  false,
-					Color:      color7d,
-					Text:       fmt.Sprintf("%.2f%%", coin.PercentChange7D),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      22,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       humanize.Commaf(coin.TotalSupply),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      19,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       humanize.Commaf(coin.AvailableSupply),
-				},
-				&table.RowCell{
-					LeftMargin: 1,
-					Width:      18,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.TableRow,
-					Text:       lastUpdated,
-				},
-				// TODO: add %percent of cap
-			)
-		}
+		ct.table = ct.GetCoinsTable()
 	}
+
+	ct.table.HideColumHeaders = true
 
 	// highlight last row if current row is out of bounds (can happen when switching views)
 	currentrow := ct.HighlightedRowIndex()
@@ -319,9 +84,9 @@ func (ct *Cointop) UpdateTable() error {
 		return true
 	})
 
-	if ct.State.filterByFavorites {
+	if ct.IsFavoritesVisible() {
 		ct.State.coins = ct.GetFavoritesSlice()
-	} else if ct.State.portfolioVisible {
+	} else if ct.IsPortfolioVisible() {
 		ct.State.coins = ct.GetPortfolioSlice()
 	} else {
 		// TODO: maintain state of previous sorting
@@ -480,4 +245,19 @@ func (ct *Cointop) ToggleTableFullscreen() error {
 	}
 
 	return nil
+}
+
+// SetSelectedView sets the active table view
+func (ct *Cointop) SetSelectedView(viewName string) {
+	ct.State.lastSelectedView = ct.State.selectedView
+	ct.State.selectedView = viewName
+}
+
+// ToggleSelectedView toggles between current table view and last selected table view
+func (ct *Cointop) ToggleSelectedView(viewName string) {
+	if ct.State.lastSelectedView == "" || ct.State.selectedView != viewName {
+		ct.SetSelectedView(viewName)
+	} else {
+		ct.SetSelectedView(ct.State.lastSelectedView)
+	}
 }

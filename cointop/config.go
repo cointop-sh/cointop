@@ -284,14 +284,13 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 		defaultView = strings.ToLower(defaultView)
 		switch defaultView {
 		case "portfolio":
-			ct.State.portfolioVisible = true
+			ct.SetSelectedView(PortfolioView)
 		case "favorites":
-			ct.State.filterByFavorites = true
+			ct.SetSelectedView(FavoritesView)
 		case "default":
 			fallthrough
 		default:
-			ct.State.portfolioVisible = false
-			ct.State.filterByFavorites = false
+			ct.SetSelectedView(CoinsView)
 			defaultView = "default"
 		}
 		ct.State.defaultView = defaultView

@@ -61,7 +61,7 @@ func (ct *Cointop) UpdateChart() error {
 	chartLock.Lock()
 	defer chartLock.Unlock()
 
-	if ct.State.portfolioVisible {
+	if ct.IsPortfolioVisible() {
 		if err := ct.PortfolioChart(); err != nil {
 			return err
 		}

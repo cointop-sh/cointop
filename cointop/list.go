@@ -157,9 +157,9 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 // GetListCount returns count of coins list
 func (ct *Cointop) GetListCount() int {
 	ct.debuglog("getListCount()")
-	if ct.State.filterByFavorites {
+	if ct.IsFavoritesVisible() {
 		return len(ct.State.favorites)
-	} else if ct.State.portfolioVisible {
+	} else if ct.IsPortfolioVisible() {
 		return len(ct.State.portfolio.Entries)
 	} else {
 		return len(ct.State.allCoins)

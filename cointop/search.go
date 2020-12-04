@@ -53,8 +53,7 @@ func (ct *Cointop) DoSearch() error {
 	}
 
 	// TODO: do this a better way (SoC)
-	ct.State.filterByFavorites = false
-	ct.State.portfolioVisible = false
+	ct.SetSelectedView(CoinsView)
 
 	defer ct.SetActiveView(ct.Views.Table.Name())
 	if err != nil {

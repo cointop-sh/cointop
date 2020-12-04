@@ -53,7 +53,6 @@ type State struct {
 	favoritesBySymbol map[string]bool
 
 	favorites                  map[string]bool
-	filterByFavorites          bool
 	helpVisible                bool
 	hideMarketbar              bool
 	hideChart                  bool
@@ -62,13 +61,14 @@ type State struct {
 	page                       int
 	perPage                    int
 	portfolio                  *Portfolio
-	portfolioVisible           bool
 	portfolioUpdateMenuVisible bool
 	refreshRate                time.Duration
 	running                    bool
 	searchFieldVisible         bool
 	selectedCoin               *Coin
 	selectedChartRange         string
+	selectedView               string
+	lastSelectedView           string
 	shortcutKeys               map[string]string
 	sortDesc                   bool
 	sortBy                     string
@@ -106,12 +106,6 @@ type Cointop struct {
 	TableColumnOrder []string
 	Views            *Views
 }
-
-// CoinMarketCap is API choice
-var CoinMarketCap = "coinmarketcap"
-
-// CoinGecko is API choice
-var CoinGecko = "coingecko"
 
 // PortfolioEntry is portfolio entry
 type PortfolioEntry struct {

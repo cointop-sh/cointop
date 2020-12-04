@@ -14,12 +14,12 @@ func (ct *Cointop) Quit() error {
 // QuitView exists the current view
 func (ct *Cointop) QuitView() error {
 	ct.debuglog("quitView()")
-	if ct.State.portfolioVisible {
-		ct.State.portfolioVisible = false
+	if ct.IsPortfolioVisible() {
+		ct.SetSelectedView(CoinsView)
 		return ct.UpdateTable()
 	}
-	if ct.State.filterByFavorites {
-		ct.State.filterByFavorites = false
+	if ct.IsFavoritesVisible() {
+		ct.SetSelectedView(CoinsView)
 		return ct.UpdateTable()
 	}
 	if ct.ui.ActiveViewName() == ct.Views.Table.Name() {
