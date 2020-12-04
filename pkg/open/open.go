@@ -14,6 +14,7 @@ var possibleCmds = []string{
 	"gvfs-open",          // gnome linux
 	"gnome-open",         // gnome linux
 	"kde-open",           // kde linux
+	"kde-open5",          // kde linux
 	"exo-open",           // xfce linux
 	"enlightenment_open", // enlightenment linux
 	"open",               // mac
