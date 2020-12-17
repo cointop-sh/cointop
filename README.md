@@ -27,6 +27,12 @@ The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and sh
 
 <img src="https://user-images.githubusercontent.com/168240/41806841-043c0ca6-767a-11e8-9c51-df9fc64b3b5c.png" alt="currency convert menu" width="880" />
 
+## Demo
+
+```bash
+ssh cointop.sh
+```
+
 In action
 
 <img src="https://user-images.githubusercontent.com/168240/39569570-75b1547c-4e7a-11e8-8eac-552abaa431f0.gif" alt="screencast" width="880" />

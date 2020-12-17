@@ -4,6 +4,7 @@ package ssh
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
 	"fmt"
 	"io"
@@ -20,10 +21,10 @@ import (
 	gossh "golang.org/x/crypto/ssh"
 )
 
-// DefaultHostKeyFile ...
+// DefaultHostKeyFile is default SSH key path
 var DefaultHostKeyFile = "~/.ssh/id_rsa"
 
-// Config ...
+// Config is config struct
 type Config struct {
 	Port             uint
 	Address          string
@@ -32,7 +33,7 @@ type Config struct {
 	HostKeyFile      string
 }
 
-// Server ...
+// Server is server struct
 type Server struct {
 	port             uint
 	address          string
@@ -42,7 +43,7 @@ type Server struct {
 	hostKeyFile      string
 }
 
-// NewServer ...
+// NewServer returns a new server instance
 func NewServer(config *Config) *Server {
 	hostKeyFile := DefaultHostKeyFile
 	if config.HostKeyFile != "" {
@@ -60,7 +61,7 @@ func NewServer(config *Config) *Server {
 	}
 }
 
-// ListenAndServe ...
+// ListenAndServe starts the server
 func (s *Server) ListenAndServe() error {
 	s.sshServer = &ssh.Server{
 		Addr:        fmt.Sprintf("%s:%v", s.address, s.port),
@@ -74,13 +75,32 @@ func (s *Server) ListenAndServe() error {
 				return
 			}
 
-			tempDir, err := createTempDir()
-			if err != nil {
-				fmt.Println(err)
-				return
+			configDir := ""
+			pubKey := sshSession.PublicKey()
+			if pubKey != nil {
+				pubBytes := pubKey.Marshal()
+				if len(pubBytes) > 0 {
+					hash := sha256.Sum256(pubBytes)
+					configDir = fmt.Sprintf("/tmp/cointop_config/%x", hash)
+					err := os.MkdirAll(configDir, 0700)
+					if err != nil {
+						fmt.Println(err)
+						return
+					}
+				}
 			}
 
-			configPath := fmt.Sprintf("%s/config", tempDir)
+			if configDir == "" {
+				tempDir, err := createTempDir()
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				configDir = tempDir
+				defer os.RemoveAll(configDir)
+			}
+
+			configPath := fmt.Sprintf("%s/config", configDir)
 			colorsDir := pathutil.NormalizePath("~/.config/cointop/colors")
 
 			cmdCtx, cancelCmd := context.WithCancel(sshSession.Context())
@@ -90,7 +110,7 @@ func (s *Server) ListenAndServe() error {
 				"--reset",
 				"--silent",
 				"--cache-dir",
-				tempDir,
+				configDir,
 				"--config",
 				configPath,
 				"--colors-dir",
@@ -128,10 +148,8 @@ func (s *Server) ListenAndServe() error {
 			io.Copy(sshSession, f)
 			f.Close()
 			cmd.Wait()
-			os.Remove(configPath)
 		},
 		PtyCallback: func(ctx ssh.Context, pty ssh.Pty) bool {
-			// TODO: check public key hash
 			return true
 		},
 		PublicKeyHandler: func(ctx ssh.Context, key ssh.PublicKey) bool {
@@ -157,19 +175,18 @@ func (s *Server) ListenAndServe() error {
 	return s.sshServer.ListenAndServe()
 }
 
-// Shutdown ...
+// Shutdown shuts down the server
 func (s *Server) Shutdown() {
 	s.sshServer.Close()
 }
 
-// setWinsize ...
+// setWinsize sets the PTY window size
 func setWinsize(f *os.File, w, h int) {
 	syscall.Syscall(syscall.SYS_IOCTL, f.Fd(), uintptr(syscall.TIOCSWINSZ),
 		uintptr(unsafe.Pointer(&struct{ h, w, x, y uint16 }{uint16(h), uint16(w), 0, 0})))
 }
 
-// createTempDir ...
-// TODO: load saved configuration based on ssh public key hash
+// createTempDir creates a temporary directory
 func createTempDir() (string, error) {
 	return ioutil.TempDir("", "")
 }
