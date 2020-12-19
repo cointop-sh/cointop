@@ -57,6 +57,7 @@ In action
 - [Contributing](#contributing)
 - [Development](#development)
 - [Tip Jar](#tip-jar)
+- [Social](#social)
 - [License](#license)
 
 ## Features
@@ -1129,7 +1130,11 @@ See this [wiki](https://github.com/miguelmota/cointop/wiki/Deployment).
 
 Thank you for tips! 🙏
 
-Follow on twitter [@cointop_sh](https://twitter.com/cointop_sh)
+### Social
+
+- Follow on twitter [@cointop](https://twitter.com/cointop)
+- Chat on [Telegram](https://telegram.me/cointopsh)
+- Discuss on [Discord](https://discord.gg/pUVGy7ECGg)
 
 ## License
 
