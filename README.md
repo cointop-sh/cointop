@@ -211,6 +211,14 @@ Run cointop flatpak
 flatpak run com.github.miguelmota.Cointop
 ```
 
+### NixOS (Linux)
+
+cointop is available as a [nixpkg](https://search.nixos.org/packages?channel=unstable&show=cointop&from=0&size=30&sort=relevance&query=cointop).
+
+```bash
+nix-env -iA nixpkgs.cointop
+```
+
 ### FreshPorts (FreeBSD / OpenBSD)
 
 cointop is available as a [FreshPort](https://www.freshports.org/finance/cointop/) package.
@@ -286,6 +294,12 @@ sudo xbps-install -Su cointop
 ```bash
 sudo flatpak uninstall com.github.miguelmota.Cointop
 sudo flatpak install flathub com.github.miguelmota.Cointop
+```
+
+### NixOS (Linux)
+
+```bash
+nix-env -uA nixpkgs.cointop
 ```
 
 ## Getting started
