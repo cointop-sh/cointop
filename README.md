@@ -181,6 +181,14 @@ Using [yay](https://github.com/Jguer/yay)
 yay -S cointop
 ```
 
+### XBPS (Void Linux)
+
+cointop is available as a [XBPS](https://voidlinux.org/packages/) package.
+
+```bash
+sudo xbps-install -S cointop
+```
+
 ### Flatpak (Linux)
 
 cointop is available as a [Flatpak](https://flatpak.org/) package via the [Flathub](https://flathub.org/apps/details/com.github.miguelmota.Cointop) registry.
@@ -265,6 +273,12 @@ sudo dnf update cointop
 
 ```bash
 yay -S cointop
+```
+
+### XBPS (Void Linux)
+
+```bash
+sudo xbps-install -Su cointop
 ```
 
 ### Flatpak (Linux)
