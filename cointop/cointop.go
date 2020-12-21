@@ -11,12 +11,12 @@ import (
 
 	"github.com/miguelmota/cointop/pkg/api"
 	"github.com/miguelmota/cointop/pkg/api/types"
+	"github.com/miguelmota/cointop/pkg/cache"
 	"github.com/miguelmota/cointop/pkg/filecache"
 	"github.com/miguelmota/cointop/pkg/pathutil"
 	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/ui"
 	"github.com/miguelmota/gocui"
-	"github.com/patrickmn/go-cache"
 )
 
 // TODO: clean up and optimize codebase

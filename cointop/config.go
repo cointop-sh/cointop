@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/BurntSushi/toml"
 	"github.com/miguelmota/cointop/pkg/pathutil"
+	"github.com/miguelmota/cointop/pkg/toml"
 )
 
 var fileperm = os.FileMode(0644)
