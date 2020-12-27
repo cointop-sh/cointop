@@ -44,9 +44,12 @@ const dots = "..."
 func (ct *Cointop) RefreshTable() error {
 	ct.debuglog("refreshTable()")
 
-	if ct.IsPortfolioVisible() {
+	switch ct.State.selectedView {
+	case PortfolioView:
 		ct.table = ct.GetPortfolioTable()
-	} else {
+	case AlertsView:
+		ct.table = ct.GetAlertsTable()
+	default:
 		ct.table = ct.GetCoinsTable()
 	}
 

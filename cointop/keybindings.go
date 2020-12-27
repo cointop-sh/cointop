@@ -306,6 +306,8 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 		case "open_search":
 			fn = ct.Keyfn(ct.openSearch)
 			view = ""
+		case "toggle_alerts":
+			fn = ct.Keyfn(ct.ToggleAlerts)
 		case "toggle_favorite":
 			fn = ct.Keyfn(ct.ToggleFavorite)
 		case "toggle_favorites":

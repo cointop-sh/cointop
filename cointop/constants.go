@@ -14,3 +14,6 @@ const CoinsView = "coins"
 
 // FavoritesView is favorites table constant
 const FavoritesView = "favorites"
+
+// AlertsView is alerts table constant
+const AlertsView = "alerts"

@@ -2,10 +2,13 @@ package cointop
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,6 +17,9 @@ import (
 )
 
 var fileperm = os.FileMode(0644)
+
+// ErrInvalidPriceAlert is error for invalid price alert value
+var ErrInvalidPriceAlert = errors.New("Invalid price alert value")
 
 // NOTE: this is to support previous default config filepaths
 var possibleConfigPaths = []string{
@@ -28,6 +34,7 @@ type config struct {
 	Shortcuts     map[string]interface{}   `toml:"shortcuts"`
 	Favorites     map[string][]interface{} `toml:"favorites"`
 	Portfolio     map[string]interface{}   `toml:"portfolio"`
+	PriceAlerts   map[string]interface{}   `toml:"price_alerts"`
 	Currency      interface{}              `toml:"currency"`
 	DefaultView   interface{}              `toml:"default_view"`
 	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
@@ -71,6 +78,9 @@ func (ct *Cointop) SetupConfig() error {
 		return err
 	}
 	if err := ct.loadCacheDirFromConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadPriceAlertsFromConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadPortfolioFromConfig(); err != nil {
@@ -193,18 +203,22 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		shortcutsIfcs[k] = i
 	}
 
-	var favorites []interface{}
+	var favoritesIfc []interface{}
 	for k, ok := range ct.State.favorites {
 		if ok {
 			var i interface{} = k
-			favorites = append(favorites, i)
+			favoritesIfc = append(favoritesIfc, i)
 		}
 	}
-	var favoritesBySymbol []interface{}
-	favoritesIfcs := map[string][]interface{}{
+	sort.Slice(favoritesIfc, func(i, j int) bool {
+		return favoritesIfc[i].(string) < favoritesIfc[j].(string)
+	})
+
+	var favoritesBySymbolIfc []interface{}
+	favoritesMapIfc := map[string][]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols": favoritesBySymbol,
-		"names":   favorites,
+		"symbols": favoritesBySymbolIfc,
+		"names":   favoritesIfc,
 	}
 
 	portfolioIfc := map[string]interface{}{}
@@ -228,16 +242,32 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	}
 
 	var apiChoiceIfc interface{} = ct.apiChoice
+
+	priceAlertsIfc := make([]interface{}, len(ct.State.priceAlerts.Entries))
+	for i, priceAlert := range ct.State.priceAlerts.Entries {
+		priceAlertsIfc[i] = []string{
+			priceAlert.CoinName,
+			priceAlert.Direction,
+			strconv.FormatFloat(priceAlert.TargetPrice, 'f', -1, 64),
+			priceAlert.Frequency,
+		}
+	}
+	priceAlertsMapIfc := map[string]interface{}{
+		"alerts": priceAlertsIfc,
+		"sound":  ct.State.priceAlerts.SoundEnabled,
+	}
+
 	var inputs = &config{
 		API:           apiChoiceIfc,
 		Colorscheme:   colorschemeIfc,
 		CoinMarketCap: cmcIfc,
 		Currency:      currencyIfc,
 		DefaultView:   defaultViewIfc,
-		Favorites:     favoritesIfcs,
+		Favorites:     favoritesMapIfc,
 		RefreshRate:   refreshRateIfc,
 		Shortcuts:     shortcutsIfcs,
 		Portfolio:     portfolioIfc,
+		PriceAlerts:   priceAlertsMapIfc,
 		CacheDir:      cacheDirIfc,
 	}
 
@@ -425,6 +455,70 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 		if err := ct.SetPortfolioEntry(name, holdings); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+// LoadPriceAlertsFromConfig loads price alerts from config file to struct
+func (ct *Cointop) loadPriceAlertsFromConfig() error {
+	ct.debuglog("loadPriceAlertsFromConfig()")
+	priceAlertsIfc, ok := ct.config.PriceAlerts["alerts"]
+	if !ok {
+		return nil
+	}
+	priceAlertsSliceIfc, ok := priceAlertsIfc.([]interface{})
+	if !ok {
+		return nil
+	}
+	for _, priceAlertIfc := range priceAlertsSliceIfc {
+		priceAlert, ok := priceAlertIfc.([]interface{})
+		if !ok {
+			return ErrInvalidPriceAlert
+		}
+		coinName, ok := priceAlert[0].(string)
+		if !ok {
+			return ErrInvalidPriceAlert
+		}
+		direction, ok := priceAlert[1].(string)
+		if !ok {
+			return ErrInvalidPriceAlert
+		}
+		if _, ok := PriceAlertDirectionsMap[direction]; !ok {
+			return ErrInvalidPriceAlert
+		}
+		targetPriceStr, ok := priceAlert[2].(string)
+		if !ok {
+			return ErrInvalidPriceAlert
+		}
+		targetPrice, err := strconv.ParseFloat(targetPriceStr, 64)
+		if err != nil {
+			return err
+		}
+		frequency, ok := priceAlert[3].(string)
+		if !ok {
+			return ErrInvalidPriceAlert
+		}
+		if _, ok := PriceAlertFrequencyMap[frequency]; !ok {
+			return ErrInvalidPriceAlert
+		}
+		id := strings.ToLower(fmt.Sprintf("%s_%s_%v_%s", coinName, direction, targetPrice, frequency))
+		entry := &PriceAlert{
+			ID:          id,
+			CoinName:    coinName,
+			Direction:   direction,
+			TargetPrice: targetPrice,
+			Frequency:   frequency,
+		}
+		ct.State.priceAlerts.Entries = append(ct.State.priceAlerts.Entries, entry)
+	}
+	soundIfc, ok := ct.config.PriceAlerts["sound"]
+	if ok {
+		enabled, ok := soundIfc.(bool)
+		if !ok {
+			return ErrInvalidPriceAlert
+		}
+		ct.State.priceAlerts.SoundEnabled = enabled
 	}
 
 	return nil

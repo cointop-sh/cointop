@@ -75,6 +75,7 @@ type State struct {
 	tableOffsetX               int
 	onlyTable                  bool
 	chartHeight                int
+	priceAlerts                *PriceAlerts
 }
 
 // Cointop cointop
@@ -116,6 +117,23 @@ type PortfolioEntry struct {
 // Portfolio is portfolio structure
 type Portfolio struct {
 	Entries map[string]*PortfolioEntry
+}
+
+// PriceAlert is price alert structure
+type PriceAlert struct {
+	ID          string
+	CoinName    string
+	TargetPrice float64
+	Direction   string
+	Frequency   string
+	CreatedAt   string
+	Expired     bool
+}
+
+// PriceAlerts is price alerts structure
+type PriceAlerts struct {
+	Entries      []*PriceAlert
+	SoundEnabled bool
 }
 
 // Config config options
@@ -213,6 +231,10 @@ func NewCointop(config *Config) (*Cointop, error) {
 			},
 			chartHeight:  10,
 			tableOffsetX: 0,
+			priceAlerts: &PriceAlerts{
+				Entries:      make([]*PriceAlert, 0),
+				SoundEnabled: true,
+			},
 		},
 		TableColumnOrder: TableColumnOrder(),
 		Views: &Views{
@@ -422,6 +444,7 @@ func (ct *Cointop) Run() error {
 		return fmt.Errorf("keybindings: %v", err)
 	}
 
+	go ct.PriceAlertWatcher()
 	ct.State.running = true
 	if err := ui.MainLoop(); err != nil && err != gocui.ErrQuit {
 		return fmt.Errorf("main loop: %v", err)

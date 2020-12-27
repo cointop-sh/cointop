@@ -44,6 +44,7 @@ func DefaultShortcuts() map[string]string {
 		"C":         "show_currency_convert_menu",
 		"e":         "show_portfolio_edit_menu",
 		"E":         "show_portfolio_edit_menu",
+		"A":         "toggle_alerts",
 		"f":         "toggle_favorite",
 		"F":         "toggle_show_favorites",
 		"g":         "move_to_page_first_row",

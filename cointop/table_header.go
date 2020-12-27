@@ -19,7 +19,6 @@ func NewTableHeaderView() *TableHeaderView {
 // UpdateTableHeader renders the table header
 func (ct *Cointop) UpdateTableHeader() error {
 	ct.debuglog("UpdateTableHeader()")
-	var cols []string
 
 	type t struct {
 		colorfn     func(a ...interface{}) string
@@ -34,7 +33,9 @@ func (ct *Cointop) UpdateTableHeader() error {
 		"rank":            {baseColor, "[r]ank", 0, 1, " "},
 		"name":            {baseColor, "[n]ame", 0, 11, " "},
 		"symbol":          {baseColor, "[s]ymbol", 4, 0, " "},
+		"targetprice":     {baseColor, "[t]arget price", 2, 0, " "},
 		"price":           {baseColor, "[p]rice", 2, 0, " "},
+		"frequency":       {baseColor, "frequency", 1, 0, " "},
 		"holdings":        {baseColor, "[h]oldings", 5, 0, " "},
 		"balance":         {baseColor, "[b]alance", 5, 0, " "},
 		"marketcap":       {baseColor, "[m]arket cap", 5, 0, " "},
@@ -60,9 +61,13 @@ func (ct *Cointop) UpdateTableHeader() error {
 		}
 	}
 
-	if ct.IsPortfolioVisible() {
+	var cols []string
+	switch ct.State.selectedView {
+	case PortfolioView:
 		cols = ct.GetPortfolioTableHeaders()
-	} else {
+	case AlertsView:
+		cols = ct.GetAlertsTableHeaders()
+	default:
 		cols = ct.GetCoinsTableHeaders()
 	}
 

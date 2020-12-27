@@ -47,7 +47,7 @@ func (s *Service) Ping() error {
 
 func (s *Service) getPaginatedCoinData(convert string, offset int, names []string) ([]apitypes.Coin, error) {
 	var ret []apitypes.Coin
-	page := offset
+	page := offset + 1 // page starts at 1
 	sparkline := false
 	pcp := geckoTypes.PriceChangePercentageObject
 	priceChangePercentage := []string{pcp.PCP1h, pcp.PCP24h, pcp.PCP7d}
