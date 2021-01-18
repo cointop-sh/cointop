@@ -47,8 +47,8 @@ func (ct *Cointop) RefreshTable() error {
 	switch ct.State.selectedView {
 	case PortfolioView:
 		ct.table = ct.GetPortfolioTable()
-	case AlertsView:
-		ct.table = ct.GetAlertsTable()
+	case PriceAlertsView:
+		ct.table = ct.GetPriceAlertsTable()
 	default:
 		ct.table = ct.GetCoinsTable()
 	}

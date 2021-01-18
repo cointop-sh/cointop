@@ -41,18 +41,24 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 		favoritesText = "[F]Favorites"
 	}
 
-	base := fmt.Sprintf("%s%s %sHelp %sChart %sRange %sSearch %sConvert %s %s %sSave", "[Q]", quitText, "[?]", "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText, "[CTRL-S]")
-	str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
-	v := fmt.Sprintf("%s", ct.Version())
-	end := len(str) - len(v) + 2
-	if end > len(str) {
-		end = len(str)
+	helpStr := fmt.Sprintf("%s%s %sHelp", "[Q]", quitText, "[?]")
+	var content string
+	if ct.IsPriceAlertsVisible() {
+		content = fmt.Sprintf("%s [E]Edit [+]Add", helpStr)
+	} else {
+		base := fmt.Sprintf("%s %sChart %sRange %sSearch %sConvert %s %s", helpStr, "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText)
+		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
+		v := fmt.Sprintf("%s", ct.Version())
+		end := len(str) - len(v) + 2
+		if end > len(str) {
+			end = len(str)
+		}
+
+		content = str[:end] + v
 	}
 
-	str = str[:end] + v
-
 	ct.UpdateUI(func() error {
-		return ct.Views.Statusbar.Update(str)
+		return ct.Views.Statusbar.Update(content)
 	})
 
 	return nil

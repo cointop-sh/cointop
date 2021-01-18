@@ -16,17 +16,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
-	"github.com/miguelmota/cointop/pkg/ui"
 )
-
-// PortfolioUpdateMenuView is structure for portfolio update menu view
-type PortfolioUpdateMenuView = ui.View
-
-// NewPortfolioUpdateMenuView returns a new portfolio update menu view
-func NewPortfolioUpdateMenuView() *PortfolioUpdateMenuView {
-	var view *PortfolioUpdateMenuView = ui.NewView("portfolioupdatemenu")
-	return view
-}
 
 // GetPortfolioTableHeaders returns the portfolio table headers
 func (ct *Cointop) GetPortfolioTableHeaders() []string {
@@ -214,8 +204,8 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
 	ct.UpdateUI(func() error {
-		ct.Views.PortfolioUpdateMenu.SetFrame(true)
-		ct.Views.PortfolioUpdateMenu.Update(content)
+		ct.Views.Menu.SetFrame(true)
+		ct.Views.Menu.Update(content)
 		ct.Views.Input.Write(value)
 		ct.Views.Input.SetCursor(len(value), 0)
 		return nil
@@ -226,6 +216,12 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 // ShowPortfolioUpdateMenu shows the portfolio update menu
 func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 	ct.debuglog("showPortfolioUpdateMenu()")
+
+	// TODO: separation of concerns
+	if ct.IsPriceAlertsVisible() {
+		return ct.ShowPriceAlertsUpdateMenu()
+	}
+
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		ct.TogglePortfolio()
@@ -235,7 +231,10 @@ func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.State.portfolioUpdateMenuVisible = true
 	ct.UpdatePortfolioUpdateMenu()
-	ct.SetActiveView(ct.Views.PortfolioUpdateMenu.Name())
+	ct.ui.SetCursor(true)
+	ct.SetActiveView(ct.Views.Menu.Name())
+	ct.g.SetViewOnTop(ct.Views.Input.Name())
+	ct.g.SetCurrentView(ct.Views.Input.Name())
 	return nil
 }
 
@@ -243,12 +242,13 @@ func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 func (ct *Cointop) HidePortfolioUpdateMenu() error {
 	ct.debuglog("hidePortfolioUpdateMenu()")
 	ct.State.portfolioUpdateMenuVisible = false
-	ct.ui.SetViewOnBottom(ct.Views.PortfolioUpdateMenu)
+	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.ui.SetViewOnBottom(ct.Views.Input)
+	ct.ui.SetCursor(false)
 	ct.SetActiveView(ct.Views.Table.Name())
 	ct.UpdateUI(func() error {
-		ct.Views.PortfolioUpdateMenu.SetFrame(false)
-		ct.Views.PortfolioUpdateMenu.Update("")
+		ct.Views.Menu.SetFrame(false)
+		ct.Views.Menu.Update("")
 		ct.Views.Input.Update("")
 		return nil
 	})
@@ -293,6 +293,10 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	} else {
 		ct.UpdateTable()
 		ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
+	}
+
+	if err := ct.Save(); err != nil {
+		return err
 	}
 
 	return nil

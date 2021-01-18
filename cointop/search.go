@@ -30,6 +30,7 @@ func NewInputView() *InputView {
 func (ct *Cointop) openSearch() error {
 	ct.debuglog("openSearch()")
 	ct.State.searchFieldVisible = true
+	ct.ui.SetCursor(true)
 	ct.SetActiveView(ct.Views.SearchField.Name())
 	return nil
 }
@@ -38,6 +39,7 @@ func (ct *Cointop) openSearch() error {
 func (ct *Cointop) CancelSearch() error {
 	ct.debuglog("cancelSearch()")
 	ct.State.searchFieldVisible = false
+	ct.ui.SetCursor(false)
 	ct.SetActiveView(ct.Views.Table.Name())
 	return nil
 }

@@ -95,7 +95,7 @@ func (ct *Cointop) PageDown() error {
 	cx := ct.Views.Table.CursorX()    // relative cursor position
 	sy := ct.Views.Table.Height()     // rows in visible view
 	k := oy + sy
-	l := len(ct.State.coins)
+	l := ct.TableRowsLen()
 	// end of table
 	if (oy + sy + sy) > l {
 		k = l - sy
@@ -180,7 +180,7 @@ func (ct *Cointop) NavigateLastLine() error {
 	ox := ct.Views.Table.OriginX()
 	cx := ct.Views.Table.CursorX()
 	sy := ct.Views.Table.Height()
-	l := len(ct.State.coins)
+	l := ct.TableRowsLen()
 	k := l - sy
 	if err := ct.Views.Table.SetOrigin(ox, k); err != nil {
 		return err
@@ -337,7 +337,7 @@ func (ct *Cointop) IsLastRow() bool {
 	ct.debuglog("isLastRow()")
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
-	numRows := len(ct.State.coins) - 1
+	numRows := ct.TableRowsLen() - 1
 
 	return (cy + oy + 1) > numRows
 }
@@ -515,4 +515,14 @@ func (ct *Cointop) MouseWheelUp() error {
 // MouseWheelDown is called on mouse wheel down event
 func (ct *Cointop) MouseWheelDown() error {
 	return nil
+}
+
+// TableRowsLen returns the number of table row entries
+func (ct *Cointop) TableRowsLen() int {
+	ct.debuglog("TableRowsLen()")
+	if ct.IsPriceAlertsVisible() {
+		return ct.ActivePriceAlertsLen()
+	}
+
+	return len(ct.State.coins)
 }

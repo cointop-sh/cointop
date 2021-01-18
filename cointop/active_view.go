@@ -10,9 +10,5 @@ func (ct *Cointop) SetActiveView(v string) error {
 	} else if v == ct.Views.Table.Name() {
 		ct.g.SetViewOnTop(ct.Views.Statusbar.Name())
 	}
-	if v == ct.Views.PortfolioUpdateMenu.Name() {
-		ct.g.SetViewOnTop(ct.Views.Input.Name())
-		ct.g.SetCurrentView(ct.Views.Input.Name())
-	}
 	return nil
 }

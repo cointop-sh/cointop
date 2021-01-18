@@ -26,16 +26,14 @@ var ErrInvalidAPIChoice = errors.New("Invalid API choice")
 
 // Views are all views in cointop
 type Views struct {
-	Chart               *ChartView
-	Table               *TableView
-	TableHeader         *TableHeaderView
-	Marketbar           *MarketbarView
-	SearchField         *SearchFieldView
-	Statusbar           *StatusbarView
-	Help                *HelpView
-	ConvertMenu         *ConvertMenuView
-	Input               *InputView
-	PortfolioUpdateMenu *PortfolioUpdateMenuView
+	Chart       *ChartView
+	Table       *TableView
+	TableHeader *TableHeaderView
+	Marketbar   *MarketbarView
+	SearchField *SearchFieldView
+	Statusbar   *StatusbarView
+	Menu        *MenuView
+	Input       *InputView
 }
 
 // State is the state preferences of cointop
@@ -76,6 +74,7 @@ type State struct {
 	onlyTable                  bool
 	chartHeight                int
 	priceAlerts                *PriceAlerts
+	priceAlertEditID           string
 }
 
 // Cointop cointop
@@ -124,7 +123,7 @@ type PriceAlert struct {
 	ID          string
 	CoinName    string
 	TargetPrice float64
-	Direction   string
+	Operator    string
 	Frequency   string
 	CreatedAt   string
 	Expired     bool
@@ -238,16 +237,14 @@ func NewCointop(config *Config) (*Cointop, error) {
 		},
 		TableColumnOrder: TableColumnOrder(),
 		Views: &Views{
-			Chart:               NewChartView(),
-			Table:               NewTableView(),
-			TableHeader:         NewTableHeaderView(),
-			Marketbar:           NewMarketbarView(),
-			SearchField:         NewSearchFieldView(),
-			Statusbar:           NewStatusbarView(),
-			Help:                NewHelpView(),
-			ConvertMenu:         NewConvertMenuView(),
-			Input:               NewInputView(),
-			PortfolioUpdateMenu: NewPortfolioUpdateMenuView(),
+			Chart:       NewChartView(),
+			Table:       NewTableView(),
+			TableHeader: NewTableHeaderView(),
+			Marketbar:   NewMarketbarView(),
+			SearchField: NewSearchFieldView(),
+			Statusbar:   NewStatusbarView(),
+			Menu:        NewMenuView(),
+			Input:       NewInputView(),
 		},
 	}
 

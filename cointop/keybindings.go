@@ -306,8 +306,8 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 		case "open_search":
 			fn = ct.Keyfn(ct.openSearch)
 			view = ""
-		case "toggle_alerts":
-			fn = ct.Keyfn(ct.ToggleAlerts)
+		case "toggle_price_alerts":
+			fn = ct.Keyfn(ct.TogglePriceAlerts)
 		case "toggle_favorite":
 			fn = ct.Keyfn(ct.ToggleFavorite)
 		case "toggle_favorites":
@@ -342,6 +342,10 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			fn = ct.Keyfn(ct.ToggleShowPortfolio)
 		case "show_portfolio_edit_menu":
 			fn = ct.Keyfn(ct.TogglePortfolioUpdateMenu)
+		case "show_price_alert_edit_menu":
+			fn = ct.Keyfn(ct.ShowPriceAlertsUpdateMenu)
+		case "show_price_alert_add_menu":
+			fn = ct.Keyfn(ct.ShowPriceAlertsAddMenu)
 		case "toggle_table_fullscreen":
 			fn = ct.Keyfn(ct.ToggleTableFullscreen)
 			view = ""
@@ -369,19 +373,19 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.CancelSearch), ct.Views.SearchField.Name())
 
 	// keys to quit help when open
-	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideHelp), ct.Views.Help.Name())
-	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideHelp), ct.Views.Help.Name())
+	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideHelp), ct.Views.Menu.Name())
+	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideHelp), ct.Views.Menu.Name())
 
 	// keys to quit portfolio update menu when open
 	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HidePortfolioUpdateMenu), ct.Views.Input.Name())
 	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HidePortfolioUpdateMenu), ct.Views.Input.Name())
 
-	// keys to update portfolio holdings
-	ct.SetKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.Keyfn(ct.SetPortfolioHoldings), ct.Views.Input.Name())
-
 	// keys to quit convert menu when open
-	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.ConvertMenu.Name())
-	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.ConvertMenu.Name())
+	ct.SetKeybindingMod(gocui.KeyEsc, gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.Menu.Name())
+	ct.SetKeybindingMod('q', gocui.ModNone, ct.Keyfn(ct.HideConvertMenu), ct.Views.Menu.Name())
+
+	// keys to update portfolio holdings
+	ct.SetKeybindingMod(gocui.KeyEnter, gocui.ModNone, ct.Keyfn(ct.EnterKeyPressHandler), ct.Views.Input.Name())
 
 	// mouse events
 	ct.SetKeybindingMod(gocui.MouseRelease, gocui.ModNone, ct.Keyfn(ct.MouseRelease), "")
@@ -395,7 +399,7 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 	// TODO: use scrolling table
 	keys := ct.SortedSupportedCurrencyConversions()
 	for i, k := range keys {
-		ct.SetKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.Keyfn(ct.SetCurrencyConverstionFn(k)), ct.Views.ConvertMenu.Name())
+		ct.SetKeybindingMod(rune(alphanumericcharacters[i]), gocui.ModNone, ct.Keyfn(ct.SetCurrencyConverstionFn(k)), ct.Views.Menu.Name())
 	}
 
 	return nil

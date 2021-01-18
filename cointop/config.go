@@ -243,14 +243,17 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	var apiChoiceIfc interface{} = ct.apiChoice
 
-	priceAlertsIfc := make([]interface{}, len(ct.State.priceAlerts.Entries))
-	for i, priceAlert := range ct.State.priceAlerts.Entries {
-		priceAlertsIfc[i] = []string{
+	var priceAlertsIfc []interface{}
+	for _, priceAlert := range ct.State.priceAlerts.Entries {
+		if priceAlert.Expired {
+			continue
+		}
+		priceAlertsIfc = append(priceAlertsIfc, []string{
 			priceAlert.CoinName,
-			priceAlert.Direction,
+			priceAlert.Operator,
 			strconv.FormatFloat(priceAlert.TargetPrice, 'f', -1, 64),
 			priceAlert.Frequency,
-		}
+		})
 	}
 	priceAlertsMapIfc := map[string]interface{}{
 		"alerts": priceAlertsIfc,
@@ -480,11 +483,11 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 		if !ok {
 			return ErrInvalidPriceAlert
 		}
-		direction, ok := priceAlert[1].(string)
+		operator, ok := priceAlert[1].(string)
 		if !ok {
 			return ErrInvalidPriceAlert
 		}
-		if _, ok := PriceAlertDirectionsMap[direction]; !ok {
+		if _, ok := PriceAlertOperatorMap[operator]; !ok {
 			return ErrInvalidPriceAlert
 		}
 		targetPriceStr, ok := priceAlert[2].(string)
@@ -502,11 +505,11 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 		if _, ok := PriceAlertFrequencyMap[frequency]; !ok {
 			return ErrInvalidPriceAlert
 		}
-		id := strings.ToLower(fmt.Sprintf("%s_%s_%v_%s", coinName, direction, targetPrice, frequency))
+		id := strings.ToLower(fmt.Sprintf("%s_%s_%v_%s", coinName, operator, targetPrice, frequency))
 		entry := &PriceAlert{
 			ID:          id,
 			CoinName:    coinName,
-			Direction:   direction,
+			Operator:    operator,
 			TargetPrice: targetPrice,
 			Frequency:   frequency,
 		}

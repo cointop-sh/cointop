@@ -5,17 +5,7 @@ import (
 	"sort"
 
 	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/ui"
 )
-
-// HelpView is structure for help view
-type HelpView = ui.View
-
-// NewHelpView returns a new help view
-func NewHelpView() *HelpView {
-	var view *HelpView = ui.NewView("help")
-	return view
-}
 
 // UpdateHelp updates the help views
 func (ct *Cointop) UpdateHelp() {
@@ -28,7 +18,7 @@ func (ct *Cointop) UpdateHelp() {
 
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxTableWidth-10, " ")))
 	cnt := 0
-	h := ct.Views.Help.Height()
+	h := ct.Views.Menu.Height()
 	percol := h - 11
 	cols := make([][]string, percol)
 	for i := range cols {
@@ -61,8 +51,8 @@ func (ct *Cointop) UpdateHelp() {
 	content := fmt.Sprintf("%s %s\n %s\n\n %s\n\n%s\n %s", header, versionLine, licenseLine, instructionsLine, body, infoLine)
 
 	ct.UpdateUI(func() error {
-		ct.Views.Help.SetFrame(true)
-		return ct.Views.Help.Update(content)
+		ct.Views.Menu.SetFrame(true)
+		return ct.Views.Menu.Update(content)
 	})
 }
 
@@ -71,7 +61,7 @@ func (ct *Cointop) ShowHelp() error {
 	ct.debuglog("showHelp()")
 	ct.State.helpVisible = true
 	ct.UpdateHelp()
-	ct.SetActiveView(ct.Views.Help.Name())
+	ct.SetActiveView(ct.Views.Menu.Name())
 	return nil
 }
 
@@ -79,11 +69,11 @@ func (ct *Cointop) ShowHelp() error {
 func (ct *Cointop) HideHelp() error {
 	ct.debuglog("hideHelp()")
 	ct.State.helpVisible = false
-	ct.ui.SetViewOnBottom(ct.Views.Help)
+	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.SetActiveView(ct.Views.Table.Name())
 	ct.UpdateUI(func() error {
-		ct.Views.Help.SetFrame(false)
-		return ct.Views.Help.Update("")
+		ct.Views.Menu.SetFrame(false)
+		return ct.Views.Menu.Update("")
 	})
 	return nil
 }

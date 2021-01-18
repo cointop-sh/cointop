@@ -65,8 +65,8 @@ func (ct *Cointop) UpdateTableHeader() error {
 	switch ct.State.selectedView {
 	case PortfolioView:
 		cols = ct.GetPortfolioTableHeaders()
-	case AlertsView:
-		cols = ct.GetAlertsTableHeaders()
+	case PriceAlertsView:
+		cols = ct.GetPriceAlertsTableHeaders()
 	default:
 		cols = ct.GetCoinsTableHeaders()
 	}

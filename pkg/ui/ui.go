@@ -46,6 +46,11 @@ func (ui *UI) SetMouse(enabled bool) {
 	ui.g.Mouse = true
 }
 
+// SetCursor enables the input field cursor
+func (ui *UI) SetCursor(enabled bool) {
+	ui.g.Cursor = enabled
+}
+
 // SetHighlight enables the highlight active state
 func (ui *UI) SetHighlight(enabled bool) {
 	ui.g.Highlight = true

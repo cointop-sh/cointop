@@ -139,16 +139,10 @@ func (ct *Cointop) layout() error {
 		ct.Views.SearchField.SetBgColor(ct.colorscheme.gocuiBgColor("searchbar"))
 	}
 
-	if err := ct.ui.SetView(ct.Views.Help, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
-		ct.Views.Help.SetFrame(false)
-		ct.Views.Help.SetFgColor(ct.colorscheme.gocuiFgColor("menu"))
-		ct.Views.Help.SetBgColor(ct.colorscheme.gocuiBgColor("menu"))
-	}
-
-	if err := ct.ui.SetView(ct.Views.PortfolioUpdateMenu, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
-		ct.Views.PortfolioUpdateMenu.SetFrame(false)
-		ct.Views.PortfolioUpdateMenu.SetFgColor(ct.colorscheme.gocuiFgColor("menu"))
-		ct.Views.PortfolioUpdateMenu.SetBgColor(ct.colorscheme.gocuiBgColor("menu"))
+	if err := ct.ui.SetView(ct.Views.Menu, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
+		ct.Views.Menu.SetFrame(false)
+		ct.Views.Menu.SetFgColor(ct.colorscheme.gocuiFgColor("menu"))
+		ct.Views.Menu.SetBgColor(ct.colorscheme.gocuiBgColor("menu"))
 	}
 
 	if err := ct.ui.SetView(ct.Views.Input, 3, 6, 30, 8); err != nil {
@@ -157,20 +151,12 @@ func (ct *Cointop) layout() error {
 		ct.Views.Input.SetWrap(true)
 		ct.Views.Input.SetFgColor(ct.colorscheme.gocuiFgColor("menu"))
 		ct.Views.Input.SetBgColor(ct.colorscheme.gocuiBgColor("menu"))
-	}
-
-	if err := ct.ui.SetView(ct.Views.ConvertMenu, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
-		ct.Views.ConvertMenu.SetFrame(false)
-		ct.Views.ConvertMenu.SetFgColor(ct.colorscheme.gocuiFgColor("menu"))
-		ct.Views.ConvertMenu.SetBgColor(ct.colorscheme.gocuiBgColor("menu"))
 
 		// run only once on init.
 		// this bit of code should be at the bottom
-		ct.ui.SetViewOnBottom(ct.Views.SearchField)         // hide
-		ct.ui.SetViewOnBottom(ct.Views.Help)                // hide
-		ct.ui.SetViewOnBottom(ct.Views.ConvertMenu)         // hide
-		ct.ui.SetViewOnBottom(ct.Views.PortfolioUpdateMenu) // hide
-		ct.ui.SetViewOnBottom(ct.Views.Input)               // hide
+		ct.ui.SetViewOnBottom(ct.Views.SearchField) // hide
+		ct.ui.SetViewOnBottom(ct.Views.Input)       // hide
+		ct.ui.SetViewOnBottom(ct.Views.Menu)        // hide
 		ct.SetActiveView(ct.Views.Table.Name())
 		ct.intervalFetchData()
 	}

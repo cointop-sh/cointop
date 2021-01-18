@@ -44,7 +44,7 @@ func DefaultShortcuts() map[string]string {
 		"C":         "show_currency_convert_menu",
 		"e":         "show_portfolio_edit_menu",
 		"E":         "show_portfolio_edit_menu",
-		"A":         "toggle_alerts",
+		"A":         "toggle_price_alerts",
 		"f":         "toggle_favorite",
 		"F":         "toggle_show_favorites",
 		"g":         "move_to_page_first_row",
@@ -79,6 +79,7 @@ func DefaultShortcuts() map[string]string {
 		"{":         "first_chart_range",
 		">":         "scroll_right",
 		"<":         "scroll_left",
+		"+":         "show_price_alert_add_menu",
 		"\\\\":      "toggle_table_fullscreen",
 	}
 }
