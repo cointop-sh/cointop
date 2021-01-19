@@ -28,13 +28,13 @@ func TableColumnOrder() []string {
 		"holdings",
 		"balance",
 		"marketcap",
-		"24hvolume",
-		"1hchange",
-		"7dchange",
-		"totalsupply",
-		"availablesupply",
-		"percentholdings",
-		"lastupdated",
+		"24h_volume",
+		"1h_change",
+		"7d_change",
+		"total_supply",
+		"available_supply",
+		"percent_holdings",
+		"last_updated",
 	}
 }
 

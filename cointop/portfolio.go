@@ -27,9 +27,9 @@ func (ct *Cointop) GetPortfolioTableHeaders() []string {
 		"price",
 		"holdings",
 		"balance",
-		"24hchange",
-		"percentholdings",
-		"lastupdated",
+		"24h_change",
+		"percent_holdings",
+		"last_updated",
 	}
 }
 
@@ -199,7 +199,7 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 		mode = "Add"
 		submitText = "Add"
 	}
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxTableWidth-26, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.width()-25, " ")))
 	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 

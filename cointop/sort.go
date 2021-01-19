@@ -49,19 +49,19 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 			return a.Balance < b.Balance
 		case "marketcap":
 			return a.MarketCap < b.MarketCap
-		case "24hvolume":
+		case "24h_volume":
 			return a.Volume24H < b.Volume24H
-		case "1hchange":
+		case "1h_change":
 			return a.PercentChange1H < b.PercentChange1H
-		case "24hchange":
+		case "24h_change":
 			return a.PercentChange24H < b.PercentChange24H
-		case "7dchange":
+		case "7d_change":
 			return a.PercentChange7D < b.PercentChange7D
-		case "totalsupply":
+		case "total_supply":
 			return a.TotalSupply < b.TotalSupply
-		case "availablesupply":
+		case "available_supply":
 			return a.AvailableSupply < b.AvailableSupply
-		case "lastupdated":
+		case "last_updated":
 			return a.LastUpdated < b.LastUpdated
 		default:
 			return a.Rank < b.Rank

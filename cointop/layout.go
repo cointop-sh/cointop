@@ -13,10 +13,9 @@ var lastWidth int
 func (ct *Cointop) layout() error {
 	ct.debuglog("layout()")
 	maxY := ct.height()
-	maxX := ct.ClampedWidth()
+	maxX := ct.width()
 
 	topOffset := 0
-
 	headerHeight := 1
 	marketbarHeight := 1
 	chartHeight := ct.State.chartHeight
@@ -92,7 +91,7 @@ func (ct *Cointop) layout() error {
 
 	tableOffsetX := ct.State.tableOffsetX
 	topOffset = topOffset + chartHeight
-	if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset, ct.maxTableWidth, topOffset+2); err != nil {
+	if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset, maxX, topOffset+2); err != nil {
 		ct.Views.TableHeader.SetFrame(false)
 		ct.Views.TableHeader.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.TableHeader.Name()))
 		ct.Views.TableHeader.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.TableHeader.Name()))
@@ -100,7 +99,7 @@ func (ct *Cointop) layout() error {
 	}
 
 	topOffset = topOffset + headerHeight
-	if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset, ct.maxTableWidth, maxY-statusbarHeight); err != nil {
+	if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset, maxX, maxY-statusbarHeight); err != nil {
 		ct.Views.Table.SetFrame(false)
 		ct.Views.Table.SetHighlight(true)
 		ct.Views.Table.SetSelFgColor(ct.colorscheme.gocuiFgColor("table_row_active"))
@@ -116,7 +115,7 @@ func (ct *Cointop) layout() error {
 	}
 
 	if !ct.State.hideStatusbar {
-		if err := ct.ui.SetView(ct.Views.Statusbar, 0, maxY-statusbarHeight-1, ct.maxTableWidth, maxY); err != nil {
+		if err := ct.ui.SetView(ct.Views.Statusbar, 0, maxY-statusbarHeight-1, maxX, maxY); err != nil {
 			ct.Views.Statusbar.SetFrame(false)
 			ct.Views.Statusbar.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.Statusbar.Name()))
 			ct.Views.Statusbar.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.Statusbar.Name()))
@@ -131,7 +130,7 @@ func (ct *Cointop) layout() error {
 		}
 	}
 
-	if err := ct.ui.SetView(ct.Views.SearchField, 0, maxY-2, ct.maxTableWidth, maxY); err != nil {
+	if err := ct.ui.SetView(ct.Views.SearchField, 0, maxY-2, maxX, maxY); err != nil {
 		ct.Views.SearchField.SetEditable(true)
 		ct.Views.SearchField.SetWrap(true)
 		ct.Views.SearchField.SetFrame(false)
@@ -139,7 +138,7 @@ func (ct *Cointop) layout() error {
 		ct.Views.SearchField.SetBgColor(ct.colorscheme.gocuiBgColor("searchbar"))
 	}
 
-	if err := ct.ui.SetView(ct.Views.Menu, 1, 1, ct.maxTableWidth-1, maxY-1); err != nil {
+	if err := ct.ui.SetView(ct.Views.Menu, 1, 1, maxX-1, maxY-1); err != nil {
 		ct.Views.Menu.SetFrame(false)
 		ct.Views.Menu.SetFgColor(ct.colorscheme.gocuiFgColor("menu"))
 		ct.Views.Menu.SetBgColor(ct.colorscheme.gocuiBgColor("menu"))

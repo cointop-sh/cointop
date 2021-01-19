@@ -241,7 +241,8 @@ func (t *Table) Fprint(w io.Writer) {
 
 			fmt.Fprintf(w, "%s", s)
 		}
-		fmt.Fprintf(w, "\n")
+		// fill in rest of row with empty spaces to highlight all of row
+		fmt.Fprintf(w, strings.Repeat(" ", t.width)+"\n")
 	}
 }
 

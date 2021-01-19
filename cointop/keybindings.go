@@ -262,13 +262,13 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 		case "first_page":
 			fn = ct.Keyfn(ct.FirstPage)
 		case "sort_column_1h_change":
-			fn = ct.Sortfn("1hchange", true)
+			fn = ct.Sortfn("1h_change", true)
 		case "sort_column_24h_change":
-			fn = ct.Sortfn("24hchange", true)
+			fn = ct.Sortfn("24h_change", true)
 		case "sort_column_7d_change":
-			fn = ct.Sortfn("7dchange", true)
+			fn = ct.Sortfn("7d_change", true)
 		case "sort_column_available_supply":
-			fn = ct.Sortfn("availablesupply", true)
+			fn = ct.Sortfn("available_supply", true)
 		case "toggle_row_chart":
 			fn = ct.Keyfn(ct.ToggleCoinChart)
 		case "move_to_page_visible_first_row":
@@ -290,17 +290,17 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 		case "sort_column_rank":
 			fn = ct.Sortfn("rank", false)
 		case "sort_column_total_supply":
-			fn = ct.Sortfn("totalsupply", true)
+			fn = ct.Sortfn("total_supply", true)
 		case "sort_column_last_updated":
-			fn = ct.Sortfn("lastupdated", true)
+			fn = ct.Sortfn("last_updated", true)
 		case "sort_column_24h_volume":
-			fn = ct.Sortfn("24hvolume", true)
+			fn = ct.Sortfn("24h_volume", true)
 		case "sort_column_balance":
 			fn = ct.Sortfn("balance", true)
 		case "sort_column_holdings":
 			fn = ct.Sortfn("holdings", true)
 		case "sort_column_percent_holdings":
-			fn = ct.Sortfn("percentholdings", true)
+			fn = ct.Sortfn("percent_holdings", true)
 		case "last_page":
 			fn = ct.Keyfn(ct.LastPage)
 		case "open_search":

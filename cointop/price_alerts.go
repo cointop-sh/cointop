@@ -224,10 +224,12 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 	var mode string
 	var current string
 	var submitText string
+	var offset int
 	if exists {
 		mode = "Edit"
 		current = fmt.Sprintf("(current %s%s)", ct.CurrencySymbol(), currentPrice)
 		submitText = "Set"
+		offset = ct.width() - 21
 	} else {
 		coin := ct.HighlightedRowCoin()
 		coinName = coin.Name
@@ -235,8 +237,9 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 		value = fmt.Sprintf("> %s", currentPrice)
 		mode = "Create"
 		submitText = "Create"
+		offset = ct.width() - 23
 	}
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Alert Entry %s\n\n", mode, pad.Left("[q] close ", ct.maxTableWidth-26, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Alert Entry %s\n\n", mode, pad.Left("[q] close ", offset, " ")))
 	label := fmt.Sprintf(" Enter target price for %s %s", ct.colorscheme.MenuLabel(coinName), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), ct.State.currencyConversion, submitText)
 

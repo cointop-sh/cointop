@@ -96,7 +96,7 @@ func (ct *Cointop) UpdateChart() error {
 // ChartPoints calculates the the chart points
 func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	ct.debuglog("ChartPoints()")
-	maxX := ct.ClampedWidth()
+	maxX := ct.ChartWidth()
 
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
@@ -174,7 +174,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 // PortfolioChart renders the portfolio chart
 func (ct *Cointop) PortfolioChart() error {
 	ct.debuglog("PortfolioChart()")
-	maxX := ct.ClampedWidth()
+	maxX := ct.ChartWidth()
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
 
@@ -372,4 +372,10 @@ func (ct *Cointop) ShowChartLoader() error {
 	})
 
 	return nil
+}
+
+// ChartWidth returns the width for chart
+func (ct *Cointop) ChartWidth() int {
+	ct.debuglog("chartClampedWidth()")
+	return ct.width()
 }

@@ -16,7 +16,7 @@ func (ct *Cointop) UpdateHelp() {
 	}
 	sort.Strings(keys)
 
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.maxTableWidth-10, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.width()-9, " ")))
 	cnt := 0
 	h := ct.Views.Menu.Height()
 	percol := h - 11

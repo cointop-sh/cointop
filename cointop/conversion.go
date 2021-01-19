@@ -150,7 +150,7 @@ func (ct *Cointop) SortedSupportedCurrencyConversions() []string {
 // UpdateConvertMenu updates the convert menu
 func (ct *Cointop) UpdateConvertMenu() error {
 	ct.debuglog("updateConvertMenu()")
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close ", ct.maxTableWidth-24, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close ", ct.width()-24, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
 	cnt := 0
 	h := ct.Views.Menu.Height()

@@ -47,7 +47,7 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 		content = fmt.Sprintf("%s [E]Edit [+]Add", helpStr)
 	} else {
 		base := fmt.Sprintf("%s %sChart %sRange %sSearch %sConvert %s %s", helpStr, "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText)
-		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.maxTableWidth, " ")
+		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.width(), " ")
 		v := fmt.Sprintf("%s", ct.Version())
 		end := len(str) - len(v) + 2
 		if end > len(str) {
