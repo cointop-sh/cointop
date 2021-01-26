@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -42,6 +43,7 @@ type config struct {
 	Colorscheme   interface{}              `toml:"colorscheme"`
 	RefreshRate   interface{}              `toml:"refresh_rate"`
 	CacheDir      interface{}              `toml:"cache_dir"`
+	Table         map[string]interface{}   `toml:"table"`
 }
 
 // SetupConfig loads config file
@@ -51,6 +53,9 @@ func (ct *Cointop) SetupConfig() error {
 		return err
 	}
 	if err := ct.parseConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadTableColumnsFromConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadShortcutsFromConfig(); err != nil {
@@ -260,6 +265,15 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		"sound":  ct.State.priceAlerts.SoundEnabled,
 	}
 
+	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
+	tableMapIfc := map[string]interface{}{}
+
+	if reflect.DeepEqual(DefaultCoinTableHeaders, ct.State.coinsTableColumns) {
+		tableMapIfc["columns"] = []string{}
+	} else {
+		tableMapIfc["columns"] = coinsTableColumnsIfc
+	}
+
 	var inputs = &config{
 		API:           apiChoiceIfc,
 		Colorscheme:   colorschemeIfc,
@@ -272,6 +286,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		Portfolio:     portfolioIfc,
 		PriceAlerts:   priceAlertsMapIfc,
 		CacheDir:      cacheDirIfc,
+		Table:         tableMapIfc,
 	}
 
 	var b bytes.Buffer
@@ -282,6 +297,31 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	}
 
 	return b.Bytes(), nil
+}
+
+// LoadTableColumnsFromConfig loads preferred coins table columns from config file to struct
+func (ct *Cointop) loadTableColumnsFromConfig() error {
+	ct.debuglog("loadTableColumnsFromConfig()")
+	columnsIfc, ok := ct.config.Table["columns"]
+	if !ok {
+		return nil
+	}
+	var columns []string
+	ifcs, ok := columnsIfc.([]interface{})
+	if ok {
+		for _, ifc := range ifcs {
+			if v, ok := ifc.(string); ok {
+				if !ct.ValidCoinsTableHeader(v) {
+					return fmt.Errorf("Invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultCoinTableHeaders, ","))
+				}
+				columns = append(columns, v)
+			}
+		}
+		if len(columns) > 0 {
+			ct.State.coinsTableColumns = columns
+		}
+	}
+	return nil
 }
 
 // LoadShortcutsFromConfig loads keyboard shortcuts from config file to struct

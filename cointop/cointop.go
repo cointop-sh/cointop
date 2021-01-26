@@ -44,6 +44,7 @@ type State struct {
 	coins              []*Coin
 	chartPoints        [][]rune
 	currencyConversion string
+	coinsTableColumns  []string
 	convertMenuVisible bool
 	defaultView        string
 
@@ -211,6 +212,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		State: &State{
 			allCoins:           []*Coin{},
 			cacheDir:           DefaultCacheDir,
+			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: "USD",
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 			favoritesBySymbol:  make(map[string]bool),
