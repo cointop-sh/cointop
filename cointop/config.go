@@ -58,6 +58,9 @@ func (ct *Cointop) SetupConfig() error {
 	if err := ct.loadTableColumnsFromConfig(); err != nil {
 		return err
 	}
+	if err := ct.loadPortfolioColumnsFromConfig(); err != nil {
+		return err
+	}
 	if err := ct.loadShortcutsFromConfig(); err != nil {
 		return err
 	}
@@ -227,13 +230,24 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	}
 
 	portfolioIfc := map[string]interface{}{}
+	var holdingsIfc [][]string
 	for name := range ct.State.portfolio.Entries {
 		entry, ok := ct.State.portfolio.Entries[name]
 		if !ok || entry.Coin == "" {
 			continue
 		}
-		var i interface{} = entry.Holdings
-		portfolioIfc[entry.Coin] = i
+		var amount string = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
+		var coinName string = entry.Coin
+		var tuple []string = []string{coinName, amount}
+		holdingsIfc = append(holdingsIfc, tuple)
+	}
+	portfolioIfc["holdings"] = holdingsIfc
+
+	if reflect.DeepEqual(DefaultPortfolioTableHeaders, ct.State.portfolioTableColumns) {
+		portfolioIfc["columns"] = []string{}
+	} else {
+		var columnsIfc interface{} = ct.State.portfolioTableColumns
+		portfolioIfc["columns"] = columnsIfc
 	}
 
 	var currencyIfc interface{} = ct.State.currencyConversion
@@ -321,6 +335,11 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 			ct.State.coinsTableColumns = columns
 		}
 	}
+	return nil
+}
+
+// LoadPortfolioColumnsFromConfig loads preferred portfolio table columns from config file to struct
+func (ct *Cointop) loadPortfolioColumnsFromConfig() error {
 	return nil
 }
 
@@ -486,19 +505,40 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 // LoadPortfolioFromConfig loads portfolio data from config file to struct
 func (ct *Cointop) loadPortfolioFromConfig() error {
 	ct.debuglog("loadPortfolioFromConfig()")
-	for name, holdingsIfc := range ct.config.Portfolio {
-		var holdings float64
-		var ok bool
-		if holdings, ok = holdingsIfc.(float64); !ok {
-			if holdingsInt, ok := holdingsIfc.(int64); ok {
-				holdings = float64(holdingsInt)
-			}
-		}
 
-		if err := ct.SetPortfolioEntry(name, holdings); err != nil {
-			return err
+	for key, valueIfc := range ct.config.Portfolio {
+		if key == "columns" {
+		}
+		if key == "holdings" {
+			holdingsIfc, ok := valueIfc.([][]interface{})
+			if !ok {
+				continue
+			}
+			fmt.Println(holdingsIfc)
 		}
 	}
+	/*
+		for name, holdingsIfc := range ct.config.Portfolio {
+			if name == "columns" {
+				continue
+			}
+			if name == "holdings" {
+				continue
+			}
+
+			var holdings float64
+			var ok bool
+			if holdings, ok = holdingsIfc.(float64); !ok {
+				if holdingsInt, ok := holdingsIfc.(int64); ok {
+					holdings = float64(holdingsInt)
+				}
+			}
+
+			if err := ct.SetPortfolioEntry(name, holdings); err != nil {
+				return err
+			}
+		}
+	*/
 
 	return nil
 }

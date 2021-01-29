@@ -18,19 +18,33 @@ import (
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
+// DefaultPortfolioTableHeaders are the default portfolio table header columns
+var DefaultPortfolioTableHeaders = []string{
+	"rank",
+	"name",
+	"symbol",
+	"price",
+	"holdings",
+	"balance",
+	"24h_change",
+	"percent_holdings",
+	"last_updated",
+}
+
+// ValidPortfolioTableHeader returns the portfolio table headers
+func (ct *Cointop) ValidPortfolioTableHeader(name string) bool {
+	for _, v := range DefaultPortfolioTableHeaders {
+		if v == name {
+			return true
+		}
+	}
+
+	return false
+}
+
 // GetPortfolioTableHeaders returns the portfolio table headers
 func (ct *Cointop) GetPortfolioTableHeaders() []string {
-	return []string{
-		"rank",
-		"name",
-		"symbol",
-		"price",
-		"holdings",
-		"balance",
-		"24h_change",
-		"percent_holdings",
-		"last_updated",
-	}
+	return ct.State.portfolioTableColumns
 }
 
 // GetPortfolioTable returns the table for displaying portfolio holdings

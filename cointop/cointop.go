@@ -61,6 +61,7 @@ type State struct {
 	perPage                    int
 	portfolio                  *Portfolio
 	portfolioUpdateMenuVisible bool
+	portfolioTableColumns      []string
 	refreshRate                time.Duration
 	running                    bool
 	searchFieldVisible         bool
@@ -230,8 +231,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry, 0),
 			},
-			chartHeight:  10,
-			tableOffsetX: 0,
+			portfolioTableColumns: DefaultPortfolioTableHeaders,
+			chartHeight:           10,
+			tableOffsetX:          0,
 			priceAlerts: &PriceAlerts{
 				Entries:      make([]*PriceAlert, 0),
 				SoundEnabled: true,
