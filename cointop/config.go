@@ -58,9 +58,6 @@ func (ct *Cointop) SetupConfig() error {
 	if err := ct.loadTableColumnsFromConfig(); err != nil {
 		return err
 	}
-	if err := ct.loadPortfolioColumnsFromConfig(); err != nil {
-		return err
-	}
 	if err := ct.loadShortcutsFromConfig(); err != nil {
 		return err
 	}
@@ -241,6 +238,9 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		var tuple []string = []string{coinName, amount}
 		holdingsIfc = append(holdingsIfc, tuple)
 	}
+	sort.Slice(holdingsIfc, func(i, j int) bool {
+		return holdingsIfc[i][0] < holdingsIfc[j][0]
+	})
 	portfolioIfc["holdings"] = holdingsIfc
 
 	if reflect.DeepEqual(DefaultPortfolioTableHeaders, ct.State.portfolioTableColumns) {
@@ -335,11 +335,6 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 			ct.State.coinsTableColumns = columns
 		}
 	}
-	return nil
-}
-
-// LoadPortfolioColumnsFromConfig loads preferred portfolio table columns from config file to struct
-func (ct *Cointop) loadPortfolioColumnsFromConfig() error {
 	return nil
 }
 
@@ -508,39 +503,86 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 
 	for key, valueIfc := range ct.config.Portfolio {
 		if key == "columns" {
-		}
-		if key == "holdings" {
-			holdingsIfc, ok := valueIfc.([][]interface{})
+			var columns []string
+			ifcs, ok := valueIfc.([]interface{})
+			if ok {
+				for _, ifc := range ifcs {
+					if v, ok := ifc.(string); ok {
+						if !ct.ValidPortfolioTableHeader(v) {
+							return fmt.Errorf("Invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultPortfolioTableHeaders, ","))
+						}
+						columns = append(columns, v)
+					}
+				}
+				if len(columns) > 0 {
+					ct.State.portfolioTableColumns = columns
+				}
+			}
+		} else if key == "holdings" {
+			holdingsIfc, ok := valueIfc.([]interface{})
 			if !ok {
 				continue
 			}
-			fmt.Println(holdingsIfc)
-		}
-	}
-	/*
-		for name, holdingsIfc := range ct.config.Portfolio {
-			if name == "columns" {
-				continue
-			}
-			if name == "holdings" {
-				continue
-			}
 
-			var holdings float64
-			var ok bool
-			if holdings, ok = holdingsIfc.(float64); !ok {
-				if holdingsInt, ok := holdingsIfc.(int64); ok {
-					holdings = float64(holdingsInt)
+			for _, itemIfc := range holdingsIfc {
+				tupleIfc, ok := itemIfc.([]interface{})
+				if !ok {
+					continue
+				}
+				if len(tupleIfc) > 2 {
+					continue
+				}
+				name, ok := tupleIfc[0].(string)
+				if !ok {
+					continue
+				}
+
+				holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
+				if err != nil {
+					return nil
+				}
+
+				if err := ct.SetPortfolioEntry(name, holdings); err != nil {
+					return err
 				}
 			}
+		} else {
+			// Backward compatibility < v1.6.0
+			holdings, err := ct.InterfaceToFloat64(valueIfc)
+			if err != nil {
+				return err
+			}
 
-			if err := ct.SetPortfolioEntry(name, holdings); err != nil {
+			if err := ct.SetPortfolioEntry(key, holdings); err != nil {
 				return err
 			}
 		}
-	*/
+	}
 
 	return nil
+}
+
+// InterfaceToFloat64 attempts to convert interface to float64
+func (ct *Cointop) InterfaceToFloat64(value interface{}) (float64, error) {
+	var num float64
+	var err error
+	switch v := value.(type) {
+	case string:
+		num, err = strconv.ParseFloat(v, 64)
+		if err != nil {
+			return 0, err
+		}
+	case int:
+		num = float64(v)
+	case int32:
+		num = float64(v)
+	case int64:
+		num = float64(v)
+	case float64:
+		num = v
+	}
+
+	return num, nil
 }
 
 // LoadPriceAlertsFromConfig loads price alerts from config file to struct
@@ -570,11 +612,7 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 		if _, ok := PriceAlertOperatorMap[operator]; !ok {
 			return ErrInvalidPriceAlert
 		}
-		targetPriceStr, ok := priceAlert[2].(string)
-		if !ok {
-			return ErrInvalidPriceAlert
-		}
-		targetPrice, err := strconv.ParseFloat(targetPriceStr, 64)
+		targetPrice, err := ct.InterfaceToFloat64(priceAlert[2])
 		if err != nil {
 			return err
 		}

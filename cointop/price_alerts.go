@@ -20,7 +20,7 @@ func (ct *Cointop) GetPriceAlertsTableHeaders() []string {
 	return []string{
 		"name",
 		"symbol",
-		"targetprice",
+		"target_price",
 		"price",
 		"frequency",
 	}
@@ -296,11 +296,11 @@ func (ct *Cointop) HidePriceAlertsUpdateMenu() error {
 
 // EnterKeyPressHandler is the key press handle for update menus
 func (ct *Cointop) EnterKeyPressHandler() error {
-	if ct.IsPortfolioVisible() {
-		return ct.SetPortfolioHoldings()
+	if ct.IsPriceAlertsVisible() {
+		return ct.CreatePriceAlert()
 	}
 
-	return ct.CreatePriceAlert()
+	return ct.SetPortfolioHoldings()
 }
 
 // CreatePriceAlert sets price from inputed value
