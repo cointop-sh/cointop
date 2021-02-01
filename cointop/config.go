@@ -20,7 +20,7 @@ import (
 var fileperm = os.FileMode(0644)
 
 // ErrInvalidPriceAlert is error for invalid price alert value
-var ErrInvalidPriceAlert = errors.New("Invalid price alert value")
+var ErrInvalidPriceAlert = errors.New("invalid price alert value")
 
 // NOTE: this is to support previous default config filepaths
 var possibleConfigPaths = []string{
@@ -326,7 +326,7 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 		for _, ifc := range ifcs {
 			if v, ok := ifc.(string); ok {
 				if !ct.ValidCoinsTableHeader(v) {
-					return fmt.Errorf("Invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultCoinTableHeaders, ","))
+					return fmt.Errorf("invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultCoinTableHeaders, ","))
 				}
 				columns = append(columns, v)
 			}
@@ -453,7 +453,7 @@ func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
 				return colors, nil
 			}
 
-			return nil, fmt.Errorf("The colorscheme file %q was not found.\n%s", path, ColorschemeHelpString())
+			return nil, fmt.Errorf("the colorscheme file %q was not found.\n%s", path, ColorschemeHelpString())
 		}
 
 		if _, err := toml.DecodeFile(path, &colors); err != nil {
@@ -509,7 +509,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				for _, ifc := range ifcs {
 					if v, ok := ifc.(string); ok {
 						if !ct.ValidPortfolioTableHeader(v) {
-							return fmt.Errorf("Invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultPortfolioTableHeaders, ","))
+							return fmt.Errorf("invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultPortfolioTableHeaders, ","))
 						}
 						columns = append(columns, v)
 					}
@@ -560,29 +560,6 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 	}
 
 	return nil
-}
-
-// InterfaceToFloat64 attempts to convert interface to float64
-func (ct *Cointop) InterfaceToFloat64(value interface{}) (float64, error) {
-	var num float64
-	var err error
-	switch v := value.(type) {
-	case string:
-		num, err = strconv.ParseFloat(v, 64)
-		if err != nil {
-			return 0, err
-		}
-	case int:
-		num = float64(v)
-	case int32:
-		num = float64(v)
-	case int64:
-		num = float64(v)
-	case float64:
-		num = v
-	}
-
-	return num, nil
 }
 
 // LoadPriceAlertsFromConfig loads price alerts from config file to struct
@@ -643,4 +620,27 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 	}
 
 	return nil
+}
+
+// InterfaceToFloat64 attempts to convert interface to float64
+func (ct *Cointop) InterfaceToFloat64(value interface{}) (float64, error) {
+	var num float64
+	var err error
+	switch v := value.(type) {
+	case string:
+		num, err = strconv.ParseFloat(v, 64)
+		if err != nil {
+			return 0, err
+		}
+	case int:
+		num = float64(v)
+	case int32:
+		num = float64(v)
+	case int64:
+		num = float64(v)
+	case float64:
+		num = v
+	}
+
+	return num, nil
 }

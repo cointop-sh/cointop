@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	fcolor "github.com/fatih/color"
 	gocui "github.com/miguelmota/gocui"
@@ -22,8 +23,9 @@ type colorCache map[string]ISprintf
 
 // Colorscheme is the struct for colorscheme
 type Colorscheme struct {
-	colors colorschemeColors
-	cache  colorCache
+	colors     colorschemeColors
+	cache      colorCache
+	cacheMutex sync.RWMutex
 }
 
 var fgcolorschemeColorsMap = map[string]fcolor.Attribute{
@@ -62,8 +64,9 @@ var gocuiColorschemeColorsMap = map[string]gocui.Attribute{
 // NewColorscheme ...
 func NewColorscheme(colors colorschemeColors) *Colorscheme {
 	return &Colorscheme{
-		colors: colors,
-		cache:  make(colorCache),
+		colors:     colors,
+		cache:      make(colorCache),
+		cacheMutex: sync.RWMutex{},
 	}
 }
 
@@ -262,7 +265,9 @@ func (c *Colorscheme) toSprintf(name string) ISprintf {
 		}
 	}
 
+	c.cacheMutex.Lock()
 	c.cache[name] = fcolor.New(attrs...).SprintFunc()
+	c.cacheMutex.Unlock()
 	return c.cache[name]
 }
 
