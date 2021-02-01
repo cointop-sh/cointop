@@ -182,7 +182,7 @@ func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
 
 	if msg != "" {
 		if ct.State.priceAlerts.SoundEnabled {
-			notifier.NotifyWithSound(title, msg)
+			notifier.Notify(title, msg)
 		} else {
 			notifier.Notify(title, msg)
 		}

@@ -5,7 +5,6 @@ require (
 	github.com/anaskhan96/soup v1.1.1 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
 	github.com/creack/pty v1.1.11
-	github.com/faiface/beep v1.0.2
 	github.com/fatih/color v1.9.0
 	github.com/gen2brain/beeep v0.0.0-20200526185328-e9c15c258e28
 	github.com/gliderlabs/ssh v0.3.0

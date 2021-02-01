@@ -276,7 +276,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	}
 	priceAlertsMapIfc := map[string]interface{}{
 		"alerts": priceAlertsIfc,
-		"sound":  ct.State.priceAlerts.SoundEnabled,
+		//"sound":  ct.State.priceAlerts.SoundEnabled,
 	}
 
 	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
