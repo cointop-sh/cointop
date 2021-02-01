@@ -57,6 +57,7 @@ type State struct {
 	hideChart                  bool
 	hideStatusbar              bool
 	lastSelectedRowIndex       int
+	marketBarHeight            int
 	page                       int
 	perPage                    int
 	portfolio                  *Portfolio
@@ -221,6 +222,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			hideMarketbar:      config.HideMarketbar,
 			hideChart:          config.HideChart,
 			hideStatusbar:      config.HideStatusbar,
+			marketBarHeight:    1,
 			onlyTable:          config.OnlyTable,
 			refreshRate:        60 * time.Second,
 			selectedChartRange: "7D",

@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"math"
+	"strings"
 	"time"
 
 	types "github.com/miguelmota/cointop/pkg/api/types"
@@ -32,6 +33,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 	var content string
 
 	if ct.IsPortfolioVisible() {
+		ct.State.marketBarHeight = 1
 		total := ct.GetPortfolioTotal()
 		totalstr := humanize.Commaf(total)
 		if !(ct.State.currencyConversion == "BTC" || ct.State.currencyConversion == "ETH" || total < 1) {
@@ -85,6 +87,11 @@ func (ct *Cointop) UpdateMarketbar() error {
 			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
 		)
 	} else {
+		ct.State.marketBarHeight = 1
+		if ct.width() < 125 {
+			ct.State.marketBarHeight = 2
+		}
+
 		var market types.GlobalMarketData
 		var err error
 		cachekey := ct.CacheKey("market")
@@ -130,11 +137,22 @@ func (ct *Cointop) UpdateMarketbar() error {
 			)
 		}
 
+		separator1 := "•"
+		separator2 := "•"
+		offset := strings.Repeat(" ", 12)
+		if ct.width() < 105 {
+			separator1 = "\n" + offset
+		} else if ct.width() < 125 {
+			separator2 = "\n" + offset
+		}
+
 		content = fmt.Sprintf(
-			"%sGlobal ▶ Market Cap: %s • 24H Volume: %s • BTC Dominance: %.2f%%",
+			"%sGlobal ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
 			chartInfo,
 			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Commaf0(market.TotalMarketCapUSD)),
+			separator1,
 			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Commaf0(market.Total24HVolumeUSD)),
+			separator2,
 			market.BitcoinPercentageOfMarketCap,
 		)
 	}

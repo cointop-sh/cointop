@@ -224,8 +224,7 @@ func (ct *Cointop) RowLinkShort() string {
 func (ct *Cointop) ToggleTableFullscreen() error {
 	ct.debuglog("ToggleTableFullscreen()")
 	ct.State.onlyTable = !ct.State.onlyTable
-	if ct.State.onlyTable {
-	} else {
+	if !ct.State.onlyTable {
 		// NOTE: cached values are initial config settings.
 		// If the only-table config was set then toggle
 		// all other initial hidden views.

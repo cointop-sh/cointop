@@ -17,7 +17,7 @@ func (ct *Cointop) layout() error {
 
 	topOffset := 0
 	headerHeight := 1
-	marketbarHeight := 1
+	marketbarHeight := ct.State.marketBarHeight
 	chartHeight := ct.State.chartHeight
 	statusbarHeight := 1
 
@@ -25,6 +25,7 @@ func (ct *Cointop) layout() error {
 		ct.State.hideMarketbar = true
 		ct.State.hideChart = true
 		ct.State.hideStatusbar = true
+		marketbarHeight = 0
 	}
 
 	if ct.State.hideMarketbar {
@@ -39,8 +40,15 @@ func (ct *Cointop) layout() error {
 		statusbarHeight = 0
 	}
 
-	if !ct.State.hideMarketbar {
-		if err := ct.ui.SetView(ct.Views.Marketbar, 0, topOffset, maxX, 2); err != nil {
+	if ct.State.hideMarketbar {
+		if ct.Views.Marketbar.Backing() != nil {
+			if err := ct.g.DeleteView(ct.Views.Marketbar.Name()); err != nil {
+				return err
+			}
+			ct.Views.Marketbar.SetBacking(nil)
+		}
+	} else {
+		if err := ct.ui.SetView(ct.Views.Marketbar, 0, topOffset, maxX, marketbarHeight+1); err != nil {
 			ct.Views.Marketbar.SetFrame(false)
 			ct.Views.Marketbar.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.Marketbar.Name()))
 			ct.Views.Marketbar.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.Marketbar.Name()))
@@ -53,19 +61,19 @@ func (ct *Cointop) layout() error {
 				}
 			}()
 		}
-	} else {
-		if ct.Views.Marketbar.Backing() != nil {
-			if err := ct.g.DeleteView(ct.Views.Marketbar.Name()); err != nil {
-				return err
-			}
-			ct.Views.Marketbar.SetBacking(nil)
-		}
 	}
 
 	topOffset = topOffset + marketbarHeight
 
-	if !ct.State.hideChart {
-		if err := ct.ui.SetView(ct.Views.Chart, 0, topOffset, maxX, topOffset+chartHeight+marketbarHeight); err != nil {
+	if ct.State.hideChart {
+		if ct.Views.Chart.Backing() != nil {
+			if err := ct.g.DeleteView(ct.Views.Chart.Name()); err != nil {
+				return err
+			}
+			ct.Views.Chart.SetBacking(nil)
+		}
+	} else {
+		if err := ct.ui.SetView(ct.Views.Chart, 0, topOffset, maxX, topOffset+chartHeight); err != nil {
 			ct.Views.Chart.Clear()
 			ct.Views.Chart.SetFrame(false)
 			ct.Views.Chart.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.Chart.Name()))
@@ -79,13 +87,6 @@ func (ct *Cointop) layout() error {
 					ct.UpdateChart()
 				}
 			}()
-		}
-	} else {
-		if ct.Views.Chart.Backing() != nil {
-			if err := ct.g.DeleteView(ct.Views.Chart.Name()); err != nil {
-				return err
-			}
-			ct.Views.Chart.SetBacking(nil)
 		}
 	}
 
