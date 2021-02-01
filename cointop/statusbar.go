@@ -44,7 +44,11 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 	helpStr := fmt.Sprintf("%s%s %sHelp", "[Q]", quitText, "[?]")
 	var content string
 	if ct.IsPriceAlertsVisible() {
-		content = fmt.Sprintf("%s [E]Edit [+]Add", helpStr)
+		var editStr string
+		if ct.ActivePriceAlertsLen() > 0 {
+			editStr = "[E]Edit "
+		}
+		content = fmt.Sprintf("%s %s[+]Add", helpStr, editStr)
 	} else {
 		base := fmt.Sprintf("%s %sChart %sRange %sSearch %sConvert %s %s", helpStr, "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText)
 		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.width(), " ")

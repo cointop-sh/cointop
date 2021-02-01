@@ -29,24 +29,33 @@ func (ct *Cointop) UpdateTableHeader() error {
 	}
 
 	baseColor := ct.colorscheme.TableHeaderSprintf()
+	offset := 0
+	lb := "["
+	rb := "]"
+	noSort := ct.IsPriceAlertsVisible()
+	if noSort {
+		offset = 2
+		lb = ""
+		rb = ""
+	}
 	possibleHeaders := map[string]*t{
-		"rank":             {baseColor, "[r]ank", 0, 1, " "},
-		"name":             {baseColor, "[n]ame", 0, 11, " "},
-		"symbol":           {baseColor, "[s]ymbol", 4, 0, " "},
-		"target_price":     {baseColor, "[t]arget price", 2, 0, " "},
-		"price":            {baseColor, "[p]rice", 2, 0, " "},
+		"rank":             {baseColor, fmt.Sprintf("%sr%sank", lb, rb), 0, 1 + offset, " "},
+		"name":             {baseColor, fmt.Sprintf("%sn%same", lb, rb), 0, 11 + offset, " "},
+		"symbol":           {baseColor, fmt.Sprintf("%ss%symbol", lb, rb), 4, 0 + offset, " "},
+		"target_price":     {baseColor, fmt.Sprintf("%st%sarget price", lb, rb), 2, 0 + offset, " "},
+		"price":            {baseColor, fmt.Sprintf("%sp%srice", lb, rb), 2, 0 + offset, " "},
 		"frequency":        {baseColor, "frequency", 1, 0, " "},
-		"holdings":         {baseColor, "[h]oldings", 5, 0, " "},
-		"balance":          {baseColor, "[b]alance", 5, 0, " "},
-		"marketcap":        {baseColor, "[m]arket cap", 5, 0, " "},
-		"24h_volume":       {baseColor, "24H [v]olume", 3, 0, " "},
-		"1h_change":        {baseColor, "[1]H%", 5, 0, " "},
-		"24h_change":       {baseColor, "[2]4H%", 3, 0, " "},
-		"7d_change":        {baseColor, "[7]D%", 4, 0, " "},
-		"total_supply":     {baseColor, "[t]otal supply", 7, 0, " "},
-		"available_supply": {baseColor, "[a]vailable supply", 0, 0, " "},
-		"percent_holdings": {baseColor, "[%]holdings", 2, 0, " "},
-		"last_updated":     {baseColor, "last [u]pdated", 3, 0, " "},
+		"holdings":         {baseColor, fmt.Sprintf("%sh%soldings", lb, rb), 5, 0 + offset, " "},
+		"balance":          {baseColor, fmt.Sprintf("%sb%salance", lb, rb), 5, 0, " "},
+		"marketcap":        {baseColor, fmt.Sprintf("%sm%sarket cap", lb, rb), 5, 0 + offset, " "},
+		"24h_volume":       {baseColor, fmt.Sprintf("24H %sv%solume", lb, rb), 3, 0 + offset, " "},
+		"1h_change":        {baseColor, fmt.Sprintf("%s1%sH%%", lb, rb), 5, 0 + offset, " "},
+		"24h_change":       {baseColor, fmt.Sprintf("%s2%s4H%%", lb, rb), 3, 0 + offset, " "},
+		"7d_change":        {baseColor, fmt.Sprintf("%s7%sD%%", lb, rb), 4, 0 + offset, " "},
+		"total_supply":     {baseColor, fmt.Sprintf("%st%sotal supply", lb, rb), 7, 0 + offset, " "},
+		"available_supply": {baseColor, fmt.Sprintf("%sa%svailable supply", lb, rb), 1, 0 + offset, " "},
+		"percent_holdings": {baseColor, fmt.Sprintf("%s%%%sholdings", lb, rb), 2, 0 + offset, " "},
+		"last_updated":     {baseColor, fmt.Sprintf("last %su%spdated", lb, rb), 3, 0, " "},
 	}
 
 	for k := range possibleHeaders {

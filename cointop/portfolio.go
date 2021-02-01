@@ -160,7 +160,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 				rowCells = append(rowCells,
 					&table.RowCell{
 						LeftMargin: 1,
-						Width:      10,
+						Width:      11,
 						LeftAlign:  false,
 						Color:      color1h,
 						Text:       fmt.Sprintf("%.2f%%", coin.PercentChange1H),
@@ -238,6 +238,9 @@ func (ct *Cointop) ToggleShowPortfolio() error {
 // TogglePortfolioUpdateMenu toggles the portfolio update menu
 func (ct *Cointop) TogglePortfolioUpdateMenu() error {
 	ct.debuglog("togglePortfolioUpdateMenu()")
+	if ct.IsPriceAlertsVisible() {
+		return ct.ShowPriceAlertsUpdateMenu()
+	}
 	ct.State.portfolioUpdateMenuVisible = !ct.State.portfolioUpdateMenuVisible
 	if ct.State.portfolioUpdateMenuVisible {
 		return ct.ShowPortfolioUpdateMenu()

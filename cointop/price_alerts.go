@@ -3,7 +3,6 @@ package cointop
 import (
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 	"strings"
@@ -86,7 +85,7 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 			},
 			&table.RowCell{
 				LeftMargin: 1,
-				Width:      16,
+				Width:      14,
 				LeftAlign:  false,
 				Color:      ct.colorscheme.TableColumnPrice,
 				Text:       targetPrice,
@@ -99,8 +98,8 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 				Text:       humanize.Commaf(coin.Price),
 			},
 			&table.RowCell{
-				LeftMargin: 2,
-				Width:      11,
+				LeftMargin: 4,
+				Width:      10,
 				LeftAlign:  true,
 				Color:      ct.colorscheme.TableRow,
 				Text:       frequency,
@@ -126,21 +125,19 @@ func (ct *Cointop) IsPriceAlertsVisible() bool {
 }
 
 // PriceAlertWatcher starts the price alert watcher
-func (ct *Cointop) PriceAlertWatcher() {
+func (ct *Cointop) PriceAlertWatcher() error {
 	ct.debuglog("priceAlertWatcher()")
 	alerts := ct.State.priceAlerts.Entries
-	ticker := time.NewTicker(2 * time.Second)
-	for {
-		select {
-		case <-ticker.C:
-			for _, alert := range alerts {
-				err := ct.CheckPriceAlert(alert)
-				if err != nil {
-					log.Fatal(err)
-				}
+	ticker := time.NewTicker(5 * time.Second)
+	for range ticker.C {
+		for _, alert := range alerts {
+			err := ct.CheckPriceAlert(alert)
+			if err != nil {
+				return err
 			}
 		}
 	}
+	return nil
 }
 
 // CheckPriceAlert checks the price alert
@@ -256,7 +253,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 // ShowPriceAlertsAddMenu shows the alert add menu
 func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 	ct.debuglog("showPriceAlertsAddMenu()")
-	ct.ToggleSelectedView(PriceAlertsView)
+	ct.SetSelectedView(PriceAlertsView)
 	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.UpdatePriceAlertsUpdateMenu(true)
 	ct.ui.SetCursor(true)
@@ -268,8 +265,8 @@ func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 
 // ShowPriceAlertsUpdateMenu shows the alerts update menu
 func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
-	ct.ToggleSelectedView(PriceAlertsView)
 	ct.debuglog("showPriceAlertsUpdateMenu()")
+	ct.SetSelectedView(PriceAlertsView)
 	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.UpdatePriceAlertsUpdateMenu(false)
 	ct.ui.SetCursor(true)
@@ -311,7 +308,8 @@ func (ct *Cointop) CreatePriceAlert() error {
 	defer ct.HidePriceAlertsUpdateMenu()
 	var coinName string
 
-	if ct.State.priceAlertEditID == "" {
+	isNew := ct.State.priceAlertEditID == ""
+	if isNew {
 		coin := ct.HighlightedRowCoin()
 		coinName = coin.Name
 	} else {
@@ -332,7 +330,9 @@ func (ct *Cointop) CreatePriceAlert() error {
 	}
 
 	ct.UpdateTable()
-	ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
+	if isNew {
+		ct.GoToPageRowIndex(0)
+	}
 
 	return nil
 }

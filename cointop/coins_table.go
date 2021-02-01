@@ -186,7 +186,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 				rowCells = append(rowCells,
 					&table.RowCell{
 						LeftMargin: 1,
-						Width:      19,
+						Width:      20,
 						LeftAlign:  false,
 						Color:      ct.colorscheme.TableRow,
 						Text:       humanize.Commaf(coin.AvailableSupply),
