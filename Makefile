@@ -218,6 +218,8 @@ docker-run:
 docker-push:
 	docker push cointop/cointop:latest
 
+docker-build-and-push: docker-build docker-push
+
 docker-run-ssh:
 	docker run -p 2222:22 -v ~/.ssh/demo:/keys --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
 

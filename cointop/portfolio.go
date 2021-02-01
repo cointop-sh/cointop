@@ -332,6 +332,9 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	ct.debuglog("setPortfolioHoldings()")
 	defer ct.HidePortfolioUpdateMenu()
 	coin := ct.HighlightedRowCoin()
+	if coin == nil {
+		return nil
+	}
 
 	// read input field
 	b := make([]byte, 100)
@@ -370,6 +373,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 		return err
 	}
 
+	ct.ToggleShowPortfolio()
 	return nil
 }
 
@@ -559,14 +563,14 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 
 	if sortBy != "" {
 		if _, ok := portfolioColumns[sortBy]; !ok {
-			return fmt.Errorf("The option %q is not a valid column name", sortBy)
+			return fmt.Errorf("the option %q is not a valid column name", sortBy)
 		}
 
 		ct.Sort(sortBy, sortDesc, holdings, true)
 	}
 
 	if _, ok := outputFormats[format]; !ok {
-		return fmt.Errorf("The option %q is not a valid format type", format)
+		return fmt.Errorf("the option %q is not a valid format type", format)
 	}
 
 	total := ct.GetPortfolioTotal()
@@ -574,7 +578,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	symbol := ct.CurrencySymbol()
 
 	for i, entry := range holdings {
-		if filter != nil && len(filter) > 0 {
+		if len(filter) > 0 {
 			found := false
 			for _, item := range filter {
 				item = strings.ToLower(strings.TrimSpace(item))
@@ -687,7 +691,7 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	portfolio := ct.GetPortfolioSlice()
 	var total float64
 	for _, entry := range portfolio {
-		if filter != nil && len(filter) > 0 {
+		if len(filter) > 0 {
 			found := false
 			for _, item := range filter {
 				item = strings.ToLower(strings.TrimSpace(item))

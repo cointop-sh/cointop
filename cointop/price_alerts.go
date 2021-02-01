@@ -256,6 +256,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 // ShowPriceAlertsAddMenu shows the alert add menu
 func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 	ct.debuglog("showPriceAlertsAddMenu()")
+	ct.ToggleSelectedView(PriceAlertsView)
 	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.UpdatePriceAlertsUpdateMenu(true)
 	ct.ui.SetCursor(true)
@@ -267,6 +268,7 @@ func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 
 // ShowPriceAlertsUpdateMenu shows the alerts update menu
 func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
+	ct.ToggleSelectedView(PriceAlertsView)
 	ct.debuglog("showPriceAlertsUpdateMenu()")
 	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.UpdatePriceAlertsUpdateMenu(false)
