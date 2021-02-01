@@ -6,10 +6,6 @@ github.com/anaskhan96/soup
 github.com/anmitsu/go-shlex
 # github.com/creack/pty v1.1.11
 github.com/creack/pty
-# github.com/faiface/beep v1.0.2
-github.com/faiface/beep
-github.com/faiface/beep/mp3
-github.com/faiface/beep/speaker
 # github.com/fatih/color v1.9.0
 github.com/fatih/color
 # github.com/gen2brain/beeep v0.0.0-20200526185328-e9c15c258e28
@@ -24,19 +20,6 @@ github.com/godbus/dbus/v5
 github.com/gopherjs/gopherjs/js
 # github.com/gopherjs/gopherwasm v1.1.0
 github.com/gopherjs/gopherwasm/js
-# github.com/hajimehoshi/go-mp3 v0.1.1
-github.com/hajimehoshi/go-mp3
-github.com/hajimehoshi/go-mp3/internal/bits
-github.com/hajimehoshi/go-mp3/internal/consts
-github.com/hajimehoshi/go-mp3/internal/frame
-github.com/hajimehoshi/go-mp3/internal/frameheader
-github.com/hajimehoshi/go-mp3/internal/huffman
-github.com/hajimehoshi/go-mp3/internal/imdct
-github.com/hajimehoshi/go-mp3/internal/maindata
-github.com/hajimehoshi/go-mp3/internal/sideinfo
-# github.com/hajimehoshi/oto v0.3.1
-github.com/hajimehoshi/oto
-github.com/hajimehoshi/oto/internal/mux
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
 # github.com/maruel/panicparse v1.5.0
@@ -63,8 +46,6 @@ github.com/nu7hatch/gouuid
 github.com/olekukonko/tablewriter
 # github.com/patrickmn/go-cache v2.1.0+incompatible
 github.com/patrickmn/go-cache
-# github.com/pkg/errors v0.8.1
-github.com/pkg/errors
 # github.com/spf13/cobra v1.0.0
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
@@ -83,29 +64,6 @@ golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
-# golang.org/x/exp v0.0.0-20180710024300-14dda7b62fcd
-golang.org/x/exp/shiny/driver/gldriver
-golang.org/x/exp/shiny/driver/internal/drawer
-golang.org/x/exp/shiny/driver/internal/errscreen
-golang.org/x/exp/shiny/driver/internal/event
-golang.org/x/exp/shiny/driver/internal/lifecycler
-golang.org/x/exp/shiny/driver/internal/win32
-golang.org/x/exp/shiny/driver/internal/x11key
-golang.org/x/exp/shiny/screen
-# golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81
-golang.org/x/image/math/f64
-# golang.org/x/mobile v0.0.0-20180806140643-507816974b79
-golang.org/x/mobile/app
-golang.org/x/mobile/app/internal/callfn
-golang.org/x/mobile/event/key
-golang.org/x/mobile/event/lifecycle
-golang.org/x/mobile/event/mouse
-golang.org/x/mobile/event/paint
-golang.org/x/mobile/event/size
-golang.org/x/mobile/event/touch
-golang.org/x/mobile/geom
-golang.org/x/mobile/gl
-golang.org/x/mobile/internal/mobileinit
 # golang.org/x/net v0.0.0-20200707034311-ab3426394381
 golang.org/x/net/html
 golang.org/x/net/html/atom
