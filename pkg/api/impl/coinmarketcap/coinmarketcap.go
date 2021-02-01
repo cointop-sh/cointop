@@ -14,10 +14,10 @@ import (
 )
 
 // ErrQuoteNotFound is the error for when a quote is not found
-var ErrQuoteNotFound = errors.New("Quote not found")
+var ErrQuoteNotFound = errors.New("quote not found")
 
 // ErrPingFailed is the error for when pinging the API fails
-var ErrPingFailed = errors.New("Failed to ping")
+var ErrPingFailed = errors.New("failed to ping")
 
 // Service service
 type Service struct {

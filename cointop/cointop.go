@@ -22,7 +22,7 @@ import (
 // TODO: clean up and optimize codebase
 
 // ErrInvalidAPIChoice is error for invalid API choice
-var ErrInvalidAPIChoice = errors.New("Invalid API choice")
+var ErrInvalidAPIChoice = errors.New("invalid API choice")
 
 // Views are all views in cointop
 type Views struct {
@@ -229,7 +229,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			page:               0,
 			perPage:            int(perPage),
 			portfolio: &Portfolio{
-				Entries: make(map[string]*PortfolioEntry, 0),
+				Entries: make(map[string]*PortfolioEntry),
 			},
 			portfolioTableColumns: DefaultPortfolioTableHeaders,
 			chartHeight:           10,

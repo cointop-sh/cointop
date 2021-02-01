@@ -2,7 +2,6 @@ package cointop
 
 import (
 	"fmt"
-	"math"
 	"net/url"
 	"strings"
 
@@ -118,7 +117,7 @@ func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 		start = 0
 	}
 	if end >= size-1 {
-		start = int(math.Floor(float64(start/100)) * 100)
+		start = int(float64(start/100) * 100)
 		end = size - 1
 	}
 	if start < 0 {

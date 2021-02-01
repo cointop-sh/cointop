@@ -92,14 +92,13 @@ func (ct *Cointop) SortDesc() error {
 // SortPrevCol sorts the previous column
 func (ct *Cointop) SortPrevCol() error {
 	ct.debuglog("sortPrevCol()")
-	nextsortBy := ct.TableColumnOrder[0]
 	i := ct.GetSortColIndex()
 	k := i - 1
 	if k < 0 {
 		k = 0
 	}
 
-	nextsortBy = ct.TableColumnOrder[k]
+	nextsortBy := ct.TableColumnOrder[k]
 	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
@@ -108,7 +107,6 @@ func (ct *Cointop) SortPrevCol() error {
 // SortNextCol sorts the next column
 func (ct *Cointop) SortNextCol() error {
 	ct.debuglog("sortNextCol()")
-	nextsortBy := ct.TableColumnOrder[0]
 	l := len(ct.TableColumnOrder)
 	i := ct.GetSortColIndex()
 	k := i + 1
@@ -116,7 +114,7 @@ func (ct *Cointop) SortNextCol() error {
 		k = l - 1
 	}
 
-	nextsortBy = ct.TableColumnOrder[k]
+	nextsortBy := ct.TableColumnOrder[k]
 	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil

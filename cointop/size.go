@@ -24,8 +24,8 @@ func (ct *Cointop) height() int {
 	return h
 }
 
-// viewWidth returns view width
-func (ct *Cointop) viewWidth(view string) int {
+// ViewWidth returns view width
+func (ct *Cointop) ViewWidth(view string) int {
 	ct.debuglog("viewWidth()")
 	v, err := ct.g.View(view)
 	if err != nil {

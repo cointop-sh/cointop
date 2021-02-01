@@ -1,14 +1,12 @@
 package cointop
 
 import (
-	"fmt"
-
 	"github.com/miguelmota/gocui"
 )
 
 // UpdateUI takes a callback which updates the view
 func (ct *Cointop) UpdateUI(f func() error) {
-	ct.debuglog(fmt.Sprintf("UpdateUI()"))
+	ct.debuglog("UpdateUI()")
 
 	if ct.g == nil {
 		return

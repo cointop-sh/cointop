@@ -14,10 +14,10 @@ import (
 )
 
 // ErrPingFailed is the error for when pinging the API fails
-var ErrPingFailed = errors.New("Failed to ping")
+var ErrPingFailed = errors.New("failed to ping")
 
 // ErrNotFound is the error when the target is not found
-var ErrNotFound = errors.New("Not found")
+var ErrNotFound = errors.New("not found")
 
 // Service service
 type Service struct {
