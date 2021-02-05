@@ -333,6 +333,7 @@ func (s *Service) SupportedCurrencies() []string {
 		"THB",
 		"TRY",
 		"TWD",
+		"UAH",
 		"USD",
 		"VEF",
 		"VND",
