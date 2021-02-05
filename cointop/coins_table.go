@@ -46,6 +46,9 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetCoinsTableHeaders()
+	if ct.IsFavoritesVisible() {
+		headers = ct.GetFavoritesTableHeaders()
+	}
 	ct.ClearSyncMap(ct.State.tableColumnWidths)
 	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
 	for _, coin := range ct.State.coins {

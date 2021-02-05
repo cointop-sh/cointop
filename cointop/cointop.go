@@ -52,6 +52,7 @@ type State struct {
 	favoritesBySymbol map[string]bool
 
 	favorites                  map[string]bool
+	favoritesTableColumns      []string
 	helpVisible                bool
 	hideMarketbar              bool
 	hideChart                  bool
@@ -219,19 +220,20 @@ func NewCointop(config *Config) (*Cointop, error) {
 			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: "USD",
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-			favoritesBySymbol:  make(map[string]bool),
-			favorites:          make(map[string]bool),
-			hideMarketbar:      config.HideMarketbar,
-			hideChart:          config.HideChart,
-			hideStatusbar:      config.HideStatusbar,
-			marketBarHeight:    1,
-			onlyTable:          config.OnlyTable,
-			refreshRate:        60 * time.Second,
-			selectedChartRange: "7D",
-			shortcutKeys:       DefaultShortcuts(),
-			sortBy:             "rank",
-			page:               0,
-			perPage:            int(perPage),
+			favoritesBySymbol:     make(map[string]bool),
+			favorites:             make(map[string]bool),
+			favoritesTableColumns: DefaultCoinTableHeaders,
+			hideMarketbar:         config.HideMarketbar,
+			hideChart:             config.HideChart,
+			hideStatusbar:         config.HideStatusbar,
+			marketBarHeight:       1,
+			onlyTable:             config.OnlyTable,
+			refreshRate:           60 * time.Second,
+			selectedChartRange:    "7D",
+			shortcutKeys:          DefaultShortcuts(),
+			sortBy:                "rank",
+			page:                  0,
+			perPage:               int(perPage),
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry),
 			},

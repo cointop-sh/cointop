@@ -31,18 +31,18 @@ var possibleConfigPaths = []string{
 }
 
 type config struct {
-	Shortcuts     map[string]interface{}   `toml:"shortcuts"`
-	Favorites     map[string][]interface{} `toml:"favorites"`
-	Portfolio     map[string]interface{}   `toml:"portfolio"`
-	PriceAlerts   map[string]interface{}   `toml:"price_alerts"`
-	Currency      interface{}              `toml:"currency"`
-	DefaultView   interface{}              `toml:"default_view"`
-	CoinMarketCap map[string]interface{}   `toml:"coinmarketcap"`
-	API           interface{}              `toml:"api"`
-	Colorscheme   interface{}              `toml:"colorscheme"`
-	RefreshRate   interface{}              `toml:"refresh_rate"`
-	CacheDir      interface{}              `toml:"cache_dir"`
-	Table         map[string]interface{}   `toml:"table"`
+	Shortcuts     map[string]interface{} `toml:"shortcuts"`
+	Favorites     map[string]interface{} `toml:"favorites"`
+	Portfolio     map[string]interface{} `toml:"portfolio"`
+	PriceAlerts   map[string]interface{} `toml:"price_alerts"`
+	Currency      interface{}            `toml:"currency"`
+	DefaultView   interface{}            `toml:"default_view"`
+	CoinMarketCap map[string]interface{} `toml:"coinmarketcap"`
+	API           interface{}            `toml:"api"`
+	Colorscheme   interface{}            `toml:"colorscheme"`
+	RefreshRate   interface{}            `toml:"refresh_rate"`
+	CacheDir      interface{}            `toml:"cache_dir"`
+	Table         map[string]interface{} `toml:"table"`
 }
 
 // SetupConfig loads config file
@@ -219,11 +219,14 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	})
 
 	var favoritesBySymbolIfc []interface{}
-	favoritesMapIfc := map[string][]interface{}{
+	favoritesMapIfc := map[string]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 		"symbols": favoritesBySymbolIfc,
 		"names":   favoritesIfc,
 	}
+
+	var favoritesColumnsIfc interface{} = ct.State.favoritesTableColumns
+	favoritesMapIfc["columns"] = favoritesColumnsIfc
 
 	portfolioIfc := map[string]interface{}{}
 	var holdingsIfc [][]string
@@ -470,19 +473,39 @@ func (ct *Cointop) loadAPIChoiceFromConfig() error {
 // LoadFavoritesFromConfig loads favorites data from config file to struct
 func (ct *Cointop) loadFavoritesFromConfig() error {
 	ct.debuglog("loadFavoritesFromConfig()")
-	for k, arr := range ct.config.Favorites {
+	for k, valueIfc := range ct.config.Favorites {
+		ifcs, ok := valueIfc.([]interface{})
+		if !ok {
+			continue
+		}
+		switch k {
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		if k == "symbols" {
-			for _, ifc := range arr {
+		case "symbols":
+			for _, ifc := range ifcs {
 				if v, ok := ifc.(string); ok {
 					ct.State.favoritesBySymbol[strings.ToUpper(v)] = true
 				}
 			}
-		} else if k == "names" {
-			for _, ifc := range arr {
+		case "names":
+			for _, ifc := range ifcs {
 				if v, ok := ifc.(string); ok {
 					ct.State.favorites[v] = true
 				}
+			}
+		case "columns":
+			var columns []string
+			for _, ifc := range ifcs {
+				col, ok := ifc.(string)
+				if !ok {
+					continue
+				}
+				if !ct.ValidCoinsTableHeader(col) {
+					return fmt.Errorf("invalid table header name %q. Valid names are: %s", col, strings.Join(DefaultCoinTableHeaders, ","))
+				}
+				columns = append(columns, col)
+			}
+			if len(columns) > 0 {
+				ct.State.favoritesTableColumns = columns
 			}
 		}
 	}

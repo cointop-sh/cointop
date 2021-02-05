@@ -4,6 +4,11 @@ import (
 	"sort"
 )
 
+// GetFavoritesTableHeaders returns the favorites table headers
+func (ct *Cointop) GetFavoritesTableHeaders() []string {
+	return ct.State.favoritesTableColumns
+}
+
 // ToggleFavorite toggles coin as favorite
 func (ct *Cointop) ToggleFavorite() error {
 	ct.debuglog("toggleFavorite()")
