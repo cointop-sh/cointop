@@ -239,6 +239,8 @@ func (c *Colorscheme) Default(a ...interface{}) string {
 }
 
 func (c *Colorscheme) toSprintf(name string) ISprintf {
+	c.cacheMutex.Lock()
+	defer c.cacheMutex.Unlock()
 	if cached, ok := c.cache[name]; ok {
 		return cached
 	}
@@ -265,9 +267,7 @@ func (c *Colorscheme) toSprintf(name string) ISprintf {
 		}
 	}
 
-	c.cacheMutex.Lock()
 	c.cache[name] = fcolor.New(attrs...).SprintFunc()
-	c.cacheMutex.Unlock()
 	return c.cache[name]
 }
 

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -54,157 +53,195 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 	total := ct.GetPortfolioTotal()
 	maxX := ct.width()
 	t := table.NewTable().SetWidth(maxX)
-
+	var rows [][]*table.RowCell
+	headers := ct.GetPortfolioTableHeaders()
+	ct.ClearSyncMap(ct.State.tableColumnWidths)
+	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
 	for _, coin := range ct.State.coins {
-		star := ct.colorscheme.TableRow(" ")
-		name := TruncateString(coin.Name, 20)
-		symbol := TruncateString(coin.Symbol, 6)
-		if coin.Favorite {
-			star = ct.colorscheme.TableRowFavorite("*")
-		}
-		rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
-
-		namecolor := ct.colorscheme.TableRow
-		if coin.Favorite {
-			namecolor = ct.colorscheme.TableRowFavorite
-		}
-
-		colorbalance := ct.colorscheme.TableColumnPrice
-		color1h := ct.colorscheme.TableColumnChange
-		color24h := ct.colorscheme.TableColumnChange
-		color7d := ct.colorscheme.TableColumnChange
-		if coin.PercentChange1H > 0 {
-			color1h = ct.colorscheme.TableColumnChangeUp
-		}
-		if coin.PercentChange1H < 0 {
-			color1h = ct.colorscheme.TableColumnChangeDown
-		}
-		if coin.PercentChange24H > 0 {
-			color24h = ct.colorscheme.TableColumnChangeUp
-		}
-		if coin.PercentChange24H < 0 {
-			color24h = ct.colorscheme.TableColumnChangeDown
-		}
-		if coin.PercentChange7D > 0 {
-			color7d = ct.colorscheme.TableColumnChangeUp
-		}
-		if coin.PercentChange7D < 0 {
-			color7d = ct.colorscheme.TableColumnChangeDown
-		}
-
-		percentHoldings := (coin.Balance / total) * 1e2
-		if math.IsNaN(percentHoldings) {
-			percentHoldings = 0
-		}
-		unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
-		lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
-
-		headers := ct.GetPortfolioTableHeaders()
+		leftMargin := 1
+		rightMargin := 1
 		var rowCells []*table.RowCell
 		for _, header := range headers {
 			switch header {
 			case "rank":
+				star := ct.colorscheme.TableRow(" ")
+				if coin.Favorite {
+					star = ct.colorscheme.TableRowFavorite("*")
+				}
+				rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
+				ct.SetTableColumnWidth(header, 8)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells, &table.RowCell{
-					LeftMargin: 0,
-					Width:      6,
-					LeftAlign:  false,
-					Color:      ct.colorscheme.Default,
-					Text:       rank,
+					LeftMargin:  leftMargin,
+					RightMargin: rightMargin,
+					LeftAlign:   false,
+					Color:       ct.colorscheme.Default,
+					Text:        rank,
 				})
 			case "name":
+
+				name := TruncateString(coin.Name, 18)
+				namecolor := ct.colorscheme.TableRow
+				if coin.Favorite {
+					namecolor = ct.colorscheme.TableRowFavorite
+				}
+				ct.SetTableColumnWidthFromString(header, name)
+				ct.SetTableColumnAlignLeft(header, true)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      22,
-						LeftAlign:  true,
-						Color:      namecolor,
-						Text:       name,
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   true,
+						Color:       namecolor,
+						Text:        name,
 					})
 			case "symbol":
+				symbol := TruncateString(coin.Symbol, 6)
+				ct.SetTableColumnWidthFromString(header, symbol)
+				ct.SetTableColumnAlignLeft(header, true)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      6,
-						LeftAlign:  true,
-						Color:      ct.colorscheme.TableRow,
-						Text:       symbol,
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   true,
+						Color:       ct.colorscheme.TableRow,
+						Text:        symbol,
 					})
 			case "price":
+				text := humanize.Commaf(coin.Price)
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, len(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      14,
-						LeftAlign:  false,
-						Color:      ct.colorscheme.TableRow,
-						Text:       humanize.Commaf(coin.Price),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
 					})
 			case "holdings":
+				text := strconv.FormatFloat(coin.Holdings, 'f', -1, 64)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      16,
-						LeftAlign:  false,
-						Color:      ct.colorscheme.TableRow,
-						Text:       strconv.FormatFloat(coin.Holdings, 'f', -1, 64),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
 					})
 			case "balance":
+				text := humanize.Commaf(coin.Balance)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				colorBalance := ct.colorscheme.TableColumnPrice
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      16,
-						LeftAlign:  false,
-						Color:      colorbalance,
-						Text:       humanize.Commaf(coin.Balance),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       colorBalance,
+						Text:        text,
 					})
 			case "1h_change":
+				color1h := ct.colorscheme.TableColumnChange
+				if coin.PercentChange1H > 0 {
+					color1h = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange1H < 0 {
+					color1h = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", coin.PercentChange1H)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      11,
-						LeftAlign:  false,
-						Color:      color1h,
-						Text:       fmt.Sprintf("%.2f%%", coin.PercentChange1H),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color1h,
+						Text:        text,
 					})
 			case "24h_change":
+				color24h := ct.colorscheme.TableColumnChange
+				if coin.PercentChange24H > 0 {
+					color24h = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange24H < 0 {
+					color24h = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", coin.PercentChange24H)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      10,
-						LeftAlign:  false,
-						Color:      color24h,
-						Text:       fmt.Sprintf("%.2f%%", coin.PercentChange24H),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color24h,
+						Text:        text,
 					})
 			case "7d_change":
+				color7d := ct.colorscheme.TableColumnChange
+				if coin.PercentChange7D > 0 {
+					color7d = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange7D < 0 {
+					color7d = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", coin.PercentChange7D)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      10,
-						LeftAlign:  false,
-						Color:      color7d,
-						Text:       fmt.Sprintf("%.2f%%", coin.PercentChange7D),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color7d,
+						Text:        text,
 					})
 			case "percent_holdings":
+				percentHoldings := (coin.Balance / total) * 1e2
+				if math.IsNaN(percentHoldings) {
+					percentHoldings = 0
+				}
+				text := fmt.Sprintf("%.2f%%", percentHoldings)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      14,
-						LeftAlign:  false,
-						Color:      ct.colorscheme.TableRow,
-						Text:       fmt.Sprintf("%.2f%%", percentHoldings),
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
 					})
 			case "last_updated":
+				unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
+				lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
+				ct.SetTableColumnWidthFromString(header, lastUpdated)
+				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
-						LeftMargin: 1,
-						Width:      18,
-						LeftAlign:  false,
-						Color:      ct.colorscheme.TableRow,
-						Text:       lastUpdated,
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        lastUpdated,
 					})
 			}
 		}
 
-		t.AddRowCells(rowCells...)
+		rows = append(rows, rowCells)
+	}
+
+	for _, row := range rows {
+		for i, header := range headers {
+			row[i].Width = ct.GetTableColumnWidth(header)
+		}
+		t.AddRowCells(row...)
 	}
 
 	return t
@@ -751,15 +788,4 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 // IsPortfolioVisible returns true if portfolio view is visible
 func (ct *Cointop) IsPortfolioVisible() bool {
 	return ct.State.selectedView == PortfolioView
-}
-
-// NormalizeFloatString normalizes a float as a string
-func normalizeFloatString(input string) string {
-	re := regexp.MustCompile(`(\d+\.\d+|\.\d+|\d+)`)
-	result := re.FindStringSubmatch(input)
-	if len(result) > 0 {
-		return result[0]
-	}
-
-	return ""
 }

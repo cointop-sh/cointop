@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"reflect"
 	"sort"
 	"strconv"
 	"strings"
@@ -243,12 +242,8 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	})
 	portfolioIfc["holdings"] = holdingsIfc
 
-	if reflect.DeepEqual(DefaultPortfolioTableHeaders, ct.State.portfolioTableColumns) {
-		portfolioIfc["columns"] = []string{}
-	} else {
-		var columnsIfc interface{} = ct.State.portfolioTableColumns
-		portfolioIfc["columns"] = columnsIfc
-	}
+	var columnsIfc interface{} = ct.State.portfolioTableColumns
+	portfolioIfc["columns"] = columnsIfc
 
 	var currencyIfc interface{} = ct.State.currencyConversion
 	var defaultViewIfc interface{} = ct.State.defaultView
@@ -281,12 +276,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
 	tableMapIfc := map[string]interface{}{}
-
-	if reflect.DeepEqual(DefaultCoinTableHeaders, ct.State.coinsTableColumns) {
-		tableMapIfc["columns"] = []string{}
-	} else {
-		tableMapIfc["columns"] = coinsTableColumnsIfc
-	}
+	tableMapIfc["columns"] = coinsTableColumnsIfc
 
 	var inputs = &config{
 		API:           apiChoiceIfc,
@@ -374,6 +364,8 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 			ct.SetSelectedView(PortfolioView)
 		case "favorites":
 			ct.SetSelectedView(FavoritesView)
+		case "alerts", "price_alerts":
+			ct.SetSelectedView(PriceAlertsView)
 		case "default":
 			fallthrough
 		default:

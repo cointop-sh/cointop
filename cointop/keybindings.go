@@ -93,21 +93,9 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 				key = gocui.KeyCtrlZ
 			case "~":
 				key = gocui.KeyCtrlTilde
-			case "[":
-				fallthrough
-			case "lsqrbracket":
-				fallthrough
-			case "leftsqrbracket":
-				fallthrough
-			case "leftsquarebracket":
+			case "[", "lsqrbracket", "leftsqrbracket", "leftsquarebracket":
 				key = gocui.KeyCtrlLsqBracket
-			case "]":
-				fallthrough
-			case "rsqrbracket":
-				fallthrough
-			case "rightsqrbracket":
-				fallthrough
-			case "rightsquarebracket":
+			case "]", "rsqrbracket", "rightsqrbracket", "rightsquarebracket":
 				key = gocui.KeyCtrlRsqBracket
 			case "space":
 				key = gocui.KeyCtrlSpace
@@ -130,41 +118,19 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 
 	s = strings.ToLower(s)
 	switch s {
-	case "arrowup":
-		fallthrough
-	case "uparrow":
-		fallthrough
-	case "up":
+	case "arrowup", "uparrow", "up":
 		key = gocui.KeyArrowUp
-	case "arrowdown":
-		fallthrough
-	case "downarrow":
-		fallthrough
-	case "down":
+	case "arrowdown", "downarrow", "down":
 		key = gocui.KeyArrowDown
-	case "arrowleft":
-		fallthrough
-	case "leftarrow":
-		fallthrough
-	case "left":
+	case "arrowleft", "leftarrow", "left":
 		key = gocui.KeyArrowLeft
-	case "arrowright":
-		fallthrough
-	case "rightarrow":
-		fallthrough
-	case "right":
+	case "arrowright", "rightarrow", "right":
 		key = gocui.KeyArrowRight
-	case "enter":
-		fallthrough
-	case "return":
+	case "enter", "return":
 		key = gocui.KeyEnter
-	case "space":
-		fallthrough
-	case "spacebar":
+	case "space", "spacebar":
 		key = gocui.KeySpace
-	case "esc":
-		fallthrough
-	case "escape":
+	case "esc", "escape":
 		key = gocui.KeyEsc
 	case "f1":
 		key = gocui.KeyF1
@@ -186,15 +152,9 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 		key = gocui.KeyF9
 	case "tab":
 		key = gocui.KeyTab
-	case "pageup":
-		fallthrough
-	case "pgup":
+	case "pageup", "pgup":
 		key = gocui.KeyPgup
-	case "pagedown":
-		fallthrough
-	case "pgdown":
-		fallthrough
-	case "pgdn":
+	case "pagedown", "pgdown", "pgdn":
 		key = gocui.KeyPgdn
 	case "home":
 		key = gocui.KeyHome
@@ -248,9 +208,7 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			fn = ct.Keyfn(ct.SortPrevCol)
 		case "sort_right_column":
 			fn = ct.Keyfn(ct.SortNextCol)
-		case "help":
-			fallthrough
-		case "toggle_show_help":
+		case "help", "toggle_show_help":
 			fn = ct.Keyfn(ct.ToggleHelp)
 			view = ""
 		case "show_help":
@@ -276,7 +234,7 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 		case "move_to_page_visible_last_row":
 			fn = ct.Keyfn(ct.navigatePageLastLine)
 		case "sort_column_market_cap":
-			fn = ct.Sortfn("marketcap", true)
+			fn = ct.Sortfn("market_cap", true)
 		case "move_to_page_visible_middle_row":
 			fn = ct.Keyfn(ct.NavigatePageMiddleLine)
 		case "scroll_left":

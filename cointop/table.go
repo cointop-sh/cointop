@@ -26,7 +26,7 @@ func TableColumnOrder() []string {
 		"price",
 		"holdings",
 		"balance",
-		"marketcap",
+		"market_cap",
 		"24h_volume",
 		"1h_change",
 		"7d_change",

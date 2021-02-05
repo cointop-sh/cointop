@@ -75,6 +75,8 @@ type State struct {
 	sortBy                     string
 	tableOffsetX               int
 	onlyTable                  bool
+	tableColumnWidths          sync.Map
+	tableColumnAlignLeft       sync.Map
 	chartHeight                int
 	priceAlerts                *PriceAlerts
 	priceAlertEditID           string
@@ -236,6 +238,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 			portfolioTableColumns: DefaultPortfolioTableHeaders,
 			chartHeight:           10,
 			tableOffsetX:          0,
+			tableColumnWidths:     sync.Map{},
+			tableColumnAlignLeft:  sync.Map{},
 			priceAlerts: &PriceAlerts{
 				Entries:      make([]*PriceAlert, 0),
 				SoundEnabled: true,

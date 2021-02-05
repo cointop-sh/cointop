@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"regexp"
 	"strings"
+	"sync"
 
 	"github.com/miguelmota/cointop/pkg/open"
 )
@@ -40,4 +42,23 @@ func TruncateString(value string, maxLen int) string {
 		value = fmt.Sprintf("%s%s", value[0:maxLen-3], dots)
 	}
 	return value
+}
+
+// ClearSyncMap clears a sync.Map
+func (ct *Cointop) ClearSyncMap(syncMap sync.Map) {
+	syncMap.Range(func(key interface{}, value interface{}) bool {
+		syncMap.Delete(key)
+		return true
+	})
+}
+
+// NormalizeFloatString normalizes a float as a string
+func normalizeFloatString(input string) string {
+	re := regexp.MustCompile(`(\d+\.\d+|\.\d+|\d+)`)
+	result := re.FindStringSubmatch(input)
+	if len(result) > 0 {
+		return result[0]
+	}
+
+	return ""
 }

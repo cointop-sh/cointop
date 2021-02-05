@@ -47,7 +47,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 			return a.Holdings < b.Holdings
 		case "balance":
 			return a.Balance < b.Balance
-		case "marketcap":
+		case "market_cap":
 			return a.MarketCap < b.MarketCap
 		case "24h_volume":
 			return a.Volume24H < b.Volume24H

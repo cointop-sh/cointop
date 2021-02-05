@@ -2,10 +2,115 @@ package cointop
 
 import (
 	"fmt"
+	"math"
 	"strings"
+	"unicode/utf8"
 
+	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/ui"
 )
+
+// ArrowUp is up arrow unicode character
+var ArrowUp = "▲"
+
+// ArrowDown is down arrow unicode character
+var ArrowDown = "▼"
+
+// HeaderColumn is header column struct
+type HeaderColumn struct {
+	Slug       string
+	Label      string
+	PlainLabel string
+}
+
+// HeaderColumns are the header column widths
+var HeaderColumns = map[string]*HeaderColumn{
+	"rank": &HeaderColumn{
+		Slug:       "rank",
+		Label:      "[r]ank",
+		PlainLabel: "rank",
+	},
+	"name": &HeaderColumn{
+		Slug:       "name",
+		Label:      "[n]ame",
+		PlainLabel: "name",
+	},
+	"symbol": &HeaderColumn{
+		Slug:       "symbol",
+		Label:      "[s]ymbol",
+		PlainLabel: "symbol",
+	},
+	"target_price": &HeaderColumn{
+		Slug:       "target_price",
+		Label:      "[t]target price",
+		PlainLabel: "target price",
+	},
+	"price": &HeaderColumn{
+		Slug:       "price",
+		Label:      "[p]rice",
+		PlainLabel: "price",
+	},
+	"frequency": &HeaderColumn{
+		Slug:       "frequency",
+		Label:      "frequency",
+		PlainLabel: "frequency",
+	},
+	"holdings": &HeaderColumn{
+		Slug:       "holdings",
+		Label:      "[h]oldings",
+		PlainLabel: "holdings",
+	},
+	"balance": &HeaderColumn{
+		Slug:       "balance",
+		Label:      "[b]alance",
+		PlainLabel: "balance",
+	},
+	"market_cap": &HeaderColumn{
+		Slug:       "market_cap",
+		Label:      "[m]arket cap",
+		PlainLabel: "market cap",
+	},
+	"24h_volume": &HeaderColumn{
+		Slug:       "24h_volume",
+		Label:      "24H [v]olume",
+		PlainLabel: "24H volume",
+	},
+	"1h_change": &HeaderColumn{
+		Slug:       "1h_change",
+		Label:      "[1]H%",
+		PlainLabel: "1H%",
+	},
+	"24h_change": &HeaderColumn{
+		Slug:       "24h_change",
+		Label:      "[2]4H%",
+		PlainLabel: "24H%",
+	},
+	"7d_change": &HeaderColumn{
+		Slug:       "7d_change",
+		Label:      "[7]D%",
+		PlainLabel: "7D%",
+	},
+	"total_supply": &HeaderColumn{
+		Slug:       "total_supply",
+		Label:      "[t]otal supply",
+		PlainLabel: "total supply",
+	},
+	"available_supply": &HeaderColumn{
+		Slug:       "available_supply",
+		Label:      "[a]vailable supply",
+		PlainLabel: "available supply",
+	},
+	"percent_holdings": &HeaderColumn{
+		Slug:       "percent_holdings",
+		Label:      "[%]holdings",
+		PlainLabel: "%holdings",
+	},
+	"last_updated": &HeaderColumn{
+		Slug:       "last_updated",
+		Label:      "last [u]pdated",
+		PlainLabel: "last updated",
+	},
+}
 
 // TableHeaderView is structure for table header view
 type TableHeaderView = ui.View
@@ -20,56 +125,8 @@ func NewTableHeaderView() *TableHeaderView {
 func (ct *Cointop) UpdateTableHeader() error {
 	ct.debuglog("UpdateTableHeader()")
 
-	type t struct {
-		colorfn     func(a ...interface{}) string
-		displaytext string
-		padleft     int
-		padright    int
-		arrow       string
-	}
-
 	baseColor := ct.colorscheme.TableHeaderSprintf()
-	offset := 0
-	lb := "["
-	rb := "]"
 	noSort := ct.IsPriceAlertsVisible()
-	if noSort {
-		offset = 2
-		lb = ""
-		rb = ""
-	}
-	possibleHeaders := map[string]*t{
-		"rank":             {baseColor, fmt.Sprintf("%sr%sank", lb, rb), 0, 1 + offset, " "},
-		"name":             {baseColor, fmt.Sprintf("%sn%same", lb, rb), 0, 11 + offset, " "},
-		"symbol":           {baseColor, fmt.Sprintf("%ss%symbol", lb, rb), 4, 0 + offset, " "},
-		"target_price":     {baseColor, fmt.Sprintf("%st%sarget price", lb, rb), 2, 0 + offset, " "},
-		"price":            {baseColor, fmt.Sprintf("%sp%srice", lb, rb), 2, 0 + offset, " "},
-		"frequency":        {baseColor, "frequency", 1, 0, " "},
-		"holdings":         {baseColor, fmt.Sprintf("%sh%soldings", lb, rb), 5, 0 + offset, " "},
-		"balance":          {baseColor, fmt.Sprintf("%sb%salance", lb, rb), 5, 0, " "},
-		"marketcap":        {baseColor, fmt.Sprintf("%sm%sarket cap", lb, rb), 5, 0 + offset, " "},
-		"24h_volume":       {baseColor, fmt.Sprintf("24H %sv%solume", lb, rb), 3, 0 + offset, " "},
-		"1h_change":        {baseColor, fmt.Sprintf("%s1%sH%%", lb, rb), 5, 0 + offset, " "},
-		"24h_change":       {baseColor, fmt.Sprintf("%s2%s4H%%", lb, rb), 3, 0 + offset, " "},
-		"7d_change":        {baseColor, fmt.Sprintf("%s7%sD%%", lb, rb), 4, 0 + offset, " "},
-		"total_supply":     {baseColor, fmt.Sprintf("%st%sotal supply", lb, rb), 7, 0 + offset, " "},
-		"available_supply": {baseColor, fmt.Sprintf("%sa%svailable supply", lb, rb), 1, 0 + offset, " "},
-		"percent_holdings": {baseColor, fmt.Sprintf("%s%%%sholdings", lb, rb), 2, 0 + offset, " "},
-		"last_updated":     {baseColor, fmt.Sprintf("last %su%spdated", lb, rb), 3, 0, " "},
-	}
-
-	for k := range possibleHeaders {
-		possibleHeaders[k].arrow = " "
-		if ct.State.sortBy == k {
-			possibleHeaders[k].colorfn = ct.colorscheme.TableHeaderColumnActiveSprintf()
-			if ct.State.sortDesc {
-				possibleHeaders[k].arrow = "▼"
-			} else {
-				possibleHeaders[k].arrow = "▲"
-			}
-		}
-	}
-
 	var cols []string
 	switch ct.State.selectedView {
 	case PortfolioView:
@@ -81,24 +138,56 @@ func (ct *Cointop) UpdateTableHeader() error {
 	}
 
 	var headers []string
-	for _, v := range cols {
-		s, ok := possibleHeaders[v]
+	for i, col := range cols {
+		hc, ok := HeaderColumns[col]
 		if !ok {
 			continue
 		}
-		var str string
-		d := s.arrow + s.displaytext
-		if v == "price" || v == "balance" {
-			d = s.arrow + ct.CurrencySymbol() + s.displaytext
+		width := ct.GetTableColumnWidth(col)
+		if width == 0 {
+			continue
 		}
-
-		str = fmt.Sprintf(
+		arrow := " "
+		colorfn := baseColor
+		if !noSort {
+			if ct.State.sortBy == col {
+				colorfn = ct.colorscheme.TableHeaderColumnActiveSprintf()
+				if ct.State.sortDesc {
+					arrow = ArrowDown
+				} else {
+					arrow = ArrowUp
+				}
+			}
+		}
+		label := hc.Label
+		if noSort {
+			label = hc.PlainLabel
+		}
+		leftAlign := ct.GetTableColumnAlignLeft(col)
+		switch col {
+		case "price", "balance":
+			label = ct.CurrencySymbol() + label
+		}
+		if leftAlign {
+			label = label + arrow
+		} else {
+			label = arrow + label
+		}
+		padfn := pad.Left
+		padLeft := 1
+		if !noSort && i == 0 {
+			padLeft = 0
+		}
+		if leftAlign {
+			padfn = pad.Right
+		}
+		colStr := fmt.Sprintf(
 			"%s%s%s",
-			strings.Repeat(" ", s.padleft),
-			s.colorfn(d),
-			strings.Repeat(" ", s.padright),
+			strings.Repeat(" ", padLeft),
+			colorfn(padfn(label, width+(1-padLeft), " ")),
+			strings.Repeat(" ", 1),
 		)
-		headers = append(headers, str)
+		headers = append(headers, colStr)
 	}
 
 	ct.UpdateUI(func() error {
@@ -106,4 +195,50 @@ func (ct *Cointop) UpdateTableHeader() error {
 	})
 
 	return nil
+}
+
+// SetTableColumnAlignLeft sets the column alignment direction for header
+func (ct *Cointop) SetTableColumnAlignLeft(header string, alignLeft bool) {
+	ct.State.tableColumnAlignLeft.Store(header, alignLeft)
+}
+
+// GetTableColumnAlignLeft gets the column alignment direction for header
+func (ct *Cointop) GetTableColumnAlignLeft(header string) bool {
+	ifc, ok := ct.State.tableColumnAlignLeft.Load(header)
+	if ok {
+		return ifc.(bool)
+	}
+	return false
+}
+
+// SetTableColumnWidth sets the column width for header
+func (ct *Cointop) SetTableColumnWidth(header string, width int) {
+	prevIfc, ok := ct.State.tableColumnWidths.Load(header)
+	var prev int
+	if ok {
+		prev = prevIfc.(int)
+	} else {
+		hc := HeaderColumns[header]
+		prev = utf8.RuneCountInString(hc.Label) + 1
+		switch header {
+		case "price", "balance":
+			prev++
+		}
+	}
+
+	ct.State.tableColumnWidths.Store(header, int(math.Max(float64(width), float64(prev))))
+}
+
+// SetTableColumnWidthFromString sets the column width for header given size of string
+func (ct *Cointop) SetTableColumnWidthFromString(header string, text string) {
+	ct.SetTableColumnWidth(header, utf8.RuneCountInString(text))
+}
+
+// GetTableColumnWidth gets the column width for header
+func (ct *Cointop) GetTableColumnWidth(header string) int {
+	ifc, ok := ct.State.tableColumnWidths.Load(header)
+	if ok {
+		return ifc.(int)
+	}
+	return 0
 }

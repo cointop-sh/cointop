@@ -45,7 +45,10 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 	ct.debuglog("getPriceAlertsTable()")
 	maxX := ct.width()
 	t := table.NewTable().SetWidth(maxX)
-
+	var rows [][]*table.RowCell
+	headers := ct.GetPriceAlertsTableHeaders()
+	ct.ClearSyncMap(ct.State.tableColumnWidths)
+	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
 	for _, entry := range ct.State.priceAlerts.Entries {
 		if entry.Expired {
 			continue
@@ -58,53 +61,83 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 		if !ok {
 			continue
 		}
-		name := TruncateString(entry.CoinName, 20)
-		symbol := TruncateString(coin.Symbol, 6)
-		namecolor := ct.colorscheme.TableRow
-		frequency := entry.Frequency
 		_, ok = PriceAlertOperatorMap[entry.Operator]
 		if !ok {
 			continue
 		}
-		targetPrice := fmt.Sprintf("%s %s", entry.Operator, humanize.Commaf(entry.TargetPrice))
 
-		t.AddRowCells(
-			&table.RowCell{
-				LeftMargin: 1,
-				Width:      22,
-				LeftAlign:  true,
-				Color:      namecolor,
-				Text:       name,
-			},
-			&table.RowCell{
-				LeftMargin: 1,
-				Width:      10,
-				LeftAlign:  true,
-				Color:      ct.colorscheme.TableRow,
-				Text:       symbol,
-			},
-			&table.RowCell{
-				LeftMargin: 1,
-				Width:      14,
-				LeftAlign:  false,
-				Color:      ct.colorscheme.TableColumnPrice,
-				Text:       targetPrice,
-			},
-			&table.RowCell{
-				LeftMargin: 1,
-				Width:      11,
-				LeftAlign:  false,
-				Color:      ct.colorscheme.TableRow,
-				Text:       humanize.Commaf(coin.Price),
-			},
-			&table.RowCell{
-				LeftMargin: 4,
-				Width:      10,
-				LeftAlign:  true,
-				Color:      ct.colorscheme.TableRow,
-				Text:       frequency,
-			},
-		)
+		leftMargin := 1
+		rightMargin := 1
+		var rowCells []*table.RowCell
+		for _, header := range headers {
+			switch header {
+			case "name":
+				name := TruncateString(entry.CoinName, 16)
+				ct.SetTableColumnWidthFromString(header, name)
+				ct.SetTableColumnAlignLeft(header, true)
+				namecolor := ct.colorscheme.TableRow
+				rowCells = append(rowCells, &table.RowCell{
+					LeftMargin:  leftMargin,
+					RightMargin: rightMargin,
+					LeftAlign:   true,
+					Color:       namecolor,
+					Text:        name,
+				})
+			case "symbol":
+				symbol := TruncateString(coin.Symbol, 6)
+				ct.SetTableColumnWidthFromString(header, symbol)
+				ct.SetTableColumnAlignLeft(header, true)
+				rowCells = append(rowCells, &table.RowCell{
+					LeftMargin:  leftMargin,
+					RightMargin: rightMargin,
+					LeftAlign:   true,
+					Color:       ct.colorscheme.TableRow,
+					Text:        symbol,
+				})
+
+			case "target_price":
+				targetPrice := fmt.Sprintf("%s %s", entry.Operator, humanize.Commaf(entry.TargetPrice))
+				ct.SetTableColumnWidthFromString(header, targetPrice)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells, &table.RowCell{
+					LeftMargin:  leftMargin,
+					RightMargin: rightMargin,
+					LeftAlign:   false,
+					Color:       ct.colorscheme.TableColumnPrice,
+					Text:        targetPrice,
+				})
+			case "price":
+				text := humanize.Commaf(coin.Price)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells, &table.RowCell{
+					LeftMargin:  leftMargin,
+					RightMargin: rightMargin,
+					LeftAlign:   false,
+					Color:       ct.colorscheme.TableRow,
+					Text:        text,
+				})
+			case "frequency":
+				frequency := entry.Frequency
+				ct.SetTableColumnWidthFromString(header, frequency)
+				ct.SetTableColumnAlignLeft(header, true)
+				rowCells = append(rowCells, &table.RowCell{
+					LeftMargin:  leftMargin,
+					RightMargin: rightMargin,
+					LeftAlign:   true,
+					Color:       ct.colorscheme.TableRow,
+					Text:        frequency,
+				})
+			}
+		}
+		rows = append(rows, rowCells)
+	}
+
+	for _, row := range rows {
+		for i, header := range headers {
+			row[i].Width = ct.GetTableColumnWidth(header)
+		}
+		t.AddRowCells(row...)
 	}
 
 	return t

@@ -248,20 +248,22 @@ func (t *Table) Fprint(w io.Writer) {
 
 // RowCell is a row cell struct
 type RowCell struct {
-	LeftMargin int
-	Width      int
-	LeftAlign  bool
-	Color      func(a ...interface{}) string
-	Text       string
+	LeftMargin  int
+	RightMargin int
+	Width       int
+	LeftAlign   bool
+	Color       func(a ...interface{}) string
+	Text        string
 }
 
 // String returns row cell as string
 func (rc *RowCell) String() string {
-	t := strings.Repeat(" ", rc.LeftMargin) + rc.Text
+	t := rc.Text
 	if rc.LeftAlign {
 		t = pad.Right(t, rc.Width, " ")
 	} else {
 		t = fmt.Sprintf("%"+fmt.Sprintf("%v", rc.Width)+"s", t)
 	}
+	t = strings.Repeat(" ", rc.LeftMargin) + t + strings.Repeat(" ", rc.RightMargin)
 	return rc.Color(t)
 }

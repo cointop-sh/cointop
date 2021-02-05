@@ -44,7 +44,7 @@ func (ct *Cointop) UpdateHelp() {
 		body = fmt.Sprintf("%s%s\n", body, row)
 	}
 
-	versionLine := fmt.Sprintf("cointop %s - (C) 2017-2020 Miguel Mota", ct.Version())
+	versionLine := fmt.Sprintf("cointop %s - (C) 2017-2021 Miguel Mota", ct.Version())
 	licenseLine := "Released under the Apache 2.0 License."
 	instructionsLine := "List of keyboard shortcuts"
 	infoLine := "See git.io/cointop for more info.\n Press ESC to return."
