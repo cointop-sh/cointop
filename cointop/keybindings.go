@@ -225,6 +225,8 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			fn = ct.Sortfn("24h_change", true)
 		case "sort_column_7d_change":
 			fn = ct.Sortfn("7d_change", true)
+		case "sort_column_30d_change":
+			fn = ct.Sortfn("30d_change", true)
 		case "sort_column_available_supply":
 			fn = ct.Sortfn("available_supply", true)
 		case "toggle_row_chart":

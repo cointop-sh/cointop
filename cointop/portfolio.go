@@ -17,6 +17,22 @@ import (
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
+// SupportedPortfolioTableHeaders are all the supported portfolio table header columns
+var SupportedPortfolioTableHeaders = []string{
+	"rank",
+	"name",
+	"symbol",
+	"price",
+	"holdings",
+	"balance",
+	"1h_change",
+	"24h_change",
+	"7d_change",
+	"30d_change",
+	"percent_holdings",
+	"last_updated",
+}
+
 // DefaultPortfolioTableHeaders are the default portfolio table header columns
 var DefaultPortfolioTableHeaders = []string{
 	"rank",
@@ -34,7 +50,7 @@ var DefaultPortfolioTableHeaders = []string{
 
 // ValidPortfolioTableHeader returns the portfolio table headers
 func (ct *Cointop) ValidPortfolioTableHeader(name string) bool {
-	for _, v := range DefaultPortfolioTableHeaders {
+	for _, v := range SupportedPortfolioTableHeaders {
 		if v == name {
 			return true
 		}
@@ -200,6 +216,25 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						RightMargin: rightMargin,
 						LeftAlign:   false,
 						Color:       color7d,
+						Text:        text,
+					})
+			case "30d_change":
+				color30d := ct.colorscheme.TableColumnChange
+				if coin.PercentChange30D > 0 {
+					color30d = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange30D < 0 {
+					color30d = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", coin.PercentChange30D)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color30d,
 						Text:        text,
 					})
 			case "percent_holdings":

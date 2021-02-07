@@ -9,6 +9,23 @@ import (
 	"github.com/miguelmota/cointop/pkg/table"
 )
 
+// SupportedCoinTableHeaders are all the supported coin table header columns
+var SupportedCoinTableHeaders = []string{
+	"rank",
+	"name",
+	"symbol",
+	"price",
+	"1h_change",
+	"24h_change",
+	"7d_change",
+	"30d_change",
+	"24h_volume",
+	"market_cap",
+	"total_supply",
+	"available_supply",
+	"last_updated",
+}
+
 // DefaultCoinTableHeaders are the default coin table header columns
 var DefaultCoinTableHeaders = []string{
 	"rank",
@@ -27,7 +44,7 @@ var DefaultCoinTableHeaders = []string{
 
 // ValidCoinsTableHeader returns true if it's a valid table header name
 func (ct *Cointop) ValidCoinsTableHeader(name string) bool {
-	for _, v := range DefaultCoinTableHeaders {
+	for _, v := range SupportedCoinTableHeaders {
 		if v == name {
 			return true
 		}
@@ -181,6 +198,25 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						RightMargin: rightMargin,
 						LeftAlign:   false,
 						Color:       color7d,
+						Text:        text,
+					})
+			case "30d_change":
+				color30d := ct.colorscheme.TableColumnChange
+				if coin.PercentChange30D > 0 {
+					color30d = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange30D < 0 {
+					color30d = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", coin.PercentChange30D)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color30d,
 						Text:        text,
 					})
 			case "market_cap":

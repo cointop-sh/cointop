@@ -27,6 +27,7 @@ func ActionsMap() map[string]bool {
 		"sort_column_24h_change":            true,
 		"sort_column_24h_volume":            true,
 		"sort_column_7d_change":             true,
+		"sort_column_30d_change":            true,
 		"sort_column_asc":                   true,
 		"sort_column_available_supply":      true,
 		"sort_column_desc":                  true,

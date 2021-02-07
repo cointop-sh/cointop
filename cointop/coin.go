@@ -15,6 +15,7 @@ type Coin struct {
 	PercentChange1H  float64
 	PercentChange24H float64
 	PercentChange7D  float64
+	PercentChange30D float64
 	LastUpdated      string
 	// for favorites
 	Favorite bool

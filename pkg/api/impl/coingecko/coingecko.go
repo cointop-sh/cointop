@@ -50,7 +50,12 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 	page := offset + 1 // page starts at 1
 	sparkline := false
 	pcp := geckoTypes.PriceChangePercentageObject
-	priceChangePercentage := []string{pcp.PCP1h, pcp.PCP24h, pcp.PCP7d}
+	priceChangePercentage := []string{
+		pcp.PCP1h,
+		pcp.PCP24h,
+		pcp.PCP7d,
+		pcp.PCP30d,
+	}
 	order := geckoTypes.OrderTypeObject.MarketCapDesc
 	convertTo := strings.ToLower(convert)
 	if convertTo == "" {
@@ -79,17 +84,19 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 			var percentChange1H float64
 			var percentChange24H float64
 			var percentChange7D float64
+			var percentChange30D float64
 
 			if item.PriceChangePercentage1hInCurrency != nil {
 				percentChange1H = *item.PriceChangePercentage1hInCurrency
 			}
-
 			if item.PriceChangePercentage24hInCurrency != nil {
 				percentChange24H = *item.PriceChangePercentage24hInCurrency
 			}
-
 			if item.PriceChangePercentage7dInCurrency != nil {
 				percentChange7D = *item.PriceChangePercentage7dInCurrency
+			}
+			if item.PriceChangePercentage30dInCurrency != nil {
+				percentChange30D = *item.PriceChangePercentage30dInCurrency
 			}
 
 			availableSupply := item.CirculatingSupply
@@ -110,6 +117,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 				PercentChange1H:  util.FormatPercentChange(percentChange1H),
 				PercentChange24H: util.FormatPercentChange(percentChange24H),
 				PercentChange7D:  util.FormatPercentChange(percentChange7D),
+				PercentChange30D: util.FormatPercentChange(percentChange30D),
 				Volume24H:        util.FormatVolume(item.TotalVolume),
 				LastUpdated:      util.FormatLastUpdated(item.LastUpdated),
 			})

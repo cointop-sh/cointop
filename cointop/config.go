@@ -319,7 +319,7 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 		for _, ifc := range ifcs {
 			if v, ok := ifc.(string); ok {
 				if !ct.ValidCoinsTableHeader(v) {
-					return fmt.Errorf("invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultCoinTableHeaders, ","))
+					return fmt.Errorf("invalid table header name %q. Valid names are: %s", v, strings.Join(SupportedCoinTableHeaders, ","))
 				}
 				columns = append(columns, v)
 			}
@@ -500,7 +500,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 					continue
 				}
 				if !ct.ValidCoinsTableHeader(col) {
-					return fmt.Errorf("invalid table header name %q. Valid names are: %s", col, strings.Join(DefaultCoinTableHeaders, ","))
+					return fmt.Errorf("invalid table header name %q. Valid names are: %s", col, strings.Join(SupportedCoinTableHeaders, ","))
 				}
 				columns = append(columns, col)
 			}
@@ -524,7 +524,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				for _, ifc := range ifcs {
 					if v, ok := ifc.(string); ok {
 						if !ct.ValidPortfolioTableHeader(v) {
-							return fmt.Errorf("invalid table header name %q. Valid names are: %s", v, strings.Join(DefaultPortfolioTableHeaders, ","))
+							return fmt.Errorf("invalid table header name %q. Valid names are: %s", v, strings.Join(SupportedPortfolioTableHeaders, ","))
 						}
 						columns = append(columns, v)
 					}
