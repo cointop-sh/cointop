@@ -43,15 +43,24 @@ const dots = "..."
 func (ct *Cointop) RefreshTable() error {
 	ct.debuglog("refreshTable()")
 
+	statusText := ""
 	switch ct.State.selectedView {
 	case PortfolioView:
 		ct.table = ct.GetPortfolioTable()
+		if ct.table.RowCount() == 0 {
+			statusText = "No holdings found. Press \"e\" on a coin to edit holdings."
+		}
 	case PriceAlertsView:
 		ct.table = ct.GetPriceAlertsTable()
+		if ct.table.RowCount() == 0 {
+			statusText = "No price alerts found. Press \"+\" on a coin to add a price alert."
+		}
 	default:
 		ct.table = ct.GetCoinsTable()
+		if ct.table.RowCount() == 0 {
+			statusText = "no coin data"
+		}
 	}
-
 	ct.table.HideColumHeaders = true
 
 	// highlight last row if current row is out of bounds (can happen when switching views)
@@ -62,7 +71,11 @@ func (ct *Cointop) RefreshTable() error {
 
 	ct.UpdateUI(func() error {
 		ct.Views.Table.Clear()
-		ct.table.Format().Fprint(ct.Views.Table.Backing())
+		if statusText == "" {
+			ct.table.Format().Fprint(ct.Views.Table.Backing())
+		} else {
+			ct.Views.Table.Update(fmt.Sprintf("\n\n%s", statusText))
+		}
 		go ct.RowChanged()
 		go ct.UpdateTableHeader()
 		go ct.UpdateMarketbar()

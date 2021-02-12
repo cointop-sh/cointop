@@ -130,7 +130,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	if found {
 		// cache hit
 		data, _ = cached.([]float64)
-		ct.debuglog("soft cache hit")
+		ct.debuglog("ct.ChartPoints() soft cache hit")
 	}
 
 	if len(data) == 0 {

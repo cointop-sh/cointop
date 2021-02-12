@@ -246,6 +246,11 @@ func (t *Table) Fprint(w io.Writer) {
 	}
 }
 
+// RowCount returns the number of rows
+func (t *Table) RowCount() int {
+	return len(t.rows)
+}
+
 // RowCell is a row cell struct
 type RowCell struct {
 	LeftMargin  int
