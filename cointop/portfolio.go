@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/miguelmota/cointop/pkg/asciitable"
 	"github.com/miguelmota/cointop/pkg/humanize"
@@ -126,7 +127,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 			case "price":
 				text := humanize.Commaf(coin.Price)
 				symbolPadding := 1
-				ct.SetTableColumnWidth(header, len(text)+symbolPadding)
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
 					&table.RowCell{
@@ -353,7 +354,7 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 		ct.Views.Menu.SetFrame(true)
 		ct.Views.Menu.Update(content)
 		ct.Views.Input.Write(value)
-		ct.Views.Input.SetCursor(len(value), 0)
+		ct.Views.Input.SetCursor(utf8.RuneCountInString(value), 0)
 		return nil
 	})
 	return nil

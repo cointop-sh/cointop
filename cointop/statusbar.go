@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/miguelmota/cointop/pkg/open"
 	"github.com/miguelmota/cointop/pkg/pad"
@@ -53,9 +54,10 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 		base := fmt.Sprintf("%s %sChart %sRange %sSearch %sConvert %s %s", helpStr, "[Enter]", "[[ ]]", "[/]", "[C]", favoritesText, portfolioText)
 		str := pad.Right(fmt.Sprintf("%v %sPage %v/%v %s", base, "[← →]", currpage, totalpages, s), ct.width(), " ")
 		v := ct.Version()
-		end := len(str) - len(v) + 2
-		if end > len(str) {
-			end = len(str)
+		size := utf8.RuneCountInString(str)
+		end := size - utf8.RuneCountInString(v) + 2
+		if end > size {
+			end = size
 		}
 
 		content = str[:end] + v

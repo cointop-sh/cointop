@@ -14,14 +14,14 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 	ct.debuglog("sort()")
 	sortlock.Lock()
 	defer sortlock.Unlock()
+	ct.State.sortBy = sortBy
+	ct.State.sortDesc = desc
 	if list == nil {
 		return
 	}
 	if len(list) < 2 {
 		return
 	}
-	ct.State.sortBy = sortBy
-	ct.State.sortDesc = desc
 	sort.Slice(list[:], func(i, j int) bool {
 		if ct.State.sortDesc {
 			i, j = j, i
