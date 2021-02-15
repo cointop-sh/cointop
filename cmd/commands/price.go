@@ -8,7 +8,7 @@ import (
 // PriceCmd ...
 func PriceCmd() *cobra.Command {
 	var apiChoice string
-	var coin string
+	var coins []string
 	var currency string
 
 	priceCmd := &cobra.Command{
@@ -16,15 +16,15 @@ func PriceCmd() *cobra.Command {
 		Short: "Displays the current price of a coin",
 		Long:  `The price command display the current price of a coin`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return cointop.PrintPrice(&cointop.PriceConfig{
-				Coin:      coin,
+			return cointop.PrintPrices(&cointop.PricesConfig{
+				Coins:     coins,
 				Currency:  currency,
 				APIChoice: apiChoice,
 			})
 		},
 	}
 
-	priceCmd.Flags().StringVarP(&coin, "coin", "c", "bitcoin", "Full name of the coin")
+	priceCmd.Flags().StringSliceVarP(&coins, "coins", "c", nil, "Name or symbol of coin(s), comma separated. E.g. \"Bitcoin\" Eg. \"btc,eth,doge\"")
 	priceCmd.Flags().StringVarP(&currency, "currency", "f", "USD", "The currency to convert to")
 	priceCmd.Flags().StringVarP(&apiChoice, "api", "a", cointop.CoinGecko, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 

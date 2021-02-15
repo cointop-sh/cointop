@@ -1,7 +1,6 @@
 package cointop
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -20,9 +19,6 @@ import (
 )
 
 // TODO: clean up and optimize codebase
-
-// ErrInvalidAPIChoice is error for invalid API choice
-var ErrInvalidAPIChoice = errors.New("invalid API choice")
 
 // Views are all views in cointop
 type Views struct {

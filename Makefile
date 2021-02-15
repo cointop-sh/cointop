@@ -44,6 +44,9 @@ build-multiple: clean
 install: build
 	sudo mv bin/cointop /usr/local/bin
 
+uninstall:
+	sudo rm /usr/local/bin/cointop
+
 clean-mac:
 	go clean && \
 	rm -rf bin/mac
