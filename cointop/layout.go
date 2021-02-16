@@ -48,7 +48,7 @@ func (ct *Cointop) layout() error {
 			ct.Views.Marketbar.SetBacking(nil)
 		}
 	} else {
-		if err := ct.ui.SetView(ct.Views.Marketbar, 0, topOffset, maxX, marketbarHeight+1); err != nil {
+		if err := ct.ui.SetView(ct.Views.Marketbar, 0, topOffset-1, maxX, marketbarHeight+1); err != nil {
 			ct.Views.Marketbar.SetFrame(false)
 			ct.Views.Marketbar.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.Marketbar.Name()))
 			ct.Views.Marketbar.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.Marketbar.Name()))
@@ -73,7 +73,7 @@ func (ct *Cointop) layout() error {
 			ct.Views.Chart.SetBacking(nil)
 		}
 	} else {
-		if err := ct.ui.SetView(ct.Views.Chart, 0, topOffset, maxX, topOffset+chartHeight); err != nil {
+		if err := ct.ui.SetView(ct.Views.Chart, 0, topOffset-1, maxX, topOffset+chartHeight); err != nil {
 			ct.Views.Chart.Clear()
 			ct.Views.Chart.SetFrame(false)
 			ct.Views.Chart.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.Chart.Name()))
@@ -92,7 +92,7 @@ func (ct *Cointop) layout() error {
 
 	tableOffsetX := ct.State.tableOffsetX
 	topOffset = topOffset + chartHeight
-	if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset, maxX, topOffset+2); err != nil {
+	if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset-1, maxX, topOffset+1); err != nil {
 		ct.Views.TableHeader.SetFrame(false)
 		ct.Views.TableHeader.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.TableHeader.Name()))
 		ct.Views.TableHeader.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.TableHeader.Name()))
@@ -100,7 +100,7 @@ func (ct *Cointop) layout() error {
 	}
 
 	topOffset = topOffset + headerHeight
-	if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset, maxX, maxY-statusbarHeight); err != nil {
+	if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset-1, maxX, maxY-statusbarHeight); err != nil {
 		ct.Views.Table.SetFrame(false)
 		ct.Views.Table.SetHighlight(true)
 		ct.Views.Table.SetSelFgColor(ct.colorscheme.gocuiFgColor("table_row_active"))
