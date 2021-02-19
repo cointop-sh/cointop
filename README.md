@@ -878,9 +878,9 @@ Frequently asked questions:
 
   - A: Press <kbd>?</kbd> to toggle the help menu. Press <kbd>q</kbd> to close help menu.
 
-- Q: I'm getting the error: `new gocui: termbox: error while reading terminfo data: EOF` when trying to run.
+- Q: I'm getting the error: `new gocui: termbox: error while reading terminfo data: EOF` or the error `termbox: error while reading terminfo data: termbox: unsupported terminal` when trying to run.
 
-  - A: Try setting the environment variable `TERM=screen-256color`
+  - A: Try setting the environment variable `TERM=screen-256color` when starting cointop. E.g. `TERM=screen-256color cointop`
 
 - Q: Does cointop work inside an emacs shell?
 

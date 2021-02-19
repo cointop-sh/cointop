@@ -30,7 +30,7 @@ github.com/mattn/go-colorable
 github.com/mattn/go-isatty
 # github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
-# github.com/miguelmota/go-coinmarketcap v0.1.6
+# github.com/miguelmota/go-coinmarketcap v0.1.7
 github.com/miguelmota/go-coinmarketcap/pro/v1
 github.com/miguelmota/go-coinmarketcap/v2
 github.com/miguelmota/go-coinmarketcap/v2/types

@@ -156,6 +156,7 @@ type CryptocurrencyInfo struct {
 type InfoOptions struct {
 	ID     string
 	Symbol string
+	Slug   string
 }
 
 // ListingOptions options
@@ -271,6 +272,9 @@ func (s *CryptocurrencyService) Info(options *InfoOptions) (map[string]*Cryptocu
 	}
 	if options.Symbol != "" {
 		params = append(params, fmt.Sprintf("symbol=%s", options.Symbol))
+	}
+	if options.Slug != "" {
+		params = append(params, fmt.Sprintf("slug=%s", strings.ToLower(options.Slug)))
 	}
 
 	url := fmt.Sprintf("%s/cryptocurrency/info?%s", baseURL, strings.Join(params, "&"))
