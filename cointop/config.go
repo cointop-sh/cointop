@@ -339,9 +339,6 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 			if !ct.ActionExists(v) {
 				continue
 			}
-			if ct.State.shortcutKeys[k] == "" {
-				continue
-			}
 			ct.State.shortcutKeys[k] = v
 		}
 	}
