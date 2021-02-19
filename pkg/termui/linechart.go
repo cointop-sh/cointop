@@ -80,7 +80,7 @@ func NewLineChart() *LineChart {
 	lc.Mode = "braille"
 	lc.DotStyle = '•'
 	lc.axisXLabelGap = 2
-	lc.axisYLabelGap = 1
+	lc.axisYLabelGap = 0
 	lc.bottomValue = math.Inf(1)
 	lc.topValue = math.Inf(-1)
 	return lc
@@ -199,23 +199,15 @@ func (lc *LineChart) calcLabelX() {
 
 func shortenFloatVal(x float64) string {
 	if x > 1e12 {
-		return fmt.Sprintf("%.2fT", x/1e12)
+		return fmt.Sprintf("%.4fT", x/1e12)
 	}
 	if x > 1e9 {
-		return fmt.Sprintf("%.2fB", x/1e9)
+		return fmt.Sprintf("%.4fB", x/1e9)
 	}
 	if x > 1e6 {
-		return fmt.Sprintf("%.2fB", x/1e6)
+		return fmt.Sprintf("%.4fB", x/1e6)
 	}
-
-	//if len(s)-3 > 3 {
-	//s = fmt.Sprintf("%.2e", x)
-	//}
-
-	//if x < 0 {
-	//s = fmt.Sprintf("%.2f", x)
-	//}
-	return fmt.Sprintf("%.2f", x)
+	return fmt.Sprintf("%.4f", x)
 }
 
 func (lc *LineChart) calcLabelY() {
@@ -226,8 +218,12 @@ func (lc *LineChart) calcLabelY() {
 	lc.labelY = make([][]rune, n)
 	maxLen := 0
 	for i := 0; i < n; i++ {
-		val := lc.bottomValue + float64(i)*span/float64(n)
-		s := str2runes(shortenFloatVal(val))
+		v := lc.bottomValue + float64(i)*span/float64(n)
+		// don't show negative Y axis labels
+		if v < 0 {
+			continue
+		}
+		s := str2runes(shortenFloatVal(v))
 		if len(s) > maxLen {
 			maxLen = len(s)
 		}
@@ -273,17 +269,20 @@ func (lc *LineChart) calcLayout() {
 		}
 	}
 
-	span := lc.maxY - lc.minY
+	//span := lc.maxY - lc.minY
 
 	if lc.minY < lc.bottomValue {
-		lc.bottomValue = lc.minY - 0.2*span
+		lc.bottomValue = lc.minY
+		//lc.bottomValue = lc.minY - 0.2*span
 	}
 
 	if lc.maxY > lc.topValue {
-		lc.topValue = lc.maxY + 0.2*span
+		lc.topValue = lc.maxY
+		//lc.topValue = lc.maxY + 0.2*span
 	}
 
-	lc.axisYHeight = lc.innerArea.Dy() - 2
+	offset := 2
+	lc.axisYHeight = lc.innerArea.Dy() - offset
 	lc.calcLabelY()
 
 	lc.axisXWidth = lc.innerArea.Dx() - 1 - lc.labelYSpace
@@ -296,7 +295,8 @@ func (lc *LineChart) calcLayout() {
 func (lc *LineChart) plotAxes() Buffer {
 	buf := NewBuffer()
 
-	origY := lc.innerArea.Min.Y + lc.innerArea.Dy() - 2
+	offset := 2
+	origY := lc.innerArea.Min.Y + lc.innerArea.Dy() - offset
 	origX := lc.innerArea.Min.X + lc.labelYSpace
 
 	buf.Set(origX, origY, Cell{Ch: ORIGIN, Fg: lc.AxesColor, Bg: lc.Bg})

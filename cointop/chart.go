@@ -385,6 +385,12 @@ func (ct *Cointop) ShowChartLoader() error {
 
 // ChartWidth returns the width for chart
 func (ct *Cointop) ChartWidth() int {
-	ct.debuglog("chartClampedWidth()")
-	return ct.width()
+	ct.debuglog("chartWidth()")
+	w := ct.width()
+	max := 130
+	if w > max {
+		return max
+	}
+
+	return w
 }
