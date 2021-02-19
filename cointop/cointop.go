@@ -225,7 +225,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			marketBarHeight:       1,
 			onlyTable:             config.OnlyTable,
 			refreshRate:           60 * time.Second,
-			selectedChartRange:    "7D",
+			selectedChartRange:    "1Y",
 			shortcutKeys:          DefaultShortcuts(),
 			sortBy:                "rank",
 			page:                  0,
@@ -338,10 +338,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		if err := ct.SaveConfig(); err != nil {
 			return nil, err
 		}
-	}
-
-	if ct.apiChoice == CoinGecko {
-		ct.State.selectedChartRange = "1Y"
 	}
 
 	if ct.apiChoice == CoinMarketCap {

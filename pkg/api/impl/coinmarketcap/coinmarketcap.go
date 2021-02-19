@@ -1,9 +1,13 @@
 package coinmarketcap
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"time"
 
@@ -18,6 +22,9 @@ var ErrQuoteNotFound = errors.New("quote not found")
 
 // ErrPingFailed is the error for when pinging the API fails
 var ErrPingFailed = errors.New("failed to ping")
+
+// ErrFetchGraphData is the error for when fetching graph data fails
+var ErrFetchGraphData = errors.New("graph data fetch error")
 
 // Service service
 type Service struct {
@@ -149,35 +156,138 @@ func (s *Service) GetCoinDataBatch(names []string, convert string) ([]apitypes.C
 // GetCoinGraphData gets coin graph data
 func (s *Service) GetCoinGraphData(convert, symbol string, name string, start int64, end int64) (apitypes.CoinGraph, error) {
 	ret := apitypes.CoinGraph{}
-	graphData, err := cmcv2.TickerGraph(&cmcv2.TickerGraphOptions{
-		Symbol: symbol,
-		Start:  start,
-		End:    end,
+	symbol = strings.ToUpper(symbol)
+	info, err := s.client.Cryptocurrency.Info(&cmc.InfoOptions{
+		Slug: name,
 	})
 	if err != nil {
 		return ret, err
 	}
-
-	ret.MarketCapByAvailableSupply = graphData.MarketCapByAvailableSupply
-	ret.PriceBTC = graphData.PriceBTC
-	ret.Price = graphData.PriceUSD
-	ret.Volume = graphData.VolumeUSD
+	var coinID string
+	if len(info) == 0 {
+		return ret, ErrFetchGraphData
+	}
+	for k := range info {
+		coinID = fmt.Sprintf("%v", info[k].ID)
+	}
+	if convert == "" {
+		convert = "usd"
+	}
+	convert = strings.ToUpper(convert)
+	interval := getChartInterval(start, end)
+	params := []string{
+		fmt.Sprintf("convert=%s,%s", convert, symbol),
+		"format=chart_crypto_details",
+		fmt.Sprintf("id=%s", coinID),
+		fmt.Sprintf("interval=%s", interval),
+		fmt.Sprintf("time_start=%v", start),
+		fmt.Sprintf("time_end=%v", end),
+	}
+	baseURL := "https://web-api.coinmarketcap.com/v1.1"
+	url := fmt.Sprintf("%s/cryptocurrency/quotes/historical?%s", baseURL, strings.Join(params, "&"))
+	resp, err := makeReq(url)
+	if err != nil {
+		return ret, err
+	}
+	var result map[string]interface{}
+	err = json.Unmarshal(resp, &result)
+	if err != nil {
+		return ret, err
+	}
+	data, ok := result["data"]
+	if !ok {
+		return ret, ErrFetchGraphData
+	}
+	ifcs, ok := data.(map[string]interface{})
+	if !ok {
+		return ret, ErrFetchGraphData
+	}
+	var prices [][]float64
+	for datetime, item := range ifcs {
+		ifc, ok := item.(map[string]interface{})
+		if !ok {
+			return ret, ErrFetchGraphData
+		}
+		for key, obj := range ifc {
+			if key != convert {
+				continue
+			}
+			arrIfc, ok := obj.([]interface{})
+			if !ok {
+				return ret, ErrFetchGraphData
+			}
+			if len(arrIfc) == 0 {
+				return ret, ErrFetchGraphData
+			}
+			val := arrIfc[0].(float64)
+			t, err := time.Parse(time.RFC3339, datetime)
+			if err != nil {
+				return ret, err
+			}
+			prices = append(prices, []float64{float64(t.Unix()), val})
+		}
+	}
+	sort.Slice(prices[:], func(i, j int) bool {
+		return prices[i][0] < prices[j][0]
+	})
+	ret.Price = prices
 	return ret, nil
 }
 
 // GetGlobalMarketGraphData gets global market graph data
 func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int64) (apitypes.MarketGraph, error) {
 	ret := apitypes.MarketGraph{}
-	graphData, err := cmcv2.GlobalMarketGraph(&cmcv2.GlobalMarketGraphOptions{
-		Start: start,
-		End:   end,
-	})
+	if convert == "" {
+		convert = "usd"
+	}
+	convert = strings.ToUpper(convert)
+	interval := getChartInterval(start, end)
+	params := []string{
+		fmt.Sprintf("convert=%s", convert),
+		"format=chart",
+		fmt.Sprintf("interval=%s", interval),
+		fmt.Sprintf("time_start=%v", start),
+		fmt.Sprintf("time_end=%v", end),
+	}
+	baseURL := "https://web-api.coinmarketcap.com/v1.1"
+	url := fmt.Sprintf("%s/global-metrics/quotes/historical?%s", baseURL, strings.Join(params, "&"))
+	resp, err := makeReq(url)
 	if err != nil {
 		return ret, err
 	}
-
-	ret.MarketCapByAvailableSupply = graphData.MarketCapByAvailableSupply
-	ret.VolumeUSD = graphData.VolumeUSD
+	var result map[string]interface{}
+	err = json.Unmarshal(resp, &result)
+	if err != nil {
+		return ret, err
+	}
+	data, ok := result["data"]
+	if !ok {
+		return ret, ErrFetchGraphData
+	}
+	mapIfc, ok := data.(map[string]interface{})
+	if !ok {
+		return ret, ErrFetchGraphData
+	}
+	var marketCap [][]float64
+	for datetime, item := range mapIfc {
+		arrIfc, ok := item.([]interface{})
+		if !ok {
+			return ret, ErrFetchGraphData
+		}
+		if len(arrIfc) == 0 {
+			return ret, ErrFetchGraphData
+		}
+		val := arrIfc[0].(float64)
+		t, err := time.Parse(time.RFC3339, datetime)
+		if err != nil {
+			return ret, err
+		}
+		marketCap = append(marketCap, []float64{float64(t.Unix()), val})
+	}
+	sort.Slice(marketCap[:], func(i, j int) bool {
+		return marketCap[i][0] < marketCap[j][0]
+	})
+	ret.MarketCapByAvailableSupply = marketCap
 	return ret, nil
 }
 
@@ -229,7 +339,6 @@ func (s *Service) CoinLink(name string) string {
 
 // SupportedCurrencies returns a list of supported currencies
 func (s *Service) SupportedCurrencies() []string {
-
 	// keep these in alphabetical order
 	return []string{
 		"AUD",
@@ -268,4 +377,56 @@ func (s *Service) SupportedCurrencies() []string {
 		"VND",
 		"ZAR",
 	}
+}
+
+// doReq does HTTP request with client
+func doReq(req *http.Request) ([]byte, error) {
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("%s", body)
+	}
+
+	return body, nil
+}
+
+// makeReq is an HTTP GET request helper
+func makeReq(url string) ([]byte, error) {
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := doReq(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, err
+}
+
+// getChartInterval returns the interval to use for given time range
+func getChartInterval(start, end int64) string {
+	interval := "15m"
+	delta := end - start
+	if delta >= 604800 {
+		interval = "1h"
+	}
+	if delta >= 2629746 {
+		interval = "1d"
+	}
+	if delta >= 604800 {
+		interval = "1h"
+	}
+	if delta >= 2592000 {
+		interval = "1d"
+	}
+	return interval
 }

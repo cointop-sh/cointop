@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -142,7 +143,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 			}
 			for i := range graphData.MarketCapByAvailableSupply {
 				price := graphData.MarketCapByAvailableSupply[i][1]
-				data = append(data, price/1e9)
+				data = append(data, price)
 			}
 		} else {
 			convert := ct.State.currencyConversion
@@ -150,9 +151,12 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 			if err != nil {
 				return nil
 			}
-
-			for i := range graphData.Price {
-				price := graphData.Price[i][1]
+			sorted := graphData.Price
+			sort.Slice(sorted[:], func(i, j int) bool {
+				return sorted[i][0] < sorted[j][0]
+			})
+			for i := range sorted {
+				price := sorted[i][1]
 				data = append(data, price)
 			}
 		}
@@ -230,8 +234,12 @@ func (ct *Cointop) PortfolioChart() error {
 				if err != nil {
 					return err
 				}
-				for i := range apiGraphData.Price {
-					price := apiGraphData.Price[i][1]
+				sorted := apiGraphData.Price
+				sort.Slice(sorted[:], func(i, j int) bool {
+					return sorted[i][0] < sorted[j][0]
+				})
+				for i := range sorted {
+					price := sorted[i][1]
 					graphData = append(graphData, price)
 				}
 			}
@@ -358,6 +366,7 @@ func (ct *Cointop) ToggleCoinChart() error {
 		ct.UpdateChart()
 	}()
 
+	// TODO: not do this (SoC)
 	go ct.UpdateMarketbar()
 
 	return nil

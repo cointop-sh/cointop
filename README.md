@@ -1008,6 +1008,12 @@ Frequently asked questions:
 
   - A: Run the command `cointop reset` to delete the config files and cache. Cointop will generate a new config when starting up. You can run `cointop --reset` to reset before running cointop.
 
+- Q: Why aren't <kbd>Home</kbd> or <kbd>End</kbd> keys working for me?
+
+  - A: Make sure to not manually set `TERM` in your `~/.bashrc`, `~/.zshrc`, or any where else. The `TERM` environment variable should be automatically set by your terminal, otherwise this may cause the terminal emulator to send escape codes when these keys are pressed. See [this Arch wiki](https://wiki.archlinux.org/index.php/Home_and_End_keys_not_working) for more info.
+
+  - A: Use the `cointop price` command. Here are some examples:
+
 - Q: What is the size of the binary?
 
   - A: The Go build size is ~8MB but packed with UPX it's only a ~3MB executable binary.
@@ -1040,8 +1046,7 @@ Frequently asked questions:
 
 - Q: Does cointop do mining?
 
-  - A: Cointop does not do any kind of mining.
-
+  - A: Cointop does not do any kind of cryptocurrency mining.
 
 - Q: How can I run the cointop SSH server on port 22?
 

@@ -11,7 +11,7 @@ require (
 	github.com/maruel/panicparse v1.5.0
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mattn/go-runewidth v0.0.9
-	github.com/miguelmota/go-coinmarketcap v0.1.6
+	github.com/miguelmota/go-coinmarketcap v0.1.7
 	github.com/miguelmota/gocui v0.4.2
 	github.com/miguelmota/termbox-go v0.0.0-20191229070316-58d4fcbce2a7
 	github.com/mitchellh/go-wordwrap v1.0.0

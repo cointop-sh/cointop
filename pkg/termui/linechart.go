@@ -198,7 +198,16 @@ func (lc *LineChart) calcLabelX() {
 }
 
 func shortenFloatVal(x float64) string {
-	s := fmt.Sprintf("%.2f", x)
+	if x > 1e12 {
+		return fmt.Sprintf("%.2fT", x/1e12)
+	}
+	if x > 1e9 {
+		return fmt.Sprintf("%.2fB", x/1e9)
+	}
+	if x > 1e6 {
+		return fmt.Sprintf("%.2fB", x/1e6)
+	}
+
 	//if len(s)-3 > 3 {
 	//s = fmt.Sprintf("%.2e", x)
 	//}
@@ -206,7 +215,7 @@ func shortenFloatVal(x float64) string {
 	//if x < 0 {
 	//s = fmt.Sprintf("%.2f", x)
 	//}
-	return s
+	return fmt.Sprintf("%.2f", x)
 }
 
 func (lc *LineChart) calcLabelY() {
@@ -217,7 +226,8 @@ func (lc *LineChart) calcLabelY() {
 	lc.labelY = make([][]rune, n)
 	maxLen := 0
 	for i := 0; i < n; i++ {
-		s := str2runes(shortenFloatVal(lc.bottomValue + float64(i)*span/float64(n)))
+		val := lc.bottomValue + float64(i)*span/float64(n)
+		s := str2runes(shortenFloatVal(val))
 		if len(s) > maxLen {
 			maxLen = len(s)
 		}
