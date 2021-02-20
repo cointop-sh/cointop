@@ -138,7 +138,18 @@ func (ct *Cointop) SortToggle(sortBy string, desc bool) error {
 func (ct *Cointop) Sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
 	ct.debuglog("sortfn()")
 	return func(g *gocui.Gui, v *gocui.View) error {
-		return ct.SortToggle(sortBy, desc)
+		coin := ct.HighlightedRowCoin()
+		err := ct.SortToggle(sortBy, desc)
+		if err != nil {
+			return err
+		}
+		if ct.State.keepRowFocusOnSort {
+			err = ct.GoToCoinRow(coin)
+			if err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 }
 

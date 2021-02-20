@@ -54,7 +54,7 @@ func (ct *Cointop) SetupConfig() error {
 	if err := ct.parseConfig(); err != nil {
 		return err
 	}
-	if err := ct.loadTableColumnsFromConfig(); err != nil {
+	if err := ct.loadTableConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadShortcutsFromConfig(); err != nil {
@@ -280,6 +280,8 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
 	tableMapIfc := map[string]interface{}{}
 	tableMapIfc["columns"] = coinsTableColumnsIfc
+	var keepRowFocusOnSortIfc interface{} = ct.State.keepRowFocusOnSort
+	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
 
 	var inputs = &config{
 		API:           apiChoiceIfc,
@@ -306,6 +308,20 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	return b.Bytes(), nil
 }
 
+// LoadTableConfig loads table config from toml config into state struct
+func (ct *Cointop) loadTableConfig() error {
+	err := ct.loadTableColumnsFromConfig()
+	if err != nil {
+		return err
+	}
+
+	keepRowFocusOnSortIfc, ok := ct.config.Table["keep_row_focus_on_sort"]
+	if ok {
+		ct.State.keepRowFocusOnSort = keepRowFocusOnSortIfc.(bool)
+	}
+	return nil
+}
+
 // LoadTableColumnsFromConfig loads preferred coins table columns from config file to struct
 func (ct *Cointop) loadTableColumnsFromConfig() error {
 	ct.debuglog("loadTableColumnsFromConfig()")
@@ -328,6 +344,7 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 			ct.State.coinsTableColumns = columns
 		}
 	}
+
 	return nil
 }
 

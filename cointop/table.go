@@ -63,10 +63,14 @@ func (ct *Cointop) RefreshTable() error {
 	}
 	ct.table.HideColumHeaders = true
 
-	// highlight last row if current row is out of bounds (can happen when switching views)
-	currentrow := ct.HighlightedRowIndex()
-	if len(ct.State.coins) > currentrow {
-		ct.HighlightRow(currentrow)
+	// highlight last row if current row is out of bounds (can happen when switching views).
+	// make sure to not highlight row when actively navigating, otherwise
+	// table will appear glitchy since this is method is async.
+	if ct.State.lastSelectedView != "" && ct.State.lastSelectedView != ct.State.selectedView {
+		currentRowIdx := ct.HighlightedRowIndex()
+		if len(ct.State.coins) > currentRowIdx {
+			ct.HighlightRow(currentRowIdx)
+		}
 	}
 
 	ct.UpdateUI(func() error {
@@ -161,7 +165,7 @@ func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 	return sliced
 }
 
-// HighlightedRowIndex returns the index of the highlighted row
+// HighlightedRowIndex returns the index of the highlighted row within the per-page limit
 func (ct *Cointop) HighlightedRowIndex() int {
 	ct.debuglog("HighlightedRowIndex()")
 	oy := ct.Views.Table.OriginY()

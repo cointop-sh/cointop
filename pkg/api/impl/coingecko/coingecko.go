@@ -33,7 +33,7 @@ func NewCoinGecko() *Service {
 	client := gecko.NewClient(nil)
 	svc := &Service{
 		client:            client,
-		maxResultsPerPage: 250,
+		maxResultsPerPage: 250, // max is 250
 		maxPages:          10,
 		cacheMap:          sync.Map{},
 	}

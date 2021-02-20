@@ -53,6 +53,7 @@ type State struct {
 	hideMarketbar              bool
 	hideChart                  bool
 	hideStatusbar              bool
+	keepRowFocusOnSort         bool
 	lastSelectedRowIndex       int
 	marketBarHeight            int
 	page                       int
@@ -197,6 +198,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	ct := &Cointop{
+		// defaults
 		apiChoice:      CoinGecko,
 		apiKeys:        new(APIKeys),
 		forceRefresh:   make(chan bool),
@@ -222,6 +224,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			hideMarketbar:         config.HideMarketbar,
 			hideChart:             config.HideChart,
 			hideStatusbar:         config.HideStatusbar,
+			keepRowFocusOnSort:    false,
 			marketBarHeight:       1,
 			onlyTable:             config.OnlyTable,
 			refreshRate:           60 * time.Second,

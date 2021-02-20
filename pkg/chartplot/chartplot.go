@@ -89,6 +89,9 @@ func (c *ChartPlot) GetChartPoints(width int) [][]rune {
 
 func interpolateData(data []float64, width int) []float64 {
 	var res []float64
+	if len(data) == 0 {
+		return res
+	}
 	stepFactor := float64(len(data)-1) / float64(width-1)
 	res = append(res, data[0])
 	for i := 1; i < width-1; i++ {
