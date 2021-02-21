@@ -27,6 +27,7 @@ vendor: deps
 debug:
 	DEBUG=1 go run main.go
 
+.PHONY: build
 build:
 	go build -ldflags "-X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop main.go
 
@@ -58,6 +59,16 @@ clean-linux:
 clean:
 	go clean && \
 	rm -rf bin/
+
+.PHONY: docs
+docs:
+	(cd docs && hugo)
+
+docs-server:
+	(cd docs && hugo serve -p 8080)
+
+docs-deploy: docs
+	netlify deploy --prod
 
 test:
 	go test ./...

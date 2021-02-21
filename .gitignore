@@ -56,3 +56,10 @@ build-dir
 # do not ignore .copr
 
 todo.txt
+
+docs/public
+deploy_docs.sh
+package-lock.json
+
+# Local Netlify folder
+.netlify

@@ -1,0 +1,7 @@
+baseURL = "https://docs.cointop.sh/"
+languageCode = "en-us"
+title = "Cointop Documentation"
+theme = "hugo-book"
+
+[markup.goldmark.renderer]
+unsafe = true
