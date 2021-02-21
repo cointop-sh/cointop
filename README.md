@@ -36,8 +36,9 @@ In action
 ## Table of Contents
 
 - [Features](#features)
-- [Installing](#installing)
-- [Updating](#updating)
+- [Documentation](#documentation)
+- [Install](#install)
+- [Update](#update)
 - [Getting started](#getting-started)
 - [Shortcuts](#shortcuts)
 - [Colorschemes](#colorschemes)
@@ -45,7 +46,6 @@ In action
 - [SSH server](#ssh-server)
 - [FAQ](#faq)
 - [Contributing](#contributing)
-- [Development](#development)
 - [Social](#social)
 - [Mentioned in](#mentioned-in)
 - [Tip Jar](#tip-jar)
@@ -72,47 +72,45 @@ In action
 - Works on macOS, Linux, and Windows
 - It's very lightweight; can be left running indefinitely
 
-## Installing
+## Documentation
 
-See [docs.cointop.sh/install](https://docs.cointop.sh/install).
+Documentation has been moved to [docs.cointop.sh](https://docs.cointop.sh/)
 
-## Updating
+Some helpful documentation links are provided below.
 
-See [docs.cointop.sh/update](https://docs.cointop.sh/update).
+## Install
 
-## Getting started
+See [docs.cointop.sh/install](https://docs.cointop.sh/install)
 
-See [docs.cointop.sh/getting-started](https://docs.cointop.sh/getting-started).
+## Update
+
+See [docs.cointop.sh/update](https://docs.cointop.sh/update)
 
 ## Shortcuts
 
-See [docs.cointop.sh/shortcuts](https://docs.cointop.sh/shortcuts).
+See [docs.cointop.sh/shortcuts](https://docs.cointop.sh/shortcuts)
 
 ## Colorschemes
 
-See [docs.cointop.sh/colorschemes](https://docs.cointop.sh/colorschemes).
+See [docs.cointop.sh/colorschemes](https://docs.cointop.sh/colorschemes)
 
 ## Config
 
-See [docs.cointop.sh/config](https://docs.cointop.sh/config).
+See [docs.cointop.sh/config](https://docs.cointop.sh/config)
 
 ## SSH Server
 
-See [docs.cointop.sh/ssh](https://docs.cointop.sh/ssh).
+See [docs.cointop.sh/ssh](https://docs.cointop.sh/ssh)
 
 ## FAQ
 
-See [docs.cointop.sh/faq](https://docs.cointop.sh/faq).
+See [docs.cointop.sh/faq](https://docs.cointop.sh/faq)
 
 ## Contributing
 
-See [docs.cointop.sh/contributing](https://docs.cointop.sh/contributing).
+See [docs.cointop.sh/contributing](https://docs.cointop.sh/contributing)
 
-## Development
-
-See [docs.cointop.sh/development](https://docs.cointop.sh/development).
-
-### Social
+## Social
 
 - Follow on twitter [@cointop](https://twitter.com/cointop)
 - Chat on [Telegram](https://telegram.me/cointopsh)
@@ -122,7 +120,7 @@ See [docs.cointop.sh/development](https://docs.cointop.sh/development).
 
 Cointop has been mentioned in:
 
-- [Ubuntu Twitter](https://twitter.com/ubuntu/status/985947962311311360?lang=en)
+- [@Ubuntu Twitter](https://twitter.com/ubuntu/status/985947962311311360?lang=en)
 - [Ubuntu Podcast](https://ubuntupodcast.org/2018/04/12/s11e06-six-feet-over-it/)
 - [Ubuntu Facebook](https://www.facebook.com/ubuntulinux/photos/coin-tracking-for-hackers-cointop-is-a-fast-and-easy-to-use-command-line-applica/10156147393253592/)
 - [Terminals Are Sexy](https://github.com/k4m4/terminals-are-sexy#tools-and-plugins)
