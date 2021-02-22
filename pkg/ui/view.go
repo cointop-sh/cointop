@@ -41,10 +41,19 @@ func (view *View) HasBacking() bool {
 	return view.backing != nil
 }
 
+// Size returns the view size
+func (view *View) Size() (int, int) {
+	if view.HasBacking() {
+		return view.backing.Size()
+	}
+
+	return 0, 0
+}
+
 // Height returns the view height
 func (view *View) Height() int {
 	if view.HasBacking() {
-		_, h := view.backing.Size()
+		_, h := view.Size()
 		return h
 	}
 
@@ -54,7 +63,7 @@ func (view *View) Height() int {
 // Width returns the view width
 func (view *View) Width() int {
 	if view.HasBacking() {
-		w, _ := view.backing.Size()
+		w, _ := view.Size()
 		return w
 	}
 
@@ -93,6 +102,10 @@ func (view *View) CursorY() int {
 // SetCursor sets the view's cursor
 func (view *View) SetCursor(x, y int) error {
 	if view.HasBacking() {
+		maxX, maxY := view.Size()
+		if x < 0 || x >= maxX || y < 0 || y >= maxY {
+			return nil
+		}
 		return view.backing.SetCursor(x, y)
 	}
 
@@ -131,6 +144,9 @@ func (view *View) OriginY() int {
 // SetOrigin sets the view's origin
 func (view *View) SetOrigin(x, y int) error {
 	if view.HasBacking() {
+		if x < 0 || y < 0 {
+			return nil
+		}
 		return view.backing.SetOrigin(x, y)
 	}
 

@@ -52,8 +52,13 @@ func (ct *Cointop) CursorDown() error {
 	}
 
 	cx, cy := ct.Views.Table.Cursor()
-	if err := ct.Views.Table.SetCursor(cx, cy+1); err != nil {
-		ox, oy := ct.Views.Table.Origin()
+	y := cy + 1
+	if err := ct.Views.Table.SetCursor(cx, y); err != nil {
+		return err
+	}
+	ox, oy := ct.Views.Table.Origin()
+	h := ct.Views.Table.Height()
+	if y < 0 || y >= h {
 		// set origin scrolls
 		if err := ct.Views.Table.SetOrigin(ox, oy+1); err != nil {
 			return err
@@ -73,8 +78,12 @@ func (ct *Cointop) CursorUp() error {
 
 	ox, oy := ct.Views.Table.Origin()
 	cx, cy := ct.Views.Table.Cursor()
-
-	if err := ct.Views.Table.SetCursor(cx, cy-1); err != nil && oy > 0 {
+	y := cy - 1
+	if err := ct.Views.Table.SetCursor(cx, y); err != nil {
+		return err
+	}
+	h := ct.Views.Table.Height()
+	if y < 0 || y >= h {
 		// set origin scrolls
 		if err := ct.Views.Table.SetOrigin(ox, oy-1); err != nil {
 			return err
@@ -180,16 +189,21 @@ func (ct *Cointop) NavigateLastLine() error {
 
 	ox := ct.Views.Table.OriginX()
 	cx := ct.Views.Table.CursorX()
-	sy := ct.Views.Table.Height()
 	l := ct.TableRowsLen()
-	k := l - sy
+	h := ct.Views.Table.Height()
+	h = int(math.Min(float64(h), float64(l)))
+	k := l - h
+	if k < 0 {
+		k = l
+	}
+	y := h - 1
+	if err := ct.Views.Table.SetCursor(cx, y); err != nil {
+		return err
+	}
+	// set origin scrolls
 	if err := ct.Views.Table.SetOrigin(ox, k); err != nil {
 		return err
 	}
-	if err := ct.Views.Table.SetCursor(cx, sy-1); err != nil {
-		return err
-	}
-
 	ct.RowChanged()
 	return nil
 }
@@ -329,7 +343,6 @@ func (ct *Cointop) IsFirstRow() bool {
 	ct.debuglog("isFirstRow()")
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
-
 	return (cy + oy) == 0
 }
 
@@ -339,7 +352,6 @@ func (ct *Cointop) IsLastRow() bool {
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
 	numRows := ct.TableRowsLen() - 1
-
 	return (cy + oy + 1) > numRows
 }
 
@@ -383,6 +395,9 @@ func (ct *Cointop) IsPageLastLine() bool {
 // GoToPageRowIndex navigates to the selected row index of the page
 func (ct *Cointop) GoToPageRowIndex(idx int) error {
 	ct.debuglog("goToPageRowIndex()")
+	if idx < 0 {
+		idx = 0
+	}
 	cx := ct.Views.Table.CursorX()
 	if err := ct.Views.Table.SetCursor(cx, idx); err != nil {
 		return err
@@ -394,10 +409,10 @@ func (ct *Cointop) GoToPageRowIndex(idx int) error {
 // GoToGlobalIndex navigates to the selected row index of all page rows
 func (ct *Cointop) GoToGlobalIndex(idx int) error {
 	ct.debuglog("goToGlobalIndex()")
-	perpage := ct.TotalPerPage()
-	atpage := idx / perpage
+	l := ct.TableRowsLen()
+	atpage := idx / l
 	ct.SetPage(atpage)
-	rowIndex := (idx % perpage)
+	rowIndex := (idx % l)
 	ct.HighlightRow(rowIndex)
 	ct.UpdateTable()
 	return nil
@@ -405,29 +420,30 @@ func (ct *Cointop) GoToGlobalIndex(idx int) error {
 
 // HighlightRow highlights the row at index within page
 func (ct *Cointop) HighlightRow(pageRowIndex int) error {
+	if pageRowIndex < 0 {
+		pageRowIndex = 0
+	}
 	ct.debuglog("highlightRow()")
 	ct.Views.Table.SetOrigin(0, 0)
 	ct.Views.Table.SetCursor(0, 0)
 	ox := ct.Views.Table.OriginX()
 	cx := ct.Views.Table.CursorX()
+	l := ct.TableRowsLen()
 	h := ct.Views.Table.Height()
-	perpage := ct.TotalPerPage()
+	h = int(math.Min(float64(h), float64(l)))
 	oy := 0
 	cy := 0
 	if h > 0 {
-		_ = perpage
 		cy = pageRowIndex % h
 		oy = pageRowIndex - cy
 		// end of page
-		if pageRowIndex >= perpage-h {
-			oy = perpage - h
-			cy = h - (perpage - pageRowIndex)
+		if pageRowIndex >= l-h {
+			oy = l - h
+			cy = h - (l - pageRowIndex)
 		}
 	}
 	ct.debuglog(fmt.Sprintf("highlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy))
-	if oy > 0 {
-		ct.Views.Table.SetOrigin(ox, oy)
-	}
+	ct.Views.Table.SetOrigin(ox, oy)
 	ct.Views.Table.SetCursor(cx, cy)
 	return nil
 }
@@ -438,14 +454,26 @@ func (ct *Cointop) GoToCoinRow(coin *Coin) error {
 	if coin == nil {
 		return nil
 	}
-	idx := ct.GetGlobalCoinIndex(coin)
+	idx := ct.GetCoinRowIndex(coin)
 	return ct.GoToGlobalIndex(idx)
 }
 
-// GetGlobalCoinIndex returns the index of the coin in from the coins list
+// GetGlobalCoinIndex returns the index of the coin in from the gloal coins list
 func (ct *Cointop) GetGlobalCoinIndex(coin *Coin) int {
 	var idx int
 	for i, v := range ct.State.allCoins {
+		if v == coin {
+			idx = i
+			break
+		}
+	}
+	return idx
+}
+
+// GetCoinRowIndex returns the index of the coin in from the visible coins list
+func (ct *Cointop) GetCoinRowIndex(coin *Coin) int {
+	var idx int
+	for i, v := range ct.State.coins {
 		if v == coin {
 			idx = i
 			break
@@ -552,6 +580,12 @@ func (ct *Cointop) MouseWheelDown() error {
 // TableRowsLen returns the number of table row entries
 func (ct *Cointop) TableRowsLen() int {
 	ct.debuglog("TableRowsLen()")
+	if ct.IsFavoritesVisible() {
+		return ct.FavoritesLen()
+	}
+	if ct.IsPortfolioVisible() {
+		return ct.PortfolioLen()
+	}
 	if ct.IsPriceAlertsVisible() {
 		return ct.ActivePriceAlertsLen()
 	}

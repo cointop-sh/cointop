@@ -77,3 +77,8 @@ func (ct *Cointop) GetFavoritesSlice() []*Coin {
 func (ct *Cointop) IsFavoritesVisible() bool {
 	return ct.State.selectedView == FavoritesView
 }
+
+// FavoritesLen returns the number of favorite coins
+func (ct *Cointop) FavoritesLen() int {
+	return len(ct.GetFavoritesSlice())
+}

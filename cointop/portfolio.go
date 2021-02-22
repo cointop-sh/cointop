@@ -286,14 +286,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 // TogglePortfolio toggles the portfolio view
 func (ct *Cointop) TogglePortfolio() error {
 	ct.debuglog("togglePortfolio()")
-	if ct.IsPortfolioVisible() {
-		ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
-	} else {
-		ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
-	}
-
 	ct.ToggleSelectedView(PortfolioView)
-
 	go ct.UpdateChart()
 	go ct.UpdateTable()
 	return nil
@@ -824,4 +817,9 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 // IsPortfolioVisible returns true if portfolio view is visible
 func (ct *Cointop) IsPortfolioVisible() bool {
 	return ct.State.selectedView == PortfolioView
+}
+
+// PortfolioLen returns the number of portfolio entries
+func (ct *Cointop) PortfolioLen() int {
+	return len(ct.GetPortfolioSlice())
 }

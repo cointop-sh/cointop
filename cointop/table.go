@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"math"
 	"net/url"
 	"strings"
 
@@ -62,16 +63,6 @@ func (ct *Cointop) RefreshTable() error {
 		}
 	}
 	ct.table.HideColumHeaders = true
-
-	// highlight last row if current row is out of bounds (can happen when switching views).
-	// make sure to not highlight row when actively navigating, otherwise
-	// table will appear glitchy since this is method is async.
-	if ct.State.lastSelectedView != "" && ct.State.lastSelectedView != ct.State.selectedView {
-		currentRowIdx := ct.HighlightedRowIndex()
-		if len(ct.State.coins) > currentRowIdx {
-			ct.HighlightRow(currentRowIdx)
-		}
-	}
 
 	ct.UpdateUI(func() error {
 		ct.Views.Table.Clear()
@@ -171,11 +162,12 @@ func (ct *Cointop) HighlightedRowIndex() int {
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
 	idx := oy + cy
+	l := ct.TableRowsLen()
+	if idx >= l {
+		idx = l - 1
+	}
 	if idx < 0 {
 		idx = 0
-	}
-	if idx >= len(ct.State.coins) {
-		idx = len(ct.State.coins) - 1
 	}
 	return idx
 }
@@ -273,9 +265,23 @@ func (ct *Cointop) SetSelectedView(viewName string) {
 
 // ToggleSelectedView toggles between current table view and last selected table view
 func (ct *Cointop) ToggleSelectedView(viewName string) {
+	if !(ct.IsPortfolioVisible() || ct.IsFavoritesVisible()) {
+		ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
+	}
 	if ct.State.lastSelectedView == "" || ct.State.selectedView != viewName {
 		ct.SetSelectedView(viewName)
 	} else {
 		ct.SetSelectedView(ct.State.lastSelectedView)
+	}
+
+	l := ct.TableRowsLen()
+	if ct.IsPortfolioVisible() || ct.IsFavoritesVisible() {
+		// highlight last row if current row is out of bounds (can happen when switching views).
+		currentRowIdx := ct.HighlightedRowIndex()
+		if currentRowIdx >= l-1 {
+			ct.HighlightRow(l - 1)
+		}
+	} else {
+		ct.GoToPageRowIndex(int(math.Min(float64(l-1), float64(ct.State.lastSelectedRowIndex))))
 	}
 }
