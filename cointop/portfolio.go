@@ -415,7 +415,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 		return nil
 	}
 
-	value := normalizeFloatString(string(b))
+	value := normalizeFloatString(string(b), true)
 	shouldDelete := value == ""
 	var holdings float64
 

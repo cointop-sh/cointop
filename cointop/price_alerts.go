@@ -403,7 +403,7 @@ func (ct *Cointop) ParsePriceAlertInput(value string) (string, float64, error) {
 		operator = matches[1]
 		amountValue = matches[2]
 	}
-	amountValue = normalizeFloatString(amountValue)
+	amountValue = normalizeFloatString(amountValue, false)
 	targetPrice, err := strconv.ParseFloat(amountValue, 64)
 	if err != nil {
 		return "", 0, err

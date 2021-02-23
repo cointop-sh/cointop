@@ -53,8 +53,11 @@ func (ct *Cointop) ClearSyncMap(syncMap sync.Map) {
 }
 
 // NormalizeFloatString normalizes a float as a string
-func normalizeFloatString(input string) string {
+func normalizeFloatString(input string, allowNegative bool) string {
 	re := regexp.MustCompile(`(\d+\.\d+|\.\d+|\d+)`)
+	if allowNegative {
+		re = regexp.MustCompile(`-?(\d+\.\d+|\.\d+|\d+)`)
+	}
 	result := re.FindStringSubmatch(input)
 	if len(result) > 0 {
 		return result[0]
