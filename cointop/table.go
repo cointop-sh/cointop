@@ -67,7 +67,9 @@ func (ct *Cointop) RefreshTable() error {
 	ct.UpdateUI(func() error {
 		ct.Views.Table.Clear()
 		if statusText == "" {
-			ct.table.Format().Fprint(ct.Views.Table.Backing())
+			if ct.Views.Table.HasBacking() {
+				ct.table.Format().Fprint(ct.Views.Table.Backing())
+			}
 		} else {
 			ct.Views.Table.Update(fmt.Sprintf("\n\n%s", statusText))
 		}
