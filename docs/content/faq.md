@@ -392,6 +392,14 @@ draft: false
   sudo cointop server -p 22
   ```
 
+## Does using the public SSH instance track me?
+
+  No, there's no tracking on the public SSH server instance. It's running the same code that you see on the public repo.
+
+## Why does the public SSH server kick me off?
+
+  The public SSH instance is for demo use or short-term usage and will disconnect users after an idle timeout to allow other users to try it out.
+
 ## Why doesn't the version number work when I install with `go get`?
 
   The version number is read from the git tag during the build process but this requires the `GO111MODULE` environment variable to be set in order for Go to read the build information:
