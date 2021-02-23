@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2] - 2021-02-12
+### Added
+- Add config option to keep row focus on sort
+
+## [1.6.1] - 2021-02-12
+### Fixed
+- Chart data interpolation
+- CoinMarketCap graph data endpoint
+
+### Added
+- Multiple coin support in price command
+
+## [1.6.0] - 2021-02-12
+### Fixed
+- Coin chart lookup
+- Dynamic column widths
+
+### Added
+- Configurable table columns
+- Basic price alerts
+
 ## [1.5.5] - 2020-11-15
 ### Fixed
 - Termux cache directory
