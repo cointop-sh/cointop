@@ -3,6 +3,7 @@ package coingecko
 import (
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 	"sync"
@@ -20,21 +21,40 @@ var ErrPingFailed = errors.New("failed to ping")
 // ErrNotFound is the error when the target is not found
 var ErrNotFound = errors.New("not found")
 
+// Config config
+type Config struct {
+	PerPage  uint
+	MaxPages uint
+}
+
 // Service service
 type Service struct {
 	client            *gecko.Client
-	maxResultsPerPage int
-	maxPages          int
+	maxResultsPerPage uint
+	maxPages          uint
 	cacheMap          sync.Map
 }
 
 // NewCoinGecko new service
-func NewCoinGecko() *Service {
+func NewCoinGecko(config *Config) *Service {
+	var maxResultsPerPage uint = 250 // absolute max
+	var maxResults uint = 0
+	var maxPages uint = 10
+	var perPage uint = 100
+	if config.PerPage > 0 {
+		perPage = config.PerPage
+	}
+	if config.MaxPages > 0 {
+		maxPages = config.MaxPages
+		maxResults = perPage * maxPages
+		maxPages = uint(math.Ceil(math.Max(float64(maxResults)/float64(maxResultsPerPage), 1)))
+	}
+
 	client := gecko.NewClient(nil)
 	svc := &Service{
 		client:            client,
-		maxResultsPerPage: 250, // max is 250
-		maxPages:          10,
+		maxResultsPerPage: uint(math.Min(float64(maxResults), float64(maxResultsPerPage))),
+		maxPages:          maxPages,
 		cacheMap:          sync.Map{},
 	}
 	svc.cacheCoinsIDList()
@@ -55,7 +75,7 @@ func (s *Service) GetAllCoinData(convert string, ch chan []apitypes.Coin) error 
 	go func() {
 		defer close(ch)
 
-		for i := 0; i < s.maxPages; i++ {
+		for i := 0; i < int(s.maxPages); i++ {
 			if i > 0 {
 				time.Sleep(1 * time.Second)
 			}
@@ -334,7 +354,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 	for i, name := range names {
 		ids[i] = s.coinNameToID(name)
 	}
-	list, err := s.client.CoinsMarket(convertTo, ids, order, s.maxResultsPerPage, page, sparkline, priceChangePercentage)
+	list, err := s.client.CoinsMarket(convertTo, ids, order, int(s.maxResultsPerPage), page, sparkline, priceChangePercentage)
 	if err != nil {
 		return nil, err
 	}

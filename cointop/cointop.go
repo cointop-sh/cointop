@@ -56,6 +56,7 @@ type State struct {
 	keepRowFocusOnSort         bool
 	lastSelectedRowIndex       int
 	marketBarHeight            int
+	maxPages                   int
 	page                       int
 	perPage                    int
 	portfolio                  *Portfolio
@@ -154,6 +155,7 @@ type Config struct {
 	OnlyTable           bool
 	RefreshRate         *uint
 	PerPage             uint
+	MaxPages            uint
 }
 
 // APIKeys is api keys structure
@@ -161,8 +163,20 @@ type APIKeys struct {
 	cmc string
 }
 
+// DefaultCurrency ...
+var DefaultCurrency = "USD"
+
+// DefaultChartRange ...
+var DefaultChartRange = "1Y"
+
+// DefaultSortBy ...
+var DefaultSortBy = "rank"
+
 // DefaultPerPage ...
 var DefaultPerPage uint = 100
+
+// MaxPages
+var DefaultMaxPages uint = 35
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"
@@ -193,8 +207,13 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	perPage := DefaultPerPage
-	if config.PerPage != 0 {
+	if config.PerPage > 0 {
 		perPage = config.PerPage
+	}
+
+	maxPages := DefaultMaxPages
+	if config.MaxPages > 0 {
+		maxPages = config.MaxPages
 	}
 
 	ct := &Cointop{
@@ -210,13 +229,13 @@ func NewCointop(config *Config) (*Cointop, error) {
 		chartRanges:    ChartRanges(),
 		debug:          debug,
 		chartRangesMap: ChartRangesMap(),
-		limiter:        time.Tick(2 * time.Second),
+		limiter:        time.NewTicker(2 * time.Second).C,
 		filecache:      nil,
 		State: &State{
 			allCoins:           []*Coin{},
 			cacheDir:           DefaultCacheDir,
 			coinsTableColumns:  DefaultCoinTableHeaders,
-			currencyConversion: "USD",
+			currencyConversion: DefaultCurrency,
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 			favoritesBySymbol:     make(map[string]bool),
 			favorites:             make(map[string]bool),
@@ -226,11 +245,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 			hideStatusbar:         config.HideStatusbar,
 			keepRowFocusOnSort:    false,
 			marketBarHeight:       1,
+			maxPages:              int(maxPages),
 			onlyTable:             config.OnlyTable,
 			refreshRate:           60 * time.Second,
-			selectedChartRange:    "1Y",
+			selectedChartRange:    DefaultChartRange,
 			shortcutKeys:          DefaultShortcuts(),
-			sortBy:                "rank",
+			sortBy:                DefaultSortBy,
 			page:                  0,
 			perPage:               int(perPage),
 			portfolio: &Portfolio{
@@ -346,7 +366,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 	if ct.apiChoice == CoinMarketCap {
 		ct.api = api.NewCMC(ct.apiKeys.cmc)
 	} else if ct.apiChoice == CoinGecko {
-		ct.api = api.NewCG()
+		ct.api = api.NewCG(perPage, maxPages)
 	} else {
 		return nil, ErrInvalidAPIChoice
 	}

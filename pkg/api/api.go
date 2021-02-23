@@ -16,6 +16,9 @@ func NewCC() {
 }
 
 // NewCG new CoinGecko API
-func NewCG() Interface {
-	return cg.NewCoinGecko()
+func NewCG(perPage, maxPages uint) Interface {
+	return cg.NewCoinGecko(&cg.Config{
+		PerPage:  perPage,
+		MaxPages: maxPages,
+	})
 }

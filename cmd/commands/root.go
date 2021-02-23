@@ -25,6 +25,7 @@ func RootCmd() *cobra.Command {
 	var apiChoice string
 	var colorscheme string
 	var perPage = cointop.DefaultPerPage
+	var maxPages = cointop.DefaultMaxPages
 	var cacheDir string
 	var colorsDir string
 
@@ -91,6 +92,7 @@ See git.io/cointop for more info.`,
 				OnlyTable:           onlyTable,
 				RefreshRate:         refreshRateP,
 				PerPage:             perPage,
+				MaxPages:            maxPages,
 			})
 			if err != nil {
 				return err
@@ -112,6 +114,7 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().BoolVarP(&noCache, "no-cache", "", false, "No cache")
 	rootCmd.Flags().UintVarP(&refreshRate, "refresh-rate", "r", 60, "Refresh rate in seconds. Set to 0 to not auto-refresh")
 	rootCmd.Flags().UintVarP(&perPage, "per-page", "", perPage, "Per page")
+	rootCmd.Flags().UintVarP(&maxPages, "max-pages", "", maxPages, "Max number of pages")
 	rootCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", "", "Set the CoinMarketCap API key")
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", "", "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
