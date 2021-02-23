@@ -14,7 +14,8 @@ import (
 func ServerCmd() *cobra.Command {
 	var port uint = 22
 	var address string = "0.0.0.0"
-	var idleTimeout uint = 60
+	var idleTimeout uint = 0
+	var maxTimeout uint = 0
 	var executableBinary string = "cointop"
 	var hostKeyFile string = cssh.DefaultHostKeyFile
 
@@ -27,6 +28,7 @@ func ServerCmd() *cobra.Command {
 				Address:          address,
 				Port:             port,
 				IdleTimeout:      time.Duration(int(idleTimeout)) * time.Second,
+				MaxTimeout:       time.Duration(int(maxTimeout)) * time.Second,
 				ExecutableBinary: executableBinary,
 				HostKeyFile:      hostKeyFile,
 			})
@@ -38,7 +40,8 @@ func ServerCmd() *cobra.Command {
 
 	serverCmd.Flags().UintVarP(&port, "port", "p", port, "Port")
 	serverCmd.Flags().StringVarP(&address, "address", "a", address, "Address")
-	serverCmd.Flags().UintVarP(&idleTimeout, "idle-timeout", "t", idleTimeout, "Idle timeout in seconds")
+	serverCmd.Flags().UintVarP(&idleTimeout, "idle-timeout", "t", idleTimeout, "Idle timeout in seconds. Default is 0 for no idle timeout")
+	serverCmd.Flags().UintVarP(&maxTimeout, "max-timeout", "m", maxTimeout, "Max timeout in seconds. Default is 0 for no max timeout")
 	serverCmd.Flags().StringVarP(&executableBinary, "binary", "b", executableBinary, "Executable binary path")
 	serverCmd.Flags().StringVarP(&hostKeyFile, "host-key-file", "k", hostKeyFile, "Host key file")
 

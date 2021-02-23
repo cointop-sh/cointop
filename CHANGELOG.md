@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.6.2] - 2021-02-12
 ### Added
-- Add config option to keep row focus on sort
+- Config option to keep row focus on sort
 
 ## [1.6.1] - 2021-02-12
 ### Fixed

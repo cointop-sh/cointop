@@ -29,6 +29,7 @@ type Config struct {
 	Port             uint
 	Address          string
 	IdleTimeout      time.Duration
+	MaxTimeout       time.Duration
 	ExecutableBinary string
 	HostKeyFile      string
 }
@@ -38,6 +39,7 @@ type Server struct {
 	port             uint
 	address          string
 	idleTimeout      time.Duration
+	maxTimeout       time.Duration
 	executableBinary string
 	sshServer        *ssh.Server
 	hostKeyFile      string
@@ -51,11 +53,11 @@ func NewServer(config *Config) *Server {
 	}
 
 	hostKeyFile = pathutil.NormalizePath(hostKeyFile)
-
 	return &Server{
 		port:             config.Port,
 		address:          config.Address,
 		idleTimeout:      config.IdleTimeout,
+		maxTimeout:       config.MaxTimeout,
 		executableBinary: config.ExecutableBinary,
 		hostKeyFile:      hostKeyFile,
 	}
@@ -66,6 +68,7 @@ func (s *Server) ListenAndServe() error {
 	s.sshServer = &ssh.Server{
 		Addr:        fmt.Sprintf("%s:%v", s.address, s.port),
 		IdleTimeout: s.idleTimeout,
+		MaxTimeout:  s.maxTimeout,
 		Handler: func(sshSession ssh.Session) {
 			cmdUserArgs := sshSession.Command()
 			ptyReq, winCh, isPty := sshSession.Pty()
