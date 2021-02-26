@@ -287,7 +287,6 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 	ct.debuglog("showPriceAlertsAddMenu()")
 	ct.SetSelectedView(PriceAlertsView)
-	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.UpdatePriceAlertsUpdateMenu(true)
 	ct.ui.SetCursor(true)
 	ct.SetActiveView(ct.Views.Menu.Name())
@@ -300,7 +299,6 @@ func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
 	ct.debuglog("showPriceAlertsUpdateMenu()")
 	ct.SetSelectedView(PriceAlertsView)
-	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.UpdatePriceAlertsUpdateMenu(false)
 	ct.ui.SetCursor(true)
 	ct.SetActiveView(ct.Views.Menu.Name())
@@ -357,14 +355,18 @@ func (ct *Cointop) CreatePriceAlert() error {
 	if err != nil {
 		return err
 	}
-
-	if err := ct.SetPriceAlert(coinName, operator, targetPrice); err != nil {
-		return err
+	shouldDelete := targetPrice == -1
+	if shouldDelete {
+		ct.RemovePriceAlert(ct.State.priceAlertEditID)
+	} else {
+		if err := ct.SetPriceAlert(coinName, operator, targetPrice); err != nil {
+			return err
+		}
 	}
 
 	ct.UpdateTable()
-	if isNew {
-		ct.GoToPageRowIndex(0)
+	if isNew || shouldDelete {
+		ct.HighlightRow(0)
 	}
 
 	return nil
@@ -383,6 +385,9 @@ func (ct *Cointop) ReadAndParsePriceAlertInput() (string, float64, error) {
 	}
 
 	inputValue := string(b)
+	if inputValue == "" {
+		return "", -1, nil
+	}
 	operator, targetPrice, err := ct.ParsePriceAlertInput(inputValue)
 	if err != nil {
 		return "", 0, err
@@ -404,6 +409,9 @@ func (ct *Cointop) ParsePriceAlertInput(value string) (string, float64, error) {
 		amountValue = matches[2]
 	}
 	amountValue = normalizeFloatString(amountValue, false)
+	if amountValue == "" {
+		return "", -1, nil
+	}
 	targetPrice, err := strconv.ParseFloat(amountValue, 64)
 	if err != nil {
 		return "", 0, err
@@ -449,6 +457,16 @@ func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice f
 	}
 
 	return nil
+}
+
+// RemovePriceAlert removes a price alert entry
+func (ct *Cointop) RemovePriceAlert(id string) {
+	ct.debuglog("removePriceAlert()")
+	for i, entry := range ct.State.priceAlerts.Entries {
+		if entry.ID == ct.State.priceAlertEditID {
+			ct.State.priceAlerts.Entries = append(ct.State.priceAlerts.Entries[:i], ct.State.priceAlerts.Entries[i+1:]...)
+		}
+	}
 }
 
 // ActivePriceAlerts returns the active price alerts

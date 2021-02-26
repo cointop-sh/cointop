@@ -368,7 +368,6 @@ func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 		return nil
 	}
 
-	ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
 	ct.State.portfolioUpdateMenuVisible = true
 	ct.UpdatePortfolioUpdateMenu()
 	ct.ui.SetCursor(true)
@@ -426,6 +425,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 		}
 	}
 
+	idx := ct.GetPortfolioCoinIndex(coin)
 	if err := ct.SetPortfolioEntry(coin.Name, holdings); err != nil {
 		return err
 	}
@@ -433,16 +433,21 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	if shouldDelete {
 		ct.RemovePortfolioEntry(coin.Name)
 		ct.UpdateTable()
+		if idx > 0 {
+			idx -= 1
+		}
 	} else {
 		ct.UpdateTable()
-		ct.GoToPageRowIndex(ct.State.lastSelectedRowIndex)
+		ct.ToggleShowPortfolio()
+		idx = ct.GetPortfolioCoinIndex(coin)
 	}
+
+	ct.HighlightRow(idx)
 
 	if err := ct.Save(); err != nil {
 		return err
 	}
 
-	ct.ToggleShowPortfolio()
 	return nil
 }
 
@@ -812,6 +817,25 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	fmt.Println(value)
 
 	return nil
+}
+
+// GetPortfolioCoinIndex returns the row index of coin in portfolio
+func (ct *Cointop) GetPortfolioCoinIndex(coin *Coin) int {
+	coins := ct.GetPortfolioSlice()
+	for i, c := range coins {
+		if c.ID == coin.ID {
+			return i
+		}
+	}
+	return 0
+}
+
+func (ct *Cointop) GetLastPortfolioRowIndex() int {
+	l := ct.PortfolioLen()
+	if l > 0 {
+		l -= 1
+	}
+	return l
 }
 
 // IsPortfolioVisible returns true if portfolio view is visible

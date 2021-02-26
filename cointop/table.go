@@ -2,7 +2,6 @@ package cointop
 
 import (
 	"fmt"
-	"math"
 	"net/url"
 	"strings"
 
@@ -176,6 +175,11 @@ func (ct *Cointop) HighlightedPageRowIndex() int {
 	return idx
 }
 
+// GetLastSelectedRowCoinIndex returns the index of the last selected row coin
+func (ct *Cointop) GetLastSelectedRowCoinIndex() int {
+	return ct.State.lastSelectedRowIndex
+}
+
 // RowLink returns the row url link
 func (ct *Cointop) RowLink() string {
 	ct.debuglog("RowLink()")
@@ -248,7 +252,7 @@ func (ct *Cointop) SetSelectedView(viewName string) {
 // ToggleSelectedView toggles between current table view and last selected table view
 func (ct *Cointop) ToggleSelectedView(viewName string) {
 	if !(ct.IsPortfolioVisible() || ct.IsFavoritesVisible()) {
-		ct.State.lastSelectedRowIndex = ct.HighlightedPageRowIndex()
+		ct.State.lastSelectedRowIndex = ct.HighlightedRowIndex()
 	}
 	if ct.State.lastSelectedView == "" || ct.State.selectedView != viewName {
 		ct.SetSelectedView(viewName)
@@ -264,6 +268,6 @@ func (ct *Cointop) ToggleSelectedView(viewName string) {
 			ct.HighlightRow(l - 1)
 		}
 	} else {
-		ct.GoToPageRowIndex(int(math.Min(float64(l-1), float64(ct.State.lastSelectedRowIndex))))
+		ct.HighlightRow(ct.State.lastSelectedRowIndex)
 	}
 }

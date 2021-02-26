@@ -282,3 +282,8 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 
 	return t
 }
+
+// TableCoinsLen returns the number of coins in coins table
+func (ct *Cointop) TableCoinsLen() int {
+	return len(ct.GetTableCoinsSlice())
+}

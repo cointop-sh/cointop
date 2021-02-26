@@ -589,6 +589,16 @@ func (ct *Cointop) TableRowsLen() int {
 	if ct.IsPriceAlertsVisible() {
 		return ct.ActivePriceAlertsLen()
 	}
+	return ct.TableCoinsLen()
+}
 
-	return len(ct.State.coins)
+// GetActiveTableSlice returns the rows slice for the active table
+func (ct *Cointop) GetActiveTableSlice() []*Coin {
+	if ct.IsFavoritesVisible() {
+		return ct.GetFavoritesSlice()
+	}
+	if ct.IsPortfolioVisible() {
+		return ct.GetPortfolioSlice()
+	}
+	return ct.GetTableCoinsSlice()
 }
