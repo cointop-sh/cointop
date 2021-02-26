@@ -18,26 +18,6 @@ func NewTableView() *TableView {
 	return view
 }
 
-// TableColumnOrder returns the default order of the table columns
-func TableColumnOrder() []string {
-	return []string{
-		"rank",
-		"name",
-		"symbol",
-		"price",
-		"holdings",
-		"balance",
-		"market_cap",
-		"24h_volume",
-		"1h_change",
-		"7d_change",
-		"total_supply",
-		"available_supply",
-		"percent_holdings",
-		"last_updated",
-	}
-}
-
 const dots = "..."
 
 // RefreshTable refreshes the table

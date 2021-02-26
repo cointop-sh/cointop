@@ -126,12 +126,8 @@ func NewTableHeaderView() *TableHeaderView {
 	return view
 }
 
-// UpdateTableHeader renders the table header
-func (ct *Cointop) UpdateTableHeader() error {
-	ct.debuglog("UpdateTableHeader()")
-
-	baseColor := ct.colorscheme.TableHeaderSprintf()
-	noSort := ct.IsPriceAlertsVisible()
+// GetActiveTableHeaders returns the list of active table headers
+func (ct *Cointop) GetActiveTableHeaders() []string {
 	var cols []string
 	switch ct.State.selectedView {
 	case PortfolioView:
@@ -141,7 +137,17 @@ func (ct *Cointop) UpdateTableHeader() error {
 	default:
 		cols = ct.GetCoinsTableHeaders()
 	}
+	return cols
+}
 
+// UpdateTableHeader renders the table header
+func (ct *Cointop) UpdateTableHeader() error {
+	ct.debuglog("UpdateTableHeader()")
+
+	baseColor := ct.colorscheme.TableHeaderSprintf()
+	noSort := ct.IsPriceAlertsVisible()
+
+	cols := ct.GetActiveTableHeaders()
 	var headers []string
 	for i, col := range cols {
 		hc, ok := HeaderColumns[col]

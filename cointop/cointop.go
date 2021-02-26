@@ -83,32 +83,31 @@ type State struct {
 
 // Cointop cointop
 type Cointop struct {
-	g                *gocui.Gui
-	ui               *ui.UI
-	ActionsMap       map[string]bool
-	apiKeys          *APIKeys
-	cache            *cache.Cache
-	colorsDir        string
-	config           config // toml config
-	configFilepath   string
-	api              api.Interface
-	apiChoice        string
-	chartRanges      []string
-	chartRangesMap   map[string]time.Duration
-	colorschemeName  string
-	colorscheme      *Colorscheme
-	debug            bool
-	filecache        *filecache.FileCache
-	forceRefresh     chan bool
-	limiter          <-chan time.Time
-	maxTableWidth    int
-	refreshMux       sync.Mutex
-	refreshTicker    *time.Ticker
-	saveMux          sync.Mutex
-	State            *State
-	table            *table.Table
-	TableColumnOrder []string
-	Views            *Views
+	g               *gocui.Gui
+	ui              *ui.UI
+	ActionsMap      map[string]bool
+	apiKeys         *APIKeys
+	cache           *cache.Cache
+	colorsDir       string
+	config          config // toml config
+	configFilepath  string
+	api             api.Interface
+	apiChoice       string
+	chartRanges     []string
+	chartRangesMap  map[string]time.Duration
+	colorschemeName string
+	colorscheme     *Colorscheme
+	debug           bool
+	filecache       *filecache.FileCache
+	forceRefresh    chan bool
+	limiter         <-chan time.Time
+	maxTableWidth   int
+	refreshMux      sync.Mutex
+	refreshTicker   *time.Ticker
+	saveMux         sync.Mutex
+	State           *State
+	table           *table.Table
+	Views           *Views
 }
 
 // PortfolioEntry is portfolio entry
@@ -266,7 +265,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 				SoundEnabled: true,
 			},
 		},
-		TableColumnOrder: TableColumnOrder(),
 		Views: &Views{
 			Chart:       NewChartView(),
 			Table:       NewTableView(),

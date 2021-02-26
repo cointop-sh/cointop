@@ -21,8 +21,8 @@ var SupportedCoinTableHeaders = []string{
 	"30d_change",
 	"24h_volume",
 	"market_cap",
-	"total_supply",
 	"available_supply",
+	"total_supply",
 	"last_updated",
 }
 
@@ -37,8 +37,8 @@ var DefaultCoinTableHeaders = []string{
 	"7d_change",
 	"24h_volume",
 	"market_cap",
-	"total_supply",
 	"available_supply",
+	"total_supply",
 	"last_updated",
 }
 

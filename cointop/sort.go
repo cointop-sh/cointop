@@ -94,13 +94,13 @@ func (ct *Cointop) SortDesc() error {
 // SortPrevCol sorts the previous column
 func (ct *Cointop) SortPrevCol() error {
 	ct.debuglog("sortPrevCol()")
+	cols := ct.GetActiveTableHeaders()
 	i := ct.GetSortColIndex()
 	k := i - 1
 	if k < 0 {
 		k = 0
 	}
-
-	nextsortBy := ct.TableColumnOrder[k]
+	nextsortBy := cols[k]
 	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
@@ -109,14 +109,14 @@ func (ct *Cointop) SortPrevCol() error {
 // SortNextCol sorts the next column
 func (ct *Cointop) SortNextCol() error {
 	ct.debuglog("sortNextCol()")
-	l := len(ct.TableColumnOrder)
+	cols := ct.GetActiveTableHeaders()
+	l := len(cols)
 	i := ct.GetSortColIndex()
 	k := i + 1
 	if k > l-1 {
 		k = l - 1
 	}
-
-	nextsortBy := ct.TableColumnOrder[k]
+	nextsortBy := cols[k]
 	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
@@ -156,7 +156,8 @@ func (ct *Cointop) Sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.
 // GetSortColIndex gets the sort column index
 func (ct *Cointop) GetSortColIndex() int {
 	ct.debuglog("getSortColIndex()")
-	for i, col := range ct.TableColumnOrder {
+	cols := ct.GetActiveTableHeaders()
+	for i, col := range cols {
 		if ct.State.sortBy == col {
 			return i
 		}
