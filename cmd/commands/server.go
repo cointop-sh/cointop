@@ -21,7 +21,7 @@ func ServerCmd() *cobra.Command {
 
 	serverCmd := &cobra.Command{
 		Use:   "server",
-		Short: "Run cintop SSH Server",
+		Short: "Run cointop SSH Server",
 		Long:  `Run cointop SSH server`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			server := cssh.NewServer(&cssh.Config{
