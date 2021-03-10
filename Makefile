@@ -97,6 +97,7 @@ snap-stage:
 snap-install:
 	sudo apt install snapd
 	sudo snap install snapcraft --classic
+	sudo snap install core20
 
 snap-install-arch:
 	yay -S snapd

@@ -15,7 +15,7 @@ parts:
       - git
     override-pull: |
       snapcraftctl pull
-      snapcraftctl set-version $(git rev-parse --short HEAD)
+      snapcraftctl set-version $(git describe --abbrev=0 --tags)
 
 apps:
   cointop:
