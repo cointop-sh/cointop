@@ -15,7 +15,7 @@ Make sure to have [go](https://golang.org/) (1.12+) installed, then do:
 go get github.com/miguelmota/cointop
 ```
 
-Make sure `$GOPATH/bin` is added to the `$PATH` variable.
+The cointop executable will be under `~/go/bin/cointop` so make sure `$GOPATH/bin` is added to the `$PATH` variable if not already.
 
 Now you can run cointop:
 
