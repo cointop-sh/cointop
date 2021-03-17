@@ -32,6 +32,7 @@ type Config struct {
 	MaxTimeout       time.Duration
 	ExecutableBinary string
 	HostKeyFile      string
+	MaxSessions      uint
 }
 
 // Server is server struct
@@ -43,6 +44,8 @@ type Server struct {
 	executableBinary string
 	sshServer        *ssh.Server
 	hostKeyFile      string
+	maxSessions      uint
+	sessionCount     uint
 }
 
 // NewServer returns a new server instance
@@ -60,6 +63,7 @@ func NewServer(config *Config) *Server {
 		maxTimeout:       config.MaxTimeout,
 		executableBinary: config.ExecutableBinary,
 		hostKeyFile:      hostKeyFile,
+		maxSessions:      config.MaxSessions,
 	}
 }
 
@@ -70,6 +74,18 @@ func (s *Server) ListenAndServe() error {
 		IdleTimeout: s.idleTimeout,
 		MaxTimeout:  s.maxTimeout,
 		Handler: func(sshSession ssh.Session) {
+			if s.maxSessions > 0 {
+				s.sessionCount++
+				defer func() {
+					s.sessionCount--
+				}()
+				if s.sessionCount > s.maxSessions {
+					io.WriteString(sshSession, "Error: Maximum sessions reached. Must wait until session slot is available.")
+					sshSession.Exit(1)
+					return
+				}
+			}
+
 			cmdUserArgs := sshSession.Command()
 			ptyReq, winCh, isPty := sshSession.Pty()
 			if !isPty {

@@ -238,5 +238,11 @@ docker-build-and-push: docker-build docker-push
 docker-run-ssh:
 	docker run -p 2222:22 -v ~/.ssh/demo:/keys --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
 
+ssh-server:
+	go run cmd/cointop/cointop.go server -p 2222
+
+ssh-client:
+	ssh localhost -p 2222
+
 mp3:
 	cat <(printf "package notifier\nfunc Mp3() string {\nreturn \`" "") <(xxd -p media/notification.mp3 | tr -d "\n") <(printf "\`\n}" "") > pkg/notifier/mp3.go
