@@ -55,6 +55,10 @@ build-dir
 # do not ignore .rpm
 # do not ignore .copr
 
+# AppImage
+*.AppImage
+.appimage_workspace
+
 todo.txt
 
 docs/public

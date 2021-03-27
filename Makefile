@@ -236,7 +236,7 @@ docker-push:
 docker-build-and-push: docker-build docker-push
 
 docker-run-ssh:
-	docker run -p 2222:22 -v ~/.ssh/demo:/keys --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
+	docker run -p 2222:22 -v ~/.ssh/demo:/keys -v ~/.cache/cointop:/tmp/cointop_config --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
 
 ssh-server:
 	go run cmd/cointop/cointop.go server -p 2222
@@ -246,3 +246,26 @@ ssh-client:
 
 mp3:
 	cat <(printf "package notifier\nfunc Mp3() string {\nreturn \`" "") <(xxd -p media/notification.mp3 | tr -d "\n") <(printf "\`\n}" "") > pkg/notifier/mp3.go
+
+pkg2appimage-install:
+	wget -c https://github.com/$(wget -q https://github.com/AppImage/pkg2appimage/releases -O - | grep "pkg2appimage-.*-x86_64.AppImage" | head -n 1 | cut -d '"' -f 2)
+	chmod +x pkg2appimage-*.AppImage
+
+appimage-clean-workspace:
+	rm -rf .appimage_workspace
+
+appimage-clean: appimage-clean-workspace
+	rm -rf *.AppImage
+
+.PHONY: appimage
+appimage: appimage-clean-workspace
+	( \
+		mkdir -p .appimage_workspace && \
+		mkdir -p dist/appimage && \
+		cd .appimage_workspace && \
+		../pkg2appimage-*.AppImage ../.appimage/cointop.yml && \
+		cp out/cointop-*.AppImage ../dist/appimage/ \
+	)
+
+appimage-run:
+	./dist/appimage/cointop-*.AppImage

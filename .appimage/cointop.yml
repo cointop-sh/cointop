@@ -1,0 +1,23 @@
+app: cointop
+
+ingredients:
+  script:
+    - LOGO_URL="https://raw.githubusercontent.com/miguelmota/cointop/master/assets/logos/cointop_icon.png"
+    - TAR_URL=$(wget -q "https://api.github.com/repos/miguelmota/cointop/releases/latest" -O - | grep -E "https.*cointop.*linux_amd64.tar.gz" | cut -d'"' -f4)
+    - wget -c $TAR_URL
+    - echo $TAR_URL | cut -d/ -f8 > VERSION
+    - tar zxvf cointop*tar.gz
+    - wget $LOGO_URL -O cointop.png
+
+script:
+  - cp ../cointop usr/bin
+  - cp ../cointop.png .
+  - cat > cointop.desktop <<EOF
+  - [Desktop Entry]
+  - Type=Application
+  - Name=cointop
+  - Icon=cointop
+  - Exec=cointop %u
+  - Categories=Utility
+  - Comment=An interactive terminal based UI application for tracking cryptocurrencies
+  - EOF
