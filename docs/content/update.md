@@ -57,3 +57,7 @@ sudo flatpak install flathub com.github.miguelmota.Cointop
 ```bash
 nix-env -uA nixpkgs.cointop
 ```
+
+## AppImage (Linux)
+
+Use the same [install](/install/#appimage-linux) instructions to update AppImage.

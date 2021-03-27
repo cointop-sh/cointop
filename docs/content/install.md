@@ -141,6 +141,28 @@ cointop is available as a [nixpkg](https://search.nixos.org/packages?channel=uns
 nix-env -iA nixpkgs.cointop
 ```
 
+## AppImage (Linux)
+
+You can download the AppImage from the [releases](https://github.com/miguelmota/cointop/releases) page.
+
+```bash
+VERSION=$(curl --silent "https://api.github.com/repos/miguelmota/cointop/releases/latest" | grep -Po --color=never '"tag_name": ".\K.*?(?=")')
+URL="https://github.com/miguelmota/cointop/releases/download/v$VERSION/cointop-v$VERSION.glibc2.32-x86_64.AppImage"
+wget $URL
+```
+
+Make AppImage executable:
+
+```bash
+chmod +x cointop-*.AppImage
+```
+
+Run AppImage:
+
+```bash
+./cointop-*.AppImage
+```
+
 ## FreshPorts (FreeBSD / OpenBSD)
 
 cointop is available as a [FreshPort](https://www.freshports.org/finance/cointop/) package.
