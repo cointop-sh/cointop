@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 	"syscall"
 	"time"
 	"unsafe"
@@ -24,6 +25,17 @@ import (
 // DefaultHostKeyFile is default SSH key path
 var DefaultHostKeyFile = "~/.ssh/id_rsa"
 
+// UserConfigTypePublicKey is constant
+var UserConfigTypePublicKey = "public-key"
+
+// UserConfigTypeUsername is constant
+var UserConfigTypeUsername = "username"
+
+// UserConfigTypeNone is constant
+var UserConfigTypeNone = "none"
+
+var UserConfigTypes = []string{UserConfigTypePublicKey, UserConfigTypeUsername, UserConfigTypeNone}
+
 // Config is config struct
 type Config struct {
 	Port             uint
@@ -33,6 +45,7 @@ type Config struct {
 	ExecutableBinary string
 	HostKeyFile      string
 	MaxSessions      uint
+	UserConfigType   string
 }
 
 // Server is server struct
@@ -46,6 +59,7 @@ type Server struct {
 	hostKeyFile      string
 	maxSessions      uint
 	sessionCount     uint
+	userConfigType   string
 }
 
 // NewServer returns a new server instance
@@ -54,7 +68,11 @@ func NewServer(config *Config) *Server {
 	if config.HostKeyFile != "" {
 		hostKeyFile = config.HostKeyFile
 	}
-
+	userConfigType := config.UserConfigType
+	if userConfigType == "" {
+		userConfigType = UserConfigTypePublicKey
+	}
+	validateUserConfigType(userConfigType)
 	hostKeyFile = pathutil.NormalizePath(hostKeyFile)
 	return &Server{
 		port:             config.Port,
@@ -64,6 +82,7 @@ func NewServer(config *Config) *Server {
 		executableBinary: config.ExecutableBinary,
 		hostKeyFile:      hostKeyFile,
 		maxSessions:      config.MaxSessions,
+		userConfigType:   userConfigType,
 	}
 }
 
@@ -95,17 +114,31 @@ func (s *Server) ListenAndServe() error {
 			}
 
 			configDir := ""
-			pubKey := sshSession.PublicKey()
-			if pubKey != nil {
-				pubBytes := pubKey.Marshal()
-				if len(pubBytes) > 0 {
-					hash := sha256.Sum256(pubBytes)
-					configDir = fmt.Sprintf("/tmp/cointop_config/%x", hash)
-					err := os.MkdirAll(configDir, 0700)
-					if err != nil {
-						fmt.Println(err)
-						return
+			configDirKey := ""
+
+			switch s.userConfigType {
+			case UserConfigTypePublicKey:
+				pubKey := sshSession.PublicKey()
+				if pubKey != nil {
+					pubBytes := pubKey.Marshal()
+					if len(pubBytes) > 0 {
+						hash := sha256.Sum256(pubBytes)
+						configDirKey = fmt.Sprintf("%x", hash)
 					}
+				}
+			case UserConfigTypeUsername:
+				user := sshSession.User()
+				if user != "" {
+					configDirKey = user
+				}
+			}
+
+			if configDirKey != "" {
+				configDir = fmt.Sprintf("/tmp/cointop_config/%s", configDirKey)
+				err := os.MkdirAll(configDir, 0700)
+				if err != nil {
+					fmt.Println(err)
+					return
 				}
 			}
 
@@ -208,4 +241,13 @@ func setWinsize(f *os.File, w, h int) {
 // createTempDir creates a temporary directory
 func createTempDir() (string, error) {
 	return ioutil.TempDir("", "")
+}
+
+func validateUserConfigType(userConfigType string) {
+	for _, validType := range UserConfigTypes {
+		if validType == userConfigType {
+			return
+		}
+	}
+	panic(fmt.Errorf("invalid user config type. Acceptable values are: %s", strings.Join(UserConfigTypes, ",")))
 }

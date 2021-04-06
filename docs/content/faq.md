@@ -400,6 +400,20 @@ draft: false
 
   The public SSH instance is for demo use or short-term usage and will disconnect users after an idle timeout to allow other users to try it out.
 
+## How do I fix the error `SSH key is required to start server` when trying to run SSH server?
+
+  Generate the SSH key if the host machine doesn't have one:
+
+  ```bash
+  $ ssh-keygen
+  ```
+
+  Make sure the host key flag points to the location of the SSH key:
+
+  ```bash
+  cointop server -k ~/.ssh/id_rsa [...]
+  ```
+
 ## Why doesn't the version number work when I install with `go get`?
 
   The version number is read from the git tag during the build process but this requires the `GO111MODULE` environment variable to be set in order for Go to read the build information:

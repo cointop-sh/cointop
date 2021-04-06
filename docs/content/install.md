@@ -189,6 +189,12 @@ cointop is available on [Docker Hub](https://hub.docker.com/r/cointop/cointop).
 docker run -it cointop/cointop
 ```
 
+Note: the config is under `/root/.config/cointop` in container, so attach a volume to make it persistent in host:
+
+```bash
+docker run -v ~/.cache/cointop:/root/.config/cointop -it cointop/cointop
+```
+
 ## Binaries
 
 You can find pre-built binaries on the [releases](https://github.com/miguelmota/cointop/releases) page.

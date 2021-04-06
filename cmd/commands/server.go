@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	cssh "github.com/miguelmota/cointop/pkg/ssh"
@@ -19,6 +20,7 @@ func ServerCmd() *cobra.Command {
 	var maxSessions uint = 0
 	var executableBinary string = "cointop"
 	var hostKeyFile string = cssh.DefaultHostKeyFile
+	var userConfigType string = cssh.UserConfigTypePublicKey
 
 	serverCmd := &cobra.Command{
 		Use:   "server",
@@ -33,6 +35,7 @@ func ServerCmd() *cobra.Command {
 				MaxSessions:      maxSessions,
 				ExecutableBinary: executableBinary,
 				HostKeyFile:      hostKeyFile,
+				UserConfigType:   userConfigType,
 			})
 
 			fmt.Printf("Running SSH server on port %v\n", port)
@@ -47,6 +50,7 @@ func ServerCmd() *cobra.Command {
 	serverCmd.Flags().UintVarP(&maxSessions, "max-sessions", "", maxSessions, "Max number of sessions allowed. Default is 0 for unlimited.")
 	serverCmd.Flags().StringVarP(&executableBinary, "binary", "b", executableBinary, "Executable binary path")
 	serverCmd.Flags().StringVarP(&hostKeyFile, "host-key-file", "k", hostKeyFile, "Host key file")
+	serverCmd.Flags().StringVarP(&userConfigType, "user-config-type", "", userConfigType, fmt.Sprintf("User config type. Options are: %s", strings.Join(cssh.UserConfigTypes, ",")))
 
 	return serverCmd
 }
