@@ -79,6 +79,7 @@ type State struct {
 	chartHeight                int
 	priceAlerts                *PriceAlerts
 	priceAlertEditID           string
+	priceAlertNewID            string
 }
 
 // Cointop cointop

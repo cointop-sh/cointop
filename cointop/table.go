@@ -157,10 +157,19 @@ func (ct *Cointop) HighlightedRowIndex() int {
 func (ct *Cointop) HighlightedRowCoin() *Coin {
 	ct.debuglog("HighlightedRowCoin()")
 	idx := ct.HighlightedRowIndex()
-	if len(ct.State.coins) == 0 {
+	coins := ct.State.coins
+	if ct.IsPriceAlertsVisible() {
+		rows := ct.ActivePriceAlerts()
+		for i, row := range rows {
+			if i == idx {
+				return ct.CoinByName(row.CoinName)
+			}
+		}
+	}
+	if len(coins) == 0 {
 		return nil
 	}
-	return ct.State.coins[idx]
+	return coins[idx]
 }
 
 // HighlightedPageRowIndex returns the index of page row of the highlighted row

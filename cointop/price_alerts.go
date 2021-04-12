@@ -227,26 +227,33 @@ func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
 }
 
 // UpdatePriceAlertsUpdateMenu updates the alerts update menu view
-func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
+func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
 	ct.debuglog("updatePriceAlertsUpdateMenu()")
 
-	exists := false
+	isEdit := false
 	var value string
 	var currentPrice string
-	var coinName string
 	ct.State.priceAlertEditID = ""
-	if !isNew && ct.IsPriceAlertsVisible() {
+	ct.State.priceAlertNewID = ""
+	if coin != nil {
+		if isNew {
+			ct.State.priceAlertNewID = coin.ID
+		} else {
+			ct.State.priceAlertEditID = coin.ID
+		}
+	}
+	if !isNew && ct.IsPriceAlertsVisible() && coin != nil {
 		rowIndex := ct.HighlightedRowIndex()
 		entry := ct.State.priceAlerts.Entries[rowIndex]
 		ifc, ok := ct.State.allCoinsSlugMap.Load(entry.CoinName)
 		if ok {
 			coin, ok := ifc.(*Coin)
 			if ok {
-				coinName = entry.CoinName
+				coin.Name = entry.CoinName
 				currentPrice = strconv.FormatFloat(coin.Price, 'f', -1, 64)
 				value = fmt.Sprintf("%s %v", entry.Operator, entry.TargetPrice)
 				ct.State.priceAlertEditID = entry.ID
-				exists = true
+				isEdit = true
 			}
 		}
 	}
@@ -255,14 +262,15 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 	var current string
 	var submitText string
 	var offset int
-	if exists {
+	if isEdit {
 		mode = "Edit"
 		current = fmt.Sprintf("(current %s%s)", ct.CurrencySymbol(), currentPrice)
 		submitText = "Set"
 		offset = ct.width() - 21
 	} else {
-		coin := ct.HighlightedRowCoin()
-		coinName = coin.Name
+		if coin == nil {
+			coin = ct.HighlightedRowCoin()
+		}
 		currentPrice = strconv.FormatFloat(coin.Price, 'f', -1, 64)
 		value = fmt.Sprintf("> %s", currentPrice)
 		mode = "Create"
@@ -270,7 +278,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 		offset = ct.width() - 23
 	}
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Alert Entry %s\n\n", mode, pad.Left("[q] close ", offset, " ")))
-	label := fmt.Sprintf(" Enter target price for %s %s", ct.colorscheme.MenuLabel(coinName), current)
+	label := fmt.Sprintf(" Enter target price for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), ct.State.currencyConversion, submitText)
 
 	ct.UpdateUI(func() error {
@@ -286,8 +294,9 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool) error {
 // ShowPriceAlertsAddMenu shows the alert add menu
 func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 	ct.debuglog("showPriceAlertsAddMenu()")
+	coin := ct.HighlightedRowCoin()
 	ct.SetSelectedView(PriceAlertsView)
-	ct.UpdatePriceAlertsUpdateMenu(true)
+	ct.UpdatePriceAlertsUpdateMenu(true, coin)
 	ct.ui.SetCursor(true)
 	ct.SetActiveView(ct.Views.Menu.Name())
 	ct.g.SetViewOnTop(ct.Views.Input.Name())
@@ -298,8 +307,9 @@ func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 // ShowPriceAlertsUpdateMenu shows the alerts update menu
 func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
 	ct.debuglog("showPriceAlertsUpdateMenu()")
+	coin := ct.HighlightedRowCoin()
 	ct.SetSelectedView(PriceAlertsView)
-	ct.UpdatePriceAlertsUpdateMenu(false)
+	ct.UpdatePriceAlertsUpdateMenu(false, coin)
 	ct.ui.SetCursor(true)
 	ct.SetActiveView(ct.Views.Menu.Name())
 	ct.g.SetViewOnTop(ct.Views.Input.Name())
@@ -337,28 +347,32 @@ func (ct *Cointop) EnterKeyPressHandler() error {
 func (ct *Cointop) CreatePriceAlert() error {
 	ct.debuglog("createPriceAlert()")
 	defer ct.HidePriceAlertsUpdateMenu()
-	var coinName string
 
-	isNew := ct.State.priceAlertEditID == ""
-	if isNew {
-		coin := ct.HighlightedRowCoin()
-		coinName = coin.Name
-	} else {
-		for i, entry := range ct.State.priceAlerts.Entries {
-			if entry.ID == ct.State.priceAlertEditID {
-				coinName = ct.State.priceAlerts.Entries[i].CoinName
-			}
-		}
-	}
-
+	isNew := ct.State.priceAlertNewID != ""
 	operator, targetPrice, err := ct.ReadAndParsePriceAlertInput()
 	if err != nil {
 		return err
 	}
 	shouldDelete := targetPrice == -1
 	if shouldDelete {
-		ct.RemovePriceAlert(ct.State.priceAlertEditID)
+		if ct.State.priceAlertEditID != "" {
+			err := ct.RemovePriceAlert(ct.State.priceAlertEditID)
+			if err != nil {
+				return err
+			}
+		}
 	} else {
+		var coinName string
+		if isNew {
+			coin := ct.CoinByID(ct.State.priceAlertNewID)
+			coinName = coin.Name
+		} else {
+			for i, entry := range ct.State.priceAlerts.Entries {
+				if entry.ID == ct.State.priceAlertEditID {
+					coinName = ct.State.priceAlerts.Entries[i].CoinName
+				}
+			}
+		}
 		if err := ct.SetPriceAlert(coinName, operator, targetPrice); err != nil {
 			return err
 		}
@@ -455,18 +469,21 @@ func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice f
 	if err := ct.Save(); err != nil {
 		return err
 	}
-
 	return nil
 }
 
 // RemovePriceAlert removes a price alert entry
-func (ct *Cointop) RemovePriceAlert(id string) {
+func (ct *Cointop) RemovePriceAlert(id string) error {
 	ct.debuglog("removePriceAlert()")
 	for i, entry := range ct.State.priceAlerts.Entries {
 		if entry.ID == ct.State.priceAlertEditID {
 			ct.State.priceAlerts.Entries = append(ct.State.priceAlerts.Entries[:i], ct.State.priceAlerts.Entries[i+1:]...)
 		}
 	}
+	if err := ct.Save(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // ActivePriceAlerts returns the active price alerts

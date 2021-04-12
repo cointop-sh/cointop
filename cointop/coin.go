@@ -61,6 +61,29 @@ func (ct *Cointop) CoinBySymbol(symbol string) *Coin {
 			return coin
 		}
 	}
+	return nil
+}
 
+// CoinByName returns the coin struct given the name
+func (ct *Cointop) CoinByName(name string) *Coin {
+	ct.debuglog("CoinByName()")
+	for i := range ct.State.allCoins {
+		coin := ct.State.allCoins[i]
+		if coin.Name == name {
+			return coin
+		}
+	}
+	return nil
+}
+
+// CoinByID returns the coin struct given the ID
+func (ct *Cointop) CoinByID(id string) *Coin {
+	ct.debuglog("CoinByID()")
+	for i := range ct.State.allCoins {
+		coin := ct.State.allCoins[i]
+		if coin.ID == id {
+			return coin
+		}
+	}
 	return nil
 }
