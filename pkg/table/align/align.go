@@ -3,35 +3,39 @@ package align
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 )
 
 // AlignLeft align left
 func AlignLeft(s string, n int) string {
-	if len(s) > n {
+	slen := utf8.RuneCountInString(s)
+	if slen > n {
 		return s[:n]
 	}
 
-	return fmt.Sprintf("%s%s", s, strings.Repeat(" ", n-len(s)))
+	return fmt.Sprintf("%s%s", s, strings.Repeat(" ", n-slen))
 }
 
 // AlignRight align right
 func AlignRight(s string, n int) string {
-	if len(s) > n {
+	slen := utf8.RuneCountInString(s)
+	if slen > n {
 		return s[:n]
 	}
 
-	return fmt.Sprintf("%s%s", strings.Repeat(" ", n-len(s)), s)
+	return fmt.Sprintf("%s%s", strings.Repeat(" ", n-slen), s)
 }
 
 // AlignCenter align center
 func AlignCenter(s string, n int) string {
-	if len(s) > n {
+	slen := utf8.RuneCountInString(s)
+	if slen > n {
 		return s[:n]
 	}
 
-	pad := (n - len(s)) / 2
+	pad := (n - slen) / 2
 	lpad := pad
-	rpad := n - len(s) - lpad
+	rpad := n - slen - lpad
 
 	return fmt.Sprintf("%s%s%s", strings.Repeat(" ", lpad), s, strings.Repeat(" ", rpad))
 }
