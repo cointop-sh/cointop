@@ -12,12 +12,14 @@ func HoldingsCmd() *cobra.Command {
 	var help bool
 	var total bool
 	var noCache bool
+	var noHeader bool
 	var config string
 	var sortBy string
 	var sortDesc bool
 	var format string = "table"
 	var humanReadable bool
 	var filter []string
+	var cols []string
 	var convert string
 
 	holdingsCmd := &cobra.Command{
@@ -52,7 +54,9 @@ func HoldingsCmd() *cobra.Command {
 				HumanReadable: humanReadable,
 				Format:        format,
 				Filter:        filter,
+				Cols:          cols,
 				Convert:       convert,
+				NoHeader:      noHeader,
 			})
 		},
 	}
@@ -61,11 +65,13 @@ func HoldingsCmd() *cobra.Command {
 	holdingsCmd.Flags().BoolVarP(&total, "total", "t", total, "Show total only")
 	holdingsCmd.Flags().BoolVarP(&noCache, "no-cache", "", noCache, "No cache")
 	holdingsCmd.Flags().BoolVarP(&humanReadable, "human", "h", humanReadable, "Human readable output")
+	holdingsCmd.Flags().BoolVarP(&noHeader, "no-header", "", noHeader, "Don't display header columns")
 	holdingsCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	holdingsCmd.Flags().StringVarP(&sortBy, "sort-by", "s", sortBy, `Sort by column. Options are "name", "symbol", "price", "holdings", "balance", "24h"`)
 	holdingsCmd.Flags().BoolVarP(&sortDesc, "sort-desc", "d", sortDesc, "Sort in descending order")
 	holdingsCmd.Flags().StringVarP(&format, "format", "", format, `Ouput format. Options are "table", "csv", "json"`)
-	holdingsCmd.Flags().StringSliceVarP(&filter, "filter", "", filter, `Filter portfolio entries by coin name or symbol, comma separated. Example: "btc,eth,doge"`)
+	holdingsCmd.Flags().StringSliceVarP(&filter, "filter", "", filter, `Filter portfolio entries by coin name or symbol, comma separated without spaces. Example: "btc,eth,doge"`)
+	holdingsCmd.Flags().StringSliceVarP(&cols, "cols", "", cols, `Filter portfolio columns, comma separated without spaces. Example: "symbol,holdings,balance"`)
 	holdingsCmd.Flags().StringVarP(&convert, "convert", "f", convert, "The currency to convert to")
 
 	return holdingsCmd

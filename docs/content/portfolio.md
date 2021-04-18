@@ -87,6 +87,19 @@ Ethereum        ETH       394.48             100           39448        -0.18   
 
 ```bash
 $ cointop holdings --cols symbol,holdings,balance
+symbol  holdings        balance
+BTC           10       118331.6
+ETH          100          39490
+DOGE      500000         1779.3
+```
+
+### Output without headers
+
+```bash
+$ cointop holdings --no-header
+Bitcoin         BTC      $11,833.16           10        $118,331.6      -1.02%     74.14%
+Ethereum        ETH          $394.9          100           $39,490       0.02%     24.74%
+Dogecoin        DOGE    $0.00355861      500,000          $1,779.3       1.46%      1.11%
 ```
 
 ### Convert to a different fiat currency
@@ -95,6 +108,13 @@ $ cointop holdings --cols symbol,holdings,balance
 $ cointop holdings -h --convert eur
     name        symbol    price holdings        balance    24h% %holdings
 Ethereum        ETH     €278.49      100        €27,849 -15.87%   100.00%
+```
+
+### Total portfolio value
+
+```bash
+$ cointop holdings --total
+3671.32
 ```
 
 ### Combining flags
