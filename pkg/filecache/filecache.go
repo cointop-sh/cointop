@@ -21,12 +21,14 @@ var DefaultCacheDir = "/tmp"
 // FileCache ...
 type FileCache struct {
 	muts     map[string]*sync.Mutex
+	prefix   string
 	cacheDir string
 }
 
 // Config ...
 type Config struct {
 	CacheDir string
+	Prefix   string
 }
 
 // NewFileCache ...
@@ -39,7 +41,6 @@ func NewFileCache(config *Config) (*FileCache, error) {
 	if config.CacheDir != "" {
 		cacheDir = config.CacheDir
 	}
-
 	if _, err := os.Stat(cacheDir); os.IsNotExist(err) {
 		if err := os.MkdirAll(cacheDir, 0700); err != nil {
 			return nil, err
@@ -49,6 +50,7 @@ func NewFileCache(config *Config) (*FileCache, error) {
 	return &FileCache{
 		muts:     make(map[string]*sync.Mutex),
 		cacheDir: cacheDir,
+		prefix:   config.Prefix,
 	}, nil
 }
 
@@ -62,7 +64,11 @@ func (f *FileCache) Set(key string, data interface{}, expire time.Duration) erro
 	defer f.muts[key].Unlock()
 
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
-	file := fmt.Sprintf("fcache.%s.%v", key, strconv.FormatInt(time.Now().Add(expire).Unix(), 10))
+	var prefix string
+	if f.prefix != "" {
+		prefix = fmt.Sprintf("%s.", f.prefix)
+	}
+	file := fmt.Sprintf("fcache.%s%s.%v", prefix, key, strconv.FormatInt(time.Now().Add(expire).Unix(), 10))
 	fpath := filepath.Join(f.cacheDir, file)
 
 	f.clean(key)
@@ -91,7 +97,11 @@ func (f *FileCache) Set(key string, data interface{}, expire time.Duration) erro
 // Get reads item from cache
 func (f *FileCache) Get(key string, dst interface{}) error {
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
-	pattern := filepath.Join(f.cacheDir, fmt.Sprintf("fcache.%s.*", key))
+	var prefix string
+	if f.prefix != "" {
+		prefix = fmt.Sprintf("%s.", f.prefix)
+	}
+	pattern := filepath.Join(f.cacheDir, fmt.Sprintf("fcache.%s%s.*", prefix, key))
 	files, err := filepath.Glob(pattern)
 	if len(files) < 1 || err != nil {
 		return errors.New("fcache: no cache file found")
