@@ -6,12 +6,13 @@ ARG VERSION
 
 COPY . ./
 RUN go build -ldflags=-s -ldflags=-w -ldflags=-X=github.com/miguelmota/cointop/cointop.version=$VERSION -o main .
-RUN git clone https://github.com/cointop-sh/colors && rm -Rf colors/.git*
+ADD https://github.com/cointop-sh/colors/archive/master.tar.gz ./
+RUN tar zxf master.tar.gz --exclude images
 
 FROM busybox:glibc
 RUN mkdir -p /etc/ssl
 COPY --from=build /etc/ssl/certs/ /etc/ssl/certs
 COPY --from=build /app/main /bin/cointop
-COPY --from=build /app/colors /root/.config/cointop/colors
+COPY --from=build /app/colors-master /root/.config/cointop/colors
 ENTRYPOINT ["/bin/cointop"]
 CMD []
