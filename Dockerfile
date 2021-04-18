@@ -13,5 +13,5 @@ RUN mkdir -p /etc/ssl
 COPY --from=build /etc/ssl/certs/ /etc/ssl/certs
 COPY --from=build /app/main /bin/cointop
 COPY --from=build /app/colors /root/.config/cointop/colors
-ENTRYPOINT cointop
+ENTRYPOINT ["/bin/cointop"]
 CMD []
