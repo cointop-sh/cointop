@@ -1,0 +1,8 @@
+**
+!go.*
+!*.go
+!assets
+!cmd
+!cointop
+!pkg
+!vendor

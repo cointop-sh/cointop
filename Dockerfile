@@ -4,7 +4,7 @@ RUN mkdir /app
 WORKDIR /app
 ARG VERSION
 
-ADD . /app/
+COPY . ./
 RUN go build -ldflags=-s -ldflags=-w -ldflags=-X=github.com/miguelmota/cointop/cointop.version=$VERSION -o main .
 RUN git clone https://github.com/cointop-sh/colors && rm -Rf colors/.git*
 
