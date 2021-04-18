@@ -78,18 +78,20 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 			rightMargin := 1
 			switch header {
 			case "rank":
-				star := ct.colorscheme.TableRow(" ")
+				star := " "
+				rankcolor := ct.colorscheme.TableRow
 				if coin.Favorite {
-					star = ct.colorscheme.TableRowFavorite("*")
+					star = "*"
+					rankcolor = ct.colorscheme.TableRowFavorite
 				}
-				rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
+				rank := fmt.Sprintf("%s%6v ", star, coin.Rank)
 				ct.SetTableColumnWidth(header, 8)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells, &table.RowCell{
 					LeftMargin:  leftMargin,
 					RightMargin: rightMargin,
 					LeftAlign:   false,
-					Color:       ct.colorscheme.Default,
+					Color:       rankcolor,
 					Text:        rank,
 				})
 			case "name":
