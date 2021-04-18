@@ -27,5 +27,3 @@ require (
 )
 
 go 1.13
-
-replace github.com/miguelmota/cointop/pkg/humanize => ./pkg/humanize
