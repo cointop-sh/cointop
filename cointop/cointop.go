@@ -1,6 +1,7 @@
 package cointop
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -307,8 +308,11 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	if !config.NoCache {
+		// each custom config file has it's own file cache
+		hash := sha256.Sum256([]byte(ct.ConfigFilePath()))
 		fcache, err := filecache.NewFileCache(&filecache.Config{
 			CacheDir: ct.State.cacheDir,
+			Prefix:   fmt.Sprintf("%x", hash[0:4]),
 		})
 		if err != nil {
 			fmt.Printf("error: %s\nyou may change the cache directory with --cache-dir flag.\nproceeding without filecache.\n", err)

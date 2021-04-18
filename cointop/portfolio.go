@@ -591,7 +591,9 @@ type TablePrintOptions struct {
 	HumanReadable bool
 	Format        string
 	Filter        []string
+	Cols          []string
 	Convert       string
+	NoHeader      bool
 }
 
 // outputFormats is list of valid output formats
@@ -628,8 +630,10 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	sortDesc := options.SortDesc
 	format := options.Format
 	humanReadable := options.HumanReadable
-	filter := options.Filter
+	filterCoins := options.Filter
+	filterCols := options.Cols
 	holdings := ct.GetPortfolioSlice()
+	noHeader := options.NoHeader
 
 	if format == "" {
 		format = "table"
@@ -651,10 +655,41 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	records := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
 
+	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
+	if len(filterCols) > 0 {
+		for _, col := range filterCols {
+			valid := false
+			for _, h := range headers {
+				if col == h {
+					valid = true
+					break
+				}
+			}
+			switch col {
+			case "amount":
+				return fmt.Errorf("did you mean %q?", "balance")
+			case "24H":
+				fallthrough
+			case "24H%":
+				fallthrough
+			case "24h":
+				fallthrough
+			case "24h_change":
+				return fmt.Errorf("did you mean %q?", "24h%")
+			case "percent_holdings":
+				return fmt.Errorf("did you mean %q?", "%holdings")
+			}
+			if !valid {
+				return fmt.Errorf("unsupported column value %q", col)
+			}
+		}
+		headers = filterCols
+	}
+
 	for i, entry := range holdings {
-		if len(filter) > 0 {
+		if len(filterCoins) > 0 {
 			found := false
-			for _, item := range filter {
+			for _, item := range filterCoins {
 				item = strings.ToLower(strings.TrimSpace(item))
 				if strings.ToLower(entry.Symbol) == item || strings.ToLower(entry.Name) == item {
 					found = true
@@ -671,35 +706,54 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 			percentHoldings = 0
 		}
 
-		if humanReadable {
-			records[i] = []string{
-				entry.Name,
-				entry.Symbol,
-				fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Price, 2)),
-				humanize.Numericf(entry.Holdings, 2),
-				fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Balance, 2)),
-				humanize.Numericf(entry.PercentChange24H, 2),
-				humanize.Numericf(percentHoldings, 2),
-			}
-		} else {
-			records[i] = []string{
-				entry.Name,
-				entry.Symbol,
-				strconv.FormatFloat(entry.Price, 'f', -1, 64),
-				strconv.FormatFloat(entry.Holdings, 'f', -1, 64),
-				strconv.FormatFloat(entry.Balance, 'f', -1, 64),
-				fmt.Sprintf("%.2f", entry.PercentChange24H),
-				fmt.Sprintf("%.2f", percentHoldings),
+		item := make([]string, len(headers))
+		for i, header := range headers {
+			switch header {
+			case "name":
+				item[i] = entry.Name
+			case "symbol":
+				item[i] = entry.Symbol
+			case "price":
+				if humanReadable {
+					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Price, 2))
+				} else {
+					item[i] = strconv.FormatFloat(entry.Price, 'f', -1, 64)
+				}
+			case "holdings":
+				if humanReadable {
+					item[i] = humanize.Monetaryf(entry.Holdings, 2)
+				} else {
+					item[i] = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
+				}
+			case "balance":
+				if humanReadable {
+					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Balance, 2))
+				} else {
+					item[i] = strconv.FormatFloat(entry.Balance, 'f', -1, 64)
+				}
+			case "24h%":
+				if humanReadable {
+					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(entry.PercentChange24H, 2))
+				} else {
+					item[i] = fmt.Sprintf("%.2f", entry.PercentChange24H)
+				}
+			case "%holdings":
+				if humanReadable {
+					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(percentHoldings, 2))
+				} else {
+					item[i] = fmt.Sprintf("%.2f", percentHoldings)
+				}
 			}
 		}
+		records[i] = item
 	}
-
-	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
 
 	if format == "csv" {
 		csvWriter := csv.NewWriter(os.Stdout)
-		if err := csvWriter.Write(headers); err != nil {
-			return err
+		if !noHeader {
+			if err := csvWriter.Write(headers); err != nil {
+				return err
+			}
 		}
 
 		for _, record := range records {
@@ -715,19 +769,28 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 
 		return nil
 	} else if format == "json" {
-		list := make([]map[string]string, len(records))
-		for i, record := range records {
-			obj := make(map[string]string, len(record))
-			for j, column := range record {
-				obj[headers[j]] = column
+		var output []byte
+		var err error
+		if noHeader {
+			output, err = json.Marshal(records)
+			if err != nil {
+				return err
+			}
+		} else {
+			list := make([]map[string]string, len(records))
+			for i, record := range records {
+				obj := make(map[string]string, len(record))
+				for j, column := range record {
+					obj[headers[j]] = column
+				}
+
+				list[i] = obj
 			}
 
-			list[i] = obj
-		}
-
-		output, err := json.Marshal(list)
-		if err != nil {
-			return err
+			output, err = json.Marshal(list)
+			if err != nil {
+				return err
+			}
 		}
 
 		fmt.Println(string(output))
@@ -735,9 +798,13 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	}
 
 	alignment := []int{-1, -1, 1, 1, 1, 1, 1}
+	var tableHeaders []string
+	if !noHeader {
+		tableHeaders = headers
+	}
 	table := asciitable.NewAsciiTable(&asciitable.Input{
 		Data:      records,
-		Headers:   headers,
+		Headers:   tableHeaders,
 		Alignment: alignment,
 	})
 
