@@ -35,10 +35,10 @@ func (ct *Cointop) UpdateMarketbar() error {
 	if ct.IsPortfolioVisible() {
 		ct.State.marketBarHeight = 1
 		total := ct.GetPortfolioTotal()
-		totalstr := humanize.Commaf(total)
+		totalstr := humanize.Monetaryf(total, 2)
 		if !(ct.State.currencyConversion == "BTC" || ct.State.currencyConversion == "ETH" || total < 1) {
 			total = math.Round(total*1e2) / 1e2
-			totalstr = humanize.Commaf2(total)
+			totalstr = humanize.Monetaryf(total, 2)
 		}
 
 		timeframe := ct.State.selectedChartRange
@@ -149,9 +149,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		content = fmt.Sprintf(
 			"%sGlobal ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
 			chartInfo,
-			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Commaf0(market.TotalMarketCapUSD)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Monetaryf(market.TotalMarketCapUSD, 0)),
 			separator1,
-			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Commaf0(market.Total24HVolumeUSD)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Monetaryf(market.Total24HVolumeUSD, 0)),
 			separator2,
 			market.BitcoinPercentageOfMarketCap,
 		)
