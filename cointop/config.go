@@ -36,6 +36,7 @@ type config struct {
 	Portfolio     map[string]interface{} `toml:"portfolio"`
 	PriceAlerts   map[string]interface{} `toml:"price_alerts"`
 	Currency      interface{}            `toml:"currency"`
+	FavoriteChar  interface{}            `toml:"favorite_char"`
 	DefaultView   interface{}            `toml:"default_view"`
 	CoinMarketCap map[string]interface{} `toml:"coinmarketcap"`
 	API           interface{}            `toml:"api"`
@@ -252,6 +253,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	var defaultViewIfc interface{} = ct.State.defaultView
 	var colorschemeIfc interface{} = ct.colorschemeName
 	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
+	var favoriteCharIfc interface{} = ct.State.favoriteChar
 	var cacheDirIfc interface{} = ct.State.cacheDir
 
 	cmcIfc := map[string]interface{}{
@@ -290,6 +292,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 		Currency:      currencyIfc,
 		DefaultView:   defaultViewIfc,
 		Favorites:     favoritesMapIfc,
+		FavoriteChar:  favoriteCharIfc,
 		RefreshRate:   refreshRateIfc,
 		Shortcuts:     shortcutsIfcs,
 		Portfolio:     portfolioIfc,

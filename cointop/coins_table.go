@@ -80,7 +80,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 			case "rank":
 				star := ct.colorscheme.TableRow(" ")
 				if coin.Favorite {
-					star = ct.colorscheme.TableRowFavorite("*")
+					star = ct.colorscheme.TableRowFavorite(ct.config.FavoriteChar)
 				}
 				rank := fmt.Sprintf("%s%v", star, ct.colorscheme.TableRow(fmt.Sprintf("%6v ", coin.Rank)))
 				ct.SetTableColumnWidth(header, 8)

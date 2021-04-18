@@ -49,6 +49,7 @@ type State struct {
 
 	favorites                  map[string]bool
 	favoritesTableColumns      []string
+	favoriteChar               string
 	helpVisible                bool
 	hideMarketbar              bool
 	hideChart                  bool
@@ -147,6 +148,7 @@ type Config struct {
 	Colorscheme         string
 	ConfigFilepath      string
 	CoinMarketCapAPIKey string
+	FavoriteChar        string
 	NoPrompts           bool
 	HideMarketbar       bool
 	HideChart           bool
@@ -247,6 +249,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			marketBarHeight:       1,
 			maxPages:              int(maxPages),
 			onlyTable:             config.OnlyTable,
+			favoriteChar:          config.FavoriteChar,
 			refreshRate:           60 * time.Second,
 			selectedChartRange:    DefaultChartRange,
 			shortcutKeys:          DefaultShortcuts(),
