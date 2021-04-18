@@ -98,11 +98,16 @@ func (ct *Cointop) SetupConfig() error {
 func (ct *Cointop) CreateConfigIfNotExists() error {
 	ct.debuglog("createConfigIfNotExists()")
 
-	for _, configPath := range possibleConfigPaths {
-		normalizedPath := pathutil.NormalizePath(configPath)
-		if _, err := os.Stat(normalizedPath); err == nil {
-			ct.configFilepath = normalizedPath
-			return nil
+	ct.configFilepath = pathutil.NormalizePath(ct.configFilepath)
+
+	// check if config file exists in one of th default paths
+	if ct.configFilepath == DefaultConfigFilepath {
+		for _, configPath := range possibleConfigPaths {
+			normalizedPath := pathutil.NormalizePath(configPath)
+			if _, err := os.Stat(normalizedPath); err == nil {
+				ct.configFilepath = normalizedPath
+				return nil
+			}
 		}
 	}
 
