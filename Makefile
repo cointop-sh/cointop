@@ -70,6 +70,9 @@ docs-server:
 docs-deploy: docs
 	netlify deploy --prod
 
+docs-open:
+	xdg-open "http://localhost:8080"
+
 test:
 	go test ./...
 

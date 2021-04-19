@@ -13,7 +13,7 @@ To view your portfolio, press <kbd>P</kbd> (Shift+p)
 
 ## Exit portfolio
 
-To exit out of the portfolio view press, <kbd>P</kbd> (Shift+p) again or <kbd>q</kbd> or <kbd>ESC</kbd>
+To exit out of the portfolio view press, <kbd>P</kbd> (Shift+p) again or <kbd>q</kbd> or <kbd>Esc</kbd>
 
 ## Add entry
 

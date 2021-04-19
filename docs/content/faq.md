@@ -119,7 +119,7 @@ draft: false
 
 ## How do I exit search?
 
-  Press <kbd>ESC</kbd> to exit search.
+  Press <kbd>Esc</kbd> to exit search.
 
 ## Does this work on the Raspberry Pi?
 
@@ -139,7 +139,7 @@ draft: false
 
 ## What does the yellow asterisk in the row mean?
 
-  The yellow asterisk or star means that you've selected that coin to be a favorite.
+  The yellow asterisk `*` star means that you've selected that coin to be a favorite.
 
 ## My favorites aren't being saved?
 
@@ -249,6 +249,12 @@ draft: false
   Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`.
 
   <sup><sub>YTD = Year-to-date<sub></sup>
+
+## How do I expand or shorten the chart?
+
+  Press <kbd>Ctrl</kbd>+<kbd>j</kbd> to increase the chart height.
+
+  Press <kbd>Ctrl</kbd>+<kbd>k</kbd> to decrease the chart height.
 
 ## How do I change the fiat currency?
 
