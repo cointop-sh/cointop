@@ -1,60 +1,86 @@
 # github.com/BurntSushi/toml v0.3.1
+## explicit
 github.com/BurntSushi/toml
-# github.com/anaskhan96/soup v1.1.1
+# github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
+## explicit
+github.com/acarl005/stripansi
+# github.com/anaskhan96/soup v1.0.1
 github.com/anaskhan96/soup
 # github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be
+## explicit
 github.com/anmitsu/go-shlex
 # github.com/creack/pty v1.1.11
+## explicit
 github.com/creack/pty
-# github.com/fatih/color v1.9.0
+# github.com/fatih/color v1.10.0
+## explicit
 github.com/fatih/color
 # github.com/gen2brain/beeep v0.0.0-20200526185328-e9c15c258e28
+## explicit
 github.com/gen2brain/beeep
-# github.com/gliderlabs/ssh v0.3.0
+# github.com/gliderlabs/ssh v0.3.2
+## explicit
 github.com/gliderlabs/ssh
 # github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4
 github.com/go-toast/toast
 # github.com/godbus/dbus/v5 v5.0.3
 github.com/godbus/dbus/v5
-# github.com/gopherjs/gopherjs v0.0.0-20180825215210-0210a2f0f73c
+# github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
 github.com/gopherjs/gopherjs/js
 # github.com/gopherjs/gopherwasm v1.1.0
 github.com/gopherjs/gopherwasm/js
 # github.com/inconshreveable/mousetrap v1.0.0
 github.com/inconshreveable/mousetrap
-# github.com/maruel/panicparse v1.5.0
+# github.com/maruel/panicparse v1.6.1
+## explicit
 github.com/maruel/panicparse/stack
-# github.com/mattn/go-colorable v0.1.7
+# github.com/mattn/go-colorable v0.1.8
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
-# github.com/mattn/go-runewidth v0.0.9
+# github.com/mattn/go-runewidth v0.0.12
+## explicit
 github.com/mattn/go-runewidth
+# github.com/michaeldv/termbox-go v0.0.0-20150618033820-675ffd907b74
+## explicit
 # github.com/miguelmota/go-coinmarketcap v0.1.7
+## explicit
 github.com/miguelmota/go-coinmarketcap/pro/v1
 github.com/miguelmota/go-coinmarketcap/v2
 github.com/miguelmota/go-coinmarketcap/v2/types
 # github.com/miguelmota/gocui v0.4.2
+## explicit
 github.com/miguelmota/gocui
 # github.com/miguelmota/termbox-go v0.0.0-20191229070316-58d4fcbce2a7
+## explicit
 github.com/miguelmota/termbox-go
-# github.com/mitchellh/go-wordwrap v1.0.0
+# github.com/mitchellh/go-wordwrap v1.0.1
+## explicit
 github.com/mitchellh/go-wordwrap
+# github.com/mop-tracker/mop v0.2.0
+## explicit
 # github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d
 github.com/nu7hatch/gouuid
-# github.com/olekukonko/tablewriter v0.0.4
+# github.com/olekukonko/tablewriter v0.0.5
+## explicit
 github.com/olekukonko/tablewriter
 # github.com/patrickmn/go-cache v2.1.0+incompatible
+## explicit
 github.com/patrickmn/go-cache
-# github.com/spf13/cobra v1.0.0
+# github.com/rivo/uniseg v0.1.0
+github.com/rivo/uniseg
+# github.com/spf13/cobra v1.1.3
+## explicit
 github.com/spf13/cobra
 # github.com/spf13/pflag v1.0.5
 github.com/spf13/pflag
 # github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af
 github.com/tadvi/systray
 # github.com/tomnomnom/xtermcolor v0.0.0-20160428124646-b78803f00a7e
+## explicit
 github.com/tomnomnom/xtermcolor
-# golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de
+# golang.org/x/crypto v0.0.0-20210415154028-4f45737414dc
+## explicit
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/curve25519
@@ -64,16 +90,17 @@ golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/poly1305
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
-# golang.org/x/net v0.0.0-20200707034311-ab3426394381
+# golang.org/x/net v0.0.0-20210226172049-e18ecbb05110
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20200810151505-1b9f1253b3ed
+# golang.org/x/sys v0.0.0-20201119102817-f84b799fce68
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 golang.org/x/sys/windows/registry
-# golang.org/x/text v0.3.3
+# golang.org/x/text v0.3.6
+## explicit
 golang.org/x/text/feature/plural
 golang.org/x/text/internal
 golang.org/x/text/internal/catmsg
