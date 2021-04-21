@@ -251,7 +251,8 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
 			if ok {
 				coin.Name = entry.CoinName
 				currentPrice = strconv.FormatFloat(coin.Price, 'f', -1, 64)
-				value = fmt.Sprintf("%s %v", entry.Operator, entry.TargetPrice)
+				targetPrice := strconv.FormatFloat(entry.TargetPrice, 'f', -1, 64)
+				value = fmt.Sprintf("%s %v", entry.Operator, targetPrice)
 				ct.State.priceAlertEditID = entry.ID
 				isEdit = true
 			}
