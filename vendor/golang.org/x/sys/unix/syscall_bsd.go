@@ -18,21 +18,6 @@ import (
 	"unsafe"
 )
 
-const ImplementsGetwd = true
-
-func Getwd() (string, error) {
-	var buf [PathMax]byte
-	_, err := Getcwd(buf[0:])
-	if err != nil {
-		return "", err
-	}
-	n := clen(buf[:])
-	if n < 1 {
-		return "", EINVAL
-	}
-	return string(buf[:n]), nil
-}
-
 /*
  * Wrapped
  */
@@ -277,7 +262,7 @@ func anyToSockaddr(fd int, rsa *RawSockaddrAny) (Sockaddr, error) {
 		}
 		return sa, nil
 	}
-	return anyToSockaddrGOOS(fd, rsa)
+	return nil, EAFNOSUPPORT
 }
 
 func Accept(fd int) (nfd int, sa Sockaddr, err error) {
@@ -287,7 +272,7 @@ func Accept(fd int) (nfd int, sa Sockaddr, err error) {
 	if err != nil {
 		return
 	}
-	if (runtime.GOOS == "darwin" || runtime.GOOS == "ios") && len == 0 {
+	if runtime.GOOS == "darwin" && len == 0 {
 		// Accepted socket has no address.
 		// This is likely due to a bug in xnu kernels,
 		// where instead of ECONNABORTED error socket
