@@ -120,7 +120,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						Text:        symbol,
 					})
 			case "price":
-				text := humanize.Commaf(coin.Price)
+				text := humanize.Monetaryf(coin.Price, 2)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -132,7 +132,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						Text:        text,
 					})
 			case "24h_volume":
-				text := humanize.Commaf(coin.Volume24H)
+				text := humanize.Monetaryf(coin.Volume24H, 0)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -151,7 +151,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 				if coin.PercentChange1H < 0 {
 					color1h = ct.colorscheme.TableColumnChangeDown
 				}
-				text := fmt.Sprintf("%.2f%%", coin.PercentChange1H)
+				text := fmt.Sprintf("%v%%", humanize.Numericf(coin.PercentChange1H, 2))
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -170,7 +170,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 				if coin.PercentChange24H < 0 {
 					color24h = ct.colorscheme.TableColumnChangeDown
 				}
-				text := fmt.Sprintf("%.2f%%", coin.PercentChange24H)
+				text := fmt.Sprintf("%v%%", humanize.Numericf(coin.PercentChange24H, 2))
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -189,7 +189,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 				if coin.PercentChange7D < 0 {
 					color7d = ct.colorscheme.TableColumnChangeDown
 				}
-				text := fmt.Sprintf("%.2f%%", coin.PercentChange7D)
+				text := fmt.Sprintf("%v%%", humanize.Numericf(coin.PercentChange7D, 2))
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -208,7 +208,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 				if coin.PercentChange30D < 0 {
 					color30d = ct.colorscheme.TableColumnChangeDown
 				}
-				text := fmt.Sprintf("%.2f%%", coin.PercentChange30D)
+				text := fmt.Sprintf("%v%%", humanize.Numericf(coin.PercentChange30D, 2))
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -220,7 +220,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						Text:        text,
 					})
 			case "market_cap":
-				text := humanize.Commaf(coin.MarketCap)
+				text := humanize.Monetaryf(coin.MarketCap, 0)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -232,7 +232,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						Text:        text,
 					})
 			case "total_supply":
-				text := humanize.Commaf(coin.TotalSupply)
+				text := humanize.Numericf(coin.TotalSupply, 0)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -244,7 +244,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						Text:        text,
 					})
 			case "available_supply":
-				text := humanize.Commaf(coin.AvailableSupply)
+				text := humanize.Numericf(coin.AvailableSupply, 0)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,

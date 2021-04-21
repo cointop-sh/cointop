@@ -125,7 +125,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Text:        symbol,
 					})
 			case "price":
-				text := humanize.Commaf(coin.Price)
+				text := humanize.Monetaryf(coin.Price, 2)
 				symbolPadding := 1
 				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
 				ct.SetTableColumnAlignLeft(header, false)
@@ -150,7 +150,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Text:        text,
 					})
 			case "balance":
-				text := humanize.Commaf(coin.Balance)
+				text := humanize.Monetaryf(coin.Balance, 2)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				colorBalance := ct.colorscheme.TableColumnPrice
@@ -715,31 +715,31 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 				item[i] = entry.Symbol
 			case "price":
 				if humanReadable {
-					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Commaf(entry.Price))
+					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Price, 2))
 				} else {
 					item[i] = strconv.FormatFloat(entry.Price, 'f', -1, 64)
 				}
 			case "holdings":
 				if humanReadable {
-					item[i] = humanize.Commaf(entry.Holdings)
+					item[i] = humanize.Monetaryf(entry.Holdings, 2)
 				} else {
 					item[i] = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
 				}
 			case "balance":
 				if humanReadable {
-					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Commaf(entry.Balance))
+					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Balance, 2))
 				} else {
 					item[i] = strconv.FormatFloat(entry.Balance, 'f', -1, 64)
 				}
 			case "24h%":
 				if humanReadable {
-					item[i] = fmt.Sprintf("%.2f%%", entry.PercentChange24H)
+					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(entry.PercentChange24H, 2))
 				} else {
 					item[i] = fmt.Sprintf("%.2f", entry.PercentChange24H)
 				}
 			case "%holdings":
 				if humanReadable {
-					item[i] = fmt.Sprintf("%.2f%%", percentHoldings)
+					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(percentHoldings, 2))
 				} else {
 					item[i] = fmt.Sprintf("%.2f", percentHoldings)
 				}
@@ -852,7 +852,7 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 	value := strconv.FormatFloat(total, 'f', -1, 64)
 
 	if humanReadable {
-		value = fmt.Sprintf("%s%s", symbol, humanize.Commaf(total))
+		value = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(total, 2))
 	}
 
 	if format == "csv" {

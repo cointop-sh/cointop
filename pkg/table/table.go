@@ -5,6 +5,7 @@ import (
 	"io"
 	"sort"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table/align"
@@ -129,7 +130,7 @@ func (t *Table) normalizeColWidthPerc() {
 // Format format table
 func (t *Table) Format() *Table {
 	for _, c := range t.cols {
-		c.width = len(c.name) + 1
+		c.width = utf8.RuneCountInString(c.name) + 1
 		if c.minWidth > c.width {
 			c.width = c.minWidth
 		}
@@ -151,8 +152,9 @@ func (t *Table) Format() *Table {
 				r.strValues[j] = fmt.Sprintf("%v", v)
 			}
 
-			if len(r.strValues[j]) > t.cols[j].width {
-				t.cols[j].width = len(r.strValues[j])
+			runeCount := utf8.RuneCountInString(r.strValues[j])
+			if runeCount > t.cols[j].width {
+				t.cols[j].width = runeCount
 			}
 		}
 	}

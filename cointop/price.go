@@ -69,7 +69,7 @@ func GetCoinPrices(config *PricesConfig) ([]string, error) {
 		}
 
 		symbol := CurrencySymbol(config.Currency)
-		value := fmt.Sprintf("%s%s", symbol, humanize.Commaf(price))
+		value := fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(price, 2))
 		prices = append(prices, value)
 	}
 
