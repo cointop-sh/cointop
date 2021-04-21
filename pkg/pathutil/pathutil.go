@@ -22,6 +22,22 @@ func UserPreferredConfigDir() string {
 	return config
 }
 
+// UserPreferredCacheDir returns the preferred cache directory for the user
+func UserPreferredCacheDir() string {
+	defaultCacheDir := "/tmp"
+
+	cache, err := os.UserCacheDir()
+	if err != nil {
+		return defaultCacheDir
+	}
+
+	if cache == "" {
+		return defaultCacheDir
+	}
+
+	return cache
+}
+
 // UserPreferredHomeDir returns the preferred home directory for the user
 func UserPreferredHomeDir() string {
 	home, err := os.UserHomeDir()
@@ -36,6 +52,7 @@ func UserPreferredHomeDir() string {
 func NormalizePath(path string) string {
 	userHome := UserPreferredHomeDir()
 	userConfigHome := UserPreferredConfigDir()
+	userCacheHome := UserPreferredCacheDir()
 
 	// expand tilde
 	if strings.HasPrefix(path, "~/") {
@@ -44,6 +61,7 @@ func NormalizePath(path string) string {
 
 	path = strings.Replace(path, ":HOME:", userHome, -1)
 	path = strings.Replace(path, ":PREFERRED_CONFIG_HOME:", userConfigHome, -1)
+	path = strings.Replace(path, ":PREFERRED_CACHE_HOME:", userCacheHome, -1)
 	path = strings.Replace(path, "/", string(filepath.Separator), -1)
 
 	return filepath.Clean(path)
