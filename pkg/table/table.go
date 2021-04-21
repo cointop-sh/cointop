@@ -7,6 +7,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/acarl005/stripansi"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table/align"
 )
@@ -130,7 +131,8 @@ func (t *Table) normalizeColWidthPerc() {
 // Format format table
 func (t *Table) Format() *Table {
 	for _, c := range t.cols {
-		c.width = utf8.RuneCountInString(c.name) + 1
+		s := stripansi.Strip(c.name)
+		c.width = utf8.RuneCountInString(s) + 1
 		if c.minWidth > c.width {
 			c.width = c.minWidth
 		}
@@ -152,7 +154,8 @@ func (t *Table) Format() *Table {
 				r.strValues[j] = fmt.Sprintf("%v", v)
 			}
 
-			runeCount := utf8.RuneCountInString(r.strValues[j])
+			s := stripansi.Strip(r.strValues[j])
+			runeCount := utf8.RuneCountInString(s)
 			if runeCount > t.cols[j].width {
 				t.cols[j].width = runeCount
 			}
