@@ -113,7 +113,6 @@ See [docs.cointop.sh/contributing](https://docs.cointop.sh/contributing)
 ## Social
 
 - Follow on twitter [@cointop](https://twitter.com/cointop)
-- Chat on [Telegram](https://telegram.me/cointopsh)
 - Discuss on [Discord](https://discord.gg/pUVGy7ECGg)
 
 ## Mentioned in
