@@ -194,7 +194,7 @@ func (ct *Cointop) SaveConfig() error {
 func (ct *Cointop) parseConfig() error {
 	ct.debuglog("parseConfig()")
 	var conf config
-	path := ct.ConfigFilePath()
+	path := ct.configFilepath
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
 		return err
 	}

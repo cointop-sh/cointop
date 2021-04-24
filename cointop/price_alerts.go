@@ -218,10 +218,9 @@ func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
 		}
 
 		alert.Expired = true
-	}
-
-	if err := ct.Save(); err != nil {
-		return err
+		if err := ct.Save(); err != nil {
+			return err
+		}
 	}
 	return nil
 }

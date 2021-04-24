@@ -431,7 +431,9 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	}
 
 	if shouldDelete {
-		ct.RemovePortfolioEntry(coin.Name)
+		if err := ct.RemovePortfolioEntry(coin.Name); err != nil {
+			return err
+		}
 		ct.UpdateTable()
 		if idx > 0 {
 			idx -= 1
@@ -443,10 +445,6 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	}
 
 	ct.HighlightRow(idx)
-
-	if err := ct.Save(); err != nil {
-		return err
-	}
 
 	return nil
 }
@@ -501,9 +499,13 @@ func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
 }
 
 // RemovePortfolioEntry removes a portfolio entry
-func (ct *Cointop) RemovePortfolioEntry(coin string) {
+func (ct *Cointop) RemovePortfolioEntry(coin string) error {
 	ct.debuglog("removePortfolioEntry()")
 	delete(ct.State.portfolio.Entries, strings.ToLower(coin))
+	if err := ct.Save(); err != nil {
+		return err
+	}
+	return nil
 }
 
 // PortfolioEntryExists returns true if portfolio entry exists
