@@ -327,7 +327,7 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 	coin := ct.HighlightedRowCoin()
 	exists := ct.PortfolioEntryExists(coin)
 	value := strconv.FormatFloat(ct.CoinHoldings(coin), 'f', -1, 64)
-	ct.debuglog(fmt.Sprintf("holdings %v", value))
+	ct.debuglog("holdings %v", value)
 	var mode string
 	var current string
 	var submitText string

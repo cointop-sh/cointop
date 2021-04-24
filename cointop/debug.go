@@ -1,27 +1,25 @@
 package cointop
 
 import (
-	"fmt"
+	"log"
 	"os"
-	"time"
 )
 
-// debuglog writs a debug log to stdout
-func (ct *Cointop) debuglog(msg string) {
-	if !ct.debug {
-		return
-	}
-
+func (ct *Cointop) initlog() {
 	filename := "/tmp/cointop.log"
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
 		panic(err)
 	}
+	log.SetOutput(f)
+	ct.logfile = f
+}
 
-	defer f.Close()
-
-	text := fmt.Sprintf("%v %s\n", time.Now().Unix(), msg)
-	if _, err = f.WriteString(text); err != nil {
-		panic(err)
+// debuglog writes a debug log message to /tmp/cointop.log if the DEBUG environment is set.
+func (ct *Cointop) debuglog(fmt string, arg ...interface{}) {
+	if !ct.debug {
+		return
 	}
+
+	log.Printf(fmt+"\n", arg...)
 }
