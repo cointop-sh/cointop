@@ -16,10 +16,10 @@ func (ct *Cointop) initlog() {
 }
 
 // debuglog writes a debug log message to /tmp/cointop.log if the DEBUG environment is set.
-func (ct *Cointop) debuglog(fmt string, arg ...interface{}) {
+func (ct *Cointop) debuglog(format string, args ...interface{}) {
 	if !ct.debug {
 		return
 	}
 
-	log.Printf(fmt+"\n", arg...)
+	log.Printf(format+"\n", args...)
 }
