@@ -274,9 +274,12 @@ draft: false
 
 ## How do change the format for currency and numeric values?
 
-  cointop uses the `LC_MONETARY` and `LC_NUMERIC` environment variables to format
-  currency and numeric values. To see cointop display currency with Bengalese numbers
+  Cointop uses the `LC_MONETARY` and `LC_NUMERIC` environment variables to format
+  currency and numeric values.
+
+  For example, to see cointop display currency with Bengalese numbers
   and numeric values in arabic run `/usr/bin/env LC_MONETARY=bn LC_NUMERIC=ar cointop`.
+
   For more information about how to check and configure your locale settings see
   [`locale(1)`](https://www.unix.com/man-page/linux/1/locale/) and
   [`locale(5)`](https://www.unix.com/man-page/linux/5/locale/).
