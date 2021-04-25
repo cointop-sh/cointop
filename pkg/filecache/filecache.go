@@ -64,11 +64,11 @@ func (f *FileCache) Set(key string, data interface{}, expire time.Duration) erro
 	defer f.muts[key].Unlock()
 
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
-	var prefix string
 	if f.prefix != "" {
-		prefix = fmt.Sprintf("%s.", f.prefix)
+		key = fmt.Sprintf("%s.%s", f.prefix, key)
 	}
-	file := fmt.Sprintf("fcache.%s%s.%v", prefix, key, strconv.FormatInt(time.Now().Add(expire).Unix(), 10))
+	ts := strconv.FormatInt(time.Now().Add(expire).Unix(), 10)
+	file := fmt.Sprintf("fcache.%s.%v", key, ts)
 	fpath := filepath.Join(f.cacheDir, file)
 
 	f.clean(key)
@@ -97,11 +97,10 @@ func (f *FileCache) Set(key string, data interface{}, expire time.Duration) erro
 // Get reads item from cache
 func (f *FileCache) Get(key string, dst interface{}) error {
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
-	var prefix string
 	if f.prefix != "" {
-		prefix = fmt.Sprintf("%s.", f.prefix)
+		key = fmt.Sprintf("%s.%s", f.prefix, key)
 	}
-	pattern := filepath.Join(f.cacheDir, fmt.Sprintf("fcache.%s%s.*", prefix, key))
+	pattern := filepath.Join(f.cacheDir, fmt.Sprintf("fcache.%s.*", key))
 	files, err := filepath.Glob(pattern)
 	if len(files) < 1 || err != nil {
 		return errors.New("fcache: no cache file found")
@@ -133,7 +132,9 @@ func (f *FileCache) Get(key string, dst interface{}) error {
 	}
 
 	for _, file := range files {
-		exptime, err := strconv.ParseInt(strings.Split(file, ".")[2], 10, 64)
+		parts := strings.Split(file, ".")
+		ts := parts[len(parts)-1]
+		exptime, err := strconv.ParseInt(ts, 10, 64)
 		if err != nil {
 			return err
 		}
