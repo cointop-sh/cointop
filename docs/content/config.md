@@ -11,9 +11,30 @@ The first time you run cointop, it'll create a config file in:
 ~/.config/cointop/config.toml
 ```
 
-You can then configure the actions you want for each key:
+On Unix systems, the default config path is `$XDG_CONFIG_HOME/cointop/config.toml`
 
-(default `~/.config/cointop/config.toml`)
+On macOS (darwin), the default config path is `$HOME/Library/Application Support/cointop/config.toml`
+
+On Windows, the default config path is `%AppData%\cointop\config.toml`
+
+_Note: The config directory is determined by [`os.UserConfigDir()`](https://pkg.go.dev/os#UserConfigDir)_
+
+You may specify a different config file to use by using the `--config` flag:
+
+```bash
+cointop --config="/path/to/config.toml"
+```
+
+Alternatively, you can set the config file path via the environment variable `COINTOP_CONFIG`
+
+```bash
+export COINTOP_CONFIG="/path/to/config.toml"
+cointop
+```
+
+## Key bindings
+
+You can configure the actions you want for each key in `config.toml`:
 
 ```toml
 currency = "USD"
@@ -103,15 +124,9 @@ refresh_rate = 60
   pro_api_key = ""
 ```
 
-You may specify a different config file to use by using the `--config` flag:
-
-```bash
-cointop --config="/path/to/config.toml"
-```
-
 ## List of actions
 
-This are the action keywords you may use in the config file to change what the shortcut keys do.
+This are the action keywords you may use in the config file to change what the shortcut keys do:
 
 Action|Description
 ----|------|

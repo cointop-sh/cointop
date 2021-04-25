@@ -45,6 +45,14 @@ draft: false
 
   The default configuration file is located under `~/.config/cointop/config.toml`
 
+  However it may vary depending on your operating system since the config directory is determinedby by [`os.UserConfigDir()`](https://pkg.go.dev/os#UserConfigDir).
+
+  On Unix systems, the default config path is `$XDG_CONFIG_HOME/cointop/config.toml`
+
+  On macOS (darwin), the default config path is `$HOME/Library/Application Support/cointop/config.toml`
+
+  On Windows, the default config path is `%AppData%\cointop\config.toml`
+
   Note: Previous versions of cointop used `~/.cointop/config` or `~/.cointop/config.toml` as the default config filepath. Cointop will use those config filepaths respectively if they exist.
 
 ## What format is the configuration file in?
@@ -315,6 +323,8 @@ draft: false
 ## How can use a different config file other than the default?
 
   Run cointop with the `--config` flag, eg `cointop --config="/path/to/config.toml"`, to use the specified file as the config.
+
+  Alternatively, you can set the config file path via the environment variable `COINTOP_CONFIG`, eg `export COINTOP_CONFIG="/path/to/config.toml"`
 
 ## I'm getting the error `open /dev/tty: no such device or address`.
 
