@@ -1,7 +1,6 @@
 package cointop
 
 import (
-	"fmt"
 	"math"
 )
 
@@ -442,7 +441,7 @@ func (ct *Cointop) HighlightRow(pageRowIndex int) error {
 			cy = h - (l - pageRowIndex)
 		}
 	}
-	ct.debuglog(fmt.Sprintf("highlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy))
+	ct.debuglog("highlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy)
 	ct.Views.Table.SetOrigin(ox, oy)
 	ct.Views.Table.SetCursor(cx, cy)
 	return nil

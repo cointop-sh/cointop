@@ -101,6 +101,7 @@ type Cointop struct {
 	colorscheme     *Colorscheme
 	debug           bool
 	filecache       *filecache.FileCache
+	logfile         *os.File
 	forceRefresh    chan bool
 	limiter         <-chan time.Time
 	maxTableWidth   int
@@ -277,6 +278,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 			Menu:        NewMenuView(),
 			Input:       NewInputView(),
 		},
+	}
+	if debug {
+		ct.initlog()
 	}
 
 	err := ct.SetupConfig()
