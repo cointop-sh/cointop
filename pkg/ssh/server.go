@@ -169,11 +169,22 @@ func (s *Server) ListenAndServe() error {
 				colorsDir,
 			}
 
-			for i, arg := range cmdUserArgs {
-				if i == 0 {
-					continue
+			if len(cmdUserArgs) > 0 {
+				if cmdUserArgs[0] == "cointop" {
+					cmdUserArgs = cmdUserArgs[1:]
 				}
+			}
 
+			if len(cmdUserArgs) > 0 {
+				if cmdUserArgs[0] == "holdings" {
+					flags = []string{
+						"--config",
+						configPath,
+					}
+				}
+			}
+
+			for _, arg := range cmdUserArgs {
 				flags = append(flags, arg)
 			}
 
