@@ -588,14 +588,15 @@ func (ct *Cointop) RefreshPortfolioCoins() error {
 
 // TablePrintOptions are options for ascii table output.
 type TablePrintOptions struct {
-	SortBy        string
-	SortDesc      bool
-	HumanReadable bool
-	Format        string
-	Filter        []string
-	Cols          []string
-	Convert       string
-	NoHeader      bool
+	SortBy           string
+	SortDesc         bool
+	HumanReadable    bool
+	Format           string
+	Filter           []string
+	Cols             []string
+	Convert          string
+	NoHeader         bool
+	PercentChange24H bool
 }
 
 // outputFormats is list of valid output formats
@@ -814,9 +815,9 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	return nil
 }
 
-// PrintTotalHoldings prints the total holdings amount
-func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
-	ct.debuglog("printTotalHoldings()")
+// PrintHoldingsTotal prints the total holdings amount
+func (ct *Cointop) PrintHoldingsTotal(options *TablePrintOptions) error {
+	ct.debuglog("PrintHoldingsTotal()")
 	if options == nil {
 		options = &TablePrintOptions{}
 	}
@@ -874,6 +875,86 @@ func (ct *Cointop) PrintTotalHoldings(options *TablePrintOptions) error {
 		return nil
 	} else if format == "json" {
 		obj := map[string]string{"total": value}
+		output, err := json.Marshal(obj)
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(string(output))
+		return nil
+	}
+
+	fmt.Println(value)
+
+	return nil
+}
+
+// PrintHoldings24HChange prints the total holdings amount
+func (ct *Cointop) PrintHoldings24HChange(options *TablePrintOptions) error {
+	ct.debuglog("PrintHoldings24HChange()")
+	if options == nil {
+		options = &TablePrintOptions{}
+	}
+
+	if err := ct.SetCurrencyConverstion(options.Convert); err != nil {
+		return err
+	}
+
+	ct.RefreshPortfolioCoins()
+
+	humanReadable := options.HumanReadable
+	format := options.Format
+	filter := options.Filter
+	portfolio := ct.GetPortfolioSlice()
+	total := ct.GetPortfolioTotal()
+	var percentChange24H float64
+	for _, entry := range portfolio {
+		if len(filter) > 0 {
+			found := false
+			for _, item := range filter {
+				item = strings.ToLower(strings.TrimSpace(item))
+				if strings.ToLower(entry.Symbol) == item || strings.ToLower(entry.Name) == item {
+					found = true
+					break
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+
+		n := ((entry.Balance / total) * entry.PercentChange24H)
+		if math.IsNaN(n) {
+			continue
+		}
+		percentChange24H += n
+	}
+
+	value := strconv.FormatFloat(percentChange24H, 'f', -1, 64)
+
+	if humanReadable {
+		value = fmt.Sprintf("%.2f%%", percentChange24H)
+	} else {
+		value = fmt.Sprintf("%.2f", percentChange24H)
+	}
+
+	if format == "csv" {
+		csvWriter := csv.NewWriter(os.Stdout)
+		if err := csvWriter.Write([]string{"24H%"}); err != nil {
+			return err
+		}
+		if err := csvWriter.Write([]string{value}); err != nil {
+			return err
+		}
+
+		csvWriter.Flush()
+		if err := csvWriter.Error(); err != nil {
+			return err
+		}
+
+		return nil
+	} else if format == "json" {
+		obj := map[string]string{"24H%": value}
 		output, err := json.Marshal(obj)
 		if err != nil {
 			return err

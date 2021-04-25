@@ -11,6 +11,7 @@ import (
 func HoldingsCmd() *cobra.Command {
 	var help bool
 	var total bool
+	var percentChange24H bool
 	var noCache bool
 	var noHeader bool
 	var config string
@@ -39,13 +40,23 @@ func HoldingsCmd() *cobra.Command {
 				return err
 			}
 
-			if total {
-				return ct.PrintTotalHoldings(&cointop.TablePrintOptions{
-					HumanReadable: humanReadable,
-					Format:        format,
-					Filter:        filter,
-					Convert:       convert,
-				})
+			if total || percentChange24H {
+				if percentChange24H {
+					return ct.PrintHoldings24HChange(&cointop.TablePrintOptions{
+						HumanReadable: humanReadable,
+						Format:        format,
+						Filter:        filter,
+						Convert:       convert,
+					})
+				}
+				if total {
+					return ct.PrintHoldingsTotal(&cointop.TablePrintOptions{
+						HumanReadable: humanReadable,
+						Format:        format,
+						Filter:        filter,
+						Convert:       convert,
+					})
+				}
 			}
 
 			return ct.PrintHoldingsTable(&cointop.TablePrintOptions{
@@ -62,7 +73,8 @@ func HoldingsCmd() *cobra.Command {
 	}
 
 	holdingsCmd.Flags().BoolVarP(&help, "help", "", help, "Help for holdings")
-	holdingsCmd.Flags().BoolVarP(&total, "total", "t", total, "Show total only")
+	holdingsCmd.Flags().BoolVarP(&total, "total", "t", total, "Show portfolio total only")
+	holdingsCmd.Flags().BoolVarP(&percentChange24H, "24h", "", percentChange24H, "Show portfolio 24H change only")
 	holdingsCmd.Flags().BoolVarP(&noCache, "no-cache", "", noCache, "No cache")
 	holdingsCmd.Flags().BoolVarP(&humanReadable, "human", "h", humanReadable, "Human readable output")
 	holdingsCmd.Flags().BoolVarP(&noHeader, "no-header", "", noHeader, "Don't display header columns")
