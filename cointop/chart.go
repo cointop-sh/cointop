@@ -88,6 +88,7 @@ func (ct *Cointop) UpdateChart() error {
 	}
 
 	ct.UpdateUI(func() error {
+		ct.Views.Chart.Clear()
 		return ct.Views.Chart.Update(ct.colorscheme.Chart(body))
 	})
 
@@ -276,6 +277,7 @@ func (ct *Cointop) ShortenChart() error {
 		return nil
 	}
 	ct.State.chartHeight = candidate
+	ct.State.lastChartHeight = ct.State.chartHeight
 
 	go ct.UpdateChart()
 	return nil
@@ -284,11 +286,12 @@ func (ct *Cointop) ShortenChart() error {
 // EnlargeChart increases the chart height by one row
 func (ct *Cointop) EnlargeChart() error {
 	ct.debuglog("EnlargeChart()")
-	candidate := ct.State.chartHeight + 1
+	candidate := ct.State.lastChartHeight + 1
 	if candidate > 30 {
 		return nil
 	}
 	ct.State.chartHeight = candidate
+	ct.State.lastChartHeight = ct.State.chartHeight
 
 	go ct.UpdateChart()
 	return nil
@@ -393,4 +396,41 @@ func (ct *Cointop) ChartWidth() int {
 	}
 
 	return w
+}
+
+// ToggleChartFullscreen toggles the chart fullscreen mode
+func (ct *Cointop) ToggleChartFullscreen() error {
+	ct.debuglog("ToggleChartFullscreen()")
+	ct.State.onlyChart = !ct.State.onlyChart
+	ct.State.onlyTable = false
+	if !ct.State.onlyChart {
+		// NOTE: cached values are initial config settings.
+		// If the only-chart config was set then toggle
+		// all other initial hidden views.
+		onlyChart, _ := ct.cache.Get("onlyChart")
+
+		if onlyChart.(bool) {
+			ct.State.hideMarketbar = false
+			ct.State.hideChart = false
+			ct.State.hideTable = false
+			ct.State.hideStatusbar = false
+		} else {
+			// NOTE: cached values store initial hidden views preferences.
+			hideMarketbar, _ := ct.cache.Get("hideMarketbar")
+			ct.State.hideMarketbar = hideMarketbar.(bool)
+			hideChart, _ := ct.cache.Get("hideChart")
+			ct.State.hideChart = hideChart.(bool)
+			hideTable, _ := ct.cache.Get("hideTable")
+			ct.State.hideTable = hideTable.(bool)
+			hideStatusbar, _ := ct.cache.Get("hideStatusbar")
+			ct.State.hideStatusbar = hideStatusbar.(bool)
+		}
+	}
+
+	go func() {
+		ct.UpdateTable()
+		ct.UpdateChart()
+	}()
+
+	return nil
 }

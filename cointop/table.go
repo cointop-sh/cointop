@@ -228,6 +228,7 @@ func (ct *Cointop) RowLinkShort() string {
 func (ct *Cointop) ToggleTableFullscreen() error {
 	ct.debuglog("ToggleTableFullscreen()")
 	ct.State.onlyTable = !ct.State.onlyTable
+	ct.State.onlyChart = false
 	if !ct.State.onlyTable {
 		// NOTE: cached values are initial config settings.
 		// If the only-table config was set then toggle
@@ -237,6 +238,7 @@ func (ct *Cointop) ToggleTableFullscreen() error {
 		if onlyTable.(bool) {
 			ct.State.hideMarketbar = false
 			ct.State.hideChart = false
+			ct.State.hideTable = false
 			ct.State.hideStatusbar = false
 		} else {
 			// NOTE: cached values store initial hidden views preferences.
@@ -244,10 +246,17 @@ func (ct *Cointop) ToggleTableFullscreen() error {
 			ct.State.hideMarketbar = hideMarketbar.(bool)
 			hideChart, _ := ct.cache.Get("hideChart")
 			ct.State.hideChart = hideChart.(bool)
+			hideTable, _ := ct.cache.Get("hideTable")
+			ct.State.hideTable = hideTable.(bool)
 			hideStatusbar, _ := ct.cache.Get("hideStatusbar")
 			ct.State.hideStatusbar = hideStatusbar.(bool)
 		}
 	}
+
+	go func() {
+		ct.UpdateTable()
+		ct.UpdateChart()
+	}()
 
 	return nil
 }

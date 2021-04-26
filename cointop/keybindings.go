@@ -12,8 +12,8 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 	mod := gocui.ModNone
 	split := strings.Split(s, "+")
 	if len(split) > 1 {
-		m := strings.ToLower(split[0])
-		k := strings.ToLower(split[1])
+		m := strings.ToLower(strings.TrimSpace(split[0]))
+		k := strings.ToLower(strings.TrimSpace(split[1]))
 		if m == "alt" {
 			mod = gocui.ModAlt
 			s = k
@@ -308,6 +308,9 @@ func (ct *Cointop) Keybindings(g *gocui.Gui) error {
 			fn = ct.Keyfn(ct.ShowPriceAlertsAddMenu)
 		case "toggle_table_fullscreen":
 			fn = ct.Keyfn(ct.ToggleTableFullscreen)
+			view = ""
+		case "toggle_chart_fullscreen":
+			fn = ct.Keyfn(ct.ToggleChartFullscreen)
 			view = ""
 		case "enlarge_chart":
 			fn = ct.Keyfn(ct.EnlargeChart)

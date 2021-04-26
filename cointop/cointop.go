@@ -53,6 +53,7 @@ type State struct {
 	helpVisible                bool
 	hideMarketbar              bool
 	hideChart                  bool
+	hideTable                  bool
 	hideStatusbar              bool
 	keepRowFocusOnSort         bool
 	lastSelectedRowIndex       int
@@ -75,9 +76,11 @@ type State struct {
 	sortBy                     string
 	tableOffsetX               int
 	onlyTable                  bool
+	onlyChart                  bool
 	tableColumnWidths          sync.Map
 	tableColumnAlignLeft       sync.Map
 	chartHeight                int
+	lastChartHeight            int
 	priceAlerts                *PriceAlerts
 	priceAlertEditID           string
 	priceAlertNewID            string
@@ -152,9 +155,11 @@ type Config struct {
 	NoPrompts           bool
 	HideMarketbar       bool
 	HideChart           bool
+	HideTable           bool
 	HideStatusbar       bool
 	NoCache             bool
 	OnlyTable           bool
+	OnlyChart           bool
 	RefreshRate         *uint
 	PerPage             uint
 	MaxPages            uint
@@ -244,11 +249,13 @@ func NewCointop(config *Config) (*Cointop, error) {
 			favoritesTableColumns: DefaultCoinTableHeaders,
 			hideMarketbar:         config.HideMarketbar,
 			hideChart:             config.HideChart,
+			hideTable:             config.HideTable,
 			hideStatusbar:         config.HideStatusbar,
 			keepRowFocusOnSort:    false,
 			marketBarHeight:       1,
 			maxPages:              int(maxPages),
 			onlyTable:             config.OnlyTable,
+			onlyChart:             config.OnlyChart,
 			refreshRate:           60 * time.Second,
 			selectedChartRange:    DefaultChartRange,
 			shortcutKeys:          DefaultShortcuts(),
@@ -260,6 +267,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			},
 			portfolioTableColumns: DefaultPortfolioTableHeaders,
 			chartHeight:           10,
+			lastChartHeight:       10,
 			tableOffsetX:          0,
 			tableColumnWidths:     sync.Map{},
 			tableColumnAlignLeft:  sync.Map{},
@@ -289,8 +297,13 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	ct.cache.Set("onlyTable", ct.State.onlyTable, cache.NoExpiration)
+	if ct.State.onlyTable && ct.State.onlyChart {
+		ct.State.onlyChart = false
+	}
+	ct.cache.Set("onlyChart", ct.State.onlyChart, cache.NoExpiration)
 	ct.cache.Set("hideMarketbar", ct.State.hideMarketbar, cache.NoExpiration)
 	ct.cache.Set("hideChart", ct.State.hideChart, cache.NoExpiration)
+	ct.cache.Set("hideTable", ct.State.hideTable, cache.NoExpiration)
 	ct.cache.Set("hideStatusbar", ct.State.hideStatusbar, cache.NoExpiration)
 
 	if config.RefreshRate != nil {

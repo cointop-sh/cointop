@@ -18,8 +18,10 @@ func RootCmd() *cobra.Command {
 	reset := getEnvBool("COINTOP_RESET")
 	hideMarketbar := getEnvBool("COINTOP_HIDE_MARKETBAR")
 	hideChart := getEnvBool("COINTOP_HIDE_CHART")
+	hideTable := getEnvBool("COINTOP_HIDE_TABLE")
 	hideStatusbar := getEnvBool("COINTOP_HIDE_STATUSBAR")
 	onlyTable := getEnvBool("COINTOP_ONLY_TABLE")
+	onlyChart := getEnvBool("COINTOP_ONLY_CHART")
 	silent := getEnvBool("COINTOP_SILENT")
 	noCache := getEnvBool("COINTOP_NO_CACHE")
 	colorscheme := os.Getenv("COINTOP_COLORSCHEME")
@@ -97,8 +99,10 @@ See git.io/cointop for more info.`,
 				Colorscheme:         colorscheme,
 				HideMarketbar:       hideMarketbar,
 				HideChart:           hideChart,
+				HideTable:           hideTable,
 				HideStatusbar:       hideStatusbar,
 				OnlyTable:           onlyTable,
+				OnlyChart:           onlyChart,
 				RefreshRate:         refreshRateP,
 				PerPage:             perPage,
 				MaxPages:            maxPages,
@@ -117,8 +121,10 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().BoolVarP(&reset, "reset", "", reset, "Reset the config. Make sure to backup any relevant changes first!")
 	rootCmd.Flags().BoolVarP(&hideMarketbar, "hide-marketbar", "", hideMarketbar, "Hide the top marketbar")
 	rootCmd.Flags().BoolVarP(&hideChart, "hide-chart", "", hideChart, "Hide the chart view")
+	rootCmd.Flags().BoolVarP(&hideTable, "hide-table", "", hideTable, "Hide the table view")
 	rootCmd.Flags().BoolVarP(&hideStatusbar, "hide-statusbar", "", hideStatusbar, "Hide the bottom statusbar")
 	rootCmd.Flags().BoolVarP(&onlyTable, "only-table", "", onlyTable, "Show only the table. Hides the chart and top and bottom bars")
+	rootCmd.Flags().BoolVarP(&onlyChart, "only-chart", "", onlyChart, "Show only the chart. Hides the table and top and bottom bars")
 	rootCmd.Flags().BoolVarP(&silent, "silent", "s", silent, "Silence log ouput")
 	rootCmd.Flags().BoolVarP(&noCache, "no-cache", "", noCache, "No cache")
 	rootCmd.Flags().UintVarP(&refreshRate, "refresh-rate", "r", 60, "Refresh rate in seconds. Set to 0 to not auto-refresh")

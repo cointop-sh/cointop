@@ -31,6 +31,8 @@ Press <kbd>Ctrl</kbd>+<kbd>j</kbd> to increase the chart height.
 
 Press <kbd>Ctrl</kbd>+<kbd>k</kbd> to decrease the chart height.
 
+Press <kbd>|</kbd> to toggle chart fullscreen.
+
 ## Hide chart
 
 Run cointop with the `--hide-chart` flag to always keep the chart hidden.

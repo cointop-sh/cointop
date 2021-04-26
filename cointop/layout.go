@@ -18,13 +18,22 @@ func (ct *Cointop) layout() error {
 	topOffset := 0
 	headerHeight := 1
 	marketbarHeight := ct.State.marketBarHeight
-	chartHeight := ct.State.chartHeight
+	chartHeight := ct.State.lastChartHeight
 	statusbarHeight := 1
 
 	if ct.State.onlyTable {
 		ct.State.hideMarketbar = true
 		ct.State.hideChart = true
+		ct.State.hideTable = false
 		ct.State.hideStatusbar = true
+		ct.State.onlyChart = false
+		marketbarHeight = 0
+	} else if ct.State.onlyChart {
+		ct.State.hideMarketbar = true
+		ct.State.hideChart = false
+		ct.State.hideTable = true
+		ct.State.hideStatusbar = true
+		ct.State.onlyTable = false
 		marketbarHeight = 0
 	}
 
@@ -73,7 +82,15 @@ func (ct *Cointop) layout() error {
 			ct.Views.Chart.SetBacking(nil)
 		}
 	} else {
-		if err := ct.ui.SetView(ct.Views.Chart, 0, topOffset-1, maxX, topOffset+chartHeight); err != nil {
+		chartTopOffset := topOffset - 1
+		if ct.State.hideStatusbar {
+			chartTopOffset = topOffset
+		}
+		if ct.State.onlyChart {
+			chartHeight = maxY - topOffset
+		}
+		ct.State.chartHeight = chartHeight
+		if err := ct.ui.SetView(ct.Views.Chart, 0, chartTopOffset, maxX, topOffset+chartHeight); err != nil {
 			ct.Views.Chart.Clear()
 			ct.Views.Chart.SetFrame(false)
 			ct.Views.Chart.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.Chart.Name()))
@@ -90,29 +107,44 @@ func (ct *Cointop) layout() error {
 		}
 	}
 
-	tableOffsetX := ct.State.tableOffsetX
-	topOffset = topOffset + chartHeight
-	if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset-1, maxX, topOffset+1); err != nil {
-		ct.Views.TableHeader.SetFrame(false)
-		ct.Views.TableHeader.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.TableHeader.Name()))
-		ct.Views.TableHeader.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.TableHeader.Name()))
-		go ct.UpdateTableHeader()
-	}
-
-	topOffset = topOffset + headerHeight
-	if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset-1, maxX, maxY-statusbarHeight); err != nil {
-		ct.Views.Table.SetFrame(false)
-		ct.Views.Table.SetHighlight(true)
-		ct.Views.Table.SetSelFgColor(ct.colorscheme.gocuiFgColor("table_row_active"))
-		ct.Views.Table.SetSelBgColor(ct.colorscheme.gocuiBgColor("table_row_active"))
-		_, found := ct.cache.Get("allCoinsSlugMap")
-		if found {
-			ct.cache.Delete("allCoinsSlugMap")
+	if ct.State.hideTable {
+		if ct.Views.TableHeader.Backing() != nil {
+			if err := ct.g.DeleteView(ct.Views.TableHeader.Name()); err != nil {
+				return err
+			}
+			ct.Views.TableHeader.SetBacking(nil)
 		}
-		go func() {
-			ct.UpdateCoins()
-			ct.UpdateTable()
-		}()
+		if ct.Views.Table.Backing() != nil {
+			if err := ct.g.DeleteView(ct.Views.Table.Name()); err != nil {
+				return err
+			}
+			ct.Views.Table.SetBacking(nil)
+		}
+	} else {
+		tableOffsetX := ct.State.tableOffsetX
+		topOffset = topOffset + chartHeight
+		if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset-1, maxX, topOffset+1); err != nil {
+			ct.Views.TableHeader.SetFrame(false)
+			ct.Views.TableHeader.SetFgColor(ct.colorscheme.gocuiFgColor(ct.Views.TableHeader.Name()))
+			ct.Views.TableHeader.SetBgColor(ct.colorscheme.gocuiBgColor(ct.Views.TableHeader.Name()))
+			go ct.UpdateTableHeader()
+		}
+
+		topOffset = topOffset + headerHeight
+		if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset-1, maxX, maxY-statusbarHeight); err != nil {
+			ct.Views.Table.SetFrame(false)
+			ct.Views.Table.SetHighlight(true)
+			ct.Views.Table.SetSelFgColor(ct.colorscheme.gocuiFgColor("table_row_active"))
+			ct.Views.Table.SetSelBgColor(ct.colorscheme.gocuiBgColor("table_row_active"))
+			_, found := ct.cache.Get("allCoinsSlugMap")
+			if found {
+				ct.cache.Delete("allCoinsSlugMap")
+			}
+			go func() {
+				ct.UpdateCoins()
+				ct.UpdateTable()
+			}()
+		}
 	}
 
 	if !ct.State.hideStatusbar {

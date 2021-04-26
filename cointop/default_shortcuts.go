@@ -28,6 +28,7 @@ func DefaultShortcuts() map[string]string {
 		"ctrl+u":    "page_up",
 		"ctrl+j":    "enlarge_chart",
 		"ctrl+k":    "shorten_chart",
+		"|":         "toggle_chart_fullscreen",
 		"alt+up":    "sort_column_asc",
 		"alt+down":  "sort_column_desc",
 		"alt+left":  "sort_left_column",
