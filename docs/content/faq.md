@@ -41,6 +41,14 @@ draft: false
 
   Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.config/cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
 
+## How do I make the background color transparent?
+
+  Change the background color options in the colorscheme file to `default` to use the system default color, eg. `base_bg = "default"`
+
+## Why don't colorschemes support RGB or hex colors?
+
+  Some of the cointop underlying rendering libraries don't support true colors. See [issue](https://github.com/nsf/termbox/issues/37).
+
 ## Where is the config file located?
 
   The default configuration file is located under `~/.config/cointop/config.toml`
