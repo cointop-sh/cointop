@@ -48,8 +48,7 @@ sudo xbps-install -Su cointop
 ## Flatpak (Linux)
 
 ```bash
-sudo flatpak uninstall com.github.miguelmota.Cointop
-sudo flatpak install flathub com.github.miguelmota.Cointop
+flatpak update com.github.miguelmota.Cointop
 ```
 
 ## NixOS (Linux)
