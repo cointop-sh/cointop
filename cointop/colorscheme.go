@@ -276,10 +276,28 @@ func (c *Colorscheme) color(name string, a ...interface{}) string {
 }
 
 func (c *Colorscheme) gocuiFgColor(name string) gocui.Attribute {
+	var attrs []gocui.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.toGocuiAttr(v); ok {
-			return fg
+			attrs = append(attrs, fg)
 		}
+	}
+	if v, ok := c.colors[name+"_bold"].(bool); ok {
+		if v {
+			attrs = append(attrs, gocui.AttrBold)
+		}
+	}
+	if v, ok := c.colors[name+"_underline"].(bool); ok {
+		if v {
+			attrs = append(attrs, gocui.AttrUnderline)
+		}
+	}
+	if len(attrs) > 0 {
+		var combined gocui.Attribute
+		for _, v := range attrs {
+			combined = combined ^ v
+		}
+		return combined
 	}
 
 	return gocui.ColorDefault
