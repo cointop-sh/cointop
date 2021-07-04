@@ -122,7 +122,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						Text:        symbol,
 					})
 			case "price":
-				text := humanize.Monetaryf(coin.Price, 2)
+				text := ct.FormatPrice(coin.Price)
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,

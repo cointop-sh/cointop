@@ -60,7 +60,7 @@ func FormatRank(rank interface{}) int {
 // FormatPrice formats the price value
 func FormatPrice(price float64, convert string) float64 {
 	convert = strings.ToUpper(convert)
-	pricestr := fmt.Sprintf("%.2f", price)
+	pricestr := fmt.Sprintf("%.5f", price)
 	if convert == "ETH" || convert == "BTC" || price < 1 {
 		pricestr = fmt.Sprintf("%.8f", price)
 	}

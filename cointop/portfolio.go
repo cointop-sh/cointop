@@ -125,7 +125,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Text:        symbol,
 					})
 			case "price":
-				text := humanize.Monetaryf(coin.Price, 2)
+				text := ct.FormatPrice(coin.Price)
 				symbolPadding := 1
 				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
 				ct.SetTableColumnAlignLeft(header, false)
@@ -718,7 +718,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 				item[i] = entry.Symbol
 			case "price":
 				if humanReadable {
-					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Price, 2))
+					item[i] = fmt.Sprintf("%s%s", symbol, ct.FormatPrice(entry.Price))
 				} else {
 					item[i] = strconv.FormatFloat(entry.Price, 'f', -1, 64)
 				}

@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/miguelmota/cointop/pkg/api"
@@ -74,4 +75,16 @@ func GetCoinPrices(config *PricesConfig) ([]string, error) {
 	}
 
 	return prices, nil
+}
+
+// FormatPrice formats the coin price number of decimals and currency format
+func (ct *Cointop) FormatPrice(price float64) string {
+	decimals := 2
+	if price < 1 {
+		decimals = 8
+	}
+	if price == math.Trunc(price) {
+		decimals = 2
+	}
+	return humanize.Monetaryf(price, decimals)
 }

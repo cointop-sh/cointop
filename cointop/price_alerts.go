@@ -96,7 +96,7 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 				})
 
 			case "target_price":
-				targetPrice := fmt.Sprintf("%s %s", entry.Operator, humanize.Monetaryf(entry.TargetPrice, 2))
+				targetPrice := fmt.Sprintf("%s %s", entry.Operator, ct.FormatPrice(entry.TargetPrice))
 				ct.SetTableColumnWidthFromString(header, targetPrice)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells, &table.RowCell{
@@ -187,7 +187,7 @@ func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
 	}
 	var msg string
 	title := "Cointop Alert"
-	priceStr := fmt.Sprintf("%s%s (%s%s)", ct.CurrencySymbol(), humanize.Numericf(alert.TargetPrice, 2), ct.CurrencySymbol(), humanize.Monetaryf(coin.Price, 2))
+	priceStr := fmt.Sprintf("%s%s (%s%s)", ct.CurrencySymbol(), ct.FormatPrice(alert.TargetPrice), ct.CurrencySymbol(), humanize.Monetaryf(coin.Price, 2))
 	if alert.Operator == ">" {
 		if coin.Price > alert.TargetPrice {
 			msg = fmt.Sprintf("%s price is greater than %v", alert.CoinName, priceStr)
