@@ -20,6 +20,7 @@ var DefaultCacheDir = "/tmp"
 
 // FileCache ...
 type FileCache struct {
+	mapLock  sync.Mutex
 	muts     map[string]*sync.Mutex
 	prefix   string
 	cacheDir string
@@ -56,12 +57,17 @@ func NewFileCache(config *Config) (*FileCache, error) {
 
 // Set writes item to cache
 func (f *FileCache) Set(key string, data interface{}, expire time.Duration) error {
-	if _, ok := f.muts[key]; !ok {
+	var mu *sync.Mutex
+	var ok bool
+	f.mapLock.Lock()
+	if mu, ok = f.muts[key]; !ok {
 		f.muts[key] = new(sync.Mutex)
+		mu = f.muts[key]
 	}
+	f.mapLock.Unlock()
 
-	f.muts[key].Lock()
-	defer f.muts[key].Unlock()
+	mu.Lock()
+	defer mu.Unlock()
 
 	key = regexp.MustCompile("[^a-zA-Z0-9_-]").ReplaceAllLiteralString(key, "")
 	if f.prefix != "" {
@@ -78,9 +84,6 @@ func (f *FileCache) Set(key string, data interface{}, expire time.Duration) erro
 		return err
 	}
 
-	var fmutex sync.RWMutex
-	fmutex.Lock()
-	defer fmutex.Unlock()
 	fp, err := os.OpenFile(fpath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
