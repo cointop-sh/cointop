@@ -529,12 +529,20 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 		return sliced
 	}
 
+OUTER:
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		p, isNew := ct.PortfolioEntry(coin)
 		if isNew {
 			continue
 		}
+		// check not already found
+		for j := range sliced {
+			if coin.Symbol == sliced[j].Symbol {
+				continue OUTER
+			}
+		}
+
 		coin.Holdings = p.Holdings
 		balance := coin.Price * p.Holdings
 		balancestr := fmt.Sprintf("%.2f", balance)
