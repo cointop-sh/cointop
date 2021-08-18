@@ -44,6 +44,7 @@ type State struct {
 	coinsTableColumns  []string
 	convertMenuVisible bool
 	defaultView        string
+	defaultChartRange  string
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
 	favoritesBySymbol map[string]bool
