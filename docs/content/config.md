@@ -39,6 +39,7 @@ You can configure the actions you want for each key in `config.toml`:
 ```toml
 currency = "USD"
 default_view = ""
+default_chart_range = "1Y"
 api = "coingecko"
 colorscheme = "cointop"
 refresh_rate = 60
