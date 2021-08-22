@@ -230,13 +230,17 @@ release:
 docker-build:
 	docker build --build-arg VERSION=$(VERSION) -t cointop/cointop .
 
+docker-tag:
+	docker tag cointop/cointop:latest cointop/cointop:$(VERSION)
+
 docker-run:
 	docker run -it cointop/cointop
 
 docker-push:
+	docker push cointop/cointop:$(VERSION)
 	docker push cointop/cointop:latest
 
-docker-build-and-push: docker-build docker-push
+docker-build-and-push: docker-build docker-tag docker-push
 
 docker-run-ssh:
 	docker run -p 2222:22 -v ~/.ssh/demo:/keys -v ~/.cache/cointop:/tmp/cointop_config --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
