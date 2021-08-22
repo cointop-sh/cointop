@@ -410,9 +410,9 @@ func (ct *Cointop) loadDefaultChartRangeFromConfig() error {
 	ct.debuglog("loadDefaultChartRangeFromConfig()")
 	if defaultChartRange, ok := ct.config.DefaultChartRange.(string); ok {
 		// validate configured value
-		_, present := ct.chartRangesMap[defaultChartRange]
-		if !present {
-			defaultChartRange = DefaultChartRange
+		_, ok := ct.chartRangesMap[defaultChartRange]
+		if !ok {
+			return fmt.Errorf("invalid default chart range %q. Valid ranges are: %s", defaultChartRange, strings.Join(ChartRanges(), ","))
 		}
 		ct.State.defaultChartRange = defaultChartRange
 		ct.State.selectedChartRange = defaultChartRange
