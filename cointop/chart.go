@@ -189,8 +189,10 @@ func (ct *Cointop) PortfolioChart() error {
 	chart := chartplot.NewChartPlot()
 	chart.SetHeight(ct.State.chartHeight)
 
-	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
-	if ct.State.selectedChartRange == "YTD" {
+	convert := ct.State.currencyConversion            // cache here
+	selectedChartRange := ct.State.selectedChartRange // cache here
+	rangeseconds := ct.chartRangesMap[selectedChartRange]
+	if selectedChartRange == "YTD" {
 		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
@@ -216,7 +218,7 @@ func (ct *Cointop) PortfolioChart() error {
 		}
 
 		var graphData []float64
-		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", p.Symbol, strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
+		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", p.Symbol, strings.Replace(selectedChartRange, " ", "", -1)))
 		cached, found := ct.cache.Get(cachekey)
 		if found {
 			// cache hit
@@ -230,7 +232,6 @@ func (ct *Cointop) PortfolioChart() error {
 			if len(graphData) == 0 {
 				time.Sleep(2 * time.Second)
 
-				convert := ct.State.currencyConversion
 				apiGraphData, err := ct.api.GetCoinGraphData(convert, p.Symbol, p.Name, start, end)
 				if err != nil {
 					return err
