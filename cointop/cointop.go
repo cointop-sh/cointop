@@ -44,6 +44,7 @@ type State struct {
 	coinsTableColumns  []string
 	convertMenuVisible bool
 	defaultView        string
+	defaultChartRange  string
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
 	favoritesBySymbol map[string]bool
@@ -243,6 +244,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			cacheDir:           DefaultCacheDir,
 			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: DefaultCurrency,
+			defaultChartRange:  DefaultChartRange,
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 			favoritesBySymbol:     make(map[string]bool),
 			favorites:             make(map[string]bool),

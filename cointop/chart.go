@@ -257,10 +257,11 @@ func (ct *Cointop) PortfolioChart() error {
 		for i := range graphData {
 			price := graphData[i]
 			sum := p.Holdings * price
-			if len(data)-1 >= i {
+			if i < len(data) {
 				data[i] += sum
+			} else {
+				data = append(data, sum)
 			}
-			data = append(data, sum)
 		}
 	}
 

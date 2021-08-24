@@ -31,18 +31,19 @@ var possibleConfigPaths = []string{
 }
 
 type config struct {
-	Shortcuts     map[string]interface{} `toml:"shortcuts"`
-	Favorites     map[string]interface{} `toml:"favorites"`
-	Portfolio     map[string]interface{} `toml:"portfolio"`
-	PriceAlerts   map[string]interface{} `toml:"price_alerts"`
-	Currency      interface{}            `toml:"currency"`
-	DefaultView   interface{}            `toml:"default_view"`
-	CoinMarketCap map[string]interface{} `toml:"coinmarketcap"`
-	API           interface{}            `toml:"api"`
-	Colorscheme   interface{}            `toml:"colorscheme"`
-	RefreshRate   interface{}            `toml:"refresh_rate"`
-	CacheDir      interface{}            `toml:"cache_dir"`
-	Table         map[string]interface{} `toml:"table"`
+	Shortcuts         map[string]interface{} `toml:"shortcuts"`
+	Favorites         map[string]interface{} `toml:"favorites"`
+	Portfolio         map[string]interface{} `toml:"portfolio"`
+	PriceAlerts       map[string]interface{} `toml:"price_alerts"`
+	Currency          interface{}            `toml:"currency"`
+	DefaultView       interface{}            `toml:"default_view"`
+	DefaultChartRange interface{}            `toml:"default_chart_range"`
+	CoinMarketCap     map[string]interface{} `toml:"coinmarketcap"`
+	API               interface{}            `toml:"api"`
+	Colorscheme       interface{}            `toml:"colorscheme"`
+	RefreshRate       interface{}            `toml:"refresh_rate"`
+	CacheDir          interface{}            `toml:"cache_dir"`
+	Table             map[string]interface{} `toml:"table"`
 }
 
 // SetupConfig loads config file
@@ -67,6 +68,9 @@ func (ct *Cointop) SetupConfig() error {
 		return err
 	}
 	if err := ct.loadDefaultViewFromConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadDefaultChartRangeFromConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadAPIKeysFromConfig(); err != nil {
@@ -255,6 +259,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 	var currencyIfc interface{} = ct.State.currencyConversion
 	var defaultViewIfc interface{} = ct.State.defaultView
+	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
 	var colorschemeIfc interface{} = ct.colorschemeName
 	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
 	var cacheDirIfc interface{} = ct.State.cacheDir
@@ -289,18 +294,19 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
 
 	var inputs = &config{
-		API:           apiChoiceIfc,
-		Colorscheme:   colorschemeIfc,
-		CoinMarketCap: cmcIfc,
-		Currency:      currencyIfc,
-		DefaultView:   defaultViewIfc,
-		Favorites:     favoritesMapIfc,
-		RefreshRate:   refreshRateIfc,
-		Shortcuts:     shortcutsIfcs,
-		Portfolio:     portfolioIfc,
-		PriceAlerts:   priceAlertsMapIfc,
-		CacheDir:      cacheDirIfc,
-		Table:         tableMapIfc,
+		API:               apiChoiceIfc,
+		Colorscheme:       colorschemeIfc,
+		CoinMarketCap:     cmcIfc,
+		Currency:          currencyIfc,
+		DefaultView:       defaultViewIfc,
+		DefaultChartRange: defaultChartRangeIfc,
+		Favorites:         favoritesMapIfc,
+		RefreshRate:       refreshRateIfc,
+		Shortcuts:         shortcutsIfcs,
+		Portfolio:         portfolioIfc,
+		PriceAlerts:       priceAlertsMapIfc,
+		CacheDir:          cacheDirIfc,
+		Table:             tableMapIfc,
 	}
 
 	var b bytes.Buffer
@@ -395,6 +401,21 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 			defaultView = "default"
 		}
 		ct.State.defaultView = defaultView
+	}
+	return nil
+}
+
+// LoadDefaultChartRangeFromConfig loads default chart range from config file to struct
+func (ct *Cointop) loadDefaultChartRangeFromConfig() error {
+	ct.debuglog("loadDefaultChartRangeFromConfig()")
+	if defaultChartRange, ok := ct.config.DefaultChartRange.(string); ok {
+		// validate configured value
+		_, ok := ct.chartRangesMap[defaultChartRange]
+		if !ok {
+			return fmt.Errorf("invalid default chart range %q. Valid ranges are: %s", defaultChartRange, strings.Join(ChartRanges(), ","))
+		}
+		ct.State.defaultChartRange = defaultChartRange
+		ct.State.selectedChartRange = defaultChartRange
 	}
 	return nil
 }

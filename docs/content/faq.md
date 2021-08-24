@@ -328,6 +328,12 @@ draft: false
 
   In the config file, set `default_view = "default"`
 
+## How do I set the default chart range?
+
+  In the config file, set `default_chart_range = "3M"`
+
+  Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`.
+
 ## How can use a different config file other than the default?
 
   Run cointop with the `--config` flag, eg `cointop --config="/path/to/config.toml"`, to use the specified file as the config.
