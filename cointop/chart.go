@@ -218,7 +218,7 @@ func (ct *Cointop) PortfolioChart() error {
 		}
 
 		var graphData []float64
-		cachekey := strings.ToLower(fmt.Sprintf("%s_%s", p.Symbol, strings.Replace(selectedChartRange, " ", "", -1)))
+		cachekey := strings.ToLower(fmt.Sprintf("%s_%s_%s", p.Symbol, convert, strings.Replace(selectedChartRange, " ", "", -1)))
 		cached, found := ct.cache.Get(cachekey)
 		if found {
 			// cache hit
