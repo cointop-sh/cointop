@@ -347,7 +347,7 @@ draft: false
 
 ## What price-change columns are available?
 
-  Supported columns relating to price change are `1h_change`, `24h_change`, `7d_change`, `30d_change`
+  Supported columns relating to price change are `1h_change`, `24h_change`, `7d_change`, `30d_change`, `1y_change`
 
 ## How can use a different config file other than the default?
 
