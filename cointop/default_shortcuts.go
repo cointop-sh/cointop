@@ -39,6 +39,7 @@ func DefaultShortcuts() map[string]string {
 		"1":         "sort_column_1h_change",
 		"2":         "sort_column_24h_change",
 		"3":         "sort_column_30d_change",
+		"6":         "sort_column_1y_change",
 		"7":         "sort_column_7d_change",
 		"a":         "sort_column_available_supply",
 		"b":         "sort_column_balance",

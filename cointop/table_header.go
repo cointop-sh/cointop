@@ -95,6 +95,11 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Label:      "[3]0D%",
 		PlainLabel: "30D%",
 	},
+	"1y_change": &HeaderColumn{
+		Slug:       "1y_change",
+		Label:      "3[6]5D%",
+		PlainLabel: "1Y%",
+	},
 	"total_supply": &HeaderColumn{
 		Slug:       "total_supply",
 		Label:      "[t]otal supply",
