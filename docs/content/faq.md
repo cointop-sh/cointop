@@ -339,7 +339,8 @@ draft: false
   In the config file, set `columns` value in one of the favorites, portfolio, table sections. The list of available columns can be seen on the help menu - look for "sort_column_XXX".
 
   For example:
-  ```
+
+  ```toml
   [table]
     columns = ["rank", "name", "symbol", "price", "1h_change", "24h_change", "7d_change", "24h_volume", "market_cap", "available_supply", "total_supply", "last_updated"]
   ```
