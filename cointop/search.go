@@ -29,6 +29,9 @@ func NewInputView() *InputView {
 // OpenSearch opens the search field
 func (ct *Cointop) openSearch() error {
 	ct.debuglog("openSearch()")
+	if ct.ui.ActiveViewName() != ct.Views.Table.Name() {
+		return nil
+	}
 	ct.State.searchFieldVisible = true
 	ct.ui.SetCursor(true)
 	ct.SetActiveView(ct.Views.SearchField.Name())
