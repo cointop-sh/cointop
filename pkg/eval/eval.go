@@ -7,13 +7,13 @@ import (
 	"github.com/Knetic/govaluate"
 )
 
-// EvaluateExpression ...
-func EvaluateExpressionToFloat64(expressionInput string) (float64, error) {
-	expressionInput = strings.TrimSpace(expressionInput) // remove trailing \0s
-	if expressionInput == "" {
+// EvaluateExpression evaulates a simple math expression string to a float64
+func EvaluateExpressionToFloat64(input string) (float64, error) {
+	input = strings.TrimSpace(input) // remove trailing \0s
+	if input == "" {
 		return 0, nil
 	}
-	expression, err := govaluate.NewEvaluableExpression(expressionInput)
+	expression, err := govaluate.NewEvaluableExpression(input)
 	if err != nil {
 		return 0, err
 	}

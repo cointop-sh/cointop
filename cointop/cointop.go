@@ -486,7 +486,7 @@ func (ct *Cointop) Run() error {
 	ui.SetMouse(true)
 	ui.SetHighlight(true)
 	ui.SetManagerFunc(ct.layout)
-	if err := ct.Keybindings(ct.g); err != nil {
+	if err := ct.SetKeybindings(); err != nil {
 		return fmt.Errorf("keybindings: %v", err)
 	}
 
