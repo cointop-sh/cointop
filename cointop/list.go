@@ -91,6 +91,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 			PercentChange24H: v.PercentChange24H,
 			PercentChange7D:  v.PercentChange7D,
 			PercentChange30D: v.PercentChange30D,
+			PercentChange1Y:  v.PercentChange1Y,
 			LastUpdated:      v.LastUpdated,
 		})
 		if ilast != nil {
@@ -141,6 +142,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 					c.PercentChange24H = cm.PercentChange24H
 					c.PercentChange7D = cm.PercentChange7D
 					c.PercentChange30D = cm.PercentChange30D
+					c.PercentChange1Y = cm.PercentChange1Y
 					c.LastUpdated = cm.LastUpdated
 					c.Favorite = cm.Favorite
 				}

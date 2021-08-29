@@ -69,6 +69,7 @@ func DefaultShortcuts() map[string]string {
 		"t":         "sort_column_total_supply",
 		"u":         "sort_column_last_updated",
 		"v":         "sort_column_24h_volume",
+		"y":         "sort_column_1y_change",
 		"q":         "quit_view",
 		"Q":         "quit_view",
 		"%":         "sort_column_percent_holdings",

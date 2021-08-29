@@ -343,6 +343,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 		pcp.PCP24h,
 		pcp.PCP7d,
 		pcp.PCP30d,
+		pcp.PCP1y,
 	}
 	order := geckoTypes.OrderTypeObject.MarketCapDesc
 	convertTo := strings.ToLower(convert)
@@ -372,6 +373,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 			var percentChange24H float64
 			var percentChange7D float64
 			var percentChange30D float64
+			var percentChange1Y float64
 
 			if item.PriceChangePercentage1hInCurrency != nil {
 				percentChange1H = *item.PriceChangePercentage1hInCurrency
@@ -384,6 +386,9 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 			}
 			if item.PriceChangePercentage30dInCurrency != nil {
 				percentChange30D = *item.PriceChangePercentage30dInCurrency
+			}
+			if item.PriceChangePercentage1yInCurrency != nil {
+				percentChange1Y = *item.PriceChangePercentage1yInCurrency
 			}
 
 			availableSupply := item.CirculatingSupply
@@ -405,6 +410,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 				PercentChange24H: util.FormatPercentChange(percentChange24H),
 				PercentChange7D:  util.FormatPercentChange(percentChange7D),
 				PercentChange30D: util.FormatPercentChange(percentChange30D),
+				PercentChange1Y:  util.FormatPercentChange(percentChange1Y),
 				Volume24H:        util.FormatVolume(item.TotalVolume),
 				LastUpdated:      util.FormatLastUpdated(item.LastUpdated),
 			})
