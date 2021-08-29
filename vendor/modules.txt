@@ -1,5 +1,7 @@
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
+# github.com/Knetic/govaluate v3.0.0+incompatible
+github.com/Knetic/govaluate
 # github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
 github.com/acarl005/stripansi
 # github.com/anaskhan96/soup v1.1.1
