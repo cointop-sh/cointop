@@ -12,8 +12,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/Knetic/govaluate"
 	"github.com/miguelmota/cointop/pkg/asciitable"
+	"github.com/miguelmota/cointop/pkg/eval"
 	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
@@ -435,22 +435,11 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 		return nil
 	}
 
-	var holdings float64 = 0
-	input := strings.TrimSpace(string(b[:n])) // remove trailing \0s
-	if input != "" {
-		expression, err := govaluate.NewEvaluableExpression(input)
-		if err != nil {
-			return nil // invalid expression - don't change anything
-		}
-		result, err := expression.Evaluate(nil)
-		if err != nil {
-			return nil // could not evaluate - don't change anything
-		}
-		var ok bool
-		holdings, ok = result.(float64)
-		if !ok {
-			return nil // not a float64 - don't change anything
-		}
+	input := string(b[:n])
+	holdings, err := eval.EvaluateExpressionToFloat64(input)
+	if err != nil {
+		// leave value as is if expression can't be evaluated
+		return nil
 	}
 	shouldDelete := holdings == 0
 
