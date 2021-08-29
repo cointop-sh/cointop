@@ -17,7 +17,8 @@ func EvaluateExpressionToFloat64(input string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	result, err := expression.Evaluate(nil)
+	params := make(map[string]interface{})
+	result, err := expression.Evaluate(params)
 	if err != nil {
 		return 0, err
 	}
