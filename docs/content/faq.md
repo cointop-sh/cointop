@@ -334,6 +334,21 @@ draft: false
 
   Supported date ranges are `All Time`, `YTD`, `1Y`, `6M`, `3M`, `1M`, `7D`, `3D`, `24H`.
 
+## How do I set the table columns?
+
+  In the config file, set `columns` value in one of the favorites, portfolio, table sections. The list of available columns can be seen on the help menu - look for "sort_column_XXX".
+
+  For example:
+
+  ```toml
+  [table]
+    columns = ["rank", "name", "symbol", "price", "1h_change", "24h_change", "7d_change", "24h_volume", "market_cap", "available_supply", "total_supply", "last_updated"]
+  ```
+
+## What price-change columns are available?
+
+  Supported columns relating to price change are `1h_change`, `24h_change`, `7d_change`, `30d_change`
+
 ## How can use a different config file other than the default?
 
   Run cointop with the `--config` flag, eg `cointop --config="/path/to/config.toml"`, to use the specified file as the config.
