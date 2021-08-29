@@ -19,6 +19,7 @@ var SupportedCoinTableHeaders = []string{
 	"24h_change",
 	"7d_change",
 	"30d_change",
+	"1y_change",
 	"24h_volume",
 	"market_cap",
 	"available_supply",
@@ -219,6 +220,25 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 						RightMargin: rightMargin,
 						LeftAlign:   false,
 						Color:       color30d,
+						Text:        text,
+					})
+			case "1y_change":
+				color1y := ct.colorscheme.TableColumnChange
+				if coin.PercentChange1Y > 0 {
+					color1y = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange1Y < 0 {
+					color1y = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%v%%", humanize.Numericf(coin.PercentChange1Y, 2))
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color1y,
 						Text:        text,
 					})
 			case "market_cap":

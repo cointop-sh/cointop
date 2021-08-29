@@ -30,6 +30,7 @@ var SupportedPortfolioTableHeaders = []string{
 	"24h_change",
 	"7d_change",
 	"30d_change",
+	"1y_change",
 	"percent_holdings",
 	"last_updated",
 }
@@ -236,6 +237,25 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						RightMargin: rightMargin,
 						LeftAlign:   false,
 						Color:       color30d,
+						Text:        text,
+					})
+			case "1y_change":
+				color1y := ct.colorscheme.TableColumnChange
+				if coin.PercentChange1Y > 0 {
+					color1y = ct.colorscheme.TableColumnChangeUp
+				}
+				if coin.PercentChange1Y < 0 {
+					color1y = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", coin.PercentChange1Y)
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       color1y,
 						Text:        text,
 					})
 			case "percent_holdings":
