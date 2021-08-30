@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/Knetic/govaluate"
+	"github.com/antonmedv/expr"
 )
 
 // EvaluateExpression evaulates a simple math expression string to a float64
@@ -13,17 +13,17 @@ func EvaluateExpressionToFloat64(input string) (float64, error) {
 	if input == "" {
 		return 0, nil
 	}
-	expression, err := govaluate.NewEvaluableExpression(input)
-	if err != nil {
-		return 0, err
-	}
-	result, err := expression.Evaluate(nil)
+	result, err := expr.Eval(input, nil)
 	if err != nil {
 		return 0, err
 	}
 	f64, ok := result.(float64)
 	if !ok {
-		return 0, errors.New("could not type assert float64")
+		ival, ok := result.(int)
+		if !ok {
+			return 0, errors.New("could not type assert float64")
+		}
+		f64 = float64(ival)
 	}
 	return f64, nil
 }

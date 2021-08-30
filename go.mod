@@ -2,10 +2,10 @@ module github.com/miguelmota/cointop
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/Knetic/govaluate v3.0.0+incompatible
 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
 	github.com/anaskhan96/soup v1.1.1 // indirect
 	github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be // indirect
+	github.com/antonmedv/expr v1.9.0
 	github.com/creack/pty v1.1.11
 	github.com/fatih/color v1.9.0
 	github.com/gen2brain/beeep v0.0.0-20200526185328-e9c15c258e28
