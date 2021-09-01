@@ -20,22 +20,26 @@ func (p *patcher) Exit(node *ast.Node) {
 }
 
 // EvaluateExpression evaulates a simple math expression string to a float64
-func EvaluateExpressionToFloat64(input string) (float64, error) {
+func EvaluateExpressionToFloat64(input string, env interface{}) (float64, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
 		return 0, nil
 	}
-	program, err := expr.Compile(input, expr.Env(nil), expr.Patch(&patcher{}))
+	program, err := expr.Compile(input, expr.Env(env), expr.Patch(&patcher{}))
 	if err != nil {
 		return 0, err
 	}
-	result, err := expr.Run(program, nil)
+	result, err := expr.Run(program, env)
 	if err != nil {
 		return 0, err
 	}
 	f64, ok := result.(float64)
 	if !ok {
-		return 0, errors.New("could not type assert float64")
+		ival, ok := result.(int)
+		if !ok {
+			return 0, errors.New("expression did not return numeric type")
+		}
+		f64 = float64(ival)
 	}
 	return f64, nil
 }
