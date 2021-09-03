@@ -202,7 +202,7 @@ func (ct *Cointop) PortfolioChart() error {
 	start := nowseconds - int64(rangeseconds.Seconds())
 	end := nowseconds
 
-	var data []float64
+	var dataSlices [][]float64
 	portfolio := ct.GetPortfolioSlice()
 	chartname := ct.SelectedCoinName()
 	for _, p := range portfolio {
@@ -253,12 +253,24 @@ func (ct *Cointop) PortfolioChart() error {
 				}()
 			}
 		}
+		dataSlices = append(dataSlices, graphData)
+	}
 
-		for i := range graphData {
-			price := graphData[i]
-			sum := p.Holdings * price
-			if i < len(data) {
-				data[i] += sum
+	var baseLen int = 0
+	for i := range dataSlices {
+		if len(dataSlices[i]) > baseLen {
+			baseLen = len(dataSlices[i])
+		}
+	}
+
+	data := make([]float64, baseLen)
+	for i := range dataSlices {
+		lenDelta := baseLen - len(dataSlices[i])
+		for j := range dataSlices[i] {
+			price := dataSlices[i][j]
+			sum := portfolio[i].Holdings * price
+			if (j + lenDelta) < baseLen {
+				data[j + lenDelta] += sum
 			} else {
 				data = append(data, sum)
 			}
