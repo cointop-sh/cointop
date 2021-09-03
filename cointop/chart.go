@@ -271,8 +271,6 @@ func (ct *Cointop) PortfolioChart() error {
 			sum := portfolio[i].Holdings * price
 			if (j + lenDelta) < baseLen {
 				data[j + lenDelta] += sum
-			} else {
-				data = append(data, sum)
 			}
 		}
 	}
