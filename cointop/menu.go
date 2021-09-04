@@ -13,6 +13,6 @@ func NewMenuView() *MenuView {
 
 // HideMenu hides the menu view
 func (ct *Cointop) HideMenu() error {
-	ct.debuglog("hideMenu()")
+	ct.debuglog("HideMenu()")
 	return nil
 }

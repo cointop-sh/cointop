@@ -70,7 +70,7 @@ func (ct *Cointop) GetPortfolioTableHeaders() []string {
 // GetPortfolioTable returns the table for displaying portfolio holdings
 func (ct *Cointop) GetPortfolioTable() *table.Table {
 	total := ct.GetPortfolioTotal()
-	maxX := ct.width()
+	maxX := ct.Width()
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetPortfolioTableHeaders()
@@ -306,7 +306,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 
 // TogglePortfolio toggles the portfolio view
 func (ct *Cointop) TogglePortfolio() error {
-	ct.debuglog("togglePortfolio()")
+	ct.debuglog("TogglePortfolio()")
 	ct.ToggleSelectedView(PortfolioView)
 	go ct.UpdateChart()
 	go ct.UpdateTable()
@@ -315,7 +315,7 @@ func (ct *Cointop) TogglePortfolio() error {
 
 // ToggleShowPortfolio shows the portfolio view
 func (ct *Cointop) ToggleShowPortfolio() error {
-	ct.debuglog("toggleShowPortfolio()")
+	ct.debuglog("ToggleShowPortfolio()")
 	ct.SetSelectedView(PortfolioView)
 	go ct.UpdateChart()
 	go ct.UpdateTable()
@@ -324,7 +324,7 @@ func (ct *Cointop) ToggleShowPortfolio() error {
 
 // TogglePortfolioUpdateMenu toggles the portfolio update menu
 func (ct *Cointop) TogglePortfolioUpdateMenu() error {
-	ct.debuglog("togglePortfolioUpdateMenu()")
+	ct.debuglog("TogglePortfolioUpdateMenu()")
 	if ct.IsPriceAlertsVisible() {
 		return ct.ShowPriceAlertsUpdateMenu()
 	}
@@ -344,11 +344,11 @@ func (ct *Cointop) CoinHoldings(coin *Coin) float64 {
 
 // UpdatePortfolioUpdateMenu updates the portfolio update menu view
 func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
-	ct.debuglog("updatePortfolioUpdateMenu()")
+	ct.debuglog("UpdatePortfolioUpdateMenu()")
 	coin := ct.HighlightedRowCoin()
 	exists := ct.PortfolioEntryExists(coin)
 	value := strconv.FormatFloat(ct.CoinHoldings(coin), 'f', -1, 64)
-	ct.debuglog("holdings %v", value)
+	ct.debuglog("UpdatePortfolioUpdateMenu() holdings %v", value)
 	var mode string
 	var current string
 	var submitText string
@@ -360,7 +360,7 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 		mode = "Add"
 		submitText = "Add"
 	}
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.width()-25, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Portfolio Entry %s\n\n", mode, pad.Left("[q] close ", ct.Width()-25, " ")))
 	label := fmt.Sprintf(" Enter holdings for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
 	content := fmt.Sprintf("%s\n%s\n\n%s%s\n\n\n [Enter] %s    [ESC] Cancel", header, label, strings.Repeat(" ", 29), coin.Symbol, submitText)
 
@@ -376,7 +376,7 @@ func (ct *Cointop) UpdatePortfolioUpdateMenu() error {
 
 // ShowPortfolioUpdateMenu shows the portfolio update menu
 func (ct *Cointop) ShowPortfolioUpdateMenu() error {
-	ct.debuglog("showPortfolioUpdateMenu()")
+	ct.debuglog("ShowPortfolioUpdateMenu()")
 
 	// TODO: separation of concerns
 	if ct.IsPriceAlertsVisible() {
@@ -400,7 +400,7 @@ func (ct *Cointop) ShowPortfolioUpdateMenu() error {
 
 // HidePortfolioUpdateMenu hides the portfolio update menu
 func (ct *Cointop) HidePortfolioUpdateMenu() error {
-	ct.debuglog("hidePortfolioUpdateMenu()")
+	ct.debuglog("HidePortfolioUpdateMenu()")
 	ct.State.portfolioUpdateMenuVisible = false
 	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.ui.SetViewOnBottom(ct.Views.Input)
@@ -418,7 +418,7 @@ func (ct *Cointop) HidePortfolioUpdateMenu() error {
 
 // SetPortfolioHoldings sets portfolio entry holdings from inputed value
 func (ct *Cointop) SetPortfolioHoldings() error {
-	ct.debuglog("setPortfolioHoldings()")
+	ct.debuglog("SetPortfolioHoldings()")
 	defer ct.HidePortfolioUpdateMenu()
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
@@ -469,7 +469,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 
 // PortfolioEntry returns a portfolio entry
 func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
-	//ct.debuglog("portfolioEntry()") // too many
+	//ct.debuglog("PortfolioEntry()") // too many
 	if c == nil {
 		return &PortfolioEntry{}, true
 	}
@@ -495,7 +495,7 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 
 // SetPortfolioEntry sets a portfolio entry
 func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
-	ct.debuglog("setPortfolioEntry()")
+	ct.debuglog("SetPortfolioEntry()")
 	ic, _ := ct.State.allCoinsSlugMap.Load(strings.ToLower(coin))
 	c, _ := ic.(*Coin)
 	p, isNew := ct.PortfolioEntry(c)
@@ -518,7 +518,7 @@ func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
 
 // RemovePortfolioEntry removes a portfolio entry
 func (ct *Cointop) RemovePortfolioEntry(coin string) error {
-	ct.debuglog("removePortfolioEntry()")
+	ct.debuglog("RemovePortfolioEntry()")
 	delete(ct.State.portfolio.Entries, strings.ToLower(coin))
 	if err := ct.Save(); err != nil {
 		return err
@@ -528,20 +528,20 @@ func (ct *Cointop) RemovePortfolioEntry(coin string) error {
 
 // PortfolioEntryExists returns true if portfolio entry exists
 func (ct *Cointop) PortfolioEntryExists(c *Coin) bool {
-	ct.debuglog("portfolioEntryExists()")
+	ct.debuglog("PortfolioEntryExists()")
 	_, isNew := ct.PortfolioEntry(c)
 	return !isNew
 }
 
 // PortfolioEntriesCount returns the count of portfolio entries
 func (ct *Cointop) PortfolioEntriesCount() int {
-	ct.debuglog("portfolioEntriesCount()")
+	ct.debuglog("PortfolioEntriesCount()")
 	return len(ct.State.portfolio.Entries)
 }
 
 // GetPortfolioSlice returns portfolio entries as a slice
 func (ct *Cointop) GetPortfolioSlice() []*Coin {
-	ct.debuglog("getPortfolioSlice()")
+	ct.debuglog("GetPortfolioSlice()")
 	sliced := []*Coin{}
 	if ct.PortfolioEntriesCount() == 0 {
 		return sliced
@@ -595,7 +595,7 @@ OUTER:
 
 // GetPortfolioTotal returns the total balance of portfolio entries
 func (ct *Cointop) GetPortfolioTotal() float64 {
-	ct.debuglog("getPortfolioTotal()")
+	ct.debuglog("GetPortfolioTotal()")
 	portfolio := ct.GetPortfolioSlice()
 	var total float64
 	for _, p := range portfolio {
@@ -606,7 +606,7 @@ func (ct *Cointop) GetPortfolioTotal() float64 {
 
 // RefreshPortfolioCoins refreshes portfolio entry coin data
 func (ct *Cointop) RefreshPortfolioCoins() error {
-	ct.debuglog("refreshPortfolioCoins()")
+	ct.debuglog("RefreshPortfolioCoins()")
 	holdings := ct.GetPortfolioSlice()
 	holdingCoins := make([]string, len(holdings))
 	for i, entry := range holdings {
@@ -654,7 +654,7 @@ var portfolioColumns = map[string]bool{
 
 // PrintHoldingsTable prints the holdings in an ASCII table
 func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
-	ct.debuglog("printHoldingsTable()")
+	ct.debuglog("PrintHoldingsTable()")
 	if options == nil {
 		options = &TablePrintOptions{}
 	}

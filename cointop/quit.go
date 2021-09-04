@@ -14,7 +14,7 @@ func (ct *Cointop) Quit() error {
 
 // QuitView exists the current view
 func (ct *Cointop) QuitView() error {
-	ct.debuglog("quitView()")
+	ct.debuglog("QuitView()")
 	if ct.State.selectedView != CoinsView {
 		ct.SetSelectedView(CoinsView)
 		return ct.UpdateTable()
@@ -28,7 +28,7 @@ func (ct *Cointop) QuitView() error {
 
 // Exit safely exits the program
 func (ct *Cointop) Exit() {
-	ct.debuglog("exit()")
+	ct.debuglog("Exit()")
 	ct.logfile.Close()
 	if ct.g != nil {
 		ct.g.Close()

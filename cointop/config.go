@@ -16,13 +16,15 @@ import (
 	"github.com/miguelmota/cointop/pkg/toml"
 )
 
-var fileperm = os.FileMode(0644)
+// FilePerm is the default file permissions
+var FilePerm = os.FileMode(0644)
 
 // ErrInvalidPriceAlert is error for invalid price alert value
 var ErrInvalidPriceAlert = errors.New("invalid price alert value")
 
+// PossibleConfigPaths are the the possible config file paths.
 // NOTE: this is to support previous default config filepaths
-var possibleConfigPaths = []string{
+var PossibleConfigPaths = []string{
 	":PREFERRED_CONFIG_HOME:/cointop/config.toml",
 	":HOME:/.config/cointop/config.toml",
 	":HOME:/.config/cointop/config",
@@ -30,7 +32,8 @@ var possibleConfigPaths = []string{
 	":HOME:/.cointop/config.toml",
 }
 
-type config struct {
+// ConfigFileConfig is the config file structure
+type ConfigFileConfig struct {
 	Shortcuts         map[string]interface{} `toml:"shortcuts"`
 	Favorites         map[string]interface{} `toml:"favorites"`
 	Portfolio         map[string]interface{} `toml:"portfolio"`
@@ -48,11 +51,11 @@ type config struct {
 
 // SetupConfig loads config file
 func (ct *Cointop) SetupConfig() error {
-	ct.debuglog("setupConfig()")
+	ct.debuglog("SetupConfig()")
 	if err := ct.CreateConfigIfNotExists(); err != nil {
 		return err
 	}
-	if err := ct.parseConfig(); err != nil {
+	if err := ct.ParseConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadTableConfig(); err != nil {
@@ -100,13 +103,13 @@ func (ct *Cointop) SetupConfig() error {
 
 // CreateConfigIfNotExists creates config file if it doesn't exist
 func (ct *Cointop) CreateConfigIfNotExists() error {
-	ct.debuglog("createConfigIfNotExists()")
+	ct.debuglog("CreateConfigIfNotExists()")
 
 	ct.configFilepath = pathutil.NormalizePath(ct.configFilepath)
 
 	// check if config file exists in one of th default paths
 	if ct.configFilepath == DefaultConfigFilepath {
-		for _, configPath := range possibleConfigPaths {
+		for _, configPath := range PossibleConfigPaths {
 			normalizedPath := pathutil.NormalizePath(configPath)
 			if _, err := os.Stat(normalizedPath); err == nil {
 				ct.configFilepath = normalizedPath
@@ -115,12 +118,12 @@ func (ct *Cointop) CreateConfigIfNotExists() error {
 		}
 	}
 
-	err := ct.makeConfigDir()
+	err := ct.MakeConfigDir()
 	if err != nil {
 		return err
 	}
 
-	err = ct.makeConfigFile()
+	err = ct.MakeConfigFile()
 	if err != nil {
 		return err
 	}
@@ -130,7 +133,7 @@ func (ct *Cointop) CreateConfigIfNotExists() error {
 
 // ConfigDirPath returns the config directory path
 func (ct *Cointop) ConfigDirPath() string {
-	ct.debuglog("configDirPath()")
+	ct.debuglog("ConfigDirPath()")
 	path := pathutil.NormalizePath(ct.configFilepath)
 	separator := string(filepath.Separator)
 	parts := strings.Split(path, separator)
@@ -139,13 +142,13 @@ func (ct *Cointop) ConfigDirPath() string {
 
 // ConfigFilePath return the config file path
 func (ct *Cointop) ConfigFilePath() string {
-	ct.debuglog("configFilePath()")
+	ct.debuglog("ConfigFilePath()")
 	return pathutil.NormalizePath(ct.configFilepath)
 }
 
 // ConfigPath return the config file path
-func (ct *Cointop) makeConfigDir() error {
-	ct.debuglog("makeConfigDir()")
+func (ct *Cointop) MakeConfigDir() error {
+	ct.debuglog("MakeConfigDir()")
 	path := ct.ConfigDirPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return os.MkdirAll(path, os.ModePerm)
@@ -155,8 +158,8 @@ func (ct *Cointop) makeConfigDir() error {
 }
 
 // MakeConfigFile creates a new config file
-func (ct *Cointop) makeConfigFile() error {
-	ct.debuglog("makeConfigFile()")
+func (ct *Cointop) MakeConfigFile() error {
+	ct.debuglog("MakeConfigFile()")
 	path := ct.ConfigFilePath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fo, err := os.Create(path)
@@ -164,7 +167,7 @@ func (ct *Cointop) makeConfigFile() error {
 			return err
 		}
 		defer fo.Close()
-		b, err := ct.configToToml()
+		b, err := ct.ConfigToToml()
 		if err != nil {
 			return err
 		}
@@ -177,16 +180,16 @@ func (ct *Cointop) makeConfigFile() error {
 
 // SaveConfig writes settings to the config file
 func (ct *Cointop) SaveConfig() error {
-	ct.debuglog("saveConfig()")
+	ct.debuglog("SaveConfig()")
 	ct.saveMux.Lock()
 	defer ct.saveMux.Unlock()
 	path := ct.ConfigFilePath()
 	if _, err := os.Stat(path); err == nil {
-		b, err := ct.configToToml()
+		b, err := ct.ConfigToToml()
 		if err != nil {
 			return err
 		}
-		err = ioutil.WriteFile(path, b, fileperm)
+		err = ioutil.WriteFile(path, b, FilePerm)
 		if err != nil {
 			return err
 		}
@@ -195,9 +198,9 @@ func (ct *Cointop) SaveConfig() error {
 }
 
 // ParseConfig decodes the toml config file
-func (ct *Cointop) parseConfig() error {
-	ct.debuglog("parseConfig()")
-	var conf config
+func (ct *Cointop) ParseConfig() error {
+	ct.debuglog("ParseConfig()")
+	var conf ConfigFileConfig
 	path := ct.configFilepath
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
 		return err
@@ -208,8 +211,8 @@ func (ct *Cointop) parseConfig() error {
 }
 
 // ConfigToToml encodes config struct to TOML
-func (ct *Cointop) configToToml() ([]byte, error) {
-	ct.debuglog("configToToml()")
+func (ct *Cointop) ConfigToToml() ([]byte, error) {
+	ct.debuglog("ConfigToToml()")
 	shortcutsIfcs := map[string]interface{}{}
 	for k, v := range ct.State.shortcutKeys {
 		var i interface{} = v
@@ -293,7 +296,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 	var keepRowFocusOnSortIfc interface{} = ct.State.keepRowFocusOnSort
 	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
 
-	var inputs = &config{
+	var inputs = &ConfigFileConfig{
 		API:               apiChoiceIfc,
 		Colorscheme:       colorschemeIfc,
 		CoinMarketCap:     cmcIfc,
@@ -321,6 +324,7 @@ func (ct *Cointop) configToToml() ([]byte, error) {
 
 // LoadTableConfig loads table config from toml config into state struct
 func (ct *Cointop) loadTableConfig() error {
+	ct.debuglog("loadTableConfig()")
 	err := ct.loadTableColumnsFromConfig()
 	if err != nil {
 		return err
@@ -460,43 +464,6 @@ func (ct *Cointop) loadCacheDirFromConfig() error {
 	}
 
 	return nil
-}
-
-// GetColorschemeColors loads colors from colorsheme file to struct
-func (ct *Cointop) getColorschemeColors() (map[string]interface{}, error) {
-	ct.debuglog("getColorschemeColors()")
-	var colors map[string]interface{}
-	if ct.colorschemeName == "" {
-		ct.colorschemeName = DefaultColorscheme
-		if _, err := toml.Decode(DefaultColors, &colors); err != nil {
-			return nil, err
-		}
-	} else {
-		colorsDir := fmt.Sprintf("%s/colors", ct.ConfigDirPath())
-		if ct.colorsDir != "" {
-			colorsDir = pathutil.NormalizePath(ct.colorsDir)
-		}
-
-		path := fmt.Sprintf("%s/%s.toml", colorsDir, ct.colorschemeName)
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
-			if ct.colorschemeName == "cointop" {
-				if _, err := toml.Decode(DefaultColors, &colors); err != nil {
-					return nil, err
-				}
-
-				return colors, nil
-			}
-
-			return nil, fmt.Errorf("the colorscheme file %q was not found.\n%s", path, ColorschemeHelpString())
-		}
-
-		if _, err := toml.DecodeFile(path, &colors); err != nil {
-			return nil, err
-		}
-	}
-
-	return colors, nil
 }
 
 // LoadAPIChoiceFromConfig loads API choices from config file to struct
@@ -675,6 +642,43 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 	}
 
 	return nil
+}
+
+// GetColorschemeColors loads colors from colorsheme file to struct
+func (ct *Cointop) GetColorschemeColors() (map[string]interface{}, error) {
+	ct.debuglog("GetColorschemeColors()")
+	var colors map[string]interface{}
+	if ct.colorschemeName == "" {
+		ct.colorschemeName = DefaultColorscheme
+		if _, err := toml.Decode(DefaultColors, &colors); err != nil {
+			return nil, err
+		}
+	} else {
+		colorsDir := fmt.Sprintf("%s/colors", ct.ConfigDirPath())
+		if ct.colorsDir != "" {
+			colorsDir = pathutil.NormalizePath(ct.colorsDir)
+		}
+
+		path := fmt.Sprintf("%s/%s.toml", colorsDir, ct.colorschemeName)
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			// NOTE: case for when cointop is set as the theme but the colorscheme file doesn't exist
+			if ct.colorschemeName == "cointop" {
+				if _, err := toml.Decode(DefaultColors, &colors); err != nil {
+					return nil, err
+				}
+
+				return colors, nil
+			}
+
+			return nil, fmt.Errorf("the colorscheme file %q was not found.\n%s", path, ColorschemeHelpString())
+		}
+
+		if _, err := toml.DecodeFile(path, &colors); err != nil {
+			return nil, err
+		}
+	}
+
+	return colors, nil
 }
 
 // InterfaceToFloat64 attempts to convert interface to float64

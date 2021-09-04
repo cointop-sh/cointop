@@ -12,23 +12,23 @@ import (
 
 // TODO: fix hex color support
 
-// colorschemeColors is a map of color string names to Attribute types
-type colorschemeColors map[string]interface{}
+// ColorschemeColors is a map of color string names to Attribute types
+type ColorschemeColors map[string]interface{}
 
 // ISprintf is a sprintf interface
 type ISprintf func(...interface{}) string
 
 // colorCache is a map of color string names to sprintf functions
-type colorCache map[string]ISprintf
+type ColorCache map[string]ISprintf
 
 // Colorscheme is the struct for colorscheme
 type Colorscheme struct {
-	colors     colorschemeColors
-	cache      colorCache
+	colors     ColorschemeColors
+	cache      ColorCache
 	cacheMutex sync.RWMutex
 }
 
-var fgcolorschemeColorsMap = map[string]fcolor.Attribute{
+var FgColorschemeColorsMap = map[string]fcolor.Attribute{
 	"black":   fcolor.FgBlack,
 	"blue":    fcolor.FgBlue,
 	"cyan":    fcolor.FgCyan,
@@ -39,7 +39,7 @@ var fgcolorschemeColorsMap = map[string]fcolor.Attribute{
 	"yellow":  fcolor.FgYellow,
 }
 
-var bgcolorschemeColorsMap = map[string]fcolor.Attribute{
+var BgColorschemeColorsMap = map[string]fcolor.Attribute{
 	"black":   fcolor.BgBlack,
 	"blue":    fcolor.BgBlue,
 	"cyan":    fcolor.BgCyan,
@@ -50,7 +50,7 @@ var bgcolorschemeColorsMap = map[string]fcolor.Attribute{
 	"yellow":  fcolor.BgYellow,
 }
 
-var gocuiColorschemeColorsMap = map[string]gocui.Attribute{
+var GocuiColorschemeColorsMap = map[string]gocui.Attribute{
 	"black":   gocui.ColorBlack,
 	"blue":    gocui.ColorBlue,
 	"cyan":    gocui.ColorCyan,
@@ -62,175 +62,175 @@ var gocuiColorschemeColorsMap = map[string]gocui.Attribute{
 }
 
 // NewColorscheme ...
-func NewColorscheme(colors colorschemeColors) *Colorscheme {
+func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 	return &Colorscheme{
 		colors:     colors,
-		cache:      make(colorCache),
+		cache:      make(ColorCache),
 		cacheMutex: sync.RWMutex{},
 	}
 }
 
 // BaseFg ...
 func (c *Colorscheme) BaseFg() gocui.Attribute {
-	return c.gocuiFgColor("base")
+	return c.GocuiFgColor("base")
 }
 
 // BaseBg ...
 func (c *Colorscheme) BaseBg() gocui.Attribute {
-	return c.gocuiBgColor("base")
+	return c.GocuiBgColor("base")
 }
 
 // Chart ...
 func (c *Colorscheme) Chart(a ...interface{}) string {
-	return c.color("chart", a...)
+	return c.Color("chart", a...)
 }
 
 // Marketbar ...
 func (c *Colorscheme) Marketbar(a ...interface{}) string {
-	return c.color("marketbar", a...)
+	return c.Color("marketbar", a...)
 }
 
 // MarketbarSprintf ...
 func (c *Colorscheme) MarketbarSprintf() ISprintf {
-	return c.toSprintf("marketbar")
+	return c.ToSprintf("marketbar")
 }
 
 // MarketbarChangeSprintf ...
 func (c *Colorscheme) MarketbarChangeSprintf() ISprintf {
 	// NOTE: reusing table styles
-	return c.toSprintf("table_column_change")
+	return c.ToSprintf("table_column_change")
 }
 
 // MarketbarChangeDownSprintf ...
 func (c *Colorscheme) MarketbarChangeDownSprintf() ISprintf {
 	// NOTE: reusing table styles
-	return c.toSprintf("table_column_change_down")
+	return c.ToSprintf("table_column_change_down")
 }
 
 // MarketbarChangeUpSprintf ...
 func (c *Colorscheme) MarketbarChangeUpSprintf() ISprintf {
 	// NOTE: reusing table styles
-	return c.toSprintf("table_column_change_up")
+	return c.ToSprintf("table_column_change_up")
 }
 
 // MarketBarLabelActive ...
 func (c *Colorscheme) MarketBarLabelActive(a ...interface{}) string {
-	return c.color("marketbar_label_active", a...)
+	return c.Color("marketbar_label_active", a...)
 }
 
 // Menu ...
 func (c *Colorscheme) Menu(a ...interface{}) string {
-	return c.color("menu", a...)
+	return c.Color("menu", a...)
 }
 
 // MenuHeader ...
 func (c *Colorscheme) MenuHeader(a ...interface{}) string {
-	return c.color("menu_header", a...)
+	return c.Color("menu_header", a...)
 }
 
 // MenuLabel ...
 func (c *Colorscheme) MenuLabel(a ...interface{}) string {
-	return c.color("menu_label", a...)
+	return c.Color("menu_label", a...)
 }
 
 // MenuLabelActive ...
 func (c *Colorscheme) MenuLabelActive(a ...interface{}) string {
-	return c.color("menu_label_active", a...)
+	return c.Color("menu_label_active", a...)
 }
 
 // Searchbar ...
 func (c *Colorscheme) Searchbar(a ...interface{}) string {
-	return c.color("searchbar", a...)
+	return c.Color("searchbar", a...)
 }
 
 // Statusbar ...
 func (c *Colorscheme) Statusbar(a ...interface{}) string {
-	return c.color("statusbar", a...)
+	return c.Color("statusbar", a...)
 }
 
 // TableColumnPrice ...
 func (c *Colorscheme) TableColumnPrice(a ...interface{}) string {
-	return c.color("table_column_price", a...)
+	return c.Color("table_column_price", a...)
 }
 
 // TableColumnPriceSprintf ...
 func (c *Colorscheme) TableColumnPriceSprintf() ISprintf {
-	return c.toSprintf("table_column_price")
+	return c.ToSprintf("table_column_price")
 }
 
 // TableColumnChange ...
 func (c *Colorscheme) TableColumnChange(a ...interface{}) string {
-	return c.color("table_column_change", a...)
+	return c.Color("table_column_change", a...)
 }
 
 // TableColumnChangeSprintf ...
 func (c *Colorscheme) TableColumnChangeSprintf() ISprintf {
-	return c.toSprintf("table_column_change")
+	return c.ToSprintf("table_column_change")
 }
 
 // TableColumnChangeDown ...
 func (c *Colorscheme) TableColumnChangeDown(a ...interface{}) string {
-	return c.color("table_column_change_down", a...)
+	return c.Color("table_column_change_down", a...)
 }
 
 // TableColumnChangeDownSprintf ...
 func (c *Colorscheme) TableColumnChangeDownSprintf() ISprintf {
-	return c.toSprintf("table_column_change_down")
+	return c.ToSprintf("table_column_change_down")
 }
 
 // TableColumnChangeUp ...
 func (c *Colorscheme) TableColumnChangeUp(a ...interface{}) string {
-	return c.color("table_column_change_up", a...)
+	return c.Color("table_column_change_up", a...)
 }
 
 // TableColumnChangeUpSprintf ...
 func (c *Colorscheme) TableColumnChangeUpSprintf() ISprintf {
-	return c.toSprintf("table_column_change_up")
+	return c.ToSprintf("table_column_change_up")
 }
 
 // TableHeader ...
 func (c *Colorscheme) TableHeader(a ...interface{}) string {
-	return c.color("table_header", a...)
+	return c.Color("table_header", a...)
 }
 
 // TableHeaderSprintf ...
 func (c *Colorscheme) TableHeaderSprintf() ISprintf {
-	return c.toSprintf("table_header")
+	return c.ToSprintf("table_header")
 }
 
 // TableHeaderColumnActive ...
 func (c *Colorscheme) TableHeaderColumnActive(a ...interface{}) string {
-	return c.color("table_header_column_active", a...)
+	return c.Color("table_header_column_active", a...)
 }
 
 // TableHeaderColumnActiveSprintf ...
 func (c *Colorscheme) TableHeaderColumnActiveSprintf() ISprintf {
-	return c.toSprintf("table_header_column_active")
+	return c.ToSprintf("table_header_column_active")
 }
 
 // TableRow ...
 func (c *Colorscheme) TableRow(a ...interface{}) string {
-	return c.color("table_row", a...)
+	return c.Color("table_row", a...)
 }
 
 // TableRowSprintf ...
 func (c *Colorscheme) TableRowSprintf() ISprintf {
-	return c.toSprintf("table_row")
+	return c.ToSprintf("table_row")
 }
 
 // TableRowActive ...
 func (c *Colorscheme) TableRowActive(a ...interface{}) string {
-	return c.color("table_row_active", a...)
+	return c.Color("table_row_active", a...)
 }
 
 // TableRowFavorite ...
 func (c *Colorscheme) TableRowFavorite(a ...interface{}) string {
-	return c.color("table_row_favorite", a...)
+	return c.Color("table_row_favorite", a...)
 }
 
 // TableRowFavoriteSprintf ...
 func (c *Colorscheme) TableRowFavoriteSprintf() ISprintf {
-	return c.toSprintf("table_row_favorite")
+	return c.ToSprintf("table_row_favorite")
 }
 
 // Default ...
@@ -238,7 +238,7 @@ func (c *Colorscheme) Default(a ...interface{}) string {
 	return fmt.Sprintf(a[0].(string), a[1:]...)
 }
 
-func (c *Colorscheme) toSprintf(name string) ISprintf {
+func (c *Colorscheme) ToSprintf(name string) ISprintf {
 	c.cacheMutex.Lock()
 	defer c.cacheMutex.Unlock()
 	if cached, ok := c.cache[name]; ok {
@@ -247,22 +247,22 @@ func (c *Colorscheme) toSprintf(name string) ISprintf {
 
 	var attrs []fcolor.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
-		if fg, ok := c.toFgAttr(v); ok {
+		if fg, ok := c.ToFgAttr(v); ok {
 			attrs = append(attrs, fg)
 		}
 	}
 	if v, ok := c.colors[name+"_bg"].(string); ok {
-		if bg, ok := c.toBgAttr(v); ok {
+		if bg, ok := c.ToBgAttr(v); ok {
 			attrs = append(attrs, bg)
 		}
 	}
 	if v, ok := c.colors[name+"_bold"].(bool); ok {
-		if bold, ok := c.toBoldAttr(v); ok {
+		if bold, ok := c.ToBoldAttr(v); ok {
 			attrs = append(attrs, bold)
 		}
 	}
 	if v, ok := c.colors[name+"_underline"].(bool); ok {
-		if underline, ok := c.toUnderlineAttr(v); ok {
+		if underline, ok := c.ToUnderlineAttr(v); ok {
 			attrs = append(attrs, underline)
 		}
 	}
@@ -271,14 +271,14 @@ func (c *Colorscheme) toSprintf(name string) ISprintf {
 	return c.cache[name]
 }
 
-func (c *Colorscheme) color(name string, a ...interface{}) string {
-	return c.toSprintf(name)(a...)
+func (c *Colorscheme) Color(name string, a ...interface{}) string {
+	return c.ToSprintf(name)(a...)
 }
 
-func (c *Colorscheme) gocuiFgColor(name string) gocui.Attribute {
+func (c *Colorscheme) GocuiFgColor(name string) gocui.Attribute {
 	var attrs []gocui.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
-		if fg, ok := c.toGocuiAttr(v); ok {
+		if fg, ok := c.ToGocuiAttr(v); ok {
 			attrs = append(attrs, fg)
 		}
 	}
@@ -303,9 +303,9 @@ func (c *Colorscheme) gocuiFgColor(name string) gocui.Attribute {
 	return gocui.ColorDefault
 }
 
-func (c *Colorscheme) gocuiBgColor(name string) gocui.Attribute {
+func (c *Colorscheme) GocuiBgColor(name string) gocui.Attribute {
 	if v, ok := c.colors[name+"_bg"].(string); ok {
-		if bg, ok := c.toGocuiAttr(v); ok {
+		if bg, ok := c.ToGocuiAttr(v); ok {
 			return bg
 		}
 	}
@@ -313,8 +313,8 @@ func (c *Colorscheme) gocuiBgColor(name string) gocui.Attribute {
 	return gocui.ColorDefault
 }
 
-func (c *Colorscheme) toFgAttr(v string) (fcolor.Attribute, bool) {
-	if attr, ok := fgcolorschemeColorsMap[v]; ok {
+func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
+	if attr, ok := FgColorschemeColorsMap[v]; ok {
 		return attr, true
 	}
 
@@ -325,8 +325,8 @@ func (c *Colorscheme) toFgAttr(v string) (fcolor.Attribute, bool) {
 	return 0, false
 }
 
-func (c *Colorscheme) toBgAttr(v string) (fcolor.Attribute, bool) {
-	if attr, ok := bgcolorschemeColorsMap[v]; ok {
+func (c *Colorscheme) ToBgAttr(v string) (fcolor.Attribute, bool) {
+	if attr, ok := BgColorschemeColorsMap[v]; ok {
 		return attr, true
 	}
 
@@ -338,18 +338,18 @@ func (c *Colorscheme) toBgAttr(v string) (fcolor.Attribute, bool) {
 }
 
 // toBoldAttr converts a boolean to an Attribute type
-func (c *Colorscheme) toBoldAttr(v bool) (fcolor.Attribute, bool) {
+func (c *Colorscheme) ToBoldAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Bold, v
 }
 
 // toUnderlineAttr converts a boolean to an Attribute type
-func (c *Colorscheme) toUnderlineAttr(v bool) (fcolor.Attribute, bool) {
+func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
 }
 
 // toGocuiAttr converts a color string name to a gocui Attribute type
-func (c *Colorscheme) toGocuiAttr(v string) (gocui.Attribute, bool) {
-	if attr, ok := gocuiColorschemeColorsMap[v]; ok {
+func (c *Colorscheme) ToGocuiAttr(v string) (gocui.Attribute, bool) {
+	if attr, ok := GocuiColorschemeColorsMap[v]; ok {
 		return attr, true
 	}
 

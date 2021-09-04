@@ -9,14 +9,14 @@ import (
 
 // UpdateHelp updates the help views
 func (ct *Cointop) UpdateHelp() {
-	ct.debuglog("updateHelp()")
+	ct.debuglog("UpdateHelp()")
 	keys := make([]string, 0, len(ct.State.shortcutKeys))
 	for k := range ct.State.shortcutKeys {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
 
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.width()-9, " ")))
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Help %s\n\n", pad.Left("[q] close ", ct.Width()-9, " ")))
 	cnt := 0
 	h := ct.Views.Menu.Height()
 	percol := h - 11
@@ -58,7 +58,7 @@ func (ct *Cointop) UpdateHelp() {
 
 // ShowHelp shows the help view
 func (ct *Cointop) ShowHelp() error {
-	ct.debuglog("showHelp()")
+	ct.debuglog("ShowHelp()")
 	ct.State.helpVisible = true
 	ct.UpdateHelp()
 	ct.SetActiveView(ct.Views.Menu.Name())
@@ -67,7 +67,7 @@ func (ct *Cointop) ShowHelp() error {
 
 // HideHelp hides the help view
 func (ct *Cointop) HideHelp() error {
-	ct.debuglog("hideHelp()")
+	ct.debuglog("HideHelp()")
 	ct.State.helpVisible = false
 	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.SetActiveView(ct.Views.Table.Name())
@@ -80,7 +80,7 @@ func (ct *Cointop) HideHelp() error {
 
 // ToggleHelp toggles the help view
 func (ct *Cointop) ToggleHelp() error {
-	ct.debuglog("toggleHelp()")
+	ct.debuglog("ToggleHelp()")
 	ct.State.helpVisible = !ct.State.helpVisible
 	if ct.State.helpVisible {
 		return ct.ShowHelp()

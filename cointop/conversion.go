@@ -151,8 +151,8 @@ func (ct *Cointop) SortedSupportedCurrencyConversions() []string {
 
 // UpdateConvertMenu updates the convert menu
 func (ct *Cointop) UpdateConvertMenu() error {
-	ct.debuglog("updateConvertMenu()")
-	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close ", ct.width()-24, " ")))
+	ct.debuglog("UpdateConvertMenu()")
+	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" Currency Conversion %s\n\n", pad.Left("[q] close ", ct.Width()-24, " ")))
 	helpline := " Press the corresponding key to select currency for conversion\n\n"
 	cnt := 0
 	h := ct.Views.Menu.Height()
@@ -226,7 +226,7 @@ func (ct *Cointop) SetCurrencyConverstion(convert string) error {
 
 // SetCurrencyConverstionFn sets the currency conversion function
 func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
-	ct.debuglog("setCurrencyConverstionFn()")
+	ct.debuglog("SetCurrencyConverstionFn()")
 	return func() error {
 		ct.HideConvertMenu()
 
@@ -245,13 +245,13 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 
 // CurrencySymbol returns the symbol for the currency conversion
 func (ct *Cointop) CurrencySymbol() string {
-	ct.debuglog("currencySymbol()")
+	ct.debuglog("CurrencySymbol()")
 	return CurrencySymbol(ct.State.currencyConversion)
 }
 
 // ShowConvertMenu shows the convert menu view
 func (ct *Cointop) ShowConvertMenu() error {
-	ct.debuglog("showConvertMenu()")
+	ct.debuglog("ShowConvertMenu()")
 	ct.State.convertMenuVisible = true
 	ct.UpdateConvertMenu()
 	ct.SetActiveView(ct.Views.Menu.Name())
@@ -260,7 +260,7 @@ func (ct *Cointop) ShowConvertMenu() error {
 
 // HideConvertMenu hides the convert menu view
 func (ct *Cointop) HideConvertMenu() error {
-	ct.debuglog("hideConvertMenu()")
+	ct.debuglog("HideConvertMenu()")
 	ct.State.convertMenuVisible = false
 	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.SetActiveView(ct.Views.Table.Name())
@@ -273,7 +273,7 @@ func (ct *Cointop) HideConvertMenu() error {
 
 // ToggleConvertMenu toggles the convert menu view
 func (ct *Cointop) ToggleConvertMenu() error {
-	ct.debuglog("toggleConvertMenu()")
+	ct.debuglog("ToggleConvertMenu()")
 	ct.State.convertMenuVisible = !ct.State.convertMenuVisible
 	if ct.State.convertMenuVisible {
 		return ct.ShowConvertMenu()

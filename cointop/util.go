@@ -13,7 +13,7 @@ import (
 
 // OpenLink opens the url in a browser
 func (ct *Cointop) OpenLink() error {
-	ct.debuglog("openLink()")
+	ct.debuglog("OpenLink()")
 	open.URL(ct.RowLink())
 	return nil
 }

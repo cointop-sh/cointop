@@ -60,7 +60,7 @@ func (ct *Cointop) GetCoinsTableHeaders() []string {
 
 // GetCoinsTable returns the table for diplaying the coins
 func (ct *Cointop) GetCoinsTable() *table.Table {
-	maxX := ct.width()
+	maxX := ct.Width()
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetCoinsTableHeaders()

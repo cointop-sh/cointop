@@ -265,7 +265,7 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 	case "last_page":
 		fn = ct.Keyfn(ct.LastPage)
 	case "open_search":
-		fn = ct.Keyfn(ct.openSearch)
+		fn = ct.Keyfn(ct.OpenSearch)
 		view = ""
 	case "toggle_price_alerts":
 		fn = ct.Keyfn(ct.TogglePriceAlerts)

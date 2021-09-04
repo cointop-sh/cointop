@@ -95,7 +95,7 @@ type Cointop struct {
 	apiKeys         *APIKeys
 	cache           *cache.Cache
 	colorsDir       string
-	config          config // toml config
+	config          ConfigFileConfig
 	configFilepath  string
 	api             api.Interface
 	apiChoice       string
@@ -352,7 +352,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ct.colorschemeName = config.Colorscheme
 	}
 
-	colors, err := ct.getColorschemeColors()
+	colors, err := ct.GetColorschemeColors()
 	if err != nil {
 		return nil, err
 	}
@@ -470,7 +470,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 // Run runs cointop
 func (ct *Cointop) Run() error {
-	ct.debuglog("run()")
+	ct.debuglog("Run()")
 	ui, err := ui.NewUI()
 	if err != nil {
 		return err
@@ -574,7 +574,7 @@ func Reset(config *ResetConfig) error {
 
 	configDeleted := false
 
-	for _, configPath := range possibleConfigPaths {
+	for _, configPath := range PossibleConfigPaths {
 		normalizedPath := pathutil.NormalizePath(configPath)
 		if _, err := os.Stat(normalizedPath); !os.IsNotExist(err) {
 			if config.Log {

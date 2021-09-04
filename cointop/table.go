@@ -21,7 +21,7 @@ const dots = "..."
 
 // RefreshTable refreshes the table
 func (ct *Cointop) RefreshTable() error {
-	ct.debuglog("refreshTable()")
+	ct.debuglog("RefreshTable()")
 
 	statusText := ""
 	switch ct.State.selectedView {

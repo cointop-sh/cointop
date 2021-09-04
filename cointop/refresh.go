@@ -7,7 +7,7 @@ import (
 
 // Refresh triggers a force refresh of coin data
 func (ct *Cointop) Refresh() error {
-	ct.debuglog("refresh()")
+	ct.debuglog("Refresh()")
 	go func() {
 		<-ct.limiter
 		ct.forceRefresh <- true
@@ -17,7 +17,7 @@ func (ct *Cointop) Refresh() error {
 
 // RefreshAll triggers a force refresh of all data
 func (ct *Cointop) RefreshAll() error {
-	ct.debuglog("refreshAll()")
+	ct.debuglog("RefreshAll()")
 	ct.refreshMux.Lock()
 	defer ct.refreshMux.Unlock()
 	ct.setRefreshStatus()

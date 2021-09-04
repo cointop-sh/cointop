@@ -1,8 +1,8 @@
 package cointop
 
 // Size returns window width and height
-func (ct *Cointop) size() (int, int) {
-	ct.debuglog("size()")
+func (ct *Cointop) Size() (int, int) {
+	ct.debuglog("Size()")
 	if ct.g == nil {
 		return 0, 0
 	}
@@ -11,22 +11,22 @@ func (ct *Cointop) size() (int, int) {
 }
 
 // Width returns window width
-func (ct *Cointop) width() int {
-	ct.debuglog("width()")
-	w, _ := ct.size()
+func (ct *Cointop) Width() int {
+	ct.debuglog("Width()")
+	w, _ := ct.Size()
 	return w
 }
 
 // Height returns window height
-func (ct *Cointop) height() int {
-	ct.debuglog("height()")
-	_, h := ct.size()
+func (ct *Cointop) Height() int {
+	ct.debuglog("Height()")
+	_, h := ct.Size()
 	return h
 }
 
 // ViewWidth returns view width
 func (ct *Cointop) ViewWidth(view string) int {
-	ct.debuglog("viewWidth()")
+	ct.debuglog("ViewWidth()")
 	v, err := ct.g.View(view)
 	if err != nil {
 		return 0
@@ -37,8 +37,8 @@ func (ct *Cointop) ViewWidth(view string) int {
 
 // ClampedWidth returns the clamped width
 func (ct *Cointop) ClampedWidth() int {
-	ct.debuglog("clampedWidth()")
-	w := ct.width()
+	ct.debuglog("ClampedWidth()")
+	w := ct.Width()
 	if w > ct.maxTableWidth {
 		return ct.maxTableWidth
 	}

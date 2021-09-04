@@ -11,7 +11,7 @@ func (ct *Cointop) GetFavoritesTableHeaders() []string {
 
 // ToggleFavorite toggles coin as favorite
 func (ct *Cointop) ToggleFavorite() error {
-	ct.debuglog("toggleFavorite()")
+	ct.debuglog("ToggleFavorite()")
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		return nil
@@ -37,7 +37,7 @@ func (ct *Cointop) ToggleFavorite() error {
 
 // ToggleFavorites toggles the favorites view
 func (ct *Cointop) ToggleFavorites() error {
-	ct.debuglog("toggleFavorites()")
+	ct.debuglog("ToggleFavorites()")
 	ct.ToggleSelectedView(FavoritesView)
 	go ct.UpdateTable()
 	return nil
@@ -45,7 +45,7 @@ func (ct *Cointop) ToggleFavorites() error {
 
 // ToggleShowFavorites shows the favorites view
 func (ct *Cointop) ToggleShowFavorites() error {
-	ct.debuglog("toggleShowFavorites()")
+	ct.debuglog("ToggleShowFavorites()")
 	ct.ToggleSelectedView(FavoritesView)
 	go ct.UpdateTable()
 	return nil
@@ -53,7 +53,7 @@ func (ct *Cointop) ToggleShowFavorites() error {
 
 // GetFavoritesSlice returns coin favorites as slice
 func (ct *Cointop) GetFavoritesSlice() []*Coin {
-	ct.debuglog("getFavoritesSlice()")
+	ct.debuglog("GetFavoritesSlice()")
 	sliced := []*Coin{}
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]

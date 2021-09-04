@@ -24,8 +24,8 @@ func NewMarketbarView() *MarketbarView {
 
 // UpdateMarketbar updates the market bar view
 func (ct *Cointop) UpdateMarketbar() error {
-	ct.debuglog("updateMarketbar()")
-	maxX := ct.width()
+	ct.debuglog("UpdateMarketbar()")
+	maxX := ct.Width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemeName == "cointop" {
 		logo = fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
@@ -88,7 +88,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 		)
 	} else {
 		ct.State.marketBarHeight = 1
-		if ct.width() < 125 {
+		if ct.Width() < 125 {
 			ct.State.marketBarHeight = 2
 		}
 
@@ -102,7 +102,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 			var ok bool
 			market, ok = cached.(types.GlobalMarketData)
 			if ok {
-				ct.debuglog("soft cache hit")
+				ct.debuglog("UpdateMarketbar() soft cache hit")
 			}
 		}
 
@@ -140,9 +140,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		separator1 := "•"
 		separator2 := "•"
 		offset := strings.Repeat(" ", 12)
-		if ct.width() < 105 {
+		if ct.Width() < 105 {
 			separator1 = "\n" + offset
-		} else if ct.width() < 125 {
+		} else if ct.Width() < 125 {
 			separator2 = "\n" + offset
 		}
 

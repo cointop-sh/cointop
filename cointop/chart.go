@@ -132,7 +132,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	if found {
 		// cache hit
 		data, _ = cached.([]float64)
-		ct.debuglog("ct.ChartPoints() soft cache hit")
+		ct.debuglog("ChartPoints() soft cache hit")
 	}
 
 	if len(data) == 0 {
@@ -223,7 +223,7 @@ func (ct *Cointop) PortfolioChart() error {
 		if found {
 			// cache hit
 			graphData, _ = cached.([]float64)
-			ct.debuglog("soft cache hit")
+			ct.debuglog("PortfolioChart() soft cache hit")
 		} else {
 			if ct.filecache != nil {
 				ct.filecache.Get(cachekey, &graphData)
@@ -390,8 +390,8 @@ func (ct *Cointop) ShowChartLoader() error {
 
 // ChartWidth returns the width for chart
 func (ct *Cointop) ChartWidth() int {
-	ct.debuglog("chartWidth()")
-	w := ct.width()
+	ct.debuglog("ChartWidth()")
+	w := ct.Width()
 	max := 175
 	if w > max {
 		return max

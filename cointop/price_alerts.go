@@ -42,8 +42,8 @@ var PriceAlertFrequencyMap = map[string]bool{
 
 // GetPriceAlertsTable returns the table for displaying alerts
 func (ct *Cointop) GetPriceAlertsTable() *table.Table {
-	ct.debuglog("getPriceAlertsTable()")
-	maxX := ct.width()
+	ct.debuglog("GetPriceAlertsTable()")
+	maxX := ct.Width()
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetPriceAlertsTableHeaders()
@@ -145,7 +145,7 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 
 // TogglePriceAlerts toggles the price alerts view
 func (ct *Cointop) TogglePriceAlerts() error {
-	ct.debuglog("togglePriceAlerts()")
+	ct.debuglog("TogglePriceAlerts()")
 	ct.ToggleSelectedView(PriceAlertsView)
 	ct.NavigateFirstLine()
 	go ct.UpdateTable()
@@ -159,7 +159,7 @@ func (ct *Cointop) IsPriceAlertsVisible() bool {
 
 // PriceAlertWatcher starts the price alert watcher
 func (ct *Cointop) PriceAlertWatcher() error {
-	ct.debuglog("priceAlertWatcher()")
+	ct.debuglog("PriceAlertWatcher()")
 	alerts := ct.State.priceAlerts.Entries
 	ticker := time.NewTicker(5 * time.Second)
 	for range ticker.C {
@@ -175,7 +175,7 @@ func (ct *Cointop) PriceAlertWatcher() error {
 
 // CheckPriceAlert checks the price alert
 func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
-	ct.debuglog("checkPriceAlert()")
+	ct.debuglog("CheckPriceAlert()")
 	if alert.Expired {
 		return nil
 	}
@@ -227,7 +227,7 @@ func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
 
 // UpdatePriceAlertsUpdateMenu updates the alerts update menu view
 func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
-	ct.debuglog("updatePriceAlertsUpdateMenu()")
+	ct.debuglog("UpdatePriceAlertsUpdateMenu()")
 
 	isEdit := false
 	var value string
@@ -266,7 +266,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
 		mode = "Edit"
 		current = fmt.Sprintf("(current %s%s)", ct.CurrencySymbol(), currentPrice)
 		submitText = "Set"
-		offset = ct.width() - 21
+		offset = ct.Width() - 21
 	} else {
 		if coin == nil {
 			coin = ct.HighlightedRowCoin()
@@ -275,7 +275,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
 		value = fmt.Sprintf("> %s", currentPrice)
 		mode = "Create"
 		submitText = "Create"
-		offset = ct.width() - 23
+		offset = ct.Width() - 23
 	}
 	header := ct.colorscheme.MenuHeader(fmt.Sprintf(" %s Alert Entry %s\n\n", mode, pad.Left("[q] close ", offset, " ")))
 	label := fmt.Sprintf(" Enter target price for %s %s", ct.colorscheme.MenuLabel(coin.Name), current)
@@ -293,7 +293,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
 
 // ShowPriceAlertsAddMenu shows the alert add menu
 func (ct *Cointop) ShowPriceAlertsAddMenu() error {
-	ct.debuglog("showPriceAlertsAddMenu()")
+	ct.debuglog("ShowPriceAlertsAddMenu()")
 	coin := ct.HighlightedRowCoin()
 	ct.SetSelectedView(PriceAlertsView)
 	ct.UpdatePriceAlertsUpdateMenu(true, coin)
@@ -306,7 +306,7 @@ func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 
 // ShowPriceAlertsUpdateMenu shows the alerts update menu
 func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
-	ct.debuglog("showPriceAlertsUpdateMenu()")
+	ct.debuglog("ShowPriceAlertsUpdateMenu()")
 	coin := ct.HighlightedRowCoin()
 	ct.SetSelectedView(PriceAlertsView)
 	ct.UpdatePriceAlertsUpdateMenu(false, coin)
@@ -319,7 +319,7 @@ func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
 
 // HidePriceAlertsUpdateMenu hides the alerts update menu
 func (ct *Cointop) HidePriceAlertsUpdateMenu() error {
-	ct.debuglog("hidePriceAlertsUpdateMenu()")
+	ct.debuglog("HidePriceAlertsUpdateMenu()")
 	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.ui.SetViewOnBottom(ct.Views.Input)
 	ct.ui.SetCursor(false)
@@ -345,7 +345,7 @@ func (ct *Cointop) EnterKeyPressHandler() error {
 
 // CreatePriceAlert sets price from inputed value
 func (ct *Cointop) CreatePriceAlert() error {
-	ct.debuglog("createPriceAlert()")
+	ct.debuglog("CreatePriceAlert()")
 	defer ct.HidePriceAlertsUpdateMenu()
 
 	isNew := ct.State.priceAlertNewID != ""
@@ -436,7 +436,7 @@ func (ct *Cointop) ParsePriceAlertInput(value string) (string, float64, error) {
 
 // SetPriceAlert sets a price alert
 func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice float64) error {
-	ct.debuglog("setPriceAlert()")
+	ct.debuglog("SetPriceAlert()")
 
 	if operator == "" {
 		operator = "="
@@ -474,7 +474,7 @@ func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice f
 
 // RemovePriceAlert removes a price alert entry
 func (ct *Cointop) RemovePriceAlert(id string) error {
-	ct.debuglog("removePriceAlert()")
+	ct.debuglog("RemovePriceAlert()")
 	for i, entry := range ct.State.priceAlerts.Entries {
 		if entry.ID == ct.State.priceAlertEditID {
 			ct.State.priceAlerts.Entries = append(ct.State.priceAlerts.Entries[:i], ct.State.priceAlerts.Entries[i+1:]...)
