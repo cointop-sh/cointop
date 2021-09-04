@@ -436,7 +436,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	}
 
 	input := string(b[:n])
-	holdings, err := eval.EvaluateExpressionToFloat64(input)
+	holdings, err := eval.EvaluateExpressionToFloat64(input, coin)
 	if err != nil {
 		// leave value as is if expression can't be evaluated
 		return nil

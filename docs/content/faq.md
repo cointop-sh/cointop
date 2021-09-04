@@ -165,7 +165,7 @@ draft: false
 
   Press <kbd>e</kbd> on the highlighted coin to enter holdings and add to your portfolio.
 
-  This dialog supports basic expressions including `+` `-` `*` etc.
+  This dialog supports basic expressions including `+` `-` `*` `/` etc.
 
 ## How do I edit the holdings of a coin in my portfolio?
 
