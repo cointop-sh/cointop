@@ -15,6 +15,10 @@ import (
 // and ListenAndServeTLS methods after a call to Shutdown or Close.
 var ErrServerClosed = errors.New("ssh: Server closed")
 
+type SubsystemHandler func(s Session)
+
+var DefaultSubsystemHandlers = map[string]SubsystemHandler{}
+
 type RequestHandler func(ctx Context, srv *Server, req *gossh.Request) (ok bool, payload []byte)
 
 var DefaultRequestHandlers = map[string]RequestHandler{}
@@ -44,6 +48,8 @@ type Server struct {
 	ServerConfigCallback          ServerConfigCallback          // callback for configuring detailed SSH options
 	SessionRequestCallback        SessionRequestCallback        // callback for allowing or denying SSH sessions
 
+	ConnectionFailedCallback ConnectionFailedCallback // callback to report connection failures
+
 	IdleTimeout time.Duration // connection timeout when no activity, none if empty
 	MaxTimeout  time.Duration // absolute connection timeout, none if empty
 
@@ -56,6 +62,10 @@ type Server struct {
 	// provide extensions to the protocol, such as tcpip forwarding. By default
 	// no handlers are enabled.
 	RequestHandlers map[string]RequestHandler
+
+	// SubsystemHandlers are handlers which are similar to the usual SSH command
+	// handlers, but handle named subsystems.
+	SubsystemHandlers map[string]SubsystemHandler
 
 	listenerWg sync.WaitGroup
 	mu         sync.RWMutex
@@ -95,6 +105,12 @@ func (srv *Server) ensureHandlers() {
 			srv.ChannelHandlers[k] = v
 		}
 	}
+	if srv.SubsystemHandlers == nil {
+		srv.SubsystemHandlers = map[string]SubsystemHandler{}
+		for k, v := range DefaultSubsystemHandlers {
+			srv.SubsystemHandlers[k] = v
+		}
+	}
 }
 
 func (srv *Server) config(ctx Context) *gossh.ServerConfig {
@@ -110,7 +126,7 @@ func (srv *Server) config(ctx Context) *gossh.ServerConfig {
 	for _, signer := range srv.HostSigners {
 		config.AddHostKey(signer)
 	}
-	if srv.PasswordHandler == nil && srv.PublicKeyHandler == nil {
+	if srv.PasswordHandler == nil && srv.PublicKeyHandler == nil && srv.KeyboardInteractiveHandler == nil {
 		config.NoClientAuth = true
 	}
 	if srv.Version != "" {
@@ -264,7 +280,9 @@ func (srv *Server) HandleConn(newConn net.Conn) {
 	defer conn.Close()
 	sshConn, chans, reqs, err := gossh.NewServerConn(conn, srv.config(ctx))
 	if err != nil {
-		// TODO: trigger event callback
+		if srv.ConnectionFailedCallback != nil {
+			srv.ConnectionFailedCallback(conn, err)
+		}
 		return
 	}
 
