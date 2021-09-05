@@ -5,13 +5,14 @@ import (
 	"sync"
 
 	"github.com/miguelmota/gocui"
+	log "github.com/sirupsen/logrus"
 )
 
 var sortlock sync.Mutex
 
 // Sort sorts the list of coins
 func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bool) {
-	ct.debuglog("Sort()")
+	log.Debug("Sort()")
 	sortlock.Lock()
 	defer sortlock.Unlock()
 	ct.State.sortBy = sortBy
@@ -79,7 +80,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 
 // SortAsc sorts list of coins in ascending order
 func (ct *Cointop) SortAsc() error {
-	ct.debuglog("SortAsc()")
+	log.Debug("SortAsc()")
 	ct.State.sortDesc = false
 	ct.UpdateTable()
 	return nil
@@ -87,7 +88,7 @@ func (ct *Cointop) SortAsc() error {
 
 // SortDesc sorts list of coins in descending order
 func (ct *Cointop) SortDesc() error {
-	ct.debuglog("SortDesc()")
+	log.Debug("SortDesc()")
 	ct.State.sortDesc = true
 	ct.UpdateTable()
 	return nil
@@ -95,7 +96,7 @@ func (ct *Cointop) SortDesc() error {
 
 // SortPrevCol sorts the previous column
 func (ct *Cointop) SortPrevCol() error {
-	ct.debuglog("SortPrevCol()")
+	log.Debug("SortPrevCol()")
 	cols := ct.GetActiveTableHeaders()
 	i := ct.GetSortColIndex()
 	k := i - 1
@@ -110,7 +111,7 @@ func (ct *Cointop) SortPrevCol() error {
 
 // SortNextCol sorts the next column
 func (ct *Cointop) SortNextCol() error {
-	ct.debuglog("SortNextCol()")
+	log.Debug("SortNextCol()")
 	cols := ct.GetActiveTableHeaders()
 	l := len(cols)
 	i := ct.GetSortColIndex()
@@ -126,7 +127,7 @@ func (ct *Cointop) SortNextCol() error {
 
 // SortToggle toggles the sort order
 func (ct *Cointop) SortToggle(sortBy string, desc bool) error {
-	ct.debuglog("SortToggle()")
+	log.Debug("SortToggle()")
 	if ct.State.sortBy == sortBy {
 		desc = !ct.State.sortDesc
 	}
@@ -138,7 +139,7 @@ func (ct *Cointop) SortToggle(sortBy string, desc bool) error {
 
 // Sortfn returns the sort function as a wrapped gocui keybinding function
 func (ct *Cointop) Sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.View) error {
-	ct.debuglog("Sortfn()")
+	log.Debug("Sortfn()")
 	return func(g *gocui.Gui, v *gocui.View) error {
 		coin := ct.HighlightedRowCoin()
 		err := ct.SortToggle(sortBy, desc)
@@ -157,7 +158,7 @@ func (ct *Cointop) Sortfn(sortBy string, desc bool) func(g *gocui.Gui, v *gocui.
 
 // GetSortColIndex gets the sort column index
 func (ct *Cointop) GetSortColIndex() int {
-	ct.debuglog("GetSortColIndex()")
+	log.Debug("GetSortColIndex()")
 	cols := ct.GetActiveTableHeaders()
 	for i, col := range cols {
 		if ct.State.sortBy == col {

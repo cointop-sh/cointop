@@ -8,6 +8,7 @@ import (
 
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
 )
 
 // ArrowUp is up arrow unicode character
@@ -147,7 +148,7 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 
 // UpdateTableHeader renders the table header
 func (ct *Cointop) UpdateTableHeader() error {
-	ct.debuglog("UpdateTableHeader()")
+	log.Debug("UpdateTableHeader()")
 
 	baseColor := ct.colorscheme.TableHeaderSprintf()
 	noSort := ct.IsPriceAlertsVisible()

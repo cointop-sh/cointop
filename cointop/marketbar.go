@@ -11,6 +11,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/humanize"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
 )
 
 // MarketbarView is structure for marketbar view
@@ -24,7 +25,7 @@ func NewMarketbarView() *MarketbarView {
 
 // UpdateMarketbar updates the market bar view
 func (ct *Cointop) UpdateMarketbar() error {
-	ct.debuglog("UpdateMarketbar()")
+	log.Debug("UpdateMarketbar()")
 	maxX := ct.Width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemeName == "cointop" {
@@ -102,7 +103,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 			var ok bool
 			market, ok = cached.(types.GlobalMarketData)
 			if ok {
-				ct.debuglog("UpdateMarketbar() soft cache hit")
+				log.Debug("UpdateMarketbar() soft cache hit")
 			}
 		}
 

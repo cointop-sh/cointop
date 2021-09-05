@@ -1,5 +1,7 @@
 package cointop
 
+import log "github.com/sirupsen/logrus"
+
 // Coin is the row structure
 type Coin struct {
 	ID               string
@@ -27,7 +29,7 @@ type Coin struct {
 
 // AllCoins returns a slice of all the coins
 func (ct *Cointop) AllCoins() []*Coin {
-	ct.debuglog("AllCoins()")
+	log.Debug("AllCoins()")
 	if ct.IsFavoritesVisible() {
 		var list []*Coin
 		for i := range ct.State.allCoins {
@@ -55,7 +57,7 @@ func (ct *Cointop) AllCoins() []*Coin {
 
 // CoinBySymbol returns the coin struct given the symbol
 func (ct *Cointop) CoinBySymbol(symbol string) *Coin {
-	ct.debuglog("CoinBySymbol()")
+	log.Debug("CoinBySymbol()")
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		if coin.Symbol == symbol {
@@ -67,7 +69,7 @@ func (ct *Cointop) CoinBySymbol(symbol string) *Coin {
 
 // CoinByName returns the coin struct given the name
 func (ct *Cointop) CoinByName(name string) *Coin {
-	ct.debuglog("CoinByName()")
+	log.Debug("CoinByName()")
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		if coin.Name == name {
@@ -79,7 +81,7 @@ func (ct *Cointop) CoinByName(name string) *Coin {
 
 // CoinByID returns the coin struct given the ID
 func (ct *Cointop) CoinByID(id string) *Coin {
-	ct.debuglog("CoinByID()")
+	log.Debug("CoinByID()")
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		if coin.ID == id {

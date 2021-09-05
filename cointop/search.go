@@ -6,6 +6,7 @@ import (
 
 	"github.com/miguelmota/cointop/pkg/levenshtein"
 	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
 )
 
 // SearchFieldView is structure for search field view
@@ -28,7 +29,7 @@ func NewInputView() *InputView {
 
 // OpenSearch opens the search field
 func (ct *Cointop) OpenSearch() error {
-	ct.debuglog("OpenSearch()")
+	log.Debug("OpenSearch()")
 	if ct.ui.ActiveViewName() != ct.Views.Table.Name() {
 		return nil
 	}
@@ -40,7 +41,7 @@ func (ct *Cointop) OpenSearch() error {
 
 // CancelSearch closes the search field
 func (ct *Cointop) CancelSearch() error {
-	ct.debuglog("CancelSearch()")
+	log.Debug("CancelSearch()")
 	ct.State.searchFieldVisible = false
 	ct.ui.SetCursor(false)
 	ct.SetActiveView(ct.Views.Table.Name())
@@ -49,7 +50,7 @@ func (ct *Cointop) CancelSearch() error {
 
 // DoSearch triggers the search and sets views
 func (ct *Cointop) DoSearch() error {
-	ct.debuglog("DoSearch()")
+	log.Debug("DoSearch()")
 	ct.Views.SearchField.Rewind()
 	b := make([]byte, 100)
 	n, err := ct.Views.SearchField.Read(b)
@@ -79,7 +80,7 @@ func (ct *Cointop) DoSearch() error {
 
 // Search performs the search and filtering
 func (ct *Cointop) Search(q string) error {
-	ct.debuglog("Search()")
+	log.Debug("Search()")
 	q = strings.TrimSpace(strings.ToLower(q))
 	idx := -1
 	min := -1

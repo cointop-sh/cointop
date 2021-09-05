@@ -12,6 +12,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/notifier"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/table"
+	log "github.com/sirupsen/logrus"
 )
 
 // GetPriceAlertsTableHeaders returns the alerts table headers
@@ -42,7 +43,7 @@ var PriceAlertFrequencyMap = map[string]bool{
 
 // GetPriceAlertsTable returns the table for displaying alerts
 func (ct *Cointop) GetPriceAlertsTable() *table.Table {
-	ct.debuglog("GetPriceAlertsTable()")
+	log.Debug("GetPriceAlertsTable()")
 	maxX := ct.Width()
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
@@ -145,7 +146,7 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 
 // TogglePriceAlerts toggles the price alerts view
 func (ct *Cointop) TogglePriceAlerts() error {
-	ct.debuglog("TogglePriceAlerts()")
+	log.Debug("TogglePriceAlerts()")
 	ct.ToggleSelectedView(PriceAlertsView)
 	ct.NavigateFirstLine()
 	go ct.UpdateTable()
@@ -159,7 +160,7 @@ func (ct *Cointop) IsPriceAlertsVisible() bool {
 
 // PriceAlertWatcher starts the price alert watcher
 func (ct *Cointop) PriceAlertWatcher() error {
-	ct.debuglog("PriceAlertWatcher()")
+	log.Debug("PriceAlertWatcher()")
 	alerts := ct.State.priceAlerts.Entries
 	ticker := time.NewTicker(5 * time.Second)
 	for range ticker.C {
@@ -175,7 +176,7 @@ func (ct *Cointop) PriceAlertWatcher() error {
 
 // CheckPriceAlert checks the price alert
 func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
-	ct.debuglog("CheckPriceAlert()")
+	log.Debug("CheckPriceAlert()")
 	if alert.Expired {
 		return nil
 	}
@@ -227,7 +228,7 @@ func (ct *Cointop) CheckPriceAlert(alert *PriceAlert) error {
 
 // UpdatePriceAlertsUpdateMenu updates the alerts update menu view
 func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
-	ct.debuglog("UpdatePriceAlertsUpdateMenu()")
+	log.Debug("UpdatePriceAlertsUpdateMenu()")
 
 	isEdit := false
 	var value string
@@ -293,7 +294,7 @@ func (ct *Cointop) UpdatePriceAlertsUpdateMenu(isNew bool, coin *Coin) error {
 
 // ShowPriceAlertsAddMenu shows the alert add menu
 func (ct *Cointop) ShowPriceAlertsAddMenu() error {
-	ct.debuglog("ShowPriceAlertsAddMenu()")
+	log.Debug("ShowPriceAlertsAddMenu()")
 	coin := ct.HighlightedRowCoin()
 	ct.SetSelectedView(PriceAlertsView)
 	ct.UpdatePriceAlertsUpdateMenu(true, coin)
@@ -306,7 +307,7 @@ func (ct *Cointop) ShowPriceAlertsAddMenu() error {
 
 // ShowPriceAlertsUpdateMenu shows the alerts update menu
 func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
-	ct.debuglog("ShowPriceAlertsUpdateMenu()")
+	log.Debug("ShowPriceAlertsUpdateMenu()")
 	coin := ct.HighlightedRowCoin()
 	ct.SetSelectedView(PriceAlertsView)
 	ct.UpdatePriceAlertsUpdateMenu(false, coin)
@@ -319,7 +320,7 @@ func (ct *Cointop) ShowPriceAlertsUpdateMenu() error {
 
 // HidePriceAlertsUpdateMenu hides the alerts update menu
 func (ct *Cointop) HidePriceAlertsUpdateMenu() error {
-	ct.debuglog("HidePriceAlertsUpdateMenu()")
+	log.Debug("HidePriceAlertsUpdateMenu()")
 	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.ui.SetViewOnBottom(ct.Views.Input)
 	ct.ui.SetCursor(false)
@@ -345,7 +346,7 @@ func (ct *Cointop) EnterKeyPressHandler() error {
 
 // CreatePriceAlert sets price from inputed value
 func (ct *Cointop) CreatePriceAlert() error {
-	ct.debuglog("CreatePriceAlert()")
+	log.Debug("CreatePriceAlert()")
 	defer ct.HidePriceAlertsUpdateMenu()
 
 	isNew := ct.State.priceAlertNewID != ""
@@ -436,7 +437,7 @@ func (ct *Cointop) ParsePriceAlertInput(value string) (string, float64, error) {
 
 // SetPriceAlert sets a price alert
 func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice float64) error {
-	ct.debuglog("SetPriceAlert()")
+	log.Debug("SetPriceAlert()")
 
 	if operator == "" {
 		operator = "="
@@ -474,7 +475,7 @@ func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice f
 
 // RemovePriceAlert removes a price alert entry
 func (ct *Cointop) RemovePriceAlert(id string) error {
-	ct.debuglog("RemovePriceAlert()")
+	log.Debug("RemovePriceAlert()")
 	for i, entry := range ct.State.priceAlerts.Entries {
 		if entry.ID == ct.State.priceAlertEditID {
 			ct.State.priceAlerts.Entries = append(ct.State.priceAlerts.Entries[:i], ct.State.priceAlerts.Entries[i+1:]...)

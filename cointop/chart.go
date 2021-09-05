@@ -10,6 +10,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/chartplot"
 	"github.com/miguelmota/cointop/pkg/timeutil"
 	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
 )
 
 // ChartView is structure for chart view
@@ -58,7 +59,7 @@ func ChartRangesMap() map[string]time.Duration {
 
 // UpdateChart updates the chart view
 func (ct *Cointop) UpdateChart() error {
-	ct.debuglog("UpdateChart()")
+	log.Debug("UpdateChart()")
 	chartLock.Lock()
 	defer chartLock.Unlock()
 
@@ -97,7 +98,7 @@ func (ct *Cointop) UpdateChart() error {
 
 // ChartPoints calculates the the chart points
 func (ct *Cointop) ChartPoints(symbol string, name string) error {
-	ct.debuglog("ChartPoints()")
+	log.Debug("ChartPoints()")
 	maxX := ct.ChartWidth()
 
 	chartPointsLock.Lock()
@@ -132,7 +133,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	if found {
 		// cache hit
 		data, _ = cached.([]float64)
-		ct.debuglog("ChartPoints() soft cache hit")
+		log.Debug("ChartPoints() soft cache hit")
 	}
 
 	if len(data) == 0 {
@@ -178,7 +179,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 // PortfolioChart renders the portfolio chart
 func (ct *Cointop) PortfolioChart() error {
-	ct.debuglog("PortfolioChart()")
+	log.Debug("PortfolioChart()")
 	maxX := ct.ChartWidth()
 	chartPointsLock.Lock()
 	defer chartPointsLock.Unlock()
@@ -223,7 +224,7 @@ func (ct *Cointop) PortfolioChart() error {
 		if found {
 			// cache hit
 			graphData, _ = cached.([]float64)
-			ct.debuglog("PortfolioChart() soft cache hit")
+			log.Debug("PortfolioChart() soft cache hit")
 		} else {
 			if ct.filecache != nil {
 				ct.filecache.Get(cachekey, &graphData)
@@ -273,7 +274,7 @@ func (ct *Cointop) PortfolioChart() error {
 
 // ShortenChart decreases the chart height by one row
 func (ct *Cointop) ShortenChart() error {
-	ct.debuglog("ShortenChart()")
+	log.Debug("ShortenChart()")
 	candidate := ct.State.chartHeight - 1
 	if candidate < 5 {
 		return nil
@@ -287,7 +288,7 @@ func (ct *Cointop) ShortenChart() error {
 
 // EnlargeChart increases the chart height by one row
 func (ct *Cointop) EnlargeChart() error {
-	ct.debuglog("EnlargeChart()")
+	log.Debug("EnlargeChart()")
 	candidate := ct.State.lastChartHeight + 1
 	if candidate > 30 {
 		return nil
@@ -301,7 +302,7 @@ func (ct *Cointop) EnlargeChart() error {
 
 // NextChartRange sets the chart to the next range option
 func (ct *Cointop) NextChartRange() error {
-	ct.debuglog("NextChartRange()")
+	log.Debug("NextChartRange()")
 	sel := 0
 	max := len(ct.chartRanges)
 	for i, k := range ct.chartRanges {
@@ -322,7 +323,7 @@ func (ct *Cointop) NextChartRange() error {
 
 // PrevChartRange sets the chart to the prevous range option
 func (ct *Cointop) PrevChartRange() error {
-	ct.debuglog("PrevChartRange()")
+	log.Debug("PrevChartRange()")
 	sel := 0
 	for i, k := range ct.chartRanges {
 		if k == ct.State.selectedChartRange {
@@ -341,7 +342,7 @@ func (ct *Cointop) PrevChartRange() error {
 
 // FirstChartRange sets the chart to the first range option
 func (ct *Cointop) FirstChartRange() error {
-	ct.debuglog("FirstChartRange()")
+	log.Debug("FirstChartRange()")
 	ct.State.selectedChartRange = ct.chartRanges[0]
 	go ct.UpdateChart()
 	return nil
@@ -349,7 +350,7 @@ func (ct *Cointop) FirstChartRange() error {
 
 // LastChartRange sets the chart to the last range option
 func (ct *Cointop) LastChartRange() error {
-	ct.debuglog("LastChartRange()")
+	log.Debug("LastChartRange()")
 	ct.State.selectedChartRange = ct.chartRanges[len(ct.chartRanges)-1]
 	go ct.UpdateChart()
 	return nil
@@ -357,7 +358,7 @@ func (ct *Cointop) LastChartRange() error {
 
 // ToggleCoinChart toggles between the global chart and the coin chart
 func (ct *Cointop) ToggleCoinChart() error {
-	ct.debuglog("ToggleCoinChart()")
+	log.Debug("ToggleCoinChart()")
 	highlightedcoin := ct.HighlightedRowCoin()
 	if ct.State.selectedCoin == highlightedcoin {
 		ct.State.selectedCoin = nil
@@ -379,7 +380,7 @@ func (ct *Cointop) ToggleCoinChart() error {
 
 // ShowChartLoader shows chart loading indicator
 func (ct *Cointop) ShowChartLoader() error {
-	ct.debuglog("ShowChartLoader()")
+	log.Debug("ShowChartLoader()")
 	ct.UpdateUI(func() error {
 		content := "\n\nLoading..."
 		return ct.Views.Chart.Update(ct.colorscheme.Chart(content))
@@ -390,7 +391,7 @@ func (ct *Cointop) ShowChartLoader() error {
 
 // ChartWidth returns the width for chart
 func (ct *Cointop) ChartWidth() int {
-	ct.debuglog("ChartWidth()")
+	log.Debug("ChartWidth()")
 	w := ct.Width()
 	max := 175
 	if w > max {
@@ -402,7 +403,7 @@ func (ct *Cointop) ChartWidth() int {
 
 // ToggleChartFullscreen toggles the chart fullscreen mode
 func (ct *Cointop) ToggleChartFullscreen() error {
-	ct.debuglog("ToggleChartFullscreen()")
+	log.Debug("ToggleChartFullscreen()")
 	ct.State.onlyChart = !ct.State.onlyChart
 	ct.State.onlyTable = false
 	if !ct.State.onlyChart {

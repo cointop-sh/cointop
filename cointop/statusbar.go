@@ -7,6 +7,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/open"
 	"github.com/miguelmota/cointop/pkg/pad"
 	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
 )
 
 // StatusbarView is structure for statusbar view
@@ -20,7 +21,7 @@ func NewStatusbarView() *StatusbarView {
 
 // UpdateStatusbar updates the statusbar view
 func (ct *Cointop) UpdateStatusbar(s string) error {
-	ct.debuglog("UpdateStatusbar()")
+	log.Debug("UpdateStatusbar()")
 	currpage := ct.CurrentDisplayPage()
 	totalpages := ct.TotalPagesDisplay()
 	var quitText string
@@ -72,7 +73,7 @@ func (ct *Cointop) UpdateStatusbar(s string) error {
 
 // RefreshRowLink updates the row link in the statusbar
 func (ct *Cointop) RefreshRowLink() error {
-	ct.debuglog("RefreshRowLink()")
+	log.Debug("RefreshRowLink()")
 	var shortcut string
 	if !open.CommandExists() {
 		shortcut = "[O]Open "

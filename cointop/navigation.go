@@ -2,29 +2,31 @@ package cointop
 
 import (
 	"math"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // CurrentPage returns the current page
 func (ct *Cointop) CurrentPage() int {
-	ct.debuglog("CurrentPage()")
+	log.Debug("CurrentPage()")
 	return ct.State.page + 1
 }
 
 // CurrentDisplayPage returns the current page in human readable format
 func (ct *Cointop) CurrentDisplayPage() int {
-	ct.debuglog("CurrentDisplayPage()")
+	log.Debug("CurrentDisplayPage()")
 	return ct.State.page + 1
 }
 
 // TotalPages returns the number of total pages
 func (ct *Cointop) TotalPages() int {
-	ct.debuglog("TotalPages()")
+	log.Debug("TotalPages()")
 	return ct.GetListCount() / ct.State.perPage
 }
 
 // TotalPagesDisplay returns the number of total pages in human readable format
 func (ct *Cointop) TotalPagesDisplay() int {
-	ct.debuglog("TotalPagesDisplay()")
+	log.Debug("TotalPagesDisplay()")
 	return ct.TotalPages() + 1
 }
 
@@ -35,7 +37,7 @@ func (ct *Cointop) TotalPerPage() int {
 
 // SetPage navigates to the selected page
 func (ct *Cointop) SetPage(page int) int {
-	ct.debuglog("SetPage()")
+	log.Debug("SetPage()")
 	if (page*ct.State.perPage) < ct.GetListCount() && page >= 0 {
 		ct.State.page = page
 	}
@@ -44,7 +46,7 @@ func (ct *Cointop) SetPage(page int) int {
 
 // CursorDown moves the cursor one row down
 func (ct *Cointop) CursorDown() error {
-	ct.debuglog("CursorDown()")
+	log.Debug("CursorDown()")
 	// return if already at the bottom
 	if ct.IsLastRow() {
 		return nil
@@ -69,7 +71,7 @@ func (ct *Cointop) CursorDown() error {
 
 // CursorUp moves the cursor one row up
 func (ct *Cointop) CursorUp() error {
-	ct.debuglog("CursorUp()")
+	log.Debug("CursorUp()")
 	// return if already at the top
 	if ct.IsFirstRow() {
 		return nil
@@ -94,7 +96,7 @@ func (ct *Cointop) CursorUp() error {
 
 // PageDown moves the cursor one page down
 func (ct *Cointop) PageDown() error {
-	ct.debuglog("PageDown()")
+	log.Debug("PageDown()")
 	// return if already at the bottom
 	if ct.IsLastRow() {
 		return nil
@@ -131,7 +133,7 @@ func (ct *Cointop) PageDown() error {
 
 // PageUp moves the cursor one page up
 func (ct *Cointop) PageUp() error {
-	ct.debuglog("PageUp()")
+	log.Debug("PageUp()")
 	// return if already at the top
 	if ct.IsFirstRow() {
 		return nil
@@ -159,7 +161,7 @@ func (ct *Cointop) PageUp() error {
 
 // NavigateFirstLine moves the cursor to the first row of the table
 func (ct *Cointop) NavigateFirstLine() error {
-	ct.debuglog("NavigateFirstLine()")
+	log.Debug("NavigateFirstLine()")
 	// return if already at the top
 	if ct.IsFirstRow() {
 		return nil
@@ -180,7 +182,7 @@ func (ct *Cointop) NavigateFirstLine() error {
 
 // NavigateLastLine moves the cursor to the last row of the table
 func (ct *Cointop) NavigateLastLine() error {
-	ct.debuglog("NavigateLastLine()")
+	log.Debug("NavigateLastLine()")
 	// return if already at the bottom
 	if ct.IsLastRow() {
 		return nil
@@ -209,7 +211,7 @@ func (ct *Cointop) NavigateLastLine() error {
 
 // NavigatePageFirstLine moves the cursor to the visible first row of the table
 func (ct *Cointop) NavigatePageFirstLine() error {
-	ct.debuglog("NavigatePageFirstLine()")
+	log.Debug("NavigatePageFirstLine()")
 	// return if already at the correct line
 	if ct.IsPageFirstLine() {
 		return nil
@@ -225,7 +227,7 @@ func (ct *Cointop) NavigatePageFirstLine() error {
 
 // NavigatePageMiddleLine moves the cursor to the visible middle row of the table
 func (ct *Cointop) NavigatePageMiddleLine() error {
-	ct.debuglog("NavigatePageMiddleLine()")
+	log.Debug("NavigatePageMiddleLine()")
 	// return if already at the correct line
 	if ct.IsPageMiddleLine() {
 		return nil
@@ -242,7 +244,7 @@ func (ct *Cointop) NavigatePageMiddleLine() error {
 
 // NavigatePageLastLine moves the cursor to the visible last row of the table
 func (ct *Cointop) navigatePageLastLine() error {
-	ct.debuglog("NavigatePageLastLine()")
+	log.Debug("NavigatePageLastLine()")
 	// return if already at the correct line
 	if ct.IsPageLastLine() {
 		return nil
@@ -259,7 +261,7 @@ func (ct *Cointop) navigatePageLastLine() error {
 
 // NextPage navigates to the next page
 func (ct *Cointop) NextPage() error {
-	ct.debuglog("NextPage()")
+	log.Debug("NextPage()")
 
 	// return if already at the last page
 	if ct.IsLastPage() {
@@ -274,7 +276,7 @@ func (ct *Cointop) NextPage() error {
 
 // PrevPage navigates to the previous page
 func (ct *Cointop) PrevPage() error {
-	ct.debuglog("PrevPage()")
+	log.Debug("PrevPage()")
 
 	// return if already at the first page
 	if ct.IsFirstPage() {
@@ -289,7 +291,7 @@ func (ct *Cointop) PrevPage() error {
 
 // NextPageTop navigates to the first row of the next page
 func (ct *Cointop) nextPageTop() error {
-	ct.debuglog("NextPageTop()")
+	log.Debug("NextPageTop()")
 
 	ct.NextPage()
 	ct.NavigateFirstLine()
@@ -299,7 +301,7 @@ func (ct *Cointop) nextPageTop() error {
 
 // PrevPageTop navigates to the first row of the previous page
 func (ct *Cointop) PrevPageTop() error {
-	ct.debuglog("PrevtPageTop()")
+	log.Debug("PrevtPageTop()")
 
 	ct.PrevPage()
 	ct.NavigateLastLine()
@@ -309,7 +311,7 @@ func (ct *Cointop) PrevPageTop() error {
 
 // FirstPage navigates to the first page
 func (ct *Cointop) FirstPage() error {
-	ct.debuglog("FirstPage()")
+	log.Debug("FirstPage()")
 
 	// return if already at the first page
 	if ct.IsFirstPage() {
@@ -324,7 +326,7 @@ func (ct *Cointop) FirstPage() error {
 
 // LastPage navigates to the last page
 func (ct *Cointop) LastPage() error {
-	ct.debuglog("LastPage()")
+	log.Debug("LastPage()")
 
 	// return if already at the last page
 	if ct.IsLastPage() {
@@ -339,7 +341,7 @@ func (ct *Cointop) LastPage() error {
 
 // IsFirstRow returns true if cursor is on first row
 func (ct *Cointop) IsFirstRow() bool {
-	ct.debuglog("IsFirstRow()")
+	log.Debug("IsFirstRow()")
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
 	return (cy + oy) == 0
@@ -347,7 +349,7 @@ func (ct *Cointop) IsFirstRow() bool {
 
 // IsLastRow returns true if cursor is on last row
 func (ct *Cointop) IsLastRow() bool {
-	ct.debuglog("IsLastRow()")
+	log.Debug("IsLastRow()")
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
 	numRows := ct.TableRowsLen() - 1
@@ -356,19 +358,19 @@ func (ct *Cointop) IsLastRow() bool {
 
 // IsFirstPage returns true if cursor is on the first page
 func (ct *Cointop) IsFirstPage() bool {
-	ct.debuglog("IsFirstPage()")
+	log.Debug("IsFirstPage()")
 	return ct.State.page == 0
 }
 
 // IsLastPage returns true if cursor is on the last page
 func (ct *Cointop) IsLastPage() bool {
-	ct.debuglog("IsLastPage()")
+	log.Debug("IsLastPage()")
 	return ct.State.page == ct.TotalPages()-1
 }
 
 // IsPageFirstLine returns true if the cursor is on the visible first row
 func (ct *Cointop) IsPageFirstLine() bool {
-	ct.debuglog("IsPageFirstLine()")
+	log.Debug("IsPageFirstLine()")
 
 	cy := ct.Views.Table.CursorY()
 	return cy == 0
@@ -376,7 +378,7 @@ func (ct *Cointop) IsPageFirstLine() bool {
 
 // IsPageMiddleLine returns true if the cursor is on the visible middle row
 func (ct *Cointop) IsPageMiddleLine() bool {
-	ct.debuglog("IsPageMiddleLine()")
+	log.Debug("IsPageMiddleLine()")
 	cy := ct.Views.Table.CursorY()
 	sy := ct.Views.Table.Height()
 	return (sy/2)-1 == cy
@@ -384,7 +386,7 @@ func (ct *Cointop) IsPageMiddleLine() bool {
 
 // IsPageLastLine returns true if the cursor is on the visible last row
 func (ct *Cointop) IsPageLastLine() bool {
-	ct.debuglog("IsPageLastLine()")
+	log.Debug("IsPageLastLine()")
 
 	cy := ct.Views.Table.CursorY()
 	sy := ct.Views.Table.Height()
@@ -393,7 +395,7 @@ func (ct *Cointop) IsPageLastLine() bool {
 
 // GoToPageRowIndex navigates to the selected row index of the page
 func (ct *Cointop) GoToPageRowIndex(idx int) error {
-	ct.debuglog("GoToPageRowIndex()")
+	log.Debug("GoToPageRowIndex()")
 	if idx < 0 {
 		idx = 0
 	}
@@ -407,7 +409,7 @@ func (ct *Cointop) GoToPageRowIndex(idx int) error {
 
 // GoToGlobalIndex navigates to the selected row index of all page rows
 func (ct *Cointop) GoToGlobalIndex(idx int) error {
-	ct.debuglog("GoToGlobalIndex()")
+	log.Debug("GoToGlobalIndex()")
 	l := ct.TableRowsLen()
 	atpage := idx / l
 	ct.SetPage(atpage)
@@ -422,7 +424,7 @@ func (ct *Cointop) HighlightRow(pageRowIndex int) error {
 	if pageRowIndex < 0 {
 		pageRowIndex = 0
 	}
-	ct.debuglog("HighlightRow()")
+	log.Debug("HighlightRow()")
 	ct.Views.Table.SetOrigin(0, 0)
 	ct.Views.Table.SetCursor(0, 0)
 	ox := ct.Views.Table.OriginX()
@@ -441,7 +443,7 @@ func (ct *Cointop) HighlightRow(pageRowIndex int) error {
 			cy = h - (l - pageRowIndex)
 		}
 	}
-	ct.debuglog("HighlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy)
+	log.Debug("HighlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy)
 	ct.Views.Table.SetOrigin(ox, oy)
 	ct.Views.Table.SetCursor(cx, cy)
 	return nil
@@ -449,7 +451,7 @@ func (ct *Cointop) HighlightRow(pageRowIndex int) error {
 
 // GoToCoinRow navigates to the row of the matched coin
 func (ct *Cointop) GoToCoinRow(coin *Coin) error {
-	ct.debuglog("GoToCoinRow()")
+	log.Debug("GoToCoinRow()")
 	if coin == nil {
 		return nil
 	}
@@ -483,7 +485,7 @@ func (ct *Cointop) GetCoinRowIndex(coin *Coin) int {
 
 // CursorDownOrNextPage moves the cursor down one row or goes to the next page if cursor is on the last row
 func (ct *Cointop) CursorDownOrNextPage() error {
-	ct.debuglog("CursorDownOrNextPage()")
+	log.Debug("CursorDownOrNextPage()")
 	if ct.IsLastRow() {
 		if ct.IsLastPage() {
 			return nil
@@ -505,7 +507,7 @@ func (ct *Cointop) CursorDownOrNextPage() error {
 
 // CursorUpOrPreviousPage moves the cursor up one row or goes to the previous page if cursor is on the first row
 func (ct *Cointop) CursorUpOrPreviousPage() error {
-	ct.debuglog("CursorUpOrPreviousPage()")
+	log.Debug("CursorUpOrPreviousPage()")
 	if ct.IsFirstRow() {
 		if ct.IsFirstPage() {
 			return nil
@@ -578,7 +580,7 @@ func (ct *Cointop) MouseWheelDown() error {
 
 // TableRowsLen returns the number of table row entries
 func (ct *Cointop) TableRowsLen() int {
-	ct.debuglog("TableRowsLen()")
+	log.Debug("TableRowsLen()")
 	if ct.IsFavoritesVisible() {
 		return ct.FavoritesLen()
 	}

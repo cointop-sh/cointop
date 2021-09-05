@@ -14,6 +14,7 @@ import (
 
 	"github.com/miguelmota/cointop/pkg/pathutil"
 	"github.com/miguelmota/cointop/pkg/toml"
+	log "github.com/sirupsen/logrus"
 )
 
 // FilePerm is the default file permissions
@@ -51,7 +52,7 @@ type ConfigFileConfig struct {
 
 // SetupConfig loads config file
 func (ct *Cointop) SetupConfig() error {
-	ct.debuglog("SetupConfig()")
+	log.Debug("SetupConfig()")
 	if err := ct.CreateConfigIfNotExists(); err != nil {
 		return err
 	}
@@ -103,7 +104,7 @@ func (ct *Cointop) SetupConfig() error {
 
 // CreateConfigIfNotExists creates config file if it doesn't exist
 func (ct *Cointop) CreateConfigIfNotExists() error {
-	ct.debuglog("CreateConfigIfNotExists()")
+	log.Debug("CreateConfigIfNotExists()")
 
 	ct.configFilepath = pathutil.NormalizePath(ct.configFilepath)
 
@@ -133,7 +134,7 @@ func (ct *Cointop) CreateConfigIfNotExists() error {
 
 // ConfigDirPath returns the config directory path
 func (ct *Cointop) ConfigDirPath() string {
-	ct.debuglog("ConfigDirPath()")
+	log.Debug("ConfigDirPath()")
 	path := pathutil.NormalizePath(ct.configFilepath)
 	separator := string(filepath.Separator)
 	parts := strings.Split(path, separator)
@@ -142,13 +143,13 @@ func (ct *Cointop) ConfigDirPath() string {
 
 // ConfigFilePath return the config file path
 func (ct *Cointop) ConfigFilePath() string {
-	ct.debuglog("ConfigFilePath()")
+	log.Debug("ConfigFilePath()")
 	return pathutil.NormalizePath(ct.configFilepath)
 }
 
 // ConfigPath return the config file path
 func (ct *Cointop) MakeConfigDir() error {
-	ct.debuglog("MakeConfigDir()")
+	log.Debug("MakeConfigDir()")
 	path := ct.ConfigDirPath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		return os.MkdirAll(path, os.ModePerm)
@@ -159,7 +160,7 @@ func (ct *Cointop) MakeConfigDir() error {
 
 // MakeConfigFile creates a new config file
 func (ct *Cointop) MakeConfigFile() error {
-	ct.debuglog("MakeConfigFile()")
+	log.Debug("MakeConfigFile()")
 	path := ct.ConfigFilePath()
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fo, err := os.Create(path)
@@ -180,7 +181,7 @@ func (ct *Cointop) MakeConfigFile() error {
 
 // SaveConfig writes settings to the config file
 func (ct *Cointop) SaveConfig() error {
-	ct.debuglog("SaveConfig()")
+	log.Debug("SaveConfig()")
 	ct.saveMux.Lock()
 	defer ct.saveMux.Unlock()
 	path := ct.ConfigFilePath()
@@ -199,7 +200,7 @@ func (ct *Cointop) SaveConfig() error {
 
 // ParseConfig decodes the toml config file
 func (ct *Cointop) ParseConfig() error {
-	ct.debuglog("ParseConfig()")
+	log.Debug("ParseConfig()")
 	var conf ConfigFileConfig
 	path := ct.configFilepath
 	if _, err := toml.DecodeFile(path, &conf); err != nil {
@@ -212,7 +213,7 @@ func (ct *Cointop) ParseConfig() error {
 
 // ConfigToToml encodes config struct to TOML
 func (ct *Cointop) ConfigToToml() ([]byte, error) {
-	ct.debuglog("ConfigToToml()")
+	log.Debug("ConfigToToml()")
 	shortcutsIfcs := map[string]interface{}{}
 	for k, v := range ct.State.shortcutKeys {
 		var i interface{} = v
@@ -324,7 +325,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 
 // LoadTableConfig loads table config from toml config into state struct
 func (ct *Cointop) loadTableConfig() error {
-	ct.debuglog("loadTableConfig()")
+	log.Debug("loadTableConfig()")
 	err := ct.loadTableColumnsFromConfig()
 	if err != nil {
 		return err
@@ -339,7 +340,7 @@ func (ct *Cointop) loadTableConfig() error {
 
 // LoadTableColumnsFromConfig loads preferred coins table columns from config file to struct
 func (ct *Cointop) loadTableColumnsFromConfig() error {
-	ct.debuglog("loadTableColumnsFromConfig()")
+	log.Debug("loadTableColumnsFromConfig()")
 	columnsIfc, ok := ct.config.Table["columns"]
 	if !ok {
 		return nil
@@ -365,7 +366,7 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 
 // LoadShortcutsFromConfig loads keyboard shortcuts from config file to struct
 func (ct *Cointop) loadShortcutsFromConfig() error {
-	ct.debuglog("loadShortcutsFromConfig()")
+	log.Debug("loadShortcutsFromConfig()")
 	for k, ifc := range ct.config.Shortcuts {
 		if v, ok := ifc.(string); ok {
 			if !ct.ActionExists(v) {
@@ -379,7 +380,7 @@ func (ct *Cointop) loadShortcutsFromConfig() error {
 
 // LoadCurrencyFromConfig loads currency from config file to struct
 func (ct *Cointop) loadCurrencyFromConfig() error {
-	ct.debuglog("loadCurrencyFromConfig()")
+	log.Debug("loadCurrencyFromConfig()")
 	if currency, ok := ct.config.Currency.(string); ok {
 		ct.State.currencyConversion = strings.ToUpper(currency)
 	}
@@ -388,7 +389,7 @@ func (ct *Cointop) loadCurrencyFromConfig() error {
 
 // LoadDefaultViewFromConfig loads default view from config file to struct
 func (ct *Cointop) loadDefaultViewFromConfig() error {
-	ct.debuglog("loadDefaultViewFromConfig()")
+	log.Debug("loadDefaultViewFromConfig()")
 	if defaultView, ok := ct.config.DefaultView.(string); ok {
 		defaultView = strings.ToLower(defaultView)
 		switch defaultView {
@@ -411,7 +412,7 @@ func (ct *Cointop) loadDefaultViewFromConfig() error {
 
 // LoadDefaultChartRangeFromConfig loads default chart range from config file to struct
 func (ct *Cointop) loadDefaultChartRangeFromConfig() error {
-	ct.debuglog("loadDefaultChartRangeFromConfig()")
+	log.Debug("loadDefaultChartRangeFromConfig()")
 	if defaultChartRange, ok := ct.config.DefaultChartRange.(string); ok {
 		// validate configured value
 		_, ok := ct.chartRangesMap[defaultChartRange]
@@ -426,7 +427,7 @@ func (ct *Cointop) loadDefaultChartRangeFromConfig() error {
 
 // LoadAPIKeysFromConfig loads API keys from config file to struct
 func (ct *Cointop) loadAPIKeysFromConfig() error {
-	ct.debuglog("loadAPIKeysFromConfig()")
+	log.Debug("loadAPIKeysFromConfig()")
 	for key, value := range ct.config.CoinMarketCap {
 		k := strings.TrimSpace(strings.ToLower(key))
 		if k == "pro_api_key" {
@@ -438,7 +439,7 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 
 // LoadColorschemeFromConfig loads colorscheme name from config file to struct
 func (ct *Cointop) loadColorschemeFromConfig() error {
-	ct.debuglog("loadColorschemeFromConfig()")
+	log.Debug("loadColorschemeFromConfig()")
 	if colorscheme, ok := ct.config.Colorscheme.(string); ok {
 		ct.colorschemeName = colorscheme
 	}
@@ -448,7 +449,7 @@ func (ct *Cointop) loadColorschemeFromConfig() error {
 
 // LoadRefreshRateFromConfig loads refresh rate from config file to struct
 func (ct *Cointop) loadRefreshRateFromConfig() error {
-	ct.debuglog("loadRefreshRateFromConfig()")
+	log.Debug("loadRefreshRateFromConfig()")
 	if refreshRate, ok := ct.config.RefreshRate.(int64); ok {
 		ct.State.refreshRate = time.Duration(uint(refreshRate)) * time.Second
 	}
@@ -458,7 +459,7 @@ func (ct *Cointop) loadRefreshRateFromConfig() error {
 
 // LoadCacheDirFromConfig loads cache dir from config file to struct
 func (ct *Cointop) loadCacheDirFromConfig() error {
-	ct.debuglog("loadCacheDirFromConfig()")
+	log.Debug("loadCacheDirFromConfig()")
 	if cacheDir, ok := ct.config.CacheDir.(string); ok {
 		ct.State.cacheDir = pathutil.NormalizePath(cacheDir)
 	}
@@ -468,7 +469,7 @@ func (ct *Cointop) loadCacheDirFromConfig() error {
 
 // LoadAPIChoiceFromConfig loads API choices from config file to struct
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
-	ct.debuglog("loadAPIKeysFromConfig()")
+	log.Debug("loadAPIKeysFromConfig()")
 	apiChoice, ok := ct.config.API.(string)
 	if ok {
 		apiChoice = strings.TrimSpace(strings.ToLower(apiChoice))
@@ -479,7 +480,7 @@ func (ct *Cointop) loadAPIChoiceFromConfig() error {
 
 // LoadFavoritesFromConfig loads favorites data from config file to struct
 func (ct *Cointop) loadFavoritesFromConfig() error {
-	ct.debuglog("loadFavoritesFromConfig()")
+	log.Debug("loadFavoritesFromConfig()")
 	for k, valueIfc := range ct.config.Favorites {
 		ifcs, ok := valueIfc.([]interface{})
 		if !ok {
@@ -521,7 +522,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 
 // LoadPortfolioFromConfig loads portfolio data from config file to struct
 func (ct *Cointop) loadPortfolioFromConfig() error {
-	ct.debuglog("loadPortfolioFromConfig()")
+	log.Debug("loadPortfolioFromConfig()")
 
 	for key, valueIfc := range ct.config.Portfolio {
 		if key == "columns" {
@@ -586,7 +587,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 
 // LoadPriceAlertsFromConfig loads price alerts from config file to struct
 func (ct *Cointop) loadPriceAlertsFromConfig() error {
-	ct.debuglog("loadPriceAlertsFromConfig()")
+	log.Debug("loadPriceAlertsFromConfig()")
 	priceAlertsIfc, ok := ct.config.PriceAlerts["alerts"]
 	if !ok {
 		return nil
@@ -646,7 +647,7 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 
 // GetColorschemeColors loads colors from colorsheme file to struct
 func (ct *Cointop) GetColorschemeColors() (map[string]interface{}, error) {
-	ct.debuglog("GetColorschemeColors()")
+	log.Debug("GetColorschemeColors()")
 	var colors map[string]interface{}
 	if ct.colorschemeName == "" {
 		ct.colorschemeName = DefaultColorscheme

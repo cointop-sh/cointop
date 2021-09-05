@@ -3,6 +3,8 @@ package cointop
 import (
 	"fmt"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // TODO: break up into small functions
@@ -11,7 +13,7 @@ var lastWidth int
 
 // layout sets initial layout
 func (ct *Cointop) layout() error {
-	ct.debuglog("Layout()")
+	log.Debug("Layout()")
 	maxY := ct.Height()
 	maxX := ct.Width()
 

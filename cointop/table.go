@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
 )
 
 // TableView is structure for table view
@@ -21,7 +22,7 @@ const dots = "..."
 
 // RefreshTable refreshes the table
 func (ct *Cointop) RefreshTable() error {
-	ct.debuglog("RefreshTable()")
+	log.Debug("RefreshTable()")
 
 	statusText := ""
 	switch ct.State.selectedView {
@@ -64,7 +65,7 @@ func (ct *Cointop) RefreshTable() error {
 
 // UpdateTable updates the table
 func (ct *Cointop) UpdateTable() error {
-	ct.debuglog("UpdateTable()")
+	log.Debug("UpdateTable()")
 	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
 		k := key.(string)
 		if v, ok := value.(*Coin); ok {
@@ -96,7 +97,7 @@ func (ct *Cointop) UpdateTable() error {
 
 // GetTableCoinsSlice returns a slice of the table rows
 func (ct *Cointop) GetTableCoinsSlice() []*Coin {
-	ct.debuglog("GetTableCoinsSlice()")
+	log.Debug("GetTableCoinsSlice()")
 	sliced := []*Coin{}
 	start := ct.State.page * ct.State.perPage
 	end := start + ct.State.perPage
@@ -139,7 +140,7 @@ func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 
 // HighlightedRowIndex returns the index of the highlighted row within the per-page limit
 func (ct *Cointop) HighlightedRowIndex() int {
-	ct.debuglog("HighlightedRowIndex()")
+	log.Debug("HighlightedRowIndex()")
 	oy := ct.Views.Table.OriginY()
 	cy := ct.Views.Table.CursorY()
 	idx := oy + cy
@@ -155,7 +156,7 @@ func (ct *Cointop) HighlightedRowIndex() int {
 
 // HighlightedRowCoin returns the coin at the index of the highlighted row
 func (ct *Cointop) HighlightedRowCoin() *Coin {
-	ct.debuglog("HighlightedRowCoin()")
+	log.Debug("HighlightedRowCoin()")
 	idx := ct.HighlightedRowIndex()
 	coins := ct.State.coins
 	if ct.IsPriceAlertsVisible() {
@@ -174,7 +175,7 @@ func (ct *Cointop) HighlightedRowCoin() *Coin {
 
 // HighlightedPageRowIndex returns the index of page row of the highlighted row
 func (ct *Cointop) HighlightedPageRowIndex() int {
-	ct.debuglog("HighlightedPageRowIndex()")
+	log.Debug("HighlightedPageRowIndex()")
 	cy := ct.Views.Table.CursorY()
 	idx := cy
 	if idx < 0 {
@@ -191,7 +192,7 @@ func (ct *Cointop) GetLastSelectedRowCoinIndex() int {
 
 // RowLink returns the row url link
 func (ct *Cointop) RowLink() string {
-	ct.debuglog("RowLink()")
+	log.Debug("RowLink()")
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		return ""
@@ -202,7 +203,7 @@ func (ct *Cointop) RowLink() string {
 
 // RowLinkShort returns a shortened version of the row url link
 func (ct *Cointop) RowLinkShort() string {
-	ct.debuglog("RowLinkShort()")
+	log.Debug("RowLinkShort()")
 	link := ct.RowLink()
 	if link != "" {
 		u, err := url.Parse(link)
@@ -226,7 +227,7 @@ func (ct *Cointop) RowLinkShort() string {
 
 // ToggleTableFullscreen toggles the table fullscreen mode
 func (ct *Cointop) ToggleTableFullscreen() error {
-	ct.debuglog("ToggleTableFullscreen()")
+	log.Debug("ToggleTableFullscreen()")
 	ct.State.onlyTable = !ct.State.onlyTable
 	ct.State.onlyChart = false
 	if !ct.State.onlyTable {
