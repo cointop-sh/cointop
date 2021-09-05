@@ -443,7 +443,7 @@ func (ct *Cointop) HighlightRow(pageRowIndex int) error {
 			cy = h - (l - pageRowIndex)
 		}
 	}
-	log.Debug("HighlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy)
+	log.Debugf("HighlightRow idx:%v h:%v cy:%v oy:%v", pageRowIndex, h, cy, oy)
 	ct.Views.Table.SetOrigin(ox, oy)
 	ct.Views.Table.SetCursor(cx, cy)
 	return nil
