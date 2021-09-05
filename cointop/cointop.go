@@ -201,8 +201,6 @@ var DefaultColorsDir = fmt.Sprintf("%s/colors", DefaultConfigFilepath)
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
 	// var debug bool
-	x := log.GetLevel()
-	log.Debug(x)
 	if os.Getenv("DEBUG") != "" {
 		log.SetLevel(log.DebugLevel)
 	}
