@@ -1,8 +1,9 @@
 package cointop
 
 import (
-	"log"
 	"os"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (ct *Cointop) initlog() {
@@ -13,13 +14,4 @@ func (ct *Cointop) initlog() {
 	}
 	log.SetOutput(f)
 	ct.logfile = f
-}
-
-// debuglog writes a debug log message to /tmp/cointop.log if the DEBUG environment is set.
-func (ct *Cointop) debuglog(format string, args ...interface{}) {
-	if !ct.debug {
-		return
-	}
-
-	log.Printf(format+"\n", args...)
 }

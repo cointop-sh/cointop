@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/miguelmota/gocui"
+	log "github.com/sirupsen/logrus"
 )
 
 // Quit quits the program
@@ -14,7 +15,7 @@ func (ct *Cointop) Quit() error {
 
 // QuitView exists the current view
 func (ct *Cointop) QuitView() error {
-	ct.debuglog("QuitView()")
+	log.Debug("QuitView()")
 	if ct.State.selectedView != CoinsView {
 		ct.SetSelectedView(CoinsView)
 		return ct.UpdateTable()
@@ -28,7 +29,7 @@ func (ct *Cointop) QuitView() error {
 
 // Exit safely exits the program
 func (ct *Cointop) Exit() {
-	ct.debuglog("Exit()")
+	log.Debug("Exit()")
 	ct.logfile.Close()
 	if ct.g != nil {
 		ct.g.Close()

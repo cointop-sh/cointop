@@ -2,6 +2,8 @@ package cointop
 
 import (
 	"sort"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // GetFavoritesTableHeaders returns the favorites table headers
@@ -11,7 +13,7 @@ func (ct *Cointop) GetFavoritesTableHeaders() []string {
 
 // ToggleFavorite toggles coin as favorite
 func (ct *Cointop) ToggleFavorite() error {
-	ct.debuglog("ToggleFavorite()")
+	log.Debug("ToggleFavorite()")
 	coin := ct.HighlightedRowCoin()
 	if coin == nil {
 		return nil
@@ -37,7 +39,7 @@ func (ct *Cointop) ToggleFavorite() error {
 
 // ToggleFavorites toggles the favorites view
 func (ct *Cointop) ToggleFavorites() error {
-	ct.debuglog("ToggleFavorites()")
+	log.Debug("ToggleFavorites()")
 	ct.ToggleSelectedView(FavoritesView)
 	go ct.UpdateTable()
 	return nil
@@ -45,7 +47,7 @@ func (ct *Cointop) ToggleFavorites() error {
 
 // ToggleShowFavorites shows the favorites view
 func (ct *Cointop) ToggleShowFavorites() error {
-	ct.debuglog("ToggleShowFavorites()")
+	log.Debug("ToggleShowFavorites()")
 	ct.ToggleSelectedView(FavoritesView)
 	go ct.UpdateTable()
 	return nil
@@ -53,7 +55,7 @@ func (ct *Cointop) ToggleShowFavorites() error {
 
 // GetFavoritesSlice returns coin favorites as slice
 func (ct *Cointop) GetFavoritesSlice() []*Coin {
-	ct.debuglog("GetFavoritesSlice()")
+	log.Debug("GetFavoritesSlice()")
 	sliced := []*Coin{}
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]

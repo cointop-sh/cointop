@@ -5,11 +5,12 @@ import (
 	"sort"
 
 	"github.com/miguelmota/cointop/pkg/pad"
+	log "github.com/sirupsen/logrus"
 )
 
 // UpdateHelp updates the help views
 func (ct *Cointop) UpdateHelp() {
-	ct.debuglog("UpdateHelp()")
+	log.Debug("UpdateHelp()")
 	keys := make([]string, 0, len(ct.State.shortcutKeys))
 	for k := range ct.State.shortcutKeys {
 		keys = append(keys, k)
@@ -58,7 +59,7 @@ func (ct *Cointop) UpdateHelp() {
 
 // ShowHelp shows the help view
 func (ct *Cointop) ShowHelp() error {
-	ct.debuglog("ShowHelp()")
+	log.Debug("ShowHelp()")
 	ct.State.helpVisible = true
 	ct.UpdateHelp()
 	ct.SetActiveView(ct.Views.Menu.Name())
@@ -67,7 +68,7 @@ func (ct *Cointop) ShowHelp() error {
 
 // HideHelp hides the help view
 func (ct *Cointop) HideHelp() error {
-	ct.debuglog("HideHelp()")
+	log.Debug("HideHelp()")
 	ct.State.helpVisible = false
 	ct.ui.SetViewOnBottom(ct.Views.Menu)
 	ct.SetActiveView(ct.Views.Table.Name())
@@ -80,7 +81,7 @@ func (ct *Cointop) HideHelp() error {
 
 // ToggleHelp toggles the help view
 func (ct *Cointop) ToggleHelp() error {
-	ct.debuglog("ToggleHelp()")
+	log.Debug("ToggleHelp()")
 	ct.State.helpVisible = !ct.State.helpVisible
 	if ct.State.helpVisible {
 		return ct.ShowHelp()

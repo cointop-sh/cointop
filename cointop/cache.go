@@ -4,17 +4,19 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // CacheKey returns cached value given key
 func (ct *Cointop) CacheKey(key string) string {
-	ct.debuglog("CacheKey()")
+	log.Debug("CacheKey()")
 	return strings.ToLower(fmt.Sprintf("%s_%s", ct.apiChoice, key))
 }
 
 // CacheAllCoinsSlugMap writes the coins map to the memory and disk cache
 func (ct *Cointop) CacheAllCoinsSlugMap() {
-	ct.debuglog("CacheAllCoinsSlugMap()")
+	log.Debug("CacheAllCoinsSlugMap()")
 	allCoinsSlugMap := make(map[string]*Coin)
 	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
 		allCoinsSlugMap[key.(string)] = value.(*Coin)

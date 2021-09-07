@@ -5,6 +5,7 @@ import (
 	"time"
 
 	types "github.com/miguelmota/cointop/pkg/api/types"
+	log "github.com/sirupsen/logrus"
 )
 
 var coinslock sync.Mutex
@@ -12,7 +13,7 @@ var updatecoinsmux sync.Mutex
 
 // UpdateCoins updates coins view
 func (ct *Cointop) UpdateCoins() error {
-	ct.debuglog("UpdateCoins()")
+	log.Debug("UpdateCoins()")
 	coinslock.Lock()
 	defer coinslock.Unlock()
 	cachekey := ct.CacheKey("allCoinsSlugMap")
@@ -23,12 +24,12 @@ func (ct *Cointop) UpdateCoins() error {
 	if found {
 		// cache hit
 		allCoinsSlugMap, _ = cached.(map[string]types.Coin)
-		ct.debuglog("UpdateCoins() soft cache hit")
+		log.Debug("UpdateCoins() soft cache hit")
 	}
 
 	// cache miss
 	if allCoinsSlugMap == nil {
-		ct.debuglog("UpdateCoins() cache miss")
+		log.Debug("UpdateCoins() cache miss")
 		ch := make(chan []types.Coin)
 		err = ct.api.GetAllCoinData(ct.State.currencyConversion, ch)
 		if err != nil {
@@ -47,7 +48,7 @@ func (ct *Cointop) UpdateCoins() error {
 
 // ProcessCoinsMap processes coins map
 func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
-	ct.debuglog("ProcessCoinsMap()")
+	log.Debug("ProcessCoinsMap()")
 
 	var coins []types.Coin
 	for _, v := range coinsMap {
@@ -59,7 +60,7 @@ func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 
 // ProcessCoins processes coins list
 func (ct *Cointop) processCoins(coins []types.Coin) {
-	ct.debuglog("ProcessCoins()")
+	log.Debug("ProcessCoins()")
 	updatecoinsmux.Lock()
 	defer updatecoinsmux.Unlock()
 
@@ -160,7 +161,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 
 // GetListCount returns count of coins list
 func (ct *Cointop) GetListCount() int {
-	ct.debuglog("GetListCount()")
+	log.Debug("GetListCount()")
 	if ct.IsFavoritesVisible() {
 		return len(ct.State.favorites)
 	} else if ct.IsPortfolioVisible() {

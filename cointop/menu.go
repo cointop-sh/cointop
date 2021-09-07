@@ -1,6 +1,9 @@
 package cointop
 
-import "github.com/miguelmota/cointop/pkg/ui"
+import (
+	"github.com/miguelmota/cointop/pkg/ui"
+	log "github.com/sirupsen/logrus"
+)
 
 // MenuView is structure for menu view
 type MenuView = ui.View
@@ -13,6 +16,6 @@ func NewMenuView() *MenuView {
 
 // HideMenu hides the menu view
 func (ct *Cointop) HideMenu() error {
-	ct.debuglog("HideMenu()")
+	log.Debug("HideMenu()")
 	return nil
 }

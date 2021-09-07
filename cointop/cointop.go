@@ -17,6 +17,7 @@ import (
 	"github.com/miguelmota/cointop/pkg/table"
 	"github.com/miguelmota/cointop/pkg/ui"
 	"github.com/miguelmota/gocui"
+	log "github.com/sirupsen/logrus"
 )
 
 // TODO: clean up and optimize codebase
@@ -103,7 +104,6 @@ type Cointop struct {
 	chartRangesMap  map[string]time.Duration
 	colorschemeName string
 	colorscheme     *Colorscheme
-	debug           bool
 	filecache       *filecache.FileCache
 	logfile         *os.File
 	forceRefresh    chan bool
@@ -200,9 +200,8 @@ var DefaultColorsDir = fmt.Sprintf("%s/colors", DefaultConfigFilepath)
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
-	var debug bool
 	if os.Getenv("DEBUG") != "" {
-		debug = true
+		log.SetLevel(log.DebugLevel)
 	}
 
 	if config == nil {
@@ -235,7 +234,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		colorsDir:      config.ColorsDir,
 		configFilepath: configFilepath,
 		chartRanges:    ChartRanges(),
-		debug:          debug,
 		chartRangesMap: ChartRangesMap(),
 		limiter:        time.NewTicker(2 * time.Second).C,
 		filecache:      nil,
@@ -289,9 +287,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			Input:       NewInputView(),
 		},
 	}
-	if debug {
-		ct.initlog()
-	}
+	ct.initlog()
 
 	err := ct.SetupConfig()
 	if err != nil {
@@ -470,7 +466,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 
 // Run runs cointop
 func (ct *Cointop) Run() error {
-	ct.debuglog("Run()")
+	log.Debug("Run()")
 	ui, err := ui.NewUI()
 	if err != nil {
 		return err

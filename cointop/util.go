@@ -9,11 +9,12 @@ import (
 	"sync"
 
 	"github.com/miguelmota/cointop/pkg/open"
+	log "github.com/sirupsen/logrus"
 )
 
 // OpenLink opens the url in a browser
 func (ct *Cointop) OpenLink() error {
-	ct.debuglog("OpenLink()")
+	log.Debug("OpenLink()")
 	open.URL(ct.RowLink())
 	return nil
 }
