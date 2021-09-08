@@ -1,6 +1,7 @@
 VERSION = $$(git describe --abbrev=0 --tags)
 VERSION_DATE = $$(git log -1 --pretty='%ad' --date=format:'%Y-%m-%d' $(VERSION))
 COMMIT_REV = $$(git rev-list -n 1 $(VERSION))
+MAINTAINER = "Miguel Mota"
 
 all: build
 
@@ -228,7 +229,7 @@ release:
 	VERSION=$(VERSION) goreleaser
 
 docker-build:
-	docker build --build-arg VERSION=$(VERSION) -t cointop/cointop .
+	docker build --build-arg VERSION=$(VERSION) --build-arg MAINTAINER=$(MAINTAINER) -t cointop/cointop .
 
 docker-tag:
 	docker tag cointop/cointop:latest cointop/cointop:$(VERSION)

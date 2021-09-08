@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -21,6 +22,7 @@ func ServerCmd() *cobra.Command {
 	var executableBinary string = "cointop"
 	var hostKeyFile string = cssh.DefaultHostKeyFile
 	var userConfigType string = cssh.UserConfigTypePublicKey
+	var colorsDir string = os.Getenv("COINTOP_COLORS_DIR")
 
 	serverCmd := &cobra.Command{
 		Use:   "server",
@@ -36,6 +38,7 @@ func ServerCmd() *cobra.Command {
 				ExecutableBinary: executableBinary,
 				HostKeyFile:      hostKeyFile,
 				UserConfigType:   userConfigType,
+				ColorsDir:        colorsDir,
 			})
 
 			fmt.Printf("Running SSH server on port %v\n", port)

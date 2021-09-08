@@ -46,6 +46,7 @@ type Config struct {
 	HostKeyFile      string
 	MaxSessions      uint
 	UserConfigType   string
+	ColorsDir        string
 }
 
 // Server is server struct
@@ -60,6 +61,7 @@ type Server struct {
 	maxSessions      uint
 	sessionCount     uint
 	userConfigType   string
+	colorsDir        string
 }
 
 // NewServer returns a new server instance
@@ -74,6 +76,10 @@ func NewServer(config *Config) *Server {
 	}
 	validateUserConfigType(userConfigType)
 	hostKeyFile = pathutil.NormalizePath(hostKeyFile)
+	colorsDir := pathutil.NormalizePath("~/.config/cointop/colors")
+	if config.ColorsDir != "" {
+		colorsDir = pathutil.NormalizePath(config.ColorsDir)
+	}
 	return &Server{
 		port:             config.Port,
 		address:          config.Address,
@@ -83,6 +89,7 @@ func NewServer(config *Config) *Server {
 		hostKeyFile:      hostKeyFile,
 		maxSessions:      config.MaxSessions,
 		userConfigType:   userConfigType,
+		colorsDir:        colorsDir,
 	}
 }
 
@@ -153,7 +160,6 @@ func (s *Server) ListenAndServe() error {
 			}
 
 			configPath := fmt.Sprintf("%s/config", configDir)
-			colorsDir := pathutil.NormalizePath("~/.config/cointop/colors")
 
 			cmdCtx, cancelCmd := context.WithCancel(sshSession.Context())
 			defer cancelCmd()
@@ -166,7 +172,7 @@ func (s *Server) ListenAndServe() error {
 				"--config",
 				configPath,
 				"--colors-dir",
-				colorsDir,
+				s.colorsDir,
 			}
 
 			if len(cmdUserArgs) > 0 {
