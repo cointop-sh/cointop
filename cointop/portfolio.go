@@ -145,6 +145,9 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					})
 			case "holdings":
 				text := strconv.FormatFloat(coin.Holdings, 'f', -1, 64)
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -272,6 +275,9 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					percentHoldings = 0
 				}
 				text := fmt.Sprintf("%.2f%%", percentHoldings)
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -773,6 +779,9 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 				} else {
 					item[i] = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
 				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
 			case "balance":
 				if humanReadable {
 					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Balance, 2))
@@ -793,6 +802,9 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(percentHoldings, 2))
 				} else {
 					item[i] = fmt.Sprintf("%.2f", percentHoldings)
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
 				}
 			}
 		}

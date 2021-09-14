@@ -185,7 +185,7 @@ draft: false
 
 ## How do I hide my portfolio balances (private mode)?
 
-  You can run cointop with the `--hide-portfolio-balances` flag to toggle hide/show portfolio balances or use the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>space</kbd> on the portfolio page.
+  You can run cointop with the `--hide-portfolio-balances` flag to hide portfolio balances or use the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>space</kbd> on the portfolio page to toggle hide/show.
 
 ## I'm getting question marks or weird symbols instead of the correct characters.
 

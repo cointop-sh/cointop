@@ -42,10 +42,6 @@ func (ct *Cointop) UpdateMarketbar() error {
 			totalstr = humanize.Monetaryf(total, 2)
 		}
 
-		if ct.State.hidePortfolioBalances {
-			totalstr = HiddenBalanceChars
-		}
-
 		timeframe := ct.State.selectedChartRange
 		chartname := ct.SelectedCoinName()
 		var charttitle string
@@ -85,10 +81,15 @@ func (ct *Cointop) UpdateMarketbar() error {
 			)
 		}
 
+		totalstr = fmt.Sprintf("%s%s", ct.CurrencySymbol(), totalstr)
+		if ct.State.hidePortfolioBalances {
+			totalstr = HiddenBalanceChars
+		}
+
 		content = fmt.Sprintf(
 			"%sTotal Portfolio Value: %s • 24H: %s",
 			chartInfo,
-			ct.colorscheme.MarketBarLabelActive(fmt.Sprintf("%s%s", ct.CurrencySymbol(), totalstr)),
+			ct.colorscheme.MarketBarLabelActive(totalstr),
 			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
 		)
 	} else {
