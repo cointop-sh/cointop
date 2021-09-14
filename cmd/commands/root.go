@@ -20,6 +20,7 @@ func RootCmd() *cobra.Command {
 	hideChart := getEnvBool("COINTOP_HIDE_CHART")
 	hideTable := getEnvBool("COINTOP_HIDE_TABLE")
 	hideStatusbar := getEnvBool("COINTOP_HIDE_STATUSBAR")
+	hidePortfolioBalances := getEnvBool("COINTOP_HIDE_PORTFOLIO_BALANCES")
 	onlyTable := getEnvBool("COINTOP_ONLY_TABLE")
 	onlyChart := getEnvBool("COINTOP_ONLY_CHART")
 	silent := getEnvBool("COINTOP_SILENT")
@@ -90,22 +91,23 @@ See git.io/cointop for more info.`,
 			}
 
 			ct, err := cointop.NewCointop(&cointop.Config{
-				CacheDir:            cacheDir,
-				ColorsDir:           colorsDir,
-				NoCache:             noCache,
-				ConfigFilepath:      config,
-				CoinMarketCapAPIKey: cmcAPIKey,
-				APIChoice:           apiChoice,
-				Colorscheme:         colorscheme,
-				HideMarketbar:       hideMarketbar,
-				HideChart:           hideChart,
-				HideTable:           hideTable,
-				HideStatusbar:       hideStatusbar,
-				OnlyTable:           onlyTable,
-				OnlyChart:           onlyChart,
-				RefreshRate:         refreshRateP,
-				PerPage:             perPage,
-				MaxPages:            maxPages,
+				CacheDir:              cacheDir,
+				ColorsDir:             colorsDir,
+				NoCache:               noCache,
+				ConfigFilepath:        config,
+				CoinMarketCapAPIKey:   cmcAPIKey,
+				APIChoice:             apiChoice,
+				Colorscheme:           colorscheme,
+				HideMarketbar:         hideMarketbar,
+				HideChart:             hideChart,
+				HideTable:             hideTable,
+				HideStatusbar:         hideStatusbar,
+				OnlyTable:             onlyTable,
+				OnlyChart:             onlyChart,
+				RefreshRate:           refreshRateP,
+				PerPage:               perPage,
+				MaxPages:              maxPages,
+				HidePortfolioBalances: hidePortfolioBalances,
 			})
 			if err != nil {
 				return err
@@ -123,6 +125,7 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().BoolVarP(&hideChart, "hide-chart", "", hideChart, "Hide the chart view")
 	rootCmd.Flags().BoolVarP(&hideTable, "hide-table", "", hideTable, "Hide the table view")
 	rootCmd.Flags().BoolVarP(&hideStatusbar, "hide-statusbar", "", hideStatusbar, "Hide the bottom statusbar")
+	rootCmd.Flags().BoolVarP(&hidePortfolioBalances, "hide-portfolio-balances", "", hidePortfolioBalances, "Hide portfolio balances. Useful for when sharing screen or taking screenshots")
 	rootCmd.Flags().BoolVarP(&onlyTable, "only-table", "", onlyTable, "Show only the table. Hides the chart and top and bottom bars")
 	rootCmd.Flags().BoolVarP(&onlyChart, "only-chart", "", onlyChart, "Show only the chart. Hides the table and top and bottom bars")
 	rootCmd.Flags().BoolVarP(&silent, "silent", "s", silent, "Silence log ouput")

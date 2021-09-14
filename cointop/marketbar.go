@@ -42,6 +42,10 @@ func (ct *Cointop) UpdateMarketbar() error {
 			totalstr = humanize.Monetaryf(total, 2)
 		}
 
+		if ct.State.hidePortfolioBalances {
+			totalstr = HiddenBalanceChars
+		}
+
 		timeframe := ct.State.selectedChartRange
 		chartname := ct.SelectedCoinName()
 		var charttitle string

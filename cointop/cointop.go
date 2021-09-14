@@ -57,6 +57,7 @@ type State struct {
 	hideChart                  bool
 	hideTable                  bool
 	hideStatusbar              bool
+	hidePortfolioBalances      bool
 	keepRowFocusOnSort         bool
 	lastSelectedRowIndex       int
 	marketBarHeight            int
@@ -147,23 +148,24 @@ type PriceAlerts struct {
 
 // Config config options
 type Config struct {
-	APIChoice           string
-	CacheDir            string
-	ColorsDir           string
-	Colorscheme         string
-	ConfigFilepath      string
-	CoinMarketCapAPIKey string
-	NoPrompts           bool
-	HideMarketbar       bool
-	HideChart           bool
-	HideTable           bool
-	HideStatusbar       bool
-	NoCache             bool
-	OnlyTable           bool
-	OnlyChart           bool
-	RefreshRate         *uint
-	PerPage             uint
-	MaxPages            uint
+	APIChoice             string
+	CacheDir              string
+	ColorsDir             string
+	Colorscheme           string
+	ConfigFilepath        string
+	CoinMarketCapAPIKey   string
+	NoPrompts             bool
+	HideMarketbar         bool
+	HideChart             bool
+	HideTable             bool
+	HideStatusbar         bool
+	HidePortfolioBalances bool
+	NoCache               bool
+	OnlyTable             bool
+	OnlyChart             bool
+	RefreshRate           *uint
+	PerPage               uint
+	MaxPages              uint
 }
 
 // APIKeys is api keys structure
@@ -251,6 +253,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			hideChart:             config.HideChart,
 			hideTable:             config.HideTable,
 			hideStatusbar:         config.HideStatusbar,
+			hidePortfolioBalances: config.HidePortfolioBalances,
 			keepRowFocusOnSort:    false,
 			marketBarHeight:       1,
 			maxPages:              int(maxPages),

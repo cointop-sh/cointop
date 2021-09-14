@@ -52,6 +52,9 @@ var DefaultPortfolioTableHeaders = []string{
 	"last_updated",
 }
 
+// HiddenBalanceChars are the characters to show when hidding balances
+var HiddenBalanceChars = "********"
+
 // ValidPortfolioTableHeader returns the portfolio table headers
 func (ct *Cointop) ValidPortfolioTableHeader(name string) bool {
 	for _, v := range SupportedPortfolioTableHeaders {
@@ -154,6 +157,9 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					})
 			case "balance":
 				text := humanize.Monetaryf(coin.Balance, 2)
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				colorBalance := ct.colorscheme.TableColumnPrice
@@ -634,6 +640,7 @@ type TablePrintOptions struct {
 	Convert          string
 	NoHeader         bool
 	PercentChange24H bool
+	HideBalances     bool
 }
 
 // outputFormats is list of valid output formats
@@ -674,6 +681,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	filterCols := options.Cols
 	holdings := ct.GetPortfolioSlice()
 	noHeader := options.NoHeader
+	hideBalances := options.HideBalances
 
 	if format == "" {
 		format = "table"
@@ -770,6 +778,9 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 					item[i] = fmt.Sprintf("%s%s", symbol, humanize.Monetaryf(entry.Balance, 2))
 				} else {
 					item[i] = strconv.FormatFloat(entry.Balance, 'f', -1, 64)
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
 				}
 			case "24h%":
 				if humanReadable {
@@ -1033,4 +1044,15 @@ func (ct *Cointop) IsPortfolioVisible() bool {
 // PortfolioLen returns the number of portfolio entries
 func (ct *Cointop) PortfolioLen() int {
 	return len(ct.GetPortfolioSlice())
+}
+
+// TogglePortfolioBalances toggles hide/show portfolio balances. Useful for keeping balances secret when sharing screen or taking screenshots.
+func (ct *Cointop) TogglePortfolioBalances() error {
+	ct.State.hidePortfolioBalances = !ct.State.hidePortfolioBalances
+	ct.UpdateUI(func() error {
+		go ct.UpdateChart()
+		go ct.UpdateTable()
+		return nil
+	})
+	return nil
 }

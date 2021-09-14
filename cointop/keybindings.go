@@ -301,6 +301,8 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 		fn = ct.Keyfn(ct.TogglePortfolio)
 	case "toggle_show_portfolio":
 		fn = ct.Keyfn(ct.ToggleShowPortfolio)
+	case "toggle_portfolio_balances":
+		fn = ct.Keyfn(ct.TogglePortfolioBalances)
 	case "show_portfolio_edit_menu":
 		fn = ct.Keyfn(ct.TogglePortfolioUpdateMenu)
 	case "show_price_alert_edit_menu":

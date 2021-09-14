@@ -183,6 +183,10 @@ draft: false
 
   Your portfolio is autosaved after you edit holdings. You can also press <kbd>ctrl</kbd>+<kbd>s</kbd> to manually save your portfolio holdings to the config file.
 
+## How do I hide my portfolio balances (private mode)?
+
+  You can run cointop with the `--hide-portfolio-balances` flag to toggle hide/show portfolio balances or use the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>space</kbd> on the portfolio page.
+
 ## I'm getting question marks or weird symbols instead of the correct characters.
 
   Make sure that your terminal has the encoding set to UTF-8 and that your terminal font supports UTF-8.

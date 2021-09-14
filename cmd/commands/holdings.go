@@ -22,6 +22,7 @@ func HoldingsCmd() *cobra.Command {
 	var filter []string
 	var cols []string
 	var convert string
+	var hideBalances bool
 
 	holdingsCmd := &cobra.Command{
 		Use:   "holdings",
@@ -68,6 +69,7 @@ func HoldingsCmd() *cobra.Command {
 				Cols:          cols,
 				Convert:       convert,
 				NoHeader:      noHeader,
+				HideBalances:  hideBalances,
 			})
 		},
 	}
@@ -78,6 +80,7 @@ func HoldingsCmd() *cobra.Command {
 	holdingsCmd.Flags().BoolVarP(&noCache, "no-cache", "", noCache, "No cache")
 	holdingsCmd.Flags().BoolVarP(&humanReadable, "human", "h", humanReadable, "Human readable output")
 	holdingsCmd.Flags().BoolVarP(&noHeader, "no-header", "", noHeader, "Don't display header columns")
+	holdingsCmd.Flags().BoolVarP(&hideBalances, "hide-balances", "", hideBalances, "Hide portfolio balances. Useful for when sharing screen or taking screenshotss")
 	holdingsCmd.Flags().StringVarP(&config, "config", "c", "", fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 	holdingsCmd.Flags().StringVarP(&sortBy, "sort-by", "s", sortBy, `Sort by column. Options are "name", "symbol", "price", "holdings", "balance", "24h"`)
 	holdingsCmd.Flags().BoolVarP(&sortDesc, "sort-desc", "d", sortDesc, "Sort in descending order")
