@@ -292,14 +292,14 @@ func (ct *Cointop) PortfolioChart() error {
 		// sum (excluding NaN)
 		for i := range coinData {
 			price := coinData[i][1]
-			if !math.IsNaN(price) {
-				sum := cacheData.coin.Holdings * price
-				if i < len(data) {
-					data[i] += sum
-				} else {
-					data = append(data, sum)
-				}
-
+			if math.IsNaN(price) {
+				price = 0.0
+			}
+			sum := cacheData.coin.Holdings * price
+			if i < len(data) {
+				data[i] += sum
+			} else {
+				data = append(data, sum)
 			}
 		}
 	}
