@@ -129,7 +129,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	start := nowseconds - int64(rangeseconds.Seconds())
 	end := nowseconds
 
-	var data []float64
+	var cacheData [][]float64
 
 	keyname := symbol
 	if keyname == "" {
@@ -140,21 +140,18 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	cached, found := ct.cache.Get(cachekey)
 	if found {
 		// cache hit
-		data, _ = cached.([]float64)
+		cacheData, _ = cached.([][]float64)
 		log.Debug("ChartPoints() soft cache hit")
 	}
 
-	if len(data) == 0 {
+	if len(cacheData) == 0 {
 		if symbol == "" {
 			convert := ct.State.currencyConversion
 			graphData, err := ct.api.GetGlobalMarketGraphData(convert, start, end)
 			if err != nil {
 				return nil
 			}
-			for i := range graphData.MarketCapByAvailableSupply {
-				price := graphData.MarketCapByAvailableSupply[i][1]
-				data = append(data, price)
-			}
+			cacheData = graphData.MarketCapByAvailableSupply
 		} else {
 			convert := ct.State.currencyConversion
 			graphData, err := ct.api.GetCoinGraphData(convert, symbol, name, start, end)
@@ -165,18 +162,35 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 			sort.Slice(sorted[:], func(i, j int) bool {
 				return sorted[i][0] < sorted[j][0]
 			})
-			for i := range sorted {
-				price := sorted[i][1]
-				data = append(data, price)
-			}
+			cacheData = sorted
 		}
 
-		ct.cache.Set(cachekey, data, 10*time.Second)
+		ct.cache.Set(cachekey, cacheData, 10*time.Second)
 		if ct.filecache != nil {
 			go func() {
-				ct.filecache.Set(cachekey, data, 24*time.Hour)
+				ct.filecache.Set(cachekey, cacheData, 24*time.Hour)
 			}()
 		}
+	}
+
+	// Resample cachedata
+	maxPoints := len(cacheData)
+	if maxPoints > 2*maxX {
+		maxPoints = 2 * maxX
+	}
+	timeQuantum := timedata.CalculateTimeQuantum(cacheData)
+	newStart := time.Unix(start, 0).Add(timeQuantum)
+	newEnd := time.Unix(end, 0).Add(-timeQuantum)
+	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), maxPoints)
+
+	// Extract just the values from the data
+	var data []float64
+	for i := range timeData {
+		value := timeData[i][1]
+		if math.IsNaN(value) {
+			value = 0.0
+		}
+		data = append(data, value)
 	}
 
 	chart.SetData(data)
