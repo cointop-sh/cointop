@@ -4,6 +4,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.8] - 2021-09-13
+### Fixed
+- Hide holdings amount when using command hide flag
+
+## [1.6.7] - 2021-09-13
+### Added
+- Toggle hide portfolio balances keybinding
+- Evaluate expression in portfolio value edit field
+- Add 1Y% change column
+
+## [1.6.6] - 2021-08-22
+### Added
+- Default chart range config
+
+### Fixed
+- Duplicate coin portfolio entries
+- Increase decimals places shown for small values
+- Filecache locking
+
+## [1.6.5] - 2021-04-25
+### Added
+- Chart fullscreen toggle keybinding
+- 24% change to holdings command
+- Read environment variables for config
+
+## [1.6.4] - 2021-04-25
+### Added
+- Preferred cache directory
+- Read host numeric monetary locale
+- Column filter for holdings command
+- SSH server user config type
+
+### Fixed
+- Config file path
+- String rune count
+
+## [1.6.3] - 2021-03-10
+### Added
+- Max pages flag
+- SSH server connection max timeout
+
+### Fixed
+- Negative holdings balance input
+- Coins and portfolio row selection
+- Table scroll
+
 ## [1.6.2] - 2021-02-12
 ### Added
 - Config option to keep row focus on sort
