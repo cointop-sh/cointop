@@ -990,12 +990,9 @@ func (ct *Cointop) PrintHoldings24HChange(options *TablePrintOptions) error {
 		percentChange24H += n
 	}
 
-	value := strconv.FormatFloat(percentChange24H, 'f', -1, 64)
-
+	value := fmt.Sprintf("%.2f", percentChange24H)
 	if humanReadable {
-		value = fmt.Sprintf("%.2f%%", percentChange24H)
-	} else {
-		value = fmt.Sprintf("%.2f", percentChange24H)
+		value = fmt.Sprintf("%s%%", value)
 	}
 
 	if format == "csv" {

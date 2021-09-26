@@ -110,6 +110,8 @@ See [docs.cointop.sh/faq](https://docs.cointop.sh/faq)
 
 See [docs.cointop.sh/contributing](https://docs.cointop.sh/contributing)
 
+_Many thanks to [Simon Roberts](https://github.com/lyricnz), [Alexis Hildebrandt](https://github.com/afh), and all the [contributors](https://github.com/miguelmota/cointop/graphs/contributors) that made cointop better._
+
 ## Social
 
 - Follow on twitter [@cointop](https://twitter.com/cointop)
