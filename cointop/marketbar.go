@@ -71,6 +71,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 			color24h = ct.colorscheme.MarketbarChangeDownSprintf()
 			arrow = "▼"
 		}
+		percentChange24Hstr := color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow))
 
 		chartInfo := ""
 		if !ct.State.hideChart {
@@ -84,13 +85,14 @@ func (ct *Cointop) UpdateMarketbar() error {
 		totalstr = fmt.Sprintf("%s%s", ct.CurrencySymbol(), totalstr)
 		if ct.State.hidePortfolioBalances {
 			totalstr = HiddenBalanceChars
+			percentChange24Hstr = HiddenBalanceChars
 		}
 
 		content = fmt.Sprintf(
 			"%sTotal Portfolio Value: %s • 24H: %s",
 			chartInfo,
 			ct.colorscheme.MarketBarLabelActive(totalstr),
-			color24h(fmt.Sprintf("%.2f%%%s", percentChange24H, arrow)),
+			percentChange24Hstr,
 		)
 	} else {
 		ct.State.marketBarHeight = 1
