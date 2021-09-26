@@ -1,9 +1,6 @@
 package cointop
 
 import (
-	"fmt"
-	"strings"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -99,7 +96,7 @@ func (ct *Cointop) layout() error {
 			ct.Views.Chart.SetBgColor(ct.colorscheme.GocuiBgColor(ct.Views.Chart.Name()))
 			go func() {
 				ct.UpdateChart()
-				cachekey := strings.ToLower(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
+				cachekey := ct.CompositeCacheKey("globaldata", "", "", ct.State.selectedChartRange)
 				_, found := ct.cache.Get(cachekey)
 				if found {
 					ct.cache.Delete(cachekey)
