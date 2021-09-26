@@ -8,7 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Resample the [timestamp,value] data given to numsteps between start-end (returns numSteps+1 points).
+// ResampleTimeSeriesData resamples the given [timestamp,value] data to numsteps between start-end (returns numSteps+1 points).
 // If the data does not extend past start/end then there will likely be NaN in the output data.
 func ResampleTimeSeriesData(data [][]float64, start float64, end float64, numSteps int) [][]float64 {
 	var newData [][]float64
@@ -33,7 +33,7 @@ func ResampleTimeSeriesData(data [][]float64, start float64, end float64, numSte
 	return newData
 }
 
-// Assuming that the [timestamp,value] data provided is roughly evenly spaced, calculate that interval.
+// CalculateTimeQuantum determines the given [timestamp,value] data
 func CalculateTimeQuantum(data [][]float64) time.Duration {
 	if len(data) > 1 {
 		minTime := time.UnixMilli(int64(data[0][0]))
@@ -43,9 +43,26 @@ func CalculateTimeQuantum(data [][]float64) time.Duration {
 	return 0
 }
 
-// Print out all the [timestamp,value] data provided
-func DebugLogPriceData(data [][]float64) {
-	for i := range data {
-		log.Debugf("%s %.2f", time.Unix(int64(data[i][0]/1000), 0), data[i][1])
+// BuildTimeSeriesLabels returns a list of short labels representing time values from the given [timestamp,value] data
+func BuildTimeSeriesLabels(data [][]float64) []string {
+	minTime := time.UnixMilli(int64(data[0][0]))
+	maxTime := time.UnixMilli(int64(data[len(data)-1][0]))
+	timeRange := maxTime.Sub(minTime)
+	log.Debugf("XXX BuildTimeSeriesLabels %s to %s = %s", minTime, maxTime, timeRange)
+
+	var timeFormat string
+	if timeRange.Hours() < 24 {
+		timeFormat = "15:04"
+	} else if timeRange.Hours() < 24*7 {
+		timeFormat = "Mon 15:04"
+	} else if timeRange.Hours() < 24*365 {
+		timeFormat = "02-Jan"
+	} else {
+		timeFormat = "Jan 2006"
 	}
+	var labels []string
+	for i := range data {
+		labels = append(labels, time.UnixMilli(int64(data[i][0])).Format(timeFormat))
+	}
+	return labels
 }

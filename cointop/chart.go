@@ -177,6 +177,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	newStart := time.Unix(start, 0).Add(timeQuantum)
 	newEnd := time.Unix(end, 0).Add(-timeQuantum)
 	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+	labels := timedata.BuildTimeSeriesLabels(timeData)
 
 	// Extract just the values from the data
 	var data []float64
@@ -189,6 +190,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	}
 
 	chart.SetData(data)
+	chart.SetDataLabels(labels)
 	ct.State.chartPoints = chart.GetChartPoints(maxX)
 
 	return nil
@@ -285,8 +287,12 @@ func (ct *Cointop) PortfolioChart() error {
 
 	// Resample and sum data
 	var data []float64
-	for _, cacheData := range allCacheData {
+	var labels []string
+	for i, cacheData := range allCacheData {
 		coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+		if i == 0 {
+			labels = timedata.BuildTimeSeriesLabels(coinData)
+		}
 		// sum (excluding NaN)
 		for i := range coinData {
 			price := coinData[i][1]
@@ -313,6 +319,7 @@ func (ct *Cointop) PortfolioChart() error {
 	}
 
 	chart.SetData(data)
+	chart.SetDataLabels(labels)
 	ct.State.chartPoints = chart.GetChartPoints(maxX)
 
 	return nil
