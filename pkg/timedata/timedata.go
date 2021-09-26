@@ -4,8 +4,6 @@ import (
 	"math"
 	"sort"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 )
 
 // ResampleTimeSeriesData resamples the given [timestamp,value] data to numsteps between start-end (returns numSteps+1 points).
@@ -48,7 +46,6 @@ func BuildTimeSeriesLabels(data [][]float64) []string {
 	minTime := time.UnixMilli(int64(data[0][0]))
 	maxTime := time.UnixMilli(int64(data[len(data)-1][0]))
 	timeRange := maxTime.Sub(minTime)
-	log.Debugf("XXX BuildTimeSeriesLabels %s to %s = %s", minTime, maxTime, timeRange)
 
 	var timeFormat string
 	if timeRange.Hours() < 24 {
