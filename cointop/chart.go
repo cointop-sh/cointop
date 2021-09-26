@@ -2,15 +2,23 @@ package cointop
 
 import (
 	"fmt"
+	"math"
 	"sort"
 	"sync"
 	"time"
 
 	"github.com/miguelmota/cointop/pkg/chartplot"
+	"github.com/miguelmota/cointop/pkg/timedata"
 	"github.com/miguelmota/cointop/pkg/timeutil"
 	"github.com/miguelmota/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
+
+// PriceData is the time-series data for a Coin used when building a Portfolio view for chart
+type PriceData struct {
+	coin *Coin
+	data [][]float64
+}
 
 // ChartView is structure for chart view
 type ChartView = ui.View
@@ -120,7 +128,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	start := nowseconds - int64(rangeseconds.Seconds())
 	end := nowseconds
 
-	var data []float64
+	var cacheData [][]float64
 
 	keyname := symbol
 	if keyname == "" {
@@ -131,21 +139,18 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	cached, found := ct.cache.Get(cachekey)
 	if found {
 		// cache hit
-		data, _ = cached.([]float64)
+		cacheData, _ = cached.([][]float64)
 		log.Debug("ChartPoints() soft cache hit")
 	}
 
-	if len(data) == 0 {
+	if len(cacheData) == 0 {
 		if symbol == "" {
 			convert := ct.State.currencyConversion
 			graphData, err := ct.api.GetGlobalMarketGraphData(convert, start, end)
 			if err != nil {
 				return nil
 			}
-			for i := range graphData.MarketCapByAvailableSupply {
-				price := graphData.MarketCapByAvailableSupply[i][1]
-				data = append(data, price)
-			}
+			cacheData = graphData.MarketCapByAvailableSupply
 		} else {
 			convert := ct.State.currencyConversion
 			graphData, err := ct.api.GetCoinGraphData(convert, symbol, name, start, end)
@@ -156,18 +161,31 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 			sort.Slice(sorted[:], func(i, j int) bool {
 				return sorted[i][0] < sorted[j][0]
 			})
-			for i := range sorted {
-				price := sorted[i][1]
-				data = append(data, price)
-			}
+			cacheData = sorted
 		}
 
-		ct.cache.Set(cachekey, data, 10*time.Second)
+		ct.cache.Set(cachekey, cacheData, 10*time.Second)
 		if ct.filecache != nil {
 			go func() {
-				ct.filecache.Set(cachekey, data, 24*time.Hour)
+				ct.filecache.Set(cachekey, cacheData, 24*time.Hour)
 			}()
 		}
+	}
+
+	// Resample cachedata
+	timeQuantum := timedata.CalculateTimeQuantum(cacheData)
+	newStart := time.Unix(start, 0).Add(timeQuantum)
+	newEnd := time.Unix(end, 0).Add(-timeQuantum)
+	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+
+	// Extract just the values from the data
+	var data []float64
+	for i := range timeData {
+		value := timeData[i][1]
+		if math.IsNaN(value) {
+			value = 0.0
+		}
+		data = append(data, value)
 	}
 
 	chart.SetData(data)
@@ -202,7 +220,7 @@ func (ct *Cointop) PortfolioChart() error {
 	start := nowseconds - int64(rangeseconds.Seconds())
 	end := nowseconds
 
-	var data []float64
+	var allCacheData []PriceData
 	portfolio := ct.GetPortfolioSlice()
 	chartname := ct.SelectedCoinName()
 	for _, p := range portfolio {
@@ -217,46 +235,65 @@ func (ct *Cointop) PortfolioChart() error {
 			continue
 		}
 
-		var graphData []float64
+		var cacheData [][]float64 // [][time,value]
 		cachekey := ct.CompositeCacheKey(p.Symbol, p.Name, convert, selectedChartRange)
 		cached, found := ct.cache.Get(cachekey)
 		if found {
 			// cache hit
-			graphData, _ = cached.([]float64)
+			cacheData, _ = cached.([][]float64)
 			log.Debug("PortfolioChart() soft cache hit")
 		} else {
 			if ct.filecache != nil {
-				ct.filecache.Get(cachekey, &graphData)
+				ct.filecache.Get(cachekey, &cacheData)
 			}
 
-			if len(graphData) == 0 {
+			if len(cacheData) == 0 {
 				time.Sleep(2 * time.Second)
 
 				apiGraphData, err := ct.api.GetCoinGraphData(convert, p.Symbol, p.Name, start, end)
 				if err != nil {
 					return err
 				}
-				sorted := apiGraphData.Price
-				sort.Slice(sorted[:], func(i, j int) bool {
-					return sorted[i][0] < sorted[j][0]
+
+				cacheData = apiGraphData.Price
+				sort.Slice(cacheData[:], func(i, j int) bool {
+					return cacheData[i][0] < cacheData[j][0]
 				})
-				for i := range sorted {
-					price := sorted[i][1]
-					graphData = append(graphData, price)
-				}
 			}
 
-			ct.cache.Set(cachekey, graphData, 10*time.Second)
+			ct.cache.Set(cachekey, cacheData, 10*time.Second)
 			if ct.filecache != nil {
 				go func() {
-					ct.filecache.Set(cachekey, graphData, 24*time.Hour)
+					ct.filecache.Set(cachekey, cacheData, 24*time.Hour)
 				}()
 			}
 		}
 
-		for i := range graphData {
-			price := graphData[i]
-			sum := p.Holdings * price
+		allCacheData = append(allCacheData, PriceData{p, cacheData})
+	}
+
+	// Use the gap between price samples to adjust start/end in by one interval
+	var timeQuantum time.Duration
+	for _, cacheData := range allCacheData {
+		timeQuantum = timedata.CalculateTimeQuantum(cacheData.data)
+		if timeQuantum != 0 {
+			break // use the first one
+		}
+	}
+	newStart := time.Unix(start, 0).Add(timeQuantum)
+	newEnd := time.Unix(end, 0).Add(-timeQuantum)
+
+	// Resample and sum data
+	var data []float64
+	for _, cacheData := range allCacheData {
+		coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+		// sum (excluding NaN)
+		for i := range coinData {
+			price := coinData[i][1]
+			if math.IsNaN(price) {
+				price = 0.0
+			}
+			sum := cacheData.coin.Holdings * price
 			if i < len(data) {
 				data[i] += sum
 			} else {

@@ -1,8 +1,6 @@
 package chartplot
 
 import (
-	"math"
-
 	"github.com/miguelmota/cointop/pkg/termui"
 )
 
@@ -53,13 +51,18 @@ func (c *ChartPlot) SetBorder(enabled bool) {
 func (c *ChartPlot) SetData(data []float64) {
 	// NOTE: edit `termui.LineChart.shortenFloatVal(float64)` to not
 	// use exponential notation.
+	// NOTE: data should be the correct width for rendering - see GetChartDataSize()
 	c.t.Data = data
+}
+
+// GetChartDataSize ...
+func (c *ChartPlot) GetChartDataSize(width int) int {
+	axisYWidth := 30
+	return (width * 2) - axisYWidth
 }
 
 // GetChartPoints ...
 func (c *ChartPlot) GetChartPoints(width int) [][]rune {
-	axisYWidth := 30
-	c.t.Data = interpolateData(c.t.Data, (width*2)-axisYWidth)
 	termui.Body = termui.NewGrid()
 	termui.Body.Width = width
 	termui.Body.AddRows(
@@ -85,25 +88,4 @@ func (c *ChartPlot) GetChartPoints(width int) [][]rune {
 	}
 
 	return points
-}
-
-func interpolateData(data []float64, width int) []float64 {
-	var res []float64
-	if len(data) == 0 {
-		return res
-	}
-	stepFactor := float64(len(data)-1) / float64(width-1)
-	res = append(res, data[0])
-	for i := 1; i < width-1; i++ {
-		step := float64(i) * stepFactor
-		before := math.Floor(step)
-		after := math.Ceil(step)
-		atPoint := step - before
-		pointBefore := data[int(before)]
-		pointAfter := data[int(after)]
-		interpolated := pointBefore + (pointAfter-pointBefore)*atPoint
-		res = append(res, interpolated)
-	}
-	res = append(res, data[len(data)-1])
-	return res
 }
