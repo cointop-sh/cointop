@@ -187,7 +187,7 @@ draft: false
 
   You can run cointop with the `--hide-portfolio-balances` flag to hide portfolio balances or use the keyboard shortcut <kbd>Ctrl</kbd>+<kbd>space</kbd> on the portfolio page to toggle hide/show.
 
-  <img width="880" alt="hide portfolio balances" src="https://user-images.githubusercontent.com/168240/133199691-f5ec0714-8c83-4df3-a525-5ccea1fcf931.png" />
+  <img width="880" alt="hide portfolio balances" src="https://user-images.githubusercontent.com/122371/133578568-153af3cc-350d-4744-ac89-dd8f5e317d1d.png" />
 
 ## I'm getting question marks or weird symbols instead of the correct characters.
 
