@@ -173,14 +173,10 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	}
 
 	// Resample cachedata
-	maxPoints := len(cacheData)
-	if maxPoints > 2*maxX {
-		maxPoints = 2 * maxX
-	}
 	timeQuantum := timedata.CalculateTimeQuantum(cacheData)
 	newStart := time.Unix(start, 0).Add(timeQuantum)
 	newEnd := time.Unix(end, 0).Add(-timeQuantum)
-	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), maxPoints)
+	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
 
 	// Extract just the values from the data
 	var data []float64
@@ -276,17 +272,6 @@ func (ct *Cointop) PortfolioChart() error {
 		allCacheData = append(allCacheData, PriceData{p, cacheData})
 	}
 
-	// Calculate how many data points to provide to the chart. Limit maxPoints to 2*maxX
-	maxPoints := 0
-	for _, cacheData := range allCacheData {
-		if len(cacheData.data) > maxPoints {
-			maxPoints = len(cacheData.data)
-		}
-	}
-	if maxPoints > 2*maxX {
-		maxPoints = 2 * maxX
-	}
-
 	// Use the gap between price samples to adjust start/end in by one interval
 	var timeQuantum time.Duration
 	for _, cacheData := range allCacheData {
@@ -301,7 +286,7 @@ func (ct *Cointop) PortfolioChart() error {
 	// Resample and sum data
 	var data []float64
 	for _, cacheData := range allCacheData {
-		coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), maxPoints)
+		coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
 		// sum (excluding NaN)
 		for i := range coinData {
 			price := coinData[i][1]

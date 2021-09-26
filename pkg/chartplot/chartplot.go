@@ -56,10 +56,18 @@ func (c *ChartPlot) SetData(data []float64) {
 	c.t.Data = data
 }
 
+func (c *ChartPlot) GetChartDataSize(width int) int {
+	axisYWidth := 30
+	return (width * 2) - axisYWidth
+}
+
 // GetChartPoints ...
 func (c *ChartPlot) GetChartPoints(width int) [][]rune {
-	axisYWidth := 30
-	c.t.Data = interpolateData(c.t.Data, (width*2)-axisYWidth)
+	targetWidth := c.GetChartDataSize(width)
+	if len(c.t.Data) != targetWidth {
+		// Don't resample data if it's already the right size
+		c.t.Data = interpolateData(c.t.Data, targetWidth)
+	}
 	termui.Body = termui.NewGrid()
 	termui.Body.Width = width
 	termui.Body.AddRows(
