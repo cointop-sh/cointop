@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Time-series data for a Coin used when building a Portfolio view for chart
+// PriceData is the time-series data for a Coin used when building a Portfolio view for chart
 type PriceData struct {
 	coin *Coin
 	data [][]float64

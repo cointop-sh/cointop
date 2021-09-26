@@ -56,6 +56,7 @@ func (c *ChartPlot) SetData(data []float64) {
 	c.t.Data = data
 }
 
+// GetChartDataSize ...
 func (c *ChartPlot) GetChartDataSize(width int) int {
 	axisYWidth := 30
 	return (width * 2) - axisYWidth
