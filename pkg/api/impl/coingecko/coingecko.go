@@ -268,6 +268,7 @@ func (s *Service) SupportedCurrencies() []string {
 		"PLN",
 		"RUB",
 		"SAR",
+		"SATS",
 		"SEK",
 		"SGD",
 		"THB",

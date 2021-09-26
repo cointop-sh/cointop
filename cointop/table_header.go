@@ -183,7 +183,12 @@ func (ct *Cointop) UpdateTableHeader() error {
 		leftAlign := ct.GetTableColumnAlignLeft(col)
 		switch col {
 		case "price", "balance":
-			label = ct.CurrencySymbol() + label
+			spacing := ""
+			// Add an extra space because "satoshi" UTF-8 chracter overlaps text on right
+			if ct.State.currencyConversion == "SATS" {
+				spacing = " "
+			}
+			label = fmt.Sprintf("%s%s%s", ct.CurrencySymbol(), spacing, label)
 		}
 		if leftAlign {
 			label = label + arrow

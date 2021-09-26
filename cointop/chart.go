@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -135,7 +134,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	if keyname == "" {
 		keyname = "globaldata"
 	}
-	cachekey := ct.CacheKey(fmt.Sprintf("%s_%s", keyname, strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
+	cachekey := ct.CompositeCacheKey(keyname, name, ct.State.currencyConversion, ct.State.selectedChartRange)
 
 	cached, found := ct.cache.Get(cachekey)
 	if found {
@@ -241,7 +240,7 @@ func (ct *Cointop) PortfolioChart() error {
 		}
 
 		var cacheData [][]float64 // [][time,value]
-		cachekey := strings.ToLower(fmt.Sprintf("%s_%s_%s", p.Symbol, convert, strings.Replace(selectedChartRange, " ", "", -1)))
+		cachekey := ct.CompositeCacheKey(p.Symbol, p.Name, convert, selectedChartRange)
 		cached, found := ct.cache.Get(cachekey)
 		if found {
 			// cache hit
@@ -314,6 +313,16 @@ func (ct *Cointop) PortfolioChart() error {
 				data[i] += sum
 			} else {
 				data = append(data, sum)
+			}
+		}
+	}
+
+	// Scale Portfolio Balances to hide value
+	if ct.State.hidePortfolioBalances {
+		var lastPrice = data[len(data)-1]
+		if lastPrice > 0.0 {
+			for i, price := range data {
+				data[i] = 100 * price / lastPrice
 			}
 		}
 	}

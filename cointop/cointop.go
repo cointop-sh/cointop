@@ -445,7 +445,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 	})
 
 	var globaldata []float64
-	chartcachekey := ct.CacheKey(fmt.Sprintf("%s_%s", "globaldata", strings.Replace(ct.State.selectedChartRange, " ", "", -1)))
+	chartcachekey := ct.CompositeCacheKey("globaldata", "", "", ct.State.selectedChartRange)
 	if ct.filecache != nil {
 		ct.filecache.Get(chartcachekey, &globaldata)
 	}
