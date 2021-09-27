@@ -174,9 +174,9 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 	// Resample cachedata
 	timeQuantum := timedata.CalculateTimeQuantum(cacheData)
-	newStart := time.Unix(start, 0).Add(timeQuantum)
+	newStart := cacheData[0][0] // use the first data point
 	newEnd := time.Unix(end, 0).Add(-timeQuantum)
-	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+	timeData := timedata.ResampleTimeSeriesData(cacheData, newStart, float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
 	labels := timedata.BuildTimeSeriesLabels(timeData)
 
 	// Extract just the values from the data
