@@ -50,7 +50,7 @@ func ChartRanges() []string {
 // ChartRangesMap returns map of chart range time ranges
 func ChartRangesMap() map[string]time.Duration {
 	return map[string]time.Duration{
-		"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
+		"All Time": time.Duration(10 * 365 * 24 * time.Hour),
 		"YTD":      time.Duration(1 * time.Second), // this will be calculated
 		"1Y":       time.Duration(365 * 24 * time.Hour),
 		"6M":       time.Duration(365 / 2 * 24 * time.Hour),
