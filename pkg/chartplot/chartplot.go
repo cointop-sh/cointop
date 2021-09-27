@@ -55,6 +55,11 @@ func (c *ChartPlot) SetData(data []float64) {
 	c.t.Data = data
 }
 
+// SetDataLabels ...
+func (c *ChartPlot) SetDataLabels(labels []string) {
+	c.t.DataLabels = labels
+}
+
 // GetChartDataSize ...
 func (c *ChartPlot) GetChartDataSize(width int) int {
 	axisYWidth := 30
