@@ -172,21 +172,24 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 		}
 	}
 
-	// Resample cachedata
-	timeQuantum := timedata.CalculateTimeQuantum(cacheData)
-	newStart := cacheData[0][0] // use the first data point
-	newEnd := time.Unix(end, 0).Add(-timeQuantum)
-	timeData := timedata.ResampleTimeSeriesData(cacheData, newStart, float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
-	labels := timedata.BuildTimeSeriesLabels(timeData)
-
-	// Extract just the values from the data
+	var labels []string
 	var data []float64
-	for i := range timeData {
-		value := timeData[i][1]
-		if math.IsNaN(value) {
-			value = 0.0
+	timeQuantum := timedata.CalculateTimeQuantum(cacheData) // will be 0 if <2 points
+	if timeQuantum > 0 {
+		// Resample cachedata
+		newStart := cacheData[0][0] // use the first data point
+		newEnd := time.Unix(end, 0).Add(-timeQuantum)
+		timeData := timedata.ResampleTimeSeriesData(cacheData, newStart, float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+		labels = timedata.BuildTimeSeriesLabels(timeData)
+
+		// Extract just the values from the data
+		for i := range timeData {
+			value := timeData[i][1]
+			if math.IsNaN(value) {
+				value = 0.0
+			}
+			data = append(data, value)
 		}
-		data = append(data, value)
 	}
 
 	chart.SetData(data)
@@ -282,38 +285,42 @@ func (ct *Cointop) PortfolioChart() error {
 			break // use the first one
 		}
 	}
-	newStart := time.Unix(start, 0).Add(timeQuantum)
-	newEnd := time.Unix(end, 0).Add(-timeQuantum)
 
-	// Resample and sum data
+	// If there is data, resample and sum
 	var data []float64
 	var labels []string
-	for i, cacheData := range allCacheData {
-		coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
-		if i == 0 {
-			labels = timedata.BuildTimeSeriesLabels(coinData)
-		}
-		// sum (excluding NaN)
-		for i := range coinData {
-			price := coinData[i][1]
-			if math.IsNaN(price) {
-				price = 0.0
-			}
-			sum := cacheData.coin.Holdings * price
-			if i < len(data) {
-				data[i] += sum
-			} else {
-				data = append(data, sum)
-			}
-		}
-	}
+	if timeQuantum > 0 {
+		newStart := time.Unix(start, 0).Add(timeQuantum)
+		newEnd := time.Unix(end, 0).Add(-timeQuantum)
 
-	// Scale Portfolio Balances to hide value
-	if ct.State.hidePortfolioBalances {
-		var lastPrice = data[len(data)-1]
-		if lastPrice > 0.0 {
-			for i, price := range data {
-				data[i] = 100 * price / lastPrice
+		// Resample and sum data
+		for i, cacheData := range allCacheData {
+			coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+			if i == 0 {
+				labels = timedata.BuildTimeSeriesLabels(coinData)
+			}
+			// sum (excluding NaN)
+			for i := range coinData {
+				price := coinData[i][1]
+				if math.IsNaN(price) {
+					price = 0.0
+				}
+				sum := cacheData.coin.Holdings * price
+				if i < len(data) {
+					data[i] += sum
+				} else {
+					data = append(data, sum)
+				}
+			}
+		}
+
+		// Scale Portfolio Balances to hide value
+		if ct.State.hidePortfolioBalances {
+			var lastPrice = data[len(data)-1]
+			if lastPrice > 0.0 {
+				for i, price := range data {
+					data[i] = 100 * price / lastPrice
+				}
 			}
 		}
 	}
