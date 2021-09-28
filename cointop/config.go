@@ -79,6 +79,10 @@ func (ct *Cointop) SetupConfig() error {
 	if err := ct.loadDefaultChartRangeFromConfig(); err != nil {
 		return err
 	}
+	if err := ct.loadMaxChartWidthFromConfig(); err != nil {
+		log.Debug("SetupConfig() ERR", err)
+		return err
+	}
 	if err := ct.loadAPIKeysFromConfig(); err != nil {
 		return err
 	}
@@ -266,8 +270,8 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var currencyIfc interface{} = ct.State.currencyConversion
 	var defaultViewIfc interface{} = ct.State.defaultView
 	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
-	var maxTableWidth interface{} = ct.maxChartWidth
-	var maxChartWidth interface{} = ct.maxChartWidth
+	var maxTableWidth interface{} = ct.maxTableWidth
+	var maxChartWidth interface{} = ct.State.maxChartWidth
 	var colorschemeIfc interface{} = ct.colorschemeName
 	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
 	var cacheDirIfc interface{} = ct.State.cacheDir
@@ -428,6 +432,16 @@ func (ct *Cointop) loadDefaultChartRangeFromConfig() error {
 		ct.State.defaultChartRange = defaultChartRange
 		ct.State.selectedChartRange = defaultChartRange
 	}
+	return nil
+}
+
+// loadMaxChartWidthFromConfig loads max chart width from config file to struct
+func (ct *Cointop) loadMaxChartWidthFromConfig() error {
+	log.Debug("loadMaxChartWidthFromConfig()")
+	if maxChartWidth, ok := ct.config.MaxChartWidth.(int64); ok {
+		ct.State.maxChartWidth = int(maxChartWidth)
+	}
+
 	return nil
 }
 

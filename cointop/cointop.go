@@ -46,6 +46,7 @@ type State struct {
 	convertMenuVisible bool
 	defaultView        string
 	defaultChartRange  string
+	maxChartWidth      int
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
 	favoritesBySymbol map[string]bool
@@ -110,7 +111,6 @@ type Cointop struct {
 	forceRefresh    chan bool
 	limiter         <-chan time.Time
 	maxTableWidth   int
-	maxChartWidth   int
 	refreshMux      sync.Mutex
 	refreshTicker   *time.Ticker
 	saveMux         sync.Mutex
@@ -238,7 +238,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		apiKeys:        new(APIKeys),
 		forceRefresh:   make(chan bool),
 		maxTableWidth:  DefaultMaxTableWidth,
-		maxChartWidth:  DefaultMaxChartWidth,
 		ActionsMap:     ActionsMap(),
 		cache:          cache.New(1*time.Minute, 2*time.Minute),
 		colorsDir:      config.ColorsDir,
@@ -253,6 +252,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: DefaultCurrency,
 			defaultChartRange:  DefaultChartRange,
+			maxChartWidth:      DefaultMaxChartWidth,
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 			favoritesBySymbol:     make(map[string]bool),
 			favorites:             make(map[string]bool),

@@ -453,7 +453,7 @@ func (ct *Cointop) ShowChartLoader() error {
 func (ct *Cointop) ChartWidth() int {
 	log.Debug("ChartWidth()")
 	w := ct.Width()
-	max := int(ct.config.MaxChartWidth.(int64))
+	max := ct.State.maxChartWidth
 	if max > 0 && w > max {
 		return max
 	}
