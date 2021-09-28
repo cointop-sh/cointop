@@ -110,6 +110,7 @@ type Cointop struct {
 	forceRefresh    chan bool
 	limiter         <-chan time.Time
 	maxTableWidth   int
+	maxChartWidth   int
 	refreshMux      sync.Mutex
 	refreshTicker   *time.Ticker
 	saveMux         sync.Mutex
@@ -179,6 +180,12 @@ var DefaultCurrency = "USD"
 // DefaultChartRange ...
 var DefaultChartRange = "1Y"
 
+// DefaultMaxTableWidth ...
+var DefaultMaxTableWidth int = 175
+
+// DefaultMaxChartWidth ...
+var DefaultMaxChartWidth int = 175
+
 // DefaultSortBy ...
 var DefaultSortBy = "rank"
 
@@ -230,7 +237,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 		apiChoice:      CoinGecko,
 		apiKeys:        new(APIKeys),
 		forceRefresh:   make(chan bool),
-		maxTableWidth:  175,
+		maxTableWidth:  DefaultMaxTableWidth,
+		maxChartWidth:  DefaultMaxChartWidth,
 		ActionsMap:     ActionsMap(),
 		cache:          cache.New(1*time.Minute, 2*time.Minute),
 		colorsDir:      config.ColorsDir,

@@ -42,6 +42,8 @@ type ConfigFileConfig struct {
 	Currency          interface{}            `toml:"currency"`
 	DefaultView       interface{}            `toml:"default_view"`
 	DefaultChartRange interface{}            `toml:"default_chart_range"`
+	MaxTableWidth     interface{}            `toml:"max_table_width"`
+	MaxChartWidth     interface{}            `toml:"max_chart_width"`
 	CoinMarketCap     map[string]interface{} `toml:"coinmarketcap"`
 	API               interface{}            `toml:"api"`
 	Colorscheme       interface{}            `toml:"colorscheme"`
@@ -264,6 +266,8 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var currencyIfc interface{} = ct.State.currencyConversion
 	var defaultViewIfc interface{} = ct.State.defaultView
 	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
+	var maxTableWidth interface{} = ct.maxChartWidth
+	var maxChartWidth interface{} = ct.maxChartWidth
 	var colorschemeIfc interface{} = ct.colorschemeName
 	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
 	var cacheDirIfc interface{} = ct.State.cacheDir
@@ -304,6 +308,8 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Currency:          currencyIfc,
 		DefaultView:       defaultViewIfc,
 		DefaultChartRange: defaultChartRangeIfc,
+		MaxTableWidth:     maxTableWidth,
+		MaxChartWidth:     maxChartWidth,
 		Favorites:         favoritesMapIfc,
 		RefreshRate:       refreshRateIfc,
 		Shortcuts:         shortcutsIfcs,
