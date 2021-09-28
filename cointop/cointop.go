@@ -180,9 +180,6 @@ var DefaultCurrency = "USD"
 // DefaultChartRange ...
 var DefaultChartRange = "1Y"
 
-// DefaultMaxTableWidth ...
-var DefaultMaxTableWidth int = 175
-
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth int = 175
 
@@ -237,7 +234,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		apiChoice:      CoinGecko,
 		apiKeys:        new(APIKeys),
 		forceRefresh:   make(chan bool),
-		maxTableWidth:  DefaultMaxTableWidth,
+		maxTableWidth:  175,
 		ActionsMap:     ActionsMap(),
 		cache:          cache.New(1*time.Minute, 2*time.Minute),
 		colorsDir:      config.ColorsDir,

@@ -42,7 +42,6 @@ type ConfigFileConfig struct {
 	Currency          interface{}            `toml:"currency"`
 	DefaultView       interface{}            `toml:"default_view"`
 	DefaultChartRange interface{}            `toml:"default_chart_range"`
-	MaxTableWidth     interface{}            `toml:"max_table_width"`
 	MaxChartWidth     interface{}            `toml:"max_chart_width"`
 	CoinMarketCap     map[string]interface{} `toml:"coinmarketcap"`
 	API               interface{}            `toml:"api"`
@@ -80,7 +79,6 @@ func (ct *Cointop) SetupConfig() error {
 		return err
 	}
 	if err := ct.loadMaxChartWidthFromConfig(); err != nil {
-		log.Debug("SetupConfig() ERR", err)
 		return err
 	}
 	if err := ct.loadAPIKeysFromConfig(); err != nil {
@@ -270,7 +268,6 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var currencyIfc interface{} = ct.State.currencyConversion
 	var defaultViewIfc interface{} = ct.State.defaultView
 	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
-	var maxTableWidth interface{} = ct.maxTableWidth
 	var maxChartWidth interface{} = ct.State.maxChartWidth
 	var colorschemeIfc interface{} = ct.colorschemeName
 	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
@@ -312,7 +309,6 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Currency:          currencyIfc,
 		DefaultView:       defaultViewIfc,
 		DefaultChartRange: defaultChartRangeIfc,
-		MaxTableWidth:     maxTableWidth,
 		MaxChartWidth:     maxChartWidth,
 		Favorites:         favoritesMapIfc,
 		RefreshRate:       refreshRateIfc,
