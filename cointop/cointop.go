@@ -183,6 +183,9 @@ var DefaultChartRange = "1Y"
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth int = 175
 
+// DefaultChartHeight ...
+var DefaultChartHeight int = 10
+
 // DefaultSortBy ...
 var DefaultSortBy = "rank"
 
@@ -274,8 +277,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 				Entries: make(map[string]*PortfolioEntry),
 			},
 			portfolioTableColumns: DefaultPortfolioTableHeaders,
-			chartHeight:           10,
-			lastChartHeight:       10,
+			chartHeight:           DefaultChartHeight,
+			lastChartHeight:       DefaultChartHeight,
 			tableOffsetX:          0,
 			tableColumnWidths:     sync.Map{},
 			tableColumnAlignLeft:  sync.Map{},
