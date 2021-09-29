@@ -511,7 +511,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 		if k == "character" {
 			if favoriteChar, ok := valueIfc.(string); ok {
 				if len(favoriteChar) != 1 {
-					return fmt.Errorf("invalid favourite-character. Must be one-character")
+					return fmt.Errorf("invalid favorite-character. Must be one-character")
 				}
 				ct.State.favoriteChar = favoriteChar
 			}
