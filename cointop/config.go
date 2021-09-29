@@ -304,7 +304,6 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	chartMapIfc := map[string]interface{}{}
 	chartMapIfc["max_width"] = ct.State.maxChartWidth
 	chartMapIfc["height"] = ct.State.chartHeight
-	log.Debugf("XXX chart = %s", chartMapIfc)
 
 	var inputs = &ConfigFileConfig{
 		API:               apiChoiceIfc,
@@ -359,6 +358,7 @@ func (ct *Cointop) loadChartConfig() error {
 	chartHeightIfc, ok := ct.config.Chart["height"]
 	if ok {
 		ct.State.chartHeight = int(chartHeightIfc.(int64))
+		ct.State.lastChartHeight = ct.State.chartHeight
 	}
 	return nil
 }
