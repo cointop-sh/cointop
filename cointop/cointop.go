@@ -46,6 +46,7 @@ type State struct {
 	convertMenuVisible bool
 	defaultView        string
 	defaultChartRange  string
+	maxChartWidth      int
 
 	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
 	favoritesBySymbol map[string]bool
@@ -179,6 +180,12 @@ var DefaultCurrency = "USD"
 // DefaultChartRange ...
 var DefaultChartRange = "1Y"
 
+// DefaultMaxChartWidth ...
+var DefaultMaxChartWidth int = 175
+
+// DefaultChartHeight ...
+var DefaultChartHeight int = 10
+
 // DefaultSortBy ...
 var DefaultSortBy = "rank"
 
@@ -245,6 +252,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: DefaultCurrency,
 			defaultChartRange:  DefaultChartRange,
+			maxChartWidth:      DefaultMaxChartWidth,
 			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 			favoritesBySymbol:     make(map[string]bool),
 			favorites:             make(map[string]bool),
@@ -269,8 +277,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 				Entries: make(map[string]*PortfolioEntry),
 			},
 			portfolioTableColumns: DefaultPortfolioTableHeaders,
-			chartHeight:           10,
-			lastChartHeight:       10,
+			chartHeight:           DefaultChartHeight,
+			lastChartHeight:       DefaultChartHeight,
 			tableOffsetX:          0,
 			tableColumnWidths:     sync.Map{},
 			tableColumnAlignLeft:  sync.Map{},

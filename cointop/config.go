@@ -48,6 +48,7 @@ type ConfigFileConfig struct {
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CacheDir          interface{}            `toml:"cache_dir"`
 	Table             map[string]interface{} `toml:"table"`
+	Chart             map[string]interface{} `toml:"chart"`
 }
 
 // SetupConfig loads config file
@@ -60,6 +61,9 @@ func (ct *Cointop) SetupConfig() error {
 		return err
 	}
 	if err := ct.loadTableConfig(); err != nil {
+		return err
+	}
+	if err := ct.loadChartConfig(); err != nil {
 		return err
 	}
 	if err := ct.loadShortcutsFromConfig(); err != nil {
@@ -297,6 +301,10 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var keepRowFocusOnSortIfc interface{} = ct.State.keepRowFocusOnSort
 	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
 
+	chartMapIfc := map[string]interface{}{}
+	chartMapIfc["max_width"] = ct.State.maxChartWidth
+	chartMapIfc["height"] = ct.State.chartHeight
+
 	var inputs = &ConfigFileConfig{
 		API:               apiChoiceIfc,
 		Colorscheme:       colorschemeIfc,
@@ -311,6 +319,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		PriceAlerts:       priceAlertsMapIfc,
 		CacheDir:          cacheDirIfc,
 		Table:             tableMapIfc,
+		Chart:             chartMapIfc,
 	}
 
 	var b bytes.Buffer
@@ -334,6 +343,22 @@ func (ct *Cointop) loadTableConfig() error {
 	keepRowFocusOnSortIfc, ok := ct.config.Table["keep_row_focus_on_sort"]
 	if ok {
 		ct.State.keepRowFocusOnSort = keepRowFocusOnSortIfc.(bool)
+	}
+	return nil
+}
+
+// LoadChartConfig loads chart config from toml config into state struct
+func (ct *Cointop) loadChartConfig() error {
+	log.Debugf("loadChartConfig()")
+	maxChartWidthIfc, ok := ct.config.Chart["max_width"]
+	if ok {
+		ct.State.maxChartWidth = int(maxChartWidthIfc.(int64))
+	}
+
+	chartHeightIfc, ok := ct.config.Chart["height"]
+	if ok {
+		ct.State.chartHeight = int(chartHeightIfc.(int64))
+		ct.State.lastChartHeight = ct.State.chartHeight
 	}
 	return nil
 }

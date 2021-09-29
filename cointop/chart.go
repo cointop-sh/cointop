@@ -342,6 +342,10 @@ func (ct *Cointop) ShortenChart() error {
 	ct.State.chartHeight = candidate
 	ct.State.lastChartHeight = ct.State.chartHeight
 
+	if err := ct.Save(); err != nil {
+		return err
+	}
+
 	go ct.UpdateChart()
 	return nil
 }
@@ -355,6 +359,10 @@ func (ct *Cointop) EnlargeChart() error {
 	}
 	ct.State.chartHeight = candidate
 	ct.State.lastChartHeight = ct.State.chartHeight
+
+	if err := ct.Save(); err != nil {
+		return err
+	}
 
 	go ct.UpdateChart()
 	return nil
@@ -453,8 +461,8 @@ func (ct *Cointop) ShowChartLoader() error {
 func (ct *Cointop) ChartWidth() int {
 	log.Debug("ChartWidth()")
 	w := ct.Width()
-	max := 175
-	if w > max {
+	max := ct.State.maxChartWidth
+	if max > 0 && w > max {
 		return max
 	}
 
