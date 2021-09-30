@@ -66,3 +66,8 @@ func normalizeFloatString(input string, allowNegative bool) string {
 
 	return ""
 }
+
+// GetCacheDir ...
+func (state *State) GetCacheDir() string {
+	return state.cacheDir
+}
