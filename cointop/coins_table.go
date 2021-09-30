@@ -82,7 +82,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 				star := " "
 				rankcolor := ct.colorscheme.TableRow
 				if coin.Favorite {
-					star = "*"
+					star = ct.State.favoriteChar
 					rankcolor = ct.colorscheme.TableRowFavorite
 				}
 				rank := fmt.Sprintf("%s%6v ", star, coin.Rank)

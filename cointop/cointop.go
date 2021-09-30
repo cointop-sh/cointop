@@ -53,6 +53,7 @@ type State struct {
 
 	favorites                  map[string]bool
 	favoritesTableColumns      []string
+	favoriteChar               string
 	helpVisible                bool
 	hideMarketbar              bool
 	hideChart                  bool
@@ -207,6 +208,9 @@ var DefaultCacheDir = filecache.DefaultCacheDir
 // DefaultColorsDir ...
 var DefaultColorsDir = fmt.Sprintf("%s/colors", DefaultConfigFilepath)
 
+// DefaultFavoriteChar ...
+var DefaultFavoriteChar = "*"
+
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
 	if os.Getenv("DEBUG") != "" {
@@ -257,6 +261,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			favoritesBySymbol:     make(map[string]bool),
 			favorites:             make(map[string]bool),
 			favoritesTableColumns: DefaultCoinTableHeaders,
+			favoriteChar:          DefaultFavoriteChar,
 			hideMarketbar:         config.HideMarketbar,
 			hideChart:             config.HideChart,
 			hideTable:             config.HideTable,
