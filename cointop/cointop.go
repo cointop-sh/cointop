@@ -9,13 +9,13 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/api"
-	"github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/cache"
-	"github.com/miguelmota/cointop/pkg/filecache"
-	"github.com/miguelmota/cointop/pkg/pathutil"
-	"github.com/miguelmota/cointop/pkg/table"
-	"github.com/miguelmota/cointop/pkg/ui"
+	"github.com/cointop-sh/cointop/pkg/api"
+	"github.com/cointop-sh/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/cache"
+	"github.com/cointop-sh/cointop/pkg/filecache"
+	"github.com/cointop-sh/cointop/pkg/pathutil"
+	"github.com/cointop-sh/cointop/pkg/table"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	"github.com/miguelmota/gocui"
 	log "github.com/sirupsen/logrus"
 )
@@ -411,7 +411,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ct.filecache.Get(coinscachekey, &allCoinsSlugMap)
 	}
 
-	// fix for https://github.com/miguelmota/cointop/issues/59
+	// fix for https://github.com/cointop-sh/cointop/issues/59
 	// can remove this after everyone has cleared their cache
 	for _, v := range allCoinsSlugMap {
 		// Some APIs returns rank 0 for new coins

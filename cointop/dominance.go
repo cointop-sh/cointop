@@ -3,7 +3,7 @@ package cointop
 import (
 	"fmt"
 
-	"github.com/miguelmota/cointop/pkg/api"
+	"github.com/cointop-sh/cointop/pkg/api"
 )
 
 // DominanceConfig is the config options for the dominance command

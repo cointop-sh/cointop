@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
+	types "github.com/cointop-sh/cointop/pkg/api/types"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -69,7 +69,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	for _, v := range coins {
 		k := v.Name
 
-		// Fix for https://github.com/miguelmota/cointop/issues/59
+		// Fix for https://github.com/cointop-sh/cointop/issues/59
 		// some APIs returns rank 0 for new coins
 		// or coins with low market cap data so we need to put them
 		// at the end of the list

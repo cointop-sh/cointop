@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/miguelmota/cointop/cointop"
+	"github.com/cointop-sh/cointop/cointop"
 	"github.com/spf13/cobra"
 )
 

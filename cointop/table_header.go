@@ -6,8 +6,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/ui"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/miguelmota/cointop/cointop"
-	"github.com/miguelmota/cointop/pkg/filecache"
+	"github.com/cointop-sh/cointop/cointop"
+	"github.com/cointop-sh/cointop/pkg/filecache"
 	"github.com/spf13/cobra"
 )
 

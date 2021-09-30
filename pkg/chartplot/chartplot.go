@@ -1,7 +1,7 @@
 package chartplot
 
 import (
-	"github.com/miguelmota/cointop/pkg/termui"
+	"github.com/cointop-sh/cointop/pkg/termui"
 )
 
 // ChartPlot ...
