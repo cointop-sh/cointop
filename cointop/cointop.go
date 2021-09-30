@@ -523,17 +523,18 @@ type CleanConfig struct {
 }
 
 // Clean removes cache files
-func Clean(config *CleanConfig) error {
+func (ct *Cointop) Clean(config *CleanConfig) error {
 	if config == nil {
 		config = &CleanConfig{}
 	}
-
-	cacheCleaned := false
-
 	cacheDir := DefaultCacheDir
 	if config.CacheDir != "" {
 		cacheDir = pathutil.NormalizePath(config.CacheDir)
+	} else if ct.State.cacheDir != "" {
+		cacheDir = ct.State.cacheDir
 	}
+
+	cacheCleaned := false
 
 	if _, err := os.Stat(cacheDir); !os.IsNotExist(err) {
 		files, err := ioutil.ReadDir(cacheDir)
@@ -572,12 +573,12 @@ type ResetConfig struct {
 }
 
 // Reset removes configuration and cache files
-func Reset(config *ResetConfig) error {
+func (ct *Cointop) Reset(config *ResetConfig) error {
 	if config == nil {
 		config = &ResetConfig{}
 	}
 
-	if err := Clean(&CleanConfig{
+	if err := ct.Clean(&CleanConfig{
 		CacheDir: config.CacheDir,
 		Log:      config.Log,
 	}); err != nil {
