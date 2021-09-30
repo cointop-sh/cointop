@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/miguelmota/cointop/pkg/pathutil"
 	"github.com/miguelmota/cointop/pkg/toml"
@@ -218,6 +219,10 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		"names":   favoritesIfc,
 		"columns": ct.State.favoritesTableColumns,
 	}
+
+	var favoritesColumnsIfc interface{} = ct.State.favoritesTableColumns
+	favoritesMapIfc["columns"] = favoritesColumnsIfc
+	favoritesMapIfc["character"] = ct.State.favoriteChar
 
 	var holdingsIfc [][]string
 	for name := range ct.State.portfolio.Entries {
@@ -471,6 +476,14 @@ func (ct *Cointop) loadAPIChoiceFromConfig() error {
 func (ct *Cointop) loadFavoritesFromConfig() error {
 	log.Debug("loadFavoritesFromConfig()")
 	for k, valueIfc := range ct.config.Favorites {
+		if k == "character" {
+			if favoriteChar, ok := valueIfc.(string); ok {
+				if utf8.RuneCountInString(favoriteChar) != 1 {
+					return fmt.Errorf("invalid favorite-character. Must be one-character")
+				}
+				ct.State.favoriteChar = favoriteChar
+			}
+		}
 		ifcs, ok := valueIfc.([]interface{})
 		if !ok {
 			continue
