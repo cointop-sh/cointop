@@ -216,11 +216,9 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
 		"symbols": favoritesBySymbolIfc,
 		"names":   favoritesIfc,
+		"columns": ct.State.favoritesTableColumns,
 	}
 
-	favoritesMapIfc["columns"] = ct.State.favoritesTableColumns
-
-	portfolioIfc := map[string]interface{}{}
 	var holdingsIfc [][]string
 	for name := range ct.State.portfolio.Entries {
 		entry, ok := ct.State.portfolio.Entries[name]
@@ -235,9 +233,10 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	sort.Slice(holdingsIfc, func(i, j int) bool {
 		return holdingsIfc[i][0] < holdingsIfc[j][0]
 	})
-	portfolioIfc["holdings"] = holdingsIfc
-
-	portfolioIfc["columns"] = ct.State.portfolioTableColumns
+	portfolioIfc := map[string]interface{}{
+		"holdings": holdingsIfc,
+		"columns":  ct.State.portfolioTableColumns,
+	}
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
