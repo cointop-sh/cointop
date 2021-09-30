@@ -218,8 +218,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		"names":   favoritesIfc,
 	}
 
-	var favoritesColumnsIfc interface{} = ct.State.favoritesTableColumns
-	favoritesMapIfc["columns"] = favoritesColumnsIfc
+	favoritesMapIfc["columns"] = ct.State.favoritesTableColumns
 
 	portfolioIfc := map[string]interface{}{}
 	var holdingsIfc [][]string
@@ -238,21 +237,11 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	})
 	portfolioIfc["holdings"] = holdingsIfc
 
-	var columnsIfc interface{} = ct.State.portfolioTableColumns
-	portfolioIfc["columns"] = columnsIfc
-
-	var currencyIfc interface{} = ct.State.currencyConversion
-	var defaultViewIfc interface{} = ct.State.defaultView
-	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
-	var colorschemeIfc interface{} = ct.colorschemeName
-	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
-	var cacheDirIfc interface{} = ct.State.cacheDir
+	portfolioIfc["columns"] = ct.State.portfolioTableColumns
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
 	}
-
-	var apiChoiceIfc interface{} = ct.apiChoice
 
 	var priceAlertsIfc []interface{}
 	for _, priceAlert := range ct.State.priceAlerts.Entries {
@@ -271,29 +260,29 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		//"sound":  ct.State.priceAlerts.SoundEnabled,
 	}
 
-	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
-	tableMapIfc := map[string]interface{}{}
-	tableMapIfc["columns"] = coinsTableColumnsIfc
-	var keepRowFocusOnSortIfc interface{} = ct.State.keepRowFocusOnSort
-	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
+	tableMapIfc := map[string]interface{}{
+		"columns":                ct.State.coinsTableColumns,
+		"keep_row_focus_on_sort": ct.State.keepRowFocusOnSort,
+	}
 
-	chartMapIfc := map[string]interface{}{}
-	chartMapIfc["max_width"] = ct.State.maxChartWidth
-	chartMapIfc["height"] = ct.State.chartHeight
+	chartMapIfc := map[string]interface{}{
+		"max_width": ct.State.maxChartWidth,
+		"height":    ct.State.chartHeight,
+	}
 
 	var inputs = &ConfigFileConfig{
-		API:               apiChoiceIfc,
-		Colorscheme:       colorschemeIfc,
+		API:               ct.apiChoice,
+		Colorscheme:       ct.colorschemeName,
 		CoinMarketCap:     cmcIfc,
-		Currency:          currencyIfc,
-		DefaultView:       defaultViewIfc,
-		DefaultChartRange: defaultChartRangeIfc,
+		Currency:          ct.State.currencyConversion,
+		DefaultView:       ct.State.defaultView,
+		DefaultChartRange: ct.State.defaultChartRange,
 		Favorites:         favoritesMapIfc,
-		RefreshRate:       refreshRateIfc,
+		RefreshRate:       uint(ct.State.refreshRate.Seconds()),
 		Shortcuts:         shortcutsIfcs,
 		Portfolio:         portfolioIfc,
 		PriceAlerts:       priceAlertsMapIfc,
-		CacheDir:          cacheDirIfc,
+		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 	}
