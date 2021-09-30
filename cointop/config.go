@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/miguelmota/cointop/pkg/pathutil"
 	"github.com/miguelmota/cointop/pkg/toml"
@@ -510,7 +511,7 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 	for k, valueIfc := range ct.config.Favorites {
 		if k == "character" {
 			if favoriteChar, ok := valueIfc.(string); ok {
-				if len(favoriteChar) != 1 {
+				if utf8.RuneCountInString(favoriteChar) != 1 {
 					return fmt.Errorf("invalid favorite-character. Must be one-character")
 				}
 				ct.State.favoriteChar = favoriteChar
