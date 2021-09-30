@@ -53,54 +53,30 @@ type ConfigFileConfig struct {
 
 // SetupConfig loads config file
 func (ct *Cointop) SetupConfig() error {
-	log.Debug("SetupConfig()")
-	if err := ct.CreateConfigIfNotExists(); err != nil {
-		return err
+	type loadConfigFunc func() error
+	loaders := []loadConfigFunc{
+		ct.CreateConfigIfNotExists,
+		ct.ParseConfig,
+		ct.loadTableConfig,
+		ct.loadChartConfig,
+		ct.loadShortcutsFromConfig,
+		ct.loadFavoritesFromConfig,
+		ct.loadCurrencyFromConfig,
+		ct.loadDefaultViewFromConfig,
+		ct.loadDefaultChartRangeFromConfig,
+		ct.loadAPIKeysFromConfig,
+		ct.loadAPIChoiceFromConfig,
+		ct.loadColorschemeFromConfig,
+		ct.loadRefreshRateFromConfig,
+		ct.loadCacheDirFromConfig,
+		ct.loadPriceAlertsFromConfig,
+		ct.loadPortfolioFromConfig,
 	}
-	if err := ct.ParseConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadTableConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadChartConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadShortcutsFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadFavoritesFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadCurrencyFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadDefaultViewFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadDefaultChartRangeFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadAPIKeysFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadAPIChoiceFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadColorschemeFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadRefreshRateFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadCacheDirFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadPriceAlertsFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadPortfolioFromConfig(); err != nil {
-		return err
+
+	for _, f := range loaders {
+		if err := f(); err != nil {
+			return err
+		}
 	}
 
 	return nil
