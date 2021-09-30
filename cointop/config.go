@@ -215,14 +215,11 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols": favoritesBySymbolIfc,
-		"names":   favoritesIfc,
-		"columns": ct.State.favoritesTableColumns,
+		"symbols":   favoritesBySymbolIfc,
+		"names":     favoritesIfc,
+		"columns":   ct.State.favoritesTableColumns,
+		"character": ct.State.favoriteChar,
 	}
-
-	var favoritesColumnsIfc interface{} = ct.State.favoritesTableColumns
-	favoritesMapIfc["columns"] = favoritesColumnsIfc
-	favoritesMapIfc["character"] = ct.State.favoriteChar
 
 	var holdingsIfc [][]string
 	for name := range ct.State.portfolio.Entries {
