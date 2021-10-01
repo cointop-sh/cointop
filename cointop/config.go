@@ -24,7 +24,7 @@ var FilePerm = os.FileMode(0644)
 // ErrInvalidPriceAlert is error for invalid price alert value
 var ErrInvalidPriceAlert = errors.New("invalid price alert value")
 
-// PossibleConfigPaths are the the possible config file paths.
+// PossibleConfigPaths are the possible config file paths.
 // NOTE: this is to support previous default config filepaths
 var PossibleConfigPaths = []string{
 	":PREFERRED_CONFIG_HOME:/cointop/config.toml",
@@ -128,7 +128,7 @@ func (ct *Cointop) ConfigFilePath() string {
 	return pathutil.NormalizePath(ct.configFilepath)
 }
 
-// ConfigPath return the config file path
+// MakeConfigDir creates the directory for the config file
 func (ct *Cointop) MakeConfigDir() error {
 	log.Debug("MakeConfigDir()")
 	path := ct.ConfigDirPath()
@@ -644,7 +644,7 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 	return nil
 }
 
-// GetColorschemeColors loads colors from colorsheme file to struct
+// GetColorschemeColors loads colors from colorscheme file to struct
 func (ct *Cointop) GetColorschemeColors() (map[string]interface{}, error) {
 	log.Debug("GetColorschemeColors()")
 	var colors map[string]interface{}

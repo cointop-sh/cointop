@@ -18,7 +18,7 @@ type ColorschemeColors map[string]interface{}
 // ISprintf is a sprintf interface
 type ISprintf func(...interface{}) string
 
-// colorCache is a map of color string names to sprintf functions
+// ColorCache is a map of color string names to sprintf functions
 type ColorCache map[string]ISprintf
 
 // Colorscheme is the struct for colorscheme
@@ -337,17 +337,17 @@ func (c *Colorscheme) ToBgAttr(v string) (fcolor.Attribute, bool) {
 	return 0, false
 }
 
-// toBoldAttr converts a boolean to an Attribute type
+// ToBoldAttr converts a boolean to an Attribute type
 func (c *Colorscheme) ToBoldAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Bold, v
 }
 
-// toUnderlineAttr converts a boolean to an Attribute type
+// ToUnderlineAttr converts a boolean to an Attribute type
 func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
 }
 
-// toGocuiAttr converts a color string name to a gocui Attribute type
+// ToGocuiAttr converts a color string name to a gocui Attribute type
 func (c *Colorscheme) ToGocuiAttr(v string) (gocui.Attribute, bool) {
 	if attr, ok := GocuiColorschemeColorsMap[v]; ok {
 		return attr, true

@@ -18,7 +18,7 @@ import (
 // Attribute is printable cell's color and style.
 type Attribute uint16
 
-// 8 basic clolrs
+// 8 basic colors
 const (
 	ColorDefault Attribute = iota
 	ColorBlack
@@ -32,7 +32,7 @@ const (
 )
 
 //Have a constant that defines number of colors
-const NumberofColors = 8
+const NumberOfColors = 8
 
 // Text style
 const (
