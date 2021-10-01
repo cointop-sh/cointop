@@ -46,7 +46,7 @@ func TruncateString(value string, maxLen int) string {
 }
 
 // ClearSyncMap clears a sync.Map
-func (ct *Cointop) ClearSyncMap(syncMap sync.Map) {
+func (ct *Cointop) ClearSyncMap(syncMap *sync.Map) {
 	syncMap.Range(func(key interface{}, value interface{}) bool {
 		syncMap.Delete(key)
 		return true
