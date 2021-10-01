@@ -39,7 +39,7 @@ In action
 - [Documentation](#documentation)
 - [Install](#install)
 - [Update](#update)
-- [Getting started](#getting-started)
+- [Getting Started](#getting-started)
 - [Shortcuts](#shortcuts)
 - [Colorschemes](#colorschemes)
 - [Config](#config)
@@ -85,6 +85,10 @@ See [docs.cointop.sh/install](https://docs.cointop.sh/install)
 ## Update
 
 See [docs.cointop.sh/update](https://docs.cointop.sh/update)
+
+## Getting Started
+
+See [docs.cointop.sh/getting-started](https://docs.cointop.sh/getting-started)
 
 ## Shortcuts
 
