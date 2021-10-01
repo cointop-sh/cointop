@@ -67,8 +67,8 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 	if ct.IsFavoritesVisible() {
 		headers = ct.GetFavoritesTableHeaders()
 	}
-	ct.ClearSyncMap(ct.State.tableColumnWidths)
-	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
+	ct.ClearSyncMap(&ct.State.tableColumnWidths)
+	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
 	for _, coin := range ct.State.coins {
 		if coin == nil {
 			continue

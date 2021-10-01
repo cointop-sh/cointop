@@ -48,8 +48,8 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetPriceAlertsTableHeaders()
-	ct.ClearSyncMap(ct.State.tableColumnWidths)
-	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
+	ct.ClearSyncMap(&ct.State.tableColumnWidths)
+	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
 	for _, entry := range ct.State.priceAlerts.Entries {
 		if entry.Expired {
 			continue

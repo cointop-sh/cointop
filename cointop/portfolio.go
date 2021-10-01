@@ -78,8 +78,8 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetPortfolioTableHeaders()
-	ct.ClearSyncMap(ct.State.tableColumnWidths)
-	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
+	ct.ClearSyncMap(&ct.State.tableColumnWidths)
+	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
 	for _, coin := range ct.State.coins {
 		leftMargin := 1
 		rightMargin := 1
