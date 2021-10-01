@@ -31,7 +31,7 @@ const (
 	ColorWhite
 )
 
-//Have a constant that defines number of colors
+// NumberOfColors ...
 const NumberOfColors = 8
 
 // Text style
