@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/cointop-sh/cointop/pkg/humanize"
+	"github.com/cointop-sh/cointop/pkg/table"
 )
 
 // SupportedCoinTableHeaders are all the supported coin table header columns

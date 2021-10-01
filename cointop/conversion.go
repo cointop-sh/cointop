@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	color "github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/pad"
+	color "github.com/cointop-sh/cointop/pkg/color"
+	"github.com/cointop-sh/cointop/pkg/pad"
 	log "github.com/sirupsen/logrus"
 )
 

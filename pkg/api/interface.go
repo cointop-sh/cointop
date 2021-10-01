@@ -1,7 +1,7 @@
 package api
 
 import (
-	types "github.com/miguelmota/cointop/pkg/api/types"
+	types "github.com/cointop-sh/cointop/pkg/api/types"
 )
 
 // Interface interface

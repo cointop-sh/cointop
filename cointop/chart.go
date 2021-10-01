@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/chartplot"
-	"github.com/miguelmota/cointop/pkg/timedata"
-	"github.com/miguelmota/cointop/pkg/timeutil"
-	"github.com/miguelmota/cointop/pkg/ui"
+	"github.com/cointop-sh/cointop/pkg/chartplot"
+	"github.com/cointop-sh/cointop/pkg/timedata"
+	"github.com/cointop-sh/cointop/pkg/timeutil"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 

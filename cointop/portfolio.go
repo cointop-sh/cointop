@@ -12,11 +12,11 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/miguelmota/cointop/pkg/asciitable"
-	"github.com/miguelmota/cointop/pkg/eval"
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/cointop-sh/cointop/pkg/asciitable"
+	"github.com/cointop-sh/cointop/pkg/eval"
+	"github.com/cointop-sh/cointop/pkg/humanize"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/table"
 	log "github.com/sirupsen/logrus"
 )
 

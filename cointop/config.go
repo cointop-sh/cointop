@@ -13,8 +13,8 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/miguelmota/cointop/pkg/pathutil"
-	"github.com/miguelmota/cointop/pkg/toml"
+	"github.com/cointop-sh/cointop/pkg/pathutil"
+	"github.com/cointop-sh/cointop/pkg/toml"
 	log "github.com/sirupsen/logrus"
 )
 

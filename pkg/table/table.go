@@ -8,8 +8,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/acarl005/stripansi"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/table/align"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/table/align"
 )
 
 // Table table

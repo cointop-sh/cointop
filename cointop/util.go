@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/miguelmota/cointop/pkg/open"
+	"github.com/cointop-sh/cointop/pkg/open"
 	log "github.com/sirupsen/logrus"
 )
 

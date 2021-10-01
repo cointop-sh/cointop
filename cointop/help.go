@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/miguelmota/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/pad"
 	log "github.com/sirupsen/logrus"
 )
 

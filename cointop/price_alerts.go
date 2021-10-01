@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/notifier"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/table"
+	"github.com/cointop-sh/cointop/pkg/humanize"
+	"github.com/cointop-sh/cointop/pkg/notifier"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/table"
 	log "github.com/sirupsen/logrus"
 )
 
