@@ -98,7 +98,7 @@ func (ct *Cointop) UpdateTable() error {
 // GetTableCoinsSlice returns a slice of the table rows
 func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 	log.Debug("GetTableCoinsSlice()")
-	sliced := []*Coin{}
+	var sliced []*Coin
 	start := ct.State.page * ct.State.perPage
 	end := start + ct.State.perPage
 	allCoins := ct.AllCoins()

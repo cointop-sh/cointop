@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	fcolor "github.com/fatih/color"
-	gocui "github.com/miguelmota/gocui"
-	xtermcolor "github.com/tomnomnom/xtermcolor"
+	"github.com/miguelmota/gocui"
+	"github.com/tomnomnom/xtermcolor"
 )
 
 // TODO: fix hex color support
