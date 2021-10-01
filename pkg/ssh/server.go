@@ -16,9 +16,9 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/cointop-sh/cointop/pkg/pathutil"
 	"github.com/creack/pty"
 	"github.com/gliderlabs/ssh"
-	"github.com/miguelmota/cointop/pkg/pathutil"
 	gossh "golang.org/x/crypto/ssh"
 )
 

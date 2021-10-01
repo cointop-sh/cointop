@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/ui"
+	types "github.com/cointop-sh/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/color"
+	"github.com/cointop-sh/cointop/pkg/humanize"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 

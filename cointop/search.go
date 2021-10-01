@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/levenshtein"
-	"github.com/miguelmota/cointop/pkg/ui"
+	"github.com/cointop-sh/cointop/pkg/levenshtein"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 

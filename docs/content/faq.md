@@ -89,7 +89,7 @@ draft: false
 
 ## I'm no longer seeing any data!
 
-  Run cointop with the `--clean` flag to delete the cache. If you're still not seeing any data, then please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
+  Run cointop with the `--clean` flag to delete the cache. If you're still not seeing any data, then please [submit an issue](https://github.com/cointop-sh/cointop/issues/new).
 
 ## How do I get a CoinMarketCap Pro API key?
 
@@ -118,7 +118,7 @@ draft: false
 
 ## I can I add my own API to cointop?
 
-  Fork cointop and add the API that implements the API [interface](https://github.com/miguelmota/cointop/blob/master/cointop/common/api/interface.go) to [`cointop/cointop/common/api/impl/`](https://github.com/miguelmota/cointop/tree/master/cointop/common/api/impl). You can use the CoinGecko [implementation](https://github.com/miguelmota/cointop/blob/master/cointop/common/api/impl/coingecko/coingecko.go) as reference.
+  Fork cointop and add the API that implements the API [interface](https://github.com/cointop-sh/cointop/blob/master/cointop/common/api/interface.go) to [`cointop/cointop/common/api/impl/`](https://github.com/cointop-sh/cointop/tree/master/cointop/common/api/impl). You can use the CoinGecko [implementation](https://github.com/cointop-sh/cointop/blob/master/cointop/common/api/impl/coingecko/coingecko.go) as reference.
 
 ## I installed cointop without errors but the command is not found.
 
@@ -199,11 +199,11 @@ draft: false
   LANG=en_US.utf8 TERM=xterm-256color cointop
   ```
 
-  If you're on Windows (PowerShell, Command Prompt, or WSL), please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for font support instructions.
+  If you're on Windows (PowerShell, Command Prompt, or WSL), please see the [wiki](https://github.com/cointop-sh/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for font support instructions.
 
 ## How do I install Go on Ubuntu?
 
-  There's instructions on installing Go on Ubuntu in the [wiki](https://github.com/miguelmota/cointop/wiki/Installing-Go-on-Ubuntu).
+  There's instructions on installing Go on Ubuntu in the [wiki](https://github.com/cointop-sh/cointop/wiki/Installing-Go-on-Ubuntu).
 
 ## I'm getting errors installing the snap in Windows WSL.
 
@@ -228,8 +228,8 @@ draft: false
   Here's how to build the executable and run it:
 
   ```powershell
-  > md C:\Users\Josem\go\src\github.com\miguelmota -ea 0
-  > git clone https://github.com/miguelmota/cointop.git
+  > md C:\Users\Josem\go\src\github.com\cointop-sh -ea 0
+  > git clone https://github.com/cointop-sh/cointop.git
   > go build -o cointop.exe main.go
   > cointop.exe
   ```
@@ -373,7 +373,7 @@ draft: false
 
 ## I can only view the first page, why isn't the pagination is working?
 
-  Sometimes the coin APIs will make updates and break things. If you see this problem please [submit an issue](https://github.com/miguelmota/cointop/issues/new).
+  Sometimes the coin APIs will make updates and break things. If you see this problem please [submit an issue](https://github.com/cointop-sh/cointop/issues/new).
 
 ## How can run cointop with just the table?
 
@@ -484,5 +484,5 @@ draft: false
   The version number is read from the git tag during the build process but this requires the `GO111MODULE` environment variable to be set in order for Go to read the build information:
 
   ```bash
-  GO111MODULE=on go get github.com/miguelmota/cointop
+  GO111MODULE=on go get github.com/cointop-sh/cointop
   ```

@@ -30,18 +30,18 @@ debug:
 
 .PHONY: build
 build:
-	go build -ldflags "-X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop main.go
+	go build -ldflags "-X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/cointop main.go
 
 # http://macappstore.org/upx
 build-mac: clean-mac
-	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/macos/cointop && upx bin/macos/cointop
+	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/macos/cointop && upx bin/macos/cointop
 
 build-linux: clean-linux
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/linux/cointop && upx bin/linux/cointop
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/linux/cointop && upx bin/linux/cointop
 
 build-multiple: clean
-	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop64 && upx bin/cointop64 && \
-	env GOARCH=386 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop32 && upx bin/cointop32
+	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/cointop64 && upx bin/cointop64 && \
+	env GOARCH=386 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/cointop32 && upx bin/cointop32
 
 install: build
 	sudo mv bin/cointop /usr/local/bin
@@ -96,7 +96,7 @@ snap-clean:
 
 snap-stage:
 	# https://github.com/elopio/go/issues/2
-	mv go.mod go.mod~ ;GO111MODULE=off GOFLAGS="-ldflags=-s -ldflags=-w -ldflags=-X=github.com/miguelmota/cointop/cointop.version=$(VERSION)" snapcraft stage; mv go.mod~ go.mod
+	mv go.mod go.mod~ ;GO111MODULE=off GOFLAGS="-ldflags=-s -ldflags=-w -ldflags=-X=github.com/cointop-sh/cointop/cointop.version=$(VERSION)" snapcraft stage; mv go.mod~ go.mod
 
 snap-install:
 	sudo apt install snapd
@@ -176,7 +176,7 @@ rpm-dirs:
 	chmod -R a+rwx ~/rpmbuild
 
 rpm-download:
-	wget https://github.com/miguelmota/cointop/archive/$(VERSION).tar.gz -O ~/rpmbuild/SOURCES/$(VERSION).tar.gz
+	wget https://github.com/cointop-sh/cointop/archive/$(VERSION).tar.gz -O ~/rpmbuild/SOURCES/$(VERSION).tar.gz
 
 copr-install-cli:
 	sudo dnf install -y copr-cli
@@ -210,7 +210,7 @@ brew-test:
 	brew test cointop.rb
 
 brew-tap:
-	brew tap cointop/cointop https://github.com/miguelmota/cointop
+	brew tap cointop/cointop https://github.com/cointop-sh/cointop
 
 brew-untap:
 	brew untap cointop/cointop

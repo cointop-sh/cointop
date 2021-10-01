@@ -5,6 +5,6 @@ draft: false
 ---
 # Changelog
 
-See [CHANGELOG.md](https://github.com/miguelmota/cointop/blob/master/CHANGELOG.md) on Github for a user-friendly changelog.
+See [CHANGELOG.md](https://github.com/cointop-sh/cointop/blob/master/CHANGELOG.md) on Github for a user-friendly changelog.
 
-See [releases](https://github.com/miguelmota/cointop/releases) on Github for more detailed commit information of each release.
+See [releases](https://github.com/cointop-sh/cointop/releases) on Github for more detailed commit information of each release.

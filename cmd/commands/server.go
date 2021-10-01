@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	cssh "github.com/miguelmota/cointop/pkg/ssh"
+	cssh "github.com/cointop-sh/cointop/pkg/ssh"
 	"github.com/spf13/cobra"
 )
 

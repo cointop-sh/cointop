@@ -10,7 +10,7 @@ draft: false
 To update make sure to use the `-u` flag if installed via Go.
 
 ```bash
-go get -u github.com/miguelmota/cointop
+go get -u github.com/cointop-sh/cointop
 ```
 
 ## Homebrew (macOS)

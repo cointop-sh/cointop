@@ -10,14 +10,14 @@
 
 > Coin tracking for hackers
 
-[![License](http://img.shields.io/badge/license-Apache-blue.svg)](https://raw.githubusercontent.com/miguelmota/cointop/master/LICENSE)
-[![Build Status](https://travis-ci.org/miguelmota/cointop.svg?branch=master)](https://travis-ci.org/miguelmota/cointop)
-[![Go Report Card](https://goreportcard.com/badge/github.com/miguelmota/cointop?)](https://goreportcard.com/report/github.com/miguelmota/cointop)
-[![GoDoc](https://godoc.org/github.com/miguelmota/cointop?status.svg)](https://godoc.org/github.com/miguelmota/cointop)
+[![License](http://img.shields.io/badge/license-Apache-blue.svg)](https://raw.githubusercontent.com/cointop-sh/cointop/master/LICENSE)
+[![Build Status](https://travis-ci.org/cointop-sh/cointop.svg?branch=master)](https://travis-ci.org/cointop-sh/cointop)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cointop-sh/cointop?)](https://goreportcard.com/report/github.com/cointop-sh/cointop)
+[![GoDoc](https://godoc.org/github.com/cointop-sh/cointop?status.svg)](https://godoc.org/github.com/cointop-sh/cointop)
 [![Mentioned in Awesome Terminals](https://awesome.re/mentioned-badge.svg)](https://github.com/k4m4/terminals-are-sexy)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-[`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
+[`cointop`](https://github.com/cointop-sh/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
 The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and shortcut keys are inspired by [`vim`](https://en.wikipedia.org/wiki/Vim_(text_editor)).
 
@@ -110,7 +110,7 @@ See [docs.cointop.sh/faq](https://docs.cointop.sh/faq)
 
 See [docs.cointop.sh/contributing](https://docs.cointop.sh/contributing)
 
-_Many thanks to [Simon Roberts](https://github.com/lyricnz), [Alexis Hildebrandt](https://github.com/afh), and all the [contributors](https://github.com/miguelmota/cointop/graphs/contributors) that made cointop better._
+_Many thanks to [Simon Roberts](https://github.com/lyricnz), [Alexis Hildebrandt](https://github.com/afh), and all the [contributors](https://github.com/cointop-sh/cointop/graphs/contributors) that made cointop better._
 
 ## Social
 
@@ -136,3 +136,5 @@ Thank you for tips! 🙏
 ## License
 
 Released under the [Apache 2.0](./LICENSE) license.
+
+© [Miguel Mota](https://github.com/miguelmota)
