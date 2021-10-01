@@ -48,8 +48,8 @@ func (ct *Cointop) GetPriceAlertsTable() *table.Table {
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetPriceAlertsTableHeaders()
-	ct.ClearSyncMap(ct.State.tableColumnWidths)
-	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
+	ct.ClearSyncMap(&ct.State.tableColumnWidths)
+	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
 	for _, entry := range ct.State.priceAlerts.Entries {
 		if entry.Expired {
 			continue
@@ -477,7 +477,7 @@ func (ct *Cointop) SetPriceAlert(coinName string, operator string, targetPrice f
 func (ct *Cointop) RemovePriceAlert(id string) error {
 	log.Debug("RemovePriceAlert()")
 	for i, entry := range ct.State.priceAlerts.Entries {
-		if entry.ID == ct.State.priceAlertEditID {
+		if entry.ID == id {
 			ct.State.priceAlerts.Entries = append(ct.State.priceAlerts.Entries[:i], ct.State.priceAlerts.Entries[i+1:]...)
 		}
 	}

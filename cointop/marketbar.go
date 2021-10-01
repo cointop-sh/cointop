@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	types "github.com/cointop-sh/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/api/types"
 	"github.com/cointop-sh/cointop/pkg/color"
 	"github.com/cointop-sh/cointop/pkg/humanize"
 	"github.com/cointop-sh/cointop/pkg/pad"

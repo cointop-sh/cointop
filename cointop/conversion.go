@@ -6,7 +6,7 @@ import (
 	"sort"
 	"strings"
 
-	color "github.com/cointop-sh/cointop/pkg/color"
+	"github.com/cointop-sh/cointop/pkg/color"
 	"github.com/cointop-sh/cointop/pkg/pad"
 	log "github.com/sirupsen/logrus"
 )

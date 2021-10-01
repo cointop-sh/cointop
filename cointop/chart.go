@@ -103,7 +103,7 @@ func (ct *Cointop) UpdateChart() error {
 	return nil
 }
 
-// ChartPoints calculates the the chart points
+// ChartPoints calculates the chart points
 func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	log.Debug("ChartPoints()")
 	maxX := ct.ChartWidth()

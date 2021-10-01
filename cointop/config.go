@@ -24,7 +24,7 @@ var FilePerm = os.FileMode(0644)
 // ErrInvalidPriceAlert is error for invalid price alert value
 var ErrInvalidPriceAlert = errors.New("invalid price alert value")
 
-// PossibleConfigPaths are the the possible config file paths.
+// PossibleConfigPaths are the possible config file paths.
 // NOTE: this is to support previous default config filepaths
 var PossibleConfigPaths = []string{
 	":PREFERRED_CONFIG_HOME:/cointop/config.toml",
@@ -54,54 +54,30 @@ type ConfigFileConfig struct {
 
 // SetupConfig loads config file
 func (ct *Cointop) SetupConfig() error {
-	log.Debug("SetupConfig()")
-	if err := ct.CreateConfigIfNotExists(); err != nil {
-		return err
+	type loadConfigFunc func() error
+	loaders := []loadConfigFunc{
+		ct.CreateConfigIfNotExists,
+		ct.ParseConfig,
+		ct.loadTableConfig,
+		ct.loadChartConfig,
+		ct.loadShortcutsFromConfig,
+		ct.loadFavoritesFromConfig,
+		ct.loadCurrencyFromConfig,
+		ct.loadDefaultViewFromConfig,
+		ct.loadDefaultChartRangeFromConfig,
+		ct.loadAPIKeysFromConfig,
+		ct.loadAPIChoiceFromConfig,
+		ct.loadColorschemeFromConfig,
+		ct.loadRefreshRateFromConfig,
+		ct.loadCacheDirFromConfig,
+		ct.loadPriceAlertsFromConfig,
+		ct.loadPortfolioFromConfig,
 	}
-	if err := ct.ParseConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadTableConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadChartConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadShortcutsFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadFavoritesFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadCurrencyFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadDefaultViewFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadDefaultChartRangeFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadAPIKeysFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadAPIChoiceFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadColorschemeFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadRefreshRateFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadCacheDirFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadPriceAlertsFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadPortfolioFromConfig(); err != nil {
-		return err
+
+	for _, f := range loaders {
+		if err := f(); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -152,7 +128,7 @@ func (ct *Cointop) ConfigFilePath() string {
 	return pathutil.NormalizePath(ct.configFilepath)
 }
 
-// ConfigPath return the config file path
+// MakeConfigDir creates the directory for the config file
 func (ct *Cointop) MakeConfigDir() error {
 	log.Debug("MakeConfigDir()")
 	path := ct.ConfigDirPath()
@@ -239,15 +215,12 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols": favoritesBySymbolIfc,
-		"names":   favoritesIfc,
+		"symbols":   favoritesBySymbolIfc,
+		"names":     favoritesIfc,
+		"columns":   ct.State.favoritesTableColumns,
+		"character": ct.State.favoriteChar,
 	}
 
-	var favoritesColumnsIfc interface{} = ct.State.favoritesTableColumns
-	favoritesMapIfc["columns"] = favoritesColumnsIfc
-	favoritesMapIfc["character"] = ct.State.favoriteChar
-
-	portfolioIfc := map[string]interface{}{}
 	var holdingsIfc [][]string
 	for name := range ct.State.portfolio.Entries {
 		entry, ok := ct.State.portfolio.Entries[name]
@@ -262,23 +235,14 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	sort.Slice(holdingsIfc, func(i, j int) bool {
 		return holdingsIfc[i][0] < holdingsIfc[j][0]
 	})
-	portfolioIfc["holdings"] = holdingsIfc
-
-	var columnsIfc interface{} = ct.State.portfolioTableColumns
-	portfolioIfc["columns"] = columnsIfc
-
-	var currencyIfc interface{} = ct.State.currencyConversion
-	var defaultViewIfc interface{} = ct.State.defaultView
-	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
-	var colorschemeIfc interface{} = ct.colorschemeName
-	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
-	var cacheDirIfc interface{} = ct.State.cacheDir
+	portfolioIfc := map[string]interface{}{
+		"holdings": holdingsIfc,
+		"columns":  ct.State.portfolioTableColumns,
+	}
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
 	}
-
-	var apiChoiceIfc interface{} = ct.apiChoice
 
 	var priceAlertsIfc []interface{}
 	for _, priceAlert := range ct.State.priceAlerts.Entries {
@@ -297,29 +261,29 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		//"sound":  ct.State.priceAlerts.SoundEnabled,
 	}
 
-	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
-	tableMapIfc := map[string]interface{}{}
-	tableMapIfc["columns"] = coinsTableColumnsIfc
-	var keepRowFocusOnSortIfc interface{} = ct.State.keepRowFocusOnSort
-	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
+	tableMapIfc := map[string]interface{}{
+		"columns":                ct.State.coinsTableColumns,
+		"keep_row_focus_on_sort": ct.State.keepRowFocusOnSort,
+	}
 
-	chartMapIfc := map[string]interface{}{}
-	chartMapIfc["max_width"] = ct.State.maxChartWidth
-	chartMapIfc["height"] = ct.State.chartHeight
+	chartMapIfc := map[string]interface{}{
+		"max_width": ct.State.maxChartWidth,
+		"height":    ct.State.chartHeight,
+	}
 
 	var inputs = &ConfigFileConfig{
-		API:               apiChoiceIfc,
-		Colorscheme:       colorschemeIfc,
+		API:               ct.apiChoice,
+		Colorscheme:       ct.colorschemeName,
 		CoinMarketCap:     cmcIfc,
-		Currency:          currencyIfc,
-		DefaultView:       defaultViewIfc,
-		DefaultChartRange: defaultChartRangeIfc,
+		Currency:          ct.State.currencyConversion,
+		DefaultView:       ct.State.defaultView,
+		DefaultChartRange: ct.State.defaultChartRange,
 		Favorites:         favoritesMapIfc,
-		RefreshRate:       refreshRateIfc,
+		RefreshRate:       uint(ct.State.refreshRate.Seconds()),
 		Shortcuts:         shortcutsIfcs,
 		Portfolio:         portfolioIfc,
 		PriceAlerts:       priceAlertsMapIfc,
-		CacheDir:          cacheDirIfc,
+		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 	}
@@ -680,7 +644,7 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 	return nil
 }
 
-// GetColorschemeColors loads colors from colorsheme file to struct
+// GetColorschemeColors loads colors from colorscheme file to struct
 func (ct *Cointop) GetColorschemeColors() (map[string]interface{}, error) {
 	log.Debug("GetColorschemeColors()")
 	var colors map[string]interface{}

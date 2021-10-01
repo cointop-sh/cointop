@@ -78,8 +78,8 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 	t := table.NewTable().SetWidth(maxX)
 	var rows [][]*table.RowCell
 	headers := ct.GetPortfolioTableHeaders()
-	ct.ClearSyncMap(ct.State.tableColumnWidths)
-	ct.ClearSyncMap(ct.State.tableColumnAlignLeft)
+	ct.ClearSyncMap(&ct.State.tableColumnWidths)
+	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
 	for _, coin := range ct.State.coins {
 		leftMargin := 1
 		rightMargin := 1
@@ -555,7 +555,7 @@ func (ct *Cointop) PortfolioEntriesCount() int {
 // GetPortfolioSlice returns portfolio entries as a slice
 func (ct *Cointop) GetPortfolioSlice() []*Coin {
 	log.Debug("GetPortfolioSlice()")
-	sliced := []*Coin{}
+	var sliced []*Coin
 	if ct.PortfolioEntriesCount() == 0 {
 		return sliced
 	}

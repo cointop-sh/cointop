@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	types "github.com/cointop-sh/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/api/types"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -114,7 +114,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	})
 
 	if len(ct.State.allCoins) < size {
-		list := []*Coin{}
+		var list []*Coin
 		for _, v := range coins {
 			k := v.Name
 			icoin, _ := ct.State.allCoinsSlugMap.Load(k)

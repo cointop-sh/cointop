@@ -537,7 +537,7 @@ func (ct *Cointop) TableScrollLeft() error {
 	return nil
 }
 
-// TableScrollRight scrolls the the table to the right
+// TableScrollRight scrolls the table to the right
 func (ct *Cointop) TableScrollRight() error {
 	ct.State.tableOffsetX--
 	maxX := int(math.Min(float64(1-(ct.maxTableWidth-ct.Width())), 0))
