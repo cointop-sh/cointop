@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// event mixins
+// WgtMgr event mixins
 type WgtMgr map[string]WgtInfo
 
 type WgtInfo struct {

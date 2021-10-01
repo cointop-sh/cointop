@@ -19,7 +19,7 @@ func (p *patcher) Exit(node *ast.Node) {
 	}
 }
 
-// EvaluateExpression evaulates a simple math expression string to a float64
+// EvaluateExpressionToFloat64 evaulates a simple math expression string to a float64
 func EvaluateExpressionToFloat64(input string, env interface{}) (float64, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {

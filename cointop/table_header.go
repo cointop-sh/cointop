@@ -26,97 +26,97 @@ type HeaderColumn struct {
 
 // HeaderColumns are the header column widths
 var HeaderColumns = map[string]*HeaderColumn{
-	"rank": &HeaderColumn{
+	"rank": {
 		Slug:       "rank",
 		Label:      "[r]ank",
 		PlainLabel: "rank",
 	},
-	"name": &HeaderColumn{
+	"name": {
 		Slug:       "name",
 		Label:      "[n]ame",
 		PlainLabel: "name",
 	},
-	"symbol": &HeaderColumn{
+	"symbol": {
 		Slug:       "symbol",
 		Label:      "[s]ymbol",
 		PlainLabel: "symbol",
 	},
-	"target_price": &HeaderColumn{
+	"target_price": {
 		Slug:       "target_price",
 		Label:      "[t]target price",
 		PlainLabel: "target price",
 	},
-	"price": &HeaderColumn{
+	"price": {
 		Slug:       "price",
 		Label:      "[p]rice",
 		PlainLabel: "price",
 	},
-	"frequency": &HeaderColumn{
+	"frequency": {
 		Slug:       "frequency",
 		Label:      "frequency",
 		PlainLabel: "frequency",
 	},
-	"holdings": &HeaderColumn{
+	"holdings": {
 		Slug:       "holdings",
 		Label:      "[h]oldings",
 		PlainLabel: "holdings",
 	},
-	"balance": &HeaderColumn{
+	"balance": {
 		Slug:       "balance",
 		Label:      "[b]alance",
 		PlainLabel: "balance",
 	},
-	"market_cap": &HeaderColumn{
+	"market_cap": {
 		Slug:       "market_cap",
 		Label:      "[m]arket cap",
 		PlainLabel: "market cap",
 	},
-	"24h_volume": &HeaderColumn{
+	"24h_volume": {
 		Slug:       "24h_volume",
 		Label:      "24H [v]olume",
 		PlainLabel: "24H volume",
 	},
-	"1h_change": &HeaderColumn{
+	"1h_change": {
 		Slug:       "1h_change",
 		Label:      "[1]H%",
 		PlainLabel: "1H%",
 	},
-	"24h_change": &HeaderColumn{
+	"24h_change": {
 		Slug:       "24h_change",
 		Label:      "[2]4H%",
 		PlainLabel: "24H%",
 	},
-	"7d_change": &HeaderColumn{
+	"7d_change": {
 		Slug:       "7d_change",
 		Label:      "[7]D%",
 		PlainLabel: "7D%",
 	},
-	"30d_change": &HeaderColumn{
+	"30d_change": {
 		Slug:       "30d_change",
 		Label:      "[3]0D%",
 		PlainLabel: "30D%",
 	},
-	"1y_change": &HeaderColumn{
+	"1y_change": {
 		Slug:       "1y_change",
 		Label:      "1[y]%",
 		PlainLabel: "1Y%",
 	},
-	"total_supply": &HeaderColumn{
+	"total_supply": {
 		Slug:       "total_supply",
 		Label:      "[t]otal supply",
 		PlainLabel: "total supply",
 	},
-	"available_supply": &HeaderColumn{
+	"available_supply": {
 		Slug:       "available_supply",
 		Label:      "[a]vailable supply",
 		PlainLabel: "available supply",
 	},
-	"percent_holdings": &HeaderColumn{
+	"percent_holdings": {
 		Slug:       "percent_holdings",
 		Label:      "[%]holdings",
 		PlainLabel: "%holdings",
 	},
-	"last_updated": &HeaderColumn{
+	"last_updated": {
 		Slug:       "last_updated",
 		Label:      "last [u]pdated",
 		PlainLabel: "last updated",

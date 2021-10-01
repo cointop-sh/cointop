@@ -56,7 +56,7 @@ func (ct *Cointop) ToggleShowFavorites() error {
 // GetFavoritesSlice returns coin favorites as slice
 func (ct *Cointop) GetFavoritesSlice() []*Coin {
 	log.Debug("GetFavoritesSlice()")
-	sliced := []*Coin{}
+	var sliced []*Coin
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		if coin.Favorite {

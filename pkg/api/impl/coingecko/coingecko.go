@@ -10,7 +10,7 @@ import (
 	"time"
 
 	apitypes "github.com/cointop-sh/cointop/pkg/api/types"
-	util "github.com/cointop-sh/cointop/pkg/api/util"
+	"github.com/cointop-sh/cointop/pkg/api/util"
 	gecko "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3"
 	geckoTypes "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
 )
@@ -293,7 +293,7 @@ func (s *Service) cacheCoinsIDList() error {
 	if list == nil {
 		return nil
 	}
-	firstWords := [][]string{}
+	var firstWords [][]string
 	for _, item := range *list {
 		keys := []string{
 			strings.ToLower(item.Name),

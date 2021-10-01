@@ -39,8 +39,8 @@ type Sparklines struct {
 var sparks = []rune{'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'}
 
 // Add appends a given Sparkline to s *Sparklines.
-func (s *Sparklines) Add(sl Sparkline) {
-	s.Lines = append(s.Lines, sl)
+func (sl *Sparklines) Add(line Sparkline) {
+	sl.Lines = append(sl.Lines, line)
 }
 
 // NewSparkline returns a unrenderable single sparkline that intended to be added into Sparklines.

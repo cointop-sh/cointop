@@ -12,7 +12,7 @@ import (
 	"time"
 
 	apitypes "github.com/cointop-sh/cointop/pkg/api/types"
-	util "github.com/cointop-sh/cointop/pkg/api/util"
+	"github.com/cointop-sh/cointop/pkg/api/util"
 	cmc "github.com/miguelmota/go-coinmarketcap/pro/v1"
 	cmcv2 "github.com/miguelmota/go-coinmarketcap/v2"
 )
@@ -135,7 +135,7 @@ func (s *Service) GetCoinData(name string, convert string) (apitypes.Coin, error
 
 // GetCoinDataBatch gets all data of specified coins.
 func (s *Service) GetCoinDataBatch(names []string, convert string) ([]apitypes.Coin, error) {
-	ret := []apitypes.Coin{}
+	var ret []apitypes.Coin
 	coins, err := s.getPaginatedCoinData(convert, 0)
 	if err != nil {
 		return ret, err
