@@ -50,17 +50,17 @@ func ChartRanges() []string {
 // ChartRangesMap returns map of chart range time ranges
 func ChartRangesMap() map[string]time.Duration {
 	return map[string]time.Duration{
-		"All Time": time.Duration(10 * 365 * 24 * time.Hour),
-		"YTD":      time.Duration(1 * time.Second), // this will be calculated
-		"1Y":       time.Duration(365 * 24 * time.Hour),
-		"6M":       time.Duration(365 / 2 * 24 * time.Hour),
-		"3M":       time.Duration(365 / 4 * 24 * time.Hour),
-		"1M":       time.Duration(365 / 12 * 24 * time.Hour),
-		"7D":       time.Duration(24 * 7 * time.Hour),
-		"3D":       time.Duration(24 * 3 * time.Hour),
-		"24H":      time.Duration(24 * time.Hour),
-		"6H":       time.Duration(6 * time.Hour),
-		"1H":       time.Duration(1 * time.Hour),
+		"All Time": 10 * 365 * 24 * time.Hour,
+		"YTD":      1 * time.Second, // this will be calculated
+		"1Y":       365 * 24 * time.Hour,
+		"6M":       365 / 2 * 24 * time.Hour,
+		"3M":       365 / 4 * 24 * time.Hour,
+		"1M":       365 / 12 * 24 * time.Hour,
+		"7D":       24 * 7 * time.Hour,
+		"3D":       24 * 3 * time.Hour,
+		"24H":      24 * time.Hour,
+		"6H":       6 * time.Hour,
+		"1H":       1 * time.Hour,
 	}
 }
 
@@ -119,7 +119,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
 	if ct.State.selectedChartRange == "YTD" {
-		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
+		ytd := time.Now().Unix() - timeutil.BeginningOfYear().Unix()
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
 
@@ -216,7 +216,7 @@ func (ct *Cointop) PortfolioChart() error {
 	selectedChartRange := ct.State.selectedChartRange // cache here
 	rangeseconds := ct.chartRangesMap[selectedChartRange]
 	if selectedChartRange == "YTD" {
-		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
+		ytd := time.Now().Unix() - timeutil.BeginningOfYear().Unix()
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
 
