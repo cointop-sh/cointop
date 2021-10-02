@@ -21,6 +21,7 @@ var ArrowDown = "▼"
 type HeaderColumn struct {
 	Slug       string
 	Label      string
+	ShortLabel string // only columns with a ShortLabel can be scaled?
 	PlainLabel string
 }
 
@@ -69,11 +70,13 @@ var HeaderColumns = map[string]*HeaderColumn{
 	"market_cap": {
 		Slug:       "market_cap",
 		Label:      "[m]arket cap",
+		ShortLabel: "[m]cap",
 		PlainLabel: "market cap",
 	},
 	"24h_volume": {
 		Slug:       "24h_volume",
 		Label:      "24H [v]olume",
+		ShortLabel: "24[v]",
 		PlainLabel: "24H volume",
 	},
 	"1h_change": {
@@ -109,6 +112,7 @@ var HeaderColumns = map[string]*HeaderColumn{
 	"available_supply": {
 		Slug:       "available_supply",
 		Label:      "[a]vailable supply",
+		ShortLabel: "[a]vl",
 		PlainLabel: "available supply",
 	},
 	"percent_holdings": {
@@ -121,6 +125,14 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Label:      "last [u]pdated",
 		PlainLabel: "last updated",
 	},
+}
+
+// GetLabel fetch the label to use for the heading (depends on configuration)
+func (h HeaderColumn) GetLabel() string {
+	if DefaultScaleNumbers && h.ShortLabel != "" {
+		return h.ShortLabel
+	}
+	return h.Label
 }
 
 // TableHeaderView is structure for table header view
@@ -176,7 +188,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 				}
 			}
 		}
-		label := hc.Label
+		label := hc.GetLabel()
 		if noSort {
 			label = hc.PlainLabel
 		}
@@ -241,7 +253,7 @@ func (ct *Cointop) SetTableColumnWidth(header string, width int) {
 		prev = prevIfc.(int)
 	} else {
 		hc := HeaderColumns[header]
-		prev = utf8.RuneCountInString(hc.Label) + 1
+		prev = utf8.RuneCountInString(hc.GetLabel()) + 1
 		switch header {
 		case "price", "balance":
 			prev++

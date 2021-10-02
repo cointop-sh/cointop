@@ -181,6 +181,9 @@ var DefaultCurrency = "USD"
 // DefaultChartRange ...
 var DefaultChartRange = "1Y"
 
+// DefaultScaleNumbers ...
+var DefaultScaleNumbers = true
+
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth int = 175
 
