@@ -15,14 +15,14 @@ import (
 // ServerCmd ...
 func ServerCmd() *cobra.Command {
 	var port uint = 22
-	var address string = "0.0.0.0"
+	var address = "0.0.0.0"
 	var idleTimeout uint = 0
 	var maxTimeout uint = 0
 	var maxSessions uint = 0
-	var executableBinary string = "cointop"
-	var hostKeyFile string = cssh.DefaultHostKeyFile
-	var userConfigType string = cssh.UserConfigTypePublicKey
-	var colorsDir string = os.Getenv("COINTOP_COLORS_DIR")
+	var executableBinary = "cointop"
+	var hostKeyFile = cssh.DefaultHostKeyFile
+	var userConfigType = cssh.UserConfigTypePublicKey
+	var colorsDir = os.Getenv("COINTOP_COLORS_DIR")
 
 	serverCmd := &cobra.Command{
 		Use:   "server",

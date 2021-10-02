@@ -25,8 +25,7 @@ type ChartView = ui.View
 
 // NewChartView returns a new chart view
 func NewChartView() *ChartView {
-	var view *ChartView = ui.NewView("chart")
-	return view
+	return ui.NewView("chart")
 }
 
 var chartLock sync.Mutex

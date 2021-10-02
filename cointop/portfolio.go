@@ -983,7 +983,7 @@ func (ct *Cointop) PrintHoldings24HChange(options *TablePrintOptions) error {
 			}
 		}
 
-		n := ((entry.Balance / total) * entry.PercentChange24H)
+		n := (entry.Balance / total) * entry.PercentChange24H
 		if math.IsNaN(n) {
 			continue
 		}

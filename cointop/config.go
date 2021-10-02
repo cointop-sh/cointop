@@ -227,9 +227,9 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		if !ok || entry.Coin == "" {
 			continue
 		}
-		var amount string = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
-		var coinName string = entry.Coin
-		var tuple []string = []string{coinName, amount}
+		var amount = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
+		var coinName = entry.Coin
+		var tuple = []string{coinName, amount}
 		holdingsIfc = append(holdingsIfc, tuple)
 	}
 	sort.Slice(holdingsIfc, func(i, j int) bool {
