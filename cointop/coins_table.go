@@ -136,7 +136,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "24h_volume":
 				text := humanize.Monetaryf(coin.Volume24H, 0)
-				if DefaultScaleNumbers {
+				if ct.State.scaleNumbers {
 					volScale, volSuffix := humanize.Scale(coin.Volume24H)
 					text = humanize.Numericf(volScale, 1) + volSuffix
 				}
@@ -247,7 +247,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "market_cap":
 				text := humanize.Monetaryf(coin.MarketCap, 0)
-				if DefaultScaleNumbers {
+				if ct.State.scaleNumbers {
 					volScale, volSuffix := humanize.Scale(coin.MarketCap)
 					text = humanize.Numericf(volScale, 1) + volSuffix
 				}
@@ -275,7 +275,7 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "available_supply":
 				text := humanize.Numericf(coin.AvailableSupply, 0)
-				if DefaultScaleNumbers {
+				if ct.State.scaleNumbers {
 					volScale, volSuffix := humanize.Scale(coin.AvailableSupply)
 					text = humanize.Numericf(volScale, 1) + volSuffix
 				}

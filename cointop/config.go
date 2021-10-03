@@ -48,6 +48,7 @@ type ConfigFileConfig struct {
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CacheDir          interface{}            `toml:"cache_dir"`
+	ScaleNumbers      interface{}            `toml:"scale_numbers"`
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -70,6 +71,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadColorschemeFromConfig,
 		ct.loadRefreshRateFromConfig,
 		ct.loadCacheDirFromConfig,
+		ct.loadScaleNumbersFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -284,6 +286,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Portfolio:         portfolioIfc,
 		PriceAlerts:       priceAlertsMapIfc,
 		CacheDir:          ct.State.cacheDir,
+		ScaleNumbers:      ct.State.scaleNumbers,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 	}
@@ -453,6 +456,16 @@ func (ct *Cointop) loadCacheDirFromConfig() error {
 	log.Debug("loadCacheDirFromConfig()")
 	if cacheDir, ok := ct.config.CacheDir.(string); ok {
 		ct.State.cacheDir = pathutil.NormalizePath(cacheDir)
+	}
+
+	return nil
+}
+
+// LoadScaleNumbersFromConfig loads scale-numbers setting from config file to struct
+func (ct *Cointop) loadScaleNumbersFromConfig() error {
+	log.Debug("loadScaleNumbersFromConfig()")
+	if scaleNumbers, ok := ct.config.ScaleNumbers.(bool); ok {
+		ct.State.scaleNumbers = scaleNumbers
 	}
 
 	return nil
