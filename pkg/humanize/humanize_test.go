@@ -11,16 +11,15 @@ func TestMonetary(t *testing.T) {
 		t.FailNow()
 	}
 
-	scaleTests := map[float64]string {
-		5.5 * 1e12: "5.5T",
-		4.4 * 1e9: "4.4B",
-		3.3 * 1e6: "3.3M",
-		2.2 * 1e3: "2200.0",
-		1.1: "1.1",
-		0.06: "0.1",
-		-5.5 * 1e12: "-5.5T",
-		-4.4 * 1e9: "-4.4B",
-		-3.3 * 1e6: "-3.3M",
+	scaleTests := map[float64]string{
+		5.54 * 1e12:  "5.5T",
+		4.44 * 1e9:   "4.4B",
+		3.34 * 1e6:   "3.3M",
+		2.24 * 1e3:   "2.2K",
+		1.1:          "1.1",
+		0.06:         "0.1",
+		0.04:         "0.0",
+		-5.54 * 1e12: "-5.5T",
 	}
 
 	for value, expected := range scaleTests {
