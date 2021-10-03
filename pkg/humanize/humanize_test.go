@@ -10,7 +10,9 @@ func TestMonetary(t *testing.T) {
 	if Monetaryf(834142.3256, 2) != "834,142.3256" {
 		t.FailNow()
 	}
+}
 
+func TestScale(t *testing.T) {
 	scaleTests := map[float64]string{
 		5.54 * 1e12:  "5.5T",
 		4.44 * 1e9:   "4.4B",
