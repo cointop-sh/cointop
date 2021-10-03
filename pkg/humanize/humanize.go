@@ -11,8 +11,6 @@ import (
 	"golang.org/x/text/message"
 )
 
-
-
 // Numericf produces a string from of the given number with give fixed precision
 // in base 10 with thousands separators after every three orders of magnitude
 // using thousands and decimal separator according to LC_NUMERIC; defaulting "en".
@@ -58,15 +56,16 @@ func f(value float64, precision int, envvar string, fixed bool) string {
 // Scale returns a scaled-down version of value and a suffix to add (M,B,etc.)
 func Scale(value float64) (float64, string) {
 	type scalingUnit struct {
-		value float64
+		value  float64
 		suffix string
 	}
 
+	//  quadrillion, quintrillion, sextillion, septillion, octillion, nonillion, and decillion
 	var scales = [...]scalingUnit{
-		{value:1e12, suffix:"T"},
-		{value:1e9, suffix:"B"},
-		{value:1e6, suffix:"M"},
-		{value:1e3, suffix:"K"},
+		{value: 1e12, suffix: "T"},
+		{value: 1e9, suffix: "B"},
+		{value: 1e6, suffix: "M"},
+		{value: 1e3, suffix: "K"},
 	}
 
 	for _, scale := range scales {
