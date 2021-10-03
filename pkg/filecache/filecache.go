@@ -16,7 +16,7 @@ import (
 )
 
 // DefaultCacheDir ...
-var DefaultCacheDir = "/tmp"
+var DefaultCacheDir = ":PREFERRED_CACHE_HOME:/cointop"
 
 // FileCache ...
 type FileCache struct {
