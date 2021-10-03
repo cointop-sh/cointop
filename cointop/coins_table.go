@@ -263,6 +263,10 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "total_supply":
 				text := humanize.Numericf(coin.TotalSupply, 0)
+				if ct.State.scaleNumbers {
+					volScale, volSuffix := humanize.Scale(coin.TotalSupply)
+					text = humanize.Numericf(volScale, 1) + volSuffix
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,

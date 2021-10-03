@@ -107,6 +107,7 @@ var HeaderColumns = map[string]*HeaderColumn{
 	"total_supply": {
 		Slug:       "total_supply",
 		Label:      "[t]otal supply",
+		ShortLabel: "[t]ot",
 		PlainLabel: "total supply",
 	},
 	"available_supply": {
