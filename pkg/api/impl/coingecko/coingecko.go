@@ -38,9 +38,9 @@ type Service struct {
 // NewCoinGecko new service
 func NewCoinGecko(config *Config) *Service {
 	maxResultsPerPage := 250 // absolute max
-	var maxResults uint = 0
-	var maxPages uint = 10
-	var perPage uint = 100
+	maxResults := uint(0)
+	maxPages := uint(10)
+	perPage := uint(100)
 	if config.PerPage > 0 {
 		perPage = config.PerPage
 	}

@@ -191,10 +191,10 @@ var DefaultChartHeight = 10
 var DefaultSortBy = "rank"
 
 // DefaultPerPage ...
-var DefaultPerPage uint = 100
+var DefaultPerPage = uint(100)
 
 // DefaultMaxPages ...
-var DefaultMaxPages uint = 35
+var DefaultMaxPages = uint(35)
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"
