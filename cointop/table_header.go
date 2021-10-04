@@ -131,7 +131,7 @@ var HeaderColumns = map[string]*HeaderColumn{
 // GetLabel fetch the label to use for the heading (depends on configuration)
 func (ct *Cointop) GetLabel(h *HeaderColumn) string {
 	// TODO: technically this should support nosort
-	if ct.State.scaleNumbers && h.ShortLabel != "" {
+	if ct.State.compactNotation && h.ShortLabel != "" {
 		return h.ShortLabel
 	}
 	return h.Label

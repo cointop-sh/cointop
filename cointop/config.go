@@ -48,7 +48,7 @@ type ConfigFileConfig struct {
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CacheDir          interface{}            `toml:"cache_dir"`
-	ScaleNumbers      interface{}            `toml:"scale_numbers"`
+	CompactNotation   interface{}            `toml:"compact_notation"`
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -71,7 +71,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadColorschemeFromConfig,
 		ct.loadRefreshRateFromConfig,
 		ct.loadCacheDirFromConfig,
-		ct.loadScaleNumbersFromConfig,
+		ct.loadCompactNotationFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -286,7 +286,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Portfolio:         portfolioIfc,
 		PriceAlerts:       priceAlertsMapIfc,
 		CacheDir:          ct.State.cacheDir,
-		ScaleNumbers:      ct.State.scaleNumbers,
+		CompactNotation:   ct.State.compactNotation,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 	}
@@ -461,11 +461,11 @@ func (ct *Cointop) loadCacheDirFromConfig() error {
 	return nil
 }
 
-// LoadScaleNumbersFromConfig loads scale-numbers setting from config file to struct
-func (ct *Cointop) loadScaleNumbersFromConfig() error {
-	log.Debug("loadScaleNumbersFromConfig()")
-	if scaleNumbers, ok := ct.config.ScaleNumbers.(bool); ok {
-		ct.State.scaleNumbers = scaleNumbers
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadCompactNotationFromConfig() error {
+	log.Debug("loadCompactNotationFromConfig()")
+	if compactNotation, ok := ct.config.CompactNotation.(bool); ok {
+		ct.State.compactNotation = compactNotation
 	}
 
 	return nil

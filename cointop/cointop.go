@@ -39,7 +39,7 @@ type State struct {
 	allCoins           []*Coin
 	allCoinsSlugMap    sync.Map
 	cacheDir           string
-	scaleNumbers       bool
+	compactNotation    bool
 	coins              []*Coin
 	chartPoints        [][]rune
 	currencyConversion string
@@ -182,8 +182,8 @@ var DefaultCurrency = "USD"
 // DefaultChartRange ...
 var DefaultChartRange = "1Y"
 
-// DefaultScaleNumbers ...
-var DefaultScaleNumbers = false
+// DefaultCompactNotation ...
+var DefaultCompactNotation = false
 
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth int = 175
@@ -257,7 +257,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		State: &State{
 			allCoins:           []*Coin{},
 			cacheDir:           DefaultCacheDir,
-			scaleNumbers:       DefaultScaleNumbers,
+			compactNotation:    DefaultCompactNotation,
 			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: DefaultCurrency,
 			defaultChartRange:  DefaultChartRange,
