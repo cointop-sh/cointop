@@ -137,8 +137,8 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 			case "24h_volume":
 				text := humanize.Monetaryf(coin.Volume24H, 0)
 				if ct.State.scaleNumbers {
-					volScale, volSuffix := humanize.Scale(coin.Volume24H)
-					text = humanize.Numericf(volScale, 1) + volSuffix
+					numScale, numSuffix := humanize.Scale(coin.Volume24H)
+					text = humanize.Numericf(numScale, 1) + numSuffix
 				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
@@ -248,8 +248,8 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 			case "market_cap":
 				text := humanize.Monetaryf(coin.MarketCap, 0)
 				if ct.State.scaleNumbers {
-					volScale, volSuffix := humanize.Scale(coin.MarketCap)
-					text = humanize.Numericf(volScale, 1) + volSuffix
+					numScale, numSuffix := humanize.Scale(coin.MarketCap)
+					text = humanize.Numericf(numScale, 1) + numSuffix
 				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
@@ -264,8 +264,8 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 			case "total_supply":
 				text := humanize.Numericf(coin.TotalSupply, 0)
 				if ct.State.scaleNumbers {
-					volScale, volSuffix := humanize.Scale(coin.TotalSupply)
-					text = humanize.Numericf(volScale, 1) + volSuffix
+					numScale, numSuffix := humanize.Scale(coin.TotalSupply)
+					text = humanize.Numericf(numScale, 1) + numSuffix
 				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
@@ -280,8 +280,8 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 			case "available_supply":
 				text := humanize.Numericf(coin.AvailableSupply, 0)
 				if ct.State.scaleNumbers {
-					volScale, volSuffix := humanize.Scale(coin.AvailableSupply)
-					text = humanize.Numericf(volScale, 1) + volSuffix
+					numScale, numSuffix := humanize.Scale(coin.AvailableSupply)
+					text = humanize.Numericf(numScale, 1) + numSuffix
 				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
