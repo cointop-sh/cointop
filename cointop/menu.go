@@ -10,8 +10,7 @@ type MenuView = ui.View
 
 // NewMenuView returns a new menu view
 func NewMenuView() *MenuView {
-	var view *MenuView = ui.NewView("menu")
-	return view
+	return ui.NewView("menu")
 }
 
 // HideMenu hides the menu view

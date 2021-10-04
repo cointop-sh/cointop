@@ -182,19 +182,19 @@ var DefaultCurrency = "USD"
 var DefaultChartRange = "1Y"
 
 // DefaultMaxChartWidth ...
-var DefaultMaxChartWidth int = 175
+var DefaultMaxChartWidth = 175
 
 // DefaultChartHeight ...
-var DefaultChartHeight int = 10
+var DefaultChartHeight = 10
 
 // DefaultSortBy ...
 var DefaultSortBy = "rank"
 
 // DefaultPerPage ...
-var DefaultPerPage uint = 100
+var DefaultPerPage = uint(100)
 
 // DefaultMaxPages ...
-var DefaultMaxPages uint = 35
+var DefaultMaxPages = uint(35)
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"

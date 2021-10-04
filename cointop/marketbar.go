@@ -19,8 +19,7 @@ type MarketbarView = ui.View
 
 // NewMarketbarView returns a new marketbar view
 func NewMarketbarView() *MarketbarView {
-	var view *MarketbarView = ui.NewView("marketbar")
-	return view
+	return ui.NewView("marketbar")
 }
 
 // UpdateMarketbar updates the market bar view
@@ -54,7 +53,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 
 		var percentChange24H float64
 		for _, p := range ct.GetPortfolioSlice() {
-			n := ((p.Balance / total) * p.PercentChange24H)
+			n := (p.Balance / total) * p.PercentChange24H
 			if math.IsNaN(n) {
 				continue
 			}

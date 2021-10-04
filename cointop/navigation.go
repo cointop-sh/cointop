@@ -413,7 +413,7 @@ func (ct *Cointop) GoToGlobalIndex(idx int) error {
 	l := ct.TableRowsLen()
 	atpage := idx / l
 	ct.SetPage(atpage)
-	rowIndex := (idx % l)
+	rowIndex := idx % l
 	ct.HighlightRow(rowIndex)
 	ct.UpdateTable()
 	return nil
