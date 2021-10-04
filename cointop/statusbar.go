@@ -15,8 +15,7 @@ type StatusbarView = ui.View
 
 // NewStatusbarView returns a new statusbar view
 func NewStatusbarView() *StatusbarView {
-	var view *StatusbarView = ui.NewView("statusbar")
-	return view
+	return ui.NewView("statusbar")
 }
 
 // UpdateStatusbar updates the statusbar view

@@ -17,7 +17,7 @@ func HoldingsCmd() *cobra.Command {
 	var config string
 	var sortBy string
 	var sortDesc bool
-	var format string = "table"
+	var format = "table"
 	var humanReadable bool
 	var filter []string
 	var cols []string

@@ -142,8 +142,7 @@ type TableHeaderView = ui.View
 
 // NewTableHeaderView returns a new table header view
 func NewTableHeaderView() *TableHeaderView {
-	var view *TableHeaderView = ui.NewView("table_header")
-	return view
+	return ui.NewView("table_header")
 }
 
 // GetActiveTableHeaders returns the list of active table headers
