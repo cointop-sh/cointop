@@ -217,10 +217,11 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols":   favoritesBySymbolIfc,
-		"names":     favoritesIfc,
-		"columns":   ct.State.favoritesTableColumns,
-		"character": ct.State.favoriteChar,
+		"symbols":          favoritesBySymbolIfc,
+		"names":            favoritesIfc,
+		"columns":          ct.State.favoritesTableColumns,
+		"character":        ct.State.favoriteChar,
+		"compact_notation": ct.State.favoritesCompactNotation,
 	}
 
 	var holdingsIfc [][]string
@@ -238,8 +239,9 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		return holdingsIfc[i][0] < holdingsIfc[j][0]
 	})
 	portfolioIfc := map[string]interface{}{
-		"holdings": holdingsIfc,
-		"columns":  ct.State.portfolioTableColumns,
+		"holdings":         holdingsIfc,
+		"columns":          ct.State.portfolioTableColumns,
+		"compact_notation": ct.State.portfolioCompactNotation,
 	}
 
 	cmcIfc := map[string]interface{}{
@@ -266,6 +268,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	tableMapIfc := map[string]interface{}{
 		"columns":                ct.State.coinsTableColumns,
 		"keep_row_focus_on_sort": ct.State.keepRowFocusOnSort,
+		"compact_notation":       ct.State.tableCompactNotation,
 	}
 
 	chartMapIfc := map[string]interface{}{
@@ -286,7 +289,6 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Portfolio:         portfolioIfc,
 		PriceAlerts:       priceAlertsMapIfc,
 		CacheDir:          ct.State.cacheDir,
-		CompactNotation:   ct.State.compactNotation,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 	}
@@ -313,6 +315,11 @@ func (ct *Cointop) loadTableConfig() error {
 	if ok {
 		ct.State.keepRowFocusOnSort = keepRowFocusOnSortIfc.(bool)
 	}
+
+	if compactNotation, ok := ct.config.Table["compact_notation"]; ok {
+		ct.State.tableCompactNotation = compactNotation.(bool)
+	}
+
 	return nil
 }
 
@@ -493,6 +500,8 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 				}
 				ct.State.favoriteChar = favoriteChar
 			}
+		} else if k == "compact_notation" {
+			ct.State.favoritesCompactNotation = valueIfc.(bool)
 		}
 		ifcs, ok := valueIfc.([]interface{})
 		if !ok {
@@ -581,6 +590,8 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 					return err
 				}
 			}
+		} else if key == "compact_notation" {
+			ct.State.portfolioCompactNotation = valueIfc.(bool)
 		} else {
 			// Backward compatibility < v1.6.0
 			holdings, err := ct.InterfaceToFloat64(valueIfc)

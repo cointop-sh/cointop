@@ -131,7 +131,8 @@ var HeaderColumns = map[string]*HeaderColumn{
 // GetLabel fetch the label to use for the heading (depends on configuration)
 func (ct *Cointop) GetLabel(h *HeaderColumn) string {
 	// TODO: technically this should support nosort
-	if ct.State.compactNotation && h.ShortLabel != "" {
+	compactNotation := ct.GetActiveTableCompactNotation()
+	if compactNotation && h.ShortLabel != "" {
 		return h.ShortLabel
 	}
 	return h.Label
@@ -158,6 +159,22 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 		cols = ct.GetCoinsTableHeaders()
 	}
 	return cols
+}
+
+// GetActiveTableHeaders returns the list of active table headers
+func (ct *Cointop) GetActiveTableCompactNotation() bool {
+	var compact bool
+	switch ct.State.selectedView {
+	case PortfolioView:
+		compact = ct.State.portfolioCompactNotation
+	case CoinsView:
+		compact = ct.State.tableCompactNotation
+	case FavoritesView:
+		compact = ct.State.favoritesCompactNotation
+	default:
+		compact = ct.State.tableCompactNotation
+	}
+	return compact
 }
 
 // UpdateTableHeader renders the table header

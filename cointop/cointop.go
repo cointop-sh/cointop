@@ -39,7 +39,6 @@ type State struct {
 	allCoins           []*Coin
 	allCoinsSlugMap    sync.Map
 	cacheDir           string
-	compactNotation    bool
 	coins              []*Coin
 	chartPoints        [][]rune
 	currencyConversion string
@@ -90,6 +89,11 @@ type State struct {
 	priceAlerts                *PriceAlerts
 	priceAlertEditID           string
 	priceAlertNewID            string
+
+	compactNotation          bool
+	tableCompactNotation     bool
+	favoritesCompactNotation bool
+	portfolioCompactNotation bool
 }
 
 // Cointop cointop
@@ -257,7 +261,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		State: &State{
 			allCoins:           []*Coin{},
 			cacheDir:           DefaultCacheDir,
-			compactNotation:    DefaultCompactNotation,
 			coinsTableColumns:  DefaultCoinTableHeaders,
 			currencyConversion: DefaultCurrency,
 			defaultChartRange:  DefaultChartRange,
@@ -296,6 +299,10 @@ func NewCointop(config *Config) (*Cointop, error) {
 				Entries:      make([]*PriceAlert, 0),
 				SoundEnabled: true,
 			},
+			compactNotation:          DefaultCompactNotation,
+			tableCompactNotation:     DefaultCompactNotation,
+			favoritesCompactNotation: DefaultCompactNotation,
+			portfolioCompactNotation: DefaultCompactNotation,
 		},
 		Views: &Views{
 			Chart:       NewChartView(),
