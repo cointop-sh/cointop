@@ -40,6 +40,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 			total = math.Round(total*1e2) / 1e2
 			totalstr = humanize.Monetaryf(total, 2)
 		}
+		if ct.State.compactNotation {
+			totalstr = humanize.ScaleNumericf(total, 3)
+		}
 
 		timeframe := ct.State.selectedChartRange
 		chartname := ct.SelectedCoinName()
