@@ -131,8 +131,7 @@ var HeaderColumns = map[string]*HeaderColumn{
 // GetLabel fetch the label to use for the heading (depends on configuration)
 func (ct *Cointop) GetLabel(h *HeaderColumn) string {
 	// TODO: technically this should support nosort
-	compactNotation := ct.GetActiveTableCompactNotation()
-	if compactNotation && h.ShortLabel != "" {
+	if ct.IsActiveTableCompactNotation() && h.ShortLabel != "" {
 		return h.ShortLabel
 	}
 	return h.Label
@@ -162,7 +161,7 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 }
 
 // GetActiveTableHeaders returns the list of active table headers
-func (ct *Cointop) GetActiveTableCompactNotation() bool {
+func (ct *Cointop) IsActiveTableCompactNotation() bool {
 	var compact bool
 	switch ct.State.selectedView {
 	case PortfolioView:
