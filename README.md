@@ -35,16 +35,18 @@ In action
 
 ## Table of Contents
 
+Documentation has been moved to [docs.cointop.sh](https://docs.cointop.sh/)
+
 - [Features](#features)
-- [Documentation](#documentation)
-- [Install](#install)
-- [Update](#update)
-- [Getting Started](#getting-started)
-- [Shortcuts](#shortcuts)
-- [Colorschemes](#colorschemes)
-- [Config](#config)
-- [SSH server](#ssh-server)
-- [FAQ](#faq)
+- [Documentation](https://docs.cointop.sh/)
+- [Install](https://docs.cointop.sh/install)
+- [Update](https://docs.cointop.sh/update)
+- [Getting started](https://docs.cointop.sh/getting-started)
+- [Shortcuts](https://docs.cointop.sh/shortcuts)
+- [Colorschemes](https://docs.cointop.sh/colorschemes)
+- [Config](https://docs.cointop.sh/config)
+- [SSH server](https://docs.cointop.sh/ssh)
+- [FAQ](https://docs.cointop.sh/faq)
 - [Contributing](#contributing)
 - [Social](#social)
 - [Mentioned in](#mentioned-in)
@@ -71,44 +73,6 @@ In action
 - Auto-refresh
 - Works on macOS, Linux, and Windows
 - It's very lightweight; can be left running indefinitely
-
-## Documentation
-
-Documentation has been moved to [docs.cointop.sh](https://docs.cointop.sh/)
-
-Some helpful documentation links are provided below.
-
-## Install
-
-See [docs.cointop.sh/install](https://docs.cointop.sh/install)
-
-## Update
-
-See [docs.cointop.sh/update](https://docs.cointop.sh/update)
-
-## Getting Started
-
-See [docs.cointop.sh/getting-started](https://docs.cointop.sh/getting-started)
-
-## Shortcuts
-
-See [docs.cointop.sh/shortcuts](https://docs.cointop.sh/shortcuts)
-
-## Colorschemes
-
-See [docs.cointop.sh/colorschemes](https://docs.cointop.sh/colorschemes)
-
-## Config
-
-See [docs.cointop.sh/config](https://docs.cointop.sh/config)
-
-## SSH Server
-
-See [docs.cointop.sh/ssh](https://docs.cointop.sh/ssh)
-
-## FAQ
-
-See [docs.cointop.sh/faq](https://docs.cointop.sh/faq)
 
 ## Contributing
 
