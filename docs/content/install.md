@@ -7,7 +7,7 @@ draft: false
 
 There are multiple ways you can install cointop depending on the platform you're on.
 
-## From source (always latest and recommeded)
+## From source (always latest and recommended)
 
 Make sure to have [go](https://golang.org/) (1.12+) installed, then do:
 
@@ -69,7 +69,7 @@ Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.sna
 
 cointop is available as a [copr](https://copr.fedorainfracloud.org/coprs/miguelmota/cointop/) package.
 
-First, enable the respository
+First, enable the repository
 
 ```bash
 sudo dnf copr enable miguelmota/cointop -y
