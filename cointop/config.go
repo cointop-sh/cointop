@@ -291,6 +291,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
+		CompactNotation:   ct.State.compactNotation,
 	}
 
 	var b bytes.Buffer
