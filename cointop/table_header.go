@@ -129,7 +129,7 @@ var HeaderColumns = map[string]*HeaderColumn{
 }
 
 // GetLabel fetch the label to use for the heading (depends on configuration)
-func (ct *Cointop) GetLabel(h HeaderColumn) string {
+func (ct *Cointop) GetLabel(h *HeaderColumn) string {
 	// TODO: technically this should support nosort
 	if ct.State.scaleNumbers && h.ShortLabel != "" {
 		return h.ShortLabel
@@ -190,7 +190,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 				}
 			}
 		}
-		label := ct.GetLabel(*hc)
+		label := ct.GetLabel(hc)
 		if noSort {
 			label = hc.PlainLabel
 		}
@@ -255,7 +255,7 @@ func (ct *Cointop) SetTableColumnWidth(header string, width int) {
 		prev = prevIfc.(int)
 	} else {
 		hc := HeaderColumns[header]
-		prev = utf8.RuneCountInString(ct.GetLabel(*hc)) + 1
+		prev = utf8.RuneCountInString(ct.GetLabel(hc)) + 1
 		switch header {
 		case "price", "balance":
 			prev++

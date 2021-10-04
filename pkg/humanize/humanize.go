@@ -75,3 +75,24 @@ func Scale(value float64) (float64, string) {
 	}
 	return value, ""
 }
+
+// ScaleNumericf scales a large number down using a suffix, then formats it with the
+// prescribed number of significant digits.
+func ScaleNumericf(value float64, digits int) string {
+	value, suffix := Scale(value)
+
+	// Round the scaled value to a certain number of significant figures
+	var s string
+	if math.Abs(value) < 1 {
+		s = Numericf(value, digits)
+	} else {
+		numDigits := len(fmt.Sprintf("%.0f", math.Abs(value)))
+		if numDigits >= digits {
+			s = Numericf(value, 0)
+		} else {
+			s = Numericf(value, digits-numDigits)
+		}
+	}
+
+	return s + suffix
+}
