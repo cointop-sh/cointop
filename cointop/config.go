@@ -48,6 +48,7 @@ type ConfigFileConfig struct {
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CacheDir          interface{}            `toml:"cache_dir"`
+	CompactNotation   interface{}            `toml:"compact_notation"`
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -70,6 +71,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadColorschemeFromConfig,
 		ct.loadRefreshRateFromConfig,
 		ct.loadCacheDirFromConfig,
+		ct.loadCompactNotationFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -215,10 +217,11 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
 		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols":   favoritesBySymbolIfc,
-		"names":     favoritesIfc,
-		"columns":   ct.State.favoritesTableColumns,
-		"character": ct.State.favoriteChar,
+		"symbols":          favoritesBySymbolIfc,
+		"names":            favoritesIfc,
+		"columns":          ct.State.favoritesTableColumns,
+		"character":        ct.State.favoriteChar,
+		"compact_notation": ct.State.favoritesCompactNotation,
 	}
 
 	var holdingsIfc [][]string
@@ -236,8 +239,9 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		return holdingsIfc[i][0] < holdingsIfc[j][0]
 	})
 	portfolioIfc := map[string]interface{}{
-		"holdings": holdingsIfc,
-		"columns":  ct.State.portfolioTableColumns,
+		"holdings":         holdingsIfc,
+		"columns":          ct.State.portfolioTableColumns,
+		"compact_notation": ct.State.portfolioCompactNotation,
 	}
 
 	cmcIfc := map[string]interface{}{
@@ -264,6 +268,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	tableMapIfc := map[string]interface{}{
 		"columns":                ct.State.coinsTableColumns,
 		"keep_row_focus_on_sort": ct.State.keepRowFocusOnSort,
+		"compact_notation":       ct.State.tableCompactNotation,
 	}
 
 	chartMapIfc := map[string]interface{}{
@@ -286,6 +291,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
+		CompactNotation:   ct.State.compactNotation,
 	}
 
 	var b bytes.Buffer
@@ -310,6 +316,11 @@ func (ct *Cointop) loadTableConfig() error {
 	if ok {
 		ct.State.keepRowFocusOnSort = keepRowFocusOnSortIfc.(bool)
 	}
+
+	if compactNotation, ok := ct.config.Table["compact_notation"]; ok {
+		ct.State.tableCompactNotation = compactNotation.(bool)
+	}
+
 	return nil
 }
 
@@ -458,6 +469,16 @@ func (ct *Cointop) loadCacheDirFromConfig() error {
 	return nil
 }
 
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadCompactNotationFromConfig() error {
+	log.Debug("loadCompactNotationFromConfig()")
+	if compactNotation, ok := ct.config.CompactNotation.(bool); ok {
+		ct.State.compactNotation = compactNotation
+	}
+
+	return nil
+}
+
 // LoadAPIChoiceFromConfig loads API choices from config file to struct
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
 	log.Debug("loadAPIKeysFromConfig()")
@@ -480,6 +501,8 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 				}
 				ct.State.favoriteChar = favoriteChar
 			}
+		} else if k == "compact_notation" {
+			ct.State.favoritesCompactNotation = valueIfc.(bool)
 		}
 		ifcs, ok := valueIfc.([]interface{})
 		if !ok {
@@ -568,6 +591,8 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 					return err
 				}
 			}
+		} else if key == "compact_notation" {
+			ct.State.portfolioCompactNotation = valueIfc.(bool)
 		} else {
 			// Backward compatibility < v1.6.0
 			holdings, err := ct.InterfaceToFloat64(valueIfc)

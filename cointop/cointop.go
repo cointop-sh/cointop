@@ -89,6 +89,11 @@ type State struct {
 	priceAlerts                *PriceAlerts
 	priceAlertEditID           string
 	priceAlertNewID            string
+
+	compactNotation          bool
+	tableCompactNotation     bool
+	favoritesCompactNotation bool
+	portfolioCompactNotation bool
 }
 
 // Cointop cointop
@@ -180,6 +185,9 @@ var DefaultCurrency = "USD"
 
 // DefaultChartRange ...
 var DefaultChartRange = "1Y"
+
+// DefaultCompactNotation ...
+var DefaultCompactNotation = false
 
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
@@ -291,6 +299,10 @@ func NewCointop(config *Config) (*Cointop, error) {
 				Entries:      make([]*PriceAlert, 0),
 				SoundEnabled: true,
 			},
+			compactNotation:          DefaultCompactNotation,
+			tableCompactNotation:     DefaultCompactNotation,
+			favoritesCompactNotation: DefaultCompactNotation,
+			portfolioCompactNotation: DefaultCompactNotation,
 		},
 		Views: &Views{
 			Chart:       NewChartView(),
