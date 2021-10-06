@@ -14,8 +14,7 @@ type SearchFieldView = ui.View
 
 // NewSearchFieldView returns a new search field view
 func NewSearchFieldView() *SearchFieldView {
-	var view *SearchFieldView = ui.NewView("searchfield")
-	return view
+	return ui.NewView("searchfield")
 }
 
 // InputView is structure for help view
@@ -23,8 +22,7 @@ type InputView = ui.View
 
 // NewInputView returns a new help view
 func NewInputView() *InputView {
-	var view *InputView = ui.NewView("input")
-	return view
+	return ui.NewView("input")
 }
 
 // OpenSearch opens the search field

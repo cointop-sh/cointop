@@ -21,7 +21,7 @@ import (
   g.PercentColor = termui.ColorBlue
 */
 
-const ColorUndef Attribute = Attribute(^uint16(0))
+const ColorUndef = Attribute(^uint16(0))
 
 type Gauge struct {
 	Block

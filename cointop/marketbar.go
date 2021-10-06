@@ -19,8 +19,7 @@ type MarketbarView = ui.View
 
 // NewMarketbarView returns a new marketbar view
 func NewMarketbarView() *MarketbarView {
-	var view *MarketbarView = ui.NewView("marketbar")
-	return view
+	return ui.NewView("marketbar")
 }
 
 // UpdateMarketbar updates the market bar view
@@ -41,6 +40,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 			total = math.Round(total*1e2) / 1e2
 			totalstr = humanize.Monetaryf(total, 2)
 		}
+		if ct.State.compactNotation {
+			totalstr = humanize.ScaleNumericf(total, 3)
+		}
 
 		timeframe := ct.State.selectedChartRange
 		chartname := ct.SelectedCoinName()
@@ -54,7 +56,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 
 		var percentChange24H float64
 		for _, p := range ct.GetPortfolioSlice() {
-			n := ((p.Balance / total) * p.PercentChange24H)
+			n := (p.Balance / total) * p.PercentChange24H
 			if math.IsNaN(n) {
 				continue
 			}
@@ -154,12 +156,19 @@ func (ct *Cointop) UpdateMarketbar() error {
 			separator2 = "\n" + offset
 		}
 
+		marketCapStr := humanize.Monetaryf(market.TotalMarketCapUSD, 0)
+		volumeStr := humanize.Monetaryf(market.Total24HVolumeUSD, 0)
+		if ct.State.compactNotation {
+			marketCapStr = humanize.ScaleNumericf(market.TotalMarketCapUSD, 3)
+			volumeStr = humanize.ScaleNumericf(market.Total24HVolumeUSD, 3)
+		}
+
 		content = fmt.Sprintf(
 			"%sGlobal ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
 			chartInfo,
-			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Monetaryf(market.TotalMarketCapUSD, 0)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), marketCapStr),
 			separator1,
-			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Monetaryf(market.Total24HVolumeUSD, 0)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), volumeStr),
 			separator2,
 			market.BitcoinPercentageOfMarketCap,
 		)

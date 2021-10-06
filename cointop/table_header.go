@@ -21,6 +21,7 @@ var ArrowDown = "▼"
 type HeaderColumn struct {
 	Slug       string
 	Label      string
+	ShortLabel string // only columns with a ShortLabel can be scaled?
 	PlainLabel string
 }
 
@@ -69,11 +70,13 @@ var HeaderColumns = map[string]*HeaderColumn{
 	"market_cap": {
 		Slug:       "market_cap",
 		Label:      "[m]arket cap",
+		ShortLabel: "[m]cap",
 		PlainLabel: "market cap",
 	},
 	"24h_volume": {
 		Slug:       "24h_volume",
 		Label:      "24H [v]olume",
+		ShortLabel: "24[v]",
 		PlainLabel: "24H volume",
 	},
 	"1h_change": {
@@ -104,11 +107,13 @@ var HeaderColumns = map[string]*HeaderColumn{
 	"total_supply": {
 		Slug:       "total_supply",
 		Label:      "[t]otal supply",
+		ShortLabel: "[t]ot",
 		PlainLabel: "total supply",
 	},
 	"available_supply": {
 		Slug:       "available_supply",
 		Label:      "[a]vailable supply",
+		ShortLabel: "[a]vl",
 		PlainLabel: "available supply",
 	},
 	"percent_holdings": {
@@ -123,13 +128,21 @@ var HeaderColumns = map[string]*HeaderColumn{
 	},
 }
 
+// GetLabel fetch the label to use for the heading (depends on configuration)
+func (ct *Cointop) GetLabel(h *HeaderColumn) string {
+	// TODO: technically this should support nosort
+	if ct.IsActiveTableCompactNotation() && h.ShortLabel != "" {
+		return h.ShortLabel
+	}
+	return h.Label
+}
+
 // TableHeaderView is structure for table header view
 type TableHeaderView = ui.View
 
 // NewTableHeaderView returns a new table header view
 func NewTableHeaderView() *TableHeaderView {
-	var view *TableHeaderView = ui.NewView("table_header")
-	return view
+	return ui.NewView("table_header")
 }
 
 // GetActiveTableHeaders returns the list of active table headers
@@ -144,6 +157,22 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 		cols = ct.GetCoinsTableHeaders()
 	}
 	return cols
+}
+
+// GetActiveTableHeaders returns the list of active table headers
+func (ct *Cointop) IsActiveTableCompactNotation() bool {
+	var compact bool
+	switch ct.State.selectedView {
+	case PortfolioView:
+		compact = ct.State.portfolioCompactNotation
+	case CoinsView:
+		compact = ct.State.tableCompactNotation
+	case FavoritesView:
+		compact = ct.State.favoritesCompactNotation
+	default:
+		compact = ct.State.tableCompactNotation
+	}
+	return compact
 }
 
 // UpdateTableHeader renders the table header
@@ -176,7 +205,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 				}
 			}
 		}
-		label := hc.Label
+		label := ct.GetLabel(hc)
 		if noSort {
 			label = hc.PlainLabel
 		}
@@ -241,7 +270,7 @@ func (ct *Cointop) SetTableColumnWidth(header string, width int) {
 		prev = prevIfc.(int)
 	} else {
 		hc := HeaderColumns[header]
-		prev = utf8.RuneCountInString(hc.Label) + 1
+		prev = utf8.RuneCountInString(ct.GetLabel(hc)) + 1
 		switch header {
 		case "price", "balance":
 			prev++

@@ -14,8 +14,7 @@ type TableView = ui.View
 
 // NewTableView returns a new table view
 func NewTableView() *TableView {
-	var view *TableView = ui.NewView("table")
-	return view
+	return ui.NewView("table")
 }
 
 const dots = "..."

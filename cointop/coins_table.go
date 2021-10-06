@@ -136,6 +136,9 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "24h_volume":
 				text := humanize.Monetaryf(coin.Volume24H, 0)
+				if ct.IsActiveTableCompactNotation() {
+					text = humanize.ScaleNumericf(coin.Volume24H, 3)
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -243,6 +246,9 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "market_cap":
 				text := humanize.Monetaryf(coin.MarketCap, 0)
+				if ct.IsActiveTableCompactNotation() {
+					text = humanize.ScaleNumericf(coin.MarketCap, 3)
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -255,6 +261,9 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "total_supply":
 				text := humanize.Numericf(coin.TotalSupply, 0)
+				if ct.IsActiveTableCompactNotation() {
+					text = humanize.ScaleNumericf(coin.TotalSupply, 3)
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
@@ -267,6 +276,9 @@ func (ct *Cointop) GetCoinsTable() *table.Table {
 					})
 			case "available_supply":
 				text := humanize.Numericf(coin.AvailableSupply, 0)
+				if ct.IsActiveTableCompactNotation() {
+					text = humanize.ScaleNumericf(coin.AvailableSupply, 3)
+				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
