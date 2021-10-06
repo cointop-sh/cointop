@@ -6,7 +6,9 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/goodsign/monday"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -27,6 +29,60 @@ func Numericf(value float64, precision int) string {
 // e.g. Monetaryf(834142.3256, 2) -> "834,142.3256"
 func Monetaryf(value float64, precision int) string {
 	return f(value, precision, "LC_MONETARY", false)
+}
+
+// Attempt to determine the locale from the current environment. If usage is provided, treat it as the name of a LC_xxx environment variable.
+// LANGUAGE
+// LC_ALL       Will override the setting of all other LC_* variables.
+// LC_MONETARY  Sets the locale for the LC_MONETARY category.
+// LC_NUMERIC   Sets the locale for the LC_NUMERIC category.
+// LC_TIME      Sets the locale for the LC_TIME category.
+// LANG         Used as a substitute for any unset LC_* variable.  If LANG is unset, it will act as if set to "C"
+// Local is language[_territory][.codeset] [@modifier]
+func DetectLocale(usage string) string {
+	if lc, ok := os.LookupEnv("LANGUAGE"); ok {
+		return lc
+	}
+	if lc, ok := os.LookupEnv("LC_ALL"); ok {
+		return lc
+	}
+	if usage != "" {
+		if lc, ok := os.LookupEnv(strings.ToUpper(usage)); ok {
+			return lc
+		}
+	}
+	if lc, ok := os.LookupEnv("LANG"); ok {
+		return lc
+	}
+	return "C"
+}
+
+// func DetectLanguage(usage string) language.Tag {
+// 	lc := DetectLocale(usage)
+// 	if lc == "C" {
+// 		lc = "en"
+// 	}
+// 	return language.Make(lc)
+// }
+
+// Locale is language[_territory][.codeset] [@modifier]
+func FormatTime(time time.Time, layout string) string {
+	// Attempt to use the environment to determine monday.Locale
+	xxx := strings.Split(DetectLocale("LC_TIME"), ".")[0]
+	bits := strings.Split(xxx, "_")
+
+	// Look for a supported Locale with default to en_US
+	var locale monday.Locale = monday.LocaleEnUS // default
+	if len(bits) == 2 {
+		lookFor := monday.Locale(strings.ToLower(bits[0]) + "_" + strings.ToUpper(bits[1]))
+		for _, v := range monday.ListLocales() {
+			if v == lookFor {
+				locale = v
+			}
+		}
+	}
+
+	return monday.Format(time, layout, locale)
 }
 
 // f formats given value, with precision decimal places using thousands and decimal

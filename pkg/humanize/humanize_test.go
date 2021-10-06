@@ -3,6 +3,7 @@ package humanize
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 // TestMonetary tests monetary formatting
@@ -49,5 +50,13 @@ func TestScaleNumeric(t *testing.T) {
 		if result != expected {
 			t.Fatalf("Expected %f to scale to '%s' but got '%s'\n", value, expected, result)
 		}
+	}
+}
+
+func TestFormatTime(t *testing.T) {
+	s := FormatTime(time.Now(), "Jan 2006")
+	t.Logf("First: %s", s)
+	if Monetaryf(834142.3256, 2) != "834,142.3256" {
+		t.FailNow()
 	}
 }
