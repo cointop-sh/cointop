@@ -357,6 +357,12 @@ draft: false
 
   Supported columns relating to price change are `1h_change`, `24h_change`, `7d_change`, `30d_change`, `1y_change`
 
+## How can I use K (thousand), M (million), B (billion), T (trillion) suffixes for shorter numbers?
+
+  There is a setting at the top-level of the configuration file called `compact_notation=true` which changes the marketbar values `market cap`, `volume` and `portfolio total value`.
+
+  The same setting can be applied at in the `[table]` section to impact the `24h_volume`, `market_cap`, `total_supply`, `available_supply` columns in the main coin view; and in the `[favorites]` section to change the same columns.   The setting also changes the column names to be shorter.
+
 ## How can use a different config file other than the default?
 
   Run cointop with the `--config` flag, eg `cointop --config="/path/to/config.toml"`, to use the specified file as the config.
