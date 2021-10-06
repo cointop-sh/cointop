@@ -41,6 +41,9 @@ github.com/go-toast/toast
 # github.com/godbus/dbus/v5 v5.0.4
 ## explicit; go 1.12
 github.com/godbus/dbus/v5
+# github.com/goodsign/monday v1.0.0
+## explicit; go 1.13
+github.com/goodsign/monday
 # github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
 ## explicit
 github.com/gopherjs/gopherjs/js

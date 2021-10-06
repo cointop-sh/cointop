@@ -10,6 +10,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
 	github.com/gliderlabs/ssh v0.3.3
+	github.com/goodsign/monday v1.0.0
 	github.com/maruel/panicparse v1.6.1
 	github.com/mattn/go-runewidth v0.0.13
 	github.com/miguelmota/go-coinmarketcap v0.1.8
