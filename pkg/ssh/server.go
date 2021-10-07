@@ -1,4 +1,5 @@
-//+build !windows
+//go:build !windows
+// +build !windows
 
 package ssh
 
@@ -196,6 +197,9 @@ func (s *Server) ListenAndServe() error {
 
 			cmd := exec.CommandContext(cmdCtx, s.executableBinary, flags...)
 			cmd.Env = append(sshSession.Environ(), fmt.Sprintf("TERM=%s", ptyReq.Term))
+			if proxy, ok := os.LookupEnv("HTTPS_PROXY"); ok {
+				cmd.Env = append(cmd.Env, fmt.Sprintf("HTTPS_PROXY=%s", proxy))
+			}
 
 			f, err := pty.Start(cmd)
 			if err != nil {
