@@ -242,6 +242,7 @@ func (s *Server) ListenAndServe() error {
 
 	err := s.sshServer.SetOption(ssh.HostKeyFile(s.hostKeyFile))
 	if err != nil {
+		fmt.Println("Error setting HostKeyFile: ", s.hostKeyFile)
 		return err
 	}
 
