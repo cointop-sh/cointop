@@ -53,6 +53,9 @@ github.com/gopherjs/gopherwasm/js
 # github.com/inconshreveable/mousetrap v1.0.0
 ## explicit
 github.com/inconshreveable/mousetrap
+# github.com/jeandeaual/go-locale v0.0.0-20210323163322-5cf4ff553a8d
+## explicit; go 1.12
+github.com/jeandeaual/go-locale
 # github.com/maruel/panicparse v1.6.1
 ## explicit; go 1.11
 github.com/maruel/panicparse/stack
