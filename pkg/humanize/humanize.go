@@ -53,7 +53,7 @@ func splitLocale(locale string) (string, string) {
 }
 
 // GetLocale returns the current locale as defined in IETF BCP 47 (e.g. "en-US").
-// The envvar is provided this is checked first, before the platform-specific defaults.
+// The envvar provided is checked first (eg LC_TIME), before the platform-specific defaults.
 func getLocale(envvar string) string {
 	userLocale := "en-US" // default language-REGION
 	// First try looking up envar directly
