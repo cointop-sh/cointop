@@ -159,13 +159,29 @@ func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int6
 		return ret, err
 	}
 
+	// This API does not appear to support vs_currency and only returns USD, so use ExchangeRates to convert
+	rate := 1.0
+	if convertTo != "usd" {
+		rates, err := s.client.ExchangeRates()
+		if err != nil {
+			return ret, err
+		}
+		// Combined rate is USD->BTC->other
+		item, found := (*rates)[convertTo]
+		if !found {
+			return ret, fmt.Errorf("unsupported currency conversion: %s", convertTo)
+		}
+		usdRate := (*rates)["usd"].Value
+		rate = item.Value / usdRate
+	}
+
 	var marketCapUSD [][]float64
 	var marketVolumeUSD [][]float64
 	if graphData.Stats != nil {
 		for _, item := range *graphData.Stats {
 			marketCapUSD = append(marketCapUSD, []float64{
 				float64(item[0]),
-				float64(item[1]),
+				float64(item[1]) * rate,
 			})
 		}
 	}
