@@ -154,7 +154,7 @@ func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int6
 	if convertTo == "" {
 		convertTo = "usd"
 	}
-	graphData, err := s.client.GlobalCharts(convertTo, days)
+	graphData, err := s.client.GlobalCharts("usd", days)
 	if err != nil {
 		return ret, err
 	}
