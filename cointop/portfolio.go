@@ -290,7 +290,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					})
 			case "last_updated":
 				unix, _ := strconv.ParseInt(coin.LastUpdated, 10, 64)
-				lastUpdated := time.Unix(unix, 0).Format("15:04:05 Jan 02")
+				lastUpdated := humanize.FormatTime(time.Unix(unix, 0), "15:04:05 Jan 02")
 				ct.SetTableColumnWidthFromString(header, lastUpdated)
 				ct.SetTableColumnAlignLeft(header, false)
 				rowCells = append(rowCells,
