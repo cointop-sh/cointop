@@ -166,13 +166,19 @@ func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int6
 		if err != nil {
 			return ret, err
 		}
+		if rates == nil {
+			return ret, fmt.Errorf("expected rates, received nil")
+		}
 		// Combined rate is USD->BTC->other
-		item, found := (*rates)[convertTo]
+		btcRate, found := (*rates)[convertTo]
 		if !found {
 			return ret, fmt.Errorf("unsupported currency conversion: %s", convertTo)
 		}
-		usdRate := (*rates)["usd"].Value
-		rate = item.Value / usdRate
+		usdRate, found := (*rates)["usd"]
+		if !found {
+			return ret, fmt.Errorf("unsupported currency conversion: usd")
+		}
+		rate = btcRate.Value / usdRate.Value
 	}
 
 	var marketCapUSD [][]float64
