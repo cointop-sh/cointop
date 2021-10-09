@@ -78,9 +78,10 @@ func (ct *Cointop) UpdateMarketbar() error {
 		chartInfo := ""
 		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
-				"[ Chart: %s %s ] ",
+				"[ Chart: %s %s %s ] ",
 				charttitle,
 				timeframe,
+				ct.State.currencyConversion,
 			)
 		}
 
@@ -141,9 +142,10 @@ func (ct *Cointop) UpdateMarketbar() error {
 		chartInfo := ""
 		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
-				"[ Chart: %s %s ] ",
+				"[ Chart: %s %s %s] ",
 				ct.colorscheme.MarketBarLabelActive(chartname),
 				timeframe,
+				ct.State.currencyConversion,
 			)
 		}
 

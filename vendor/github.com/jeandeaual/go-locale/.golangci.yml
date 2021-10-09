@@ -1,0 +1,40 @@
+run:
+  timeout: 5m
+linters:
+  disable-all: true
+  enable:
+    # Default
+    - deadcode
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - structcheck
+    - typecheck
+    - unused
+    - varcheck
+    # Manually enabled
+    - dupl
+    - gocyclo
+    - gofmt
+    - golint
+    - goprintffuncname
+    - lll
+    - misspell
+    - nakedret
+    - prealloc
+    - unconvert
+    - whitespace
+linter-settings:
+  gocyclo:
+    # Minimal code complexity to report, 30 by default
+    min-complexity: 15
+  govet:
+    # Report about shadowed variables
+    check-shadowing: true
+issues:
+  exclude-use-default: false
+  exclude:
+    # govet: Common false positives
+    - (possible misuse of unsafe.Pointer|should have signature)
