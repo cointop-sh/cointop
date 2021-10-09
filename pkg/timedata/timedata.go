@@ -4,6 +4,8 @@ import (
 	"math"
 	"sort"
 	"time"
+
+	"github.com/cointop-sh/cointop/pkg/humanize"
 )
 
 // Point is a point on a line
@@ -86,7 +88,8 @@ func BuildTimeSeriesLabels(data [][]float64) []string {
 	}
 	var labels []string
 	for i := range data {
-		labels = append(labels, time.UnixMilli(int64(data[i][0])).Format(timeFormat))
+		labelTime := time.UnixMilli(int64(data[i][0]))
+		labels = append(labels, humanize.FormatTime(labelTime, timeFormat))
 	}
 	return labels
 }
