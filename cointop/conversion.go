@@ -8,6 +8,7 @@ import (
 
 	"github.com/cointop-sh/cointop/pkg/color"
 	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/mattn/go-runewidth"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -249,7 +250,14 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 // CurrencySymbol returns the symbol for the currency conversion
 func (ct *Cointop) CurrencySymbol() string {
 	log.Debug("CurrencySymbol()")
-	return CurrencySymbol(ct.State.currencyConversion)
+	symbol := CurrencySymbol(ct.State.currencyConversion)
+
+	width := runewidth.StringWidth(symbol)
+	if width > 1 {
+		symbol = pad.Right(symbol, width, " ")
+	}
+
+	return symbol
 }
 
 // ShowConvertMenu shows the convert menu view
