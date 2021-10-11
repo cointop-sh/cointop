@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/cointop-sh/cointop/pkg/levenshtein"
 	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
@@ -92,18 +93,49 @@ func (ct *Cointop) Search(q string) error {
 		ct.State.lastSearchQuery = q
 	}
 
+	idx := -1
+	min := -1
+	var hasprefixidx []int
+	var hasprefixdist []int
+
 	// Start the search from the current position (+1), looking names that start with the search term, or symbols that match completely
 	currentIndex := ct.GetGlobalCoinIndex(ct.HighlightedRowCoin()) + 1
 	if ct.IsLastPage() && ct.IsLastRow() {
 		currentIndex = 0
 	}
-	for i, coin := range ct.State.allCoins[currentIndex:] {
+	for i := currentIndex; i < len(ct.State.allCoins); i++ {
+		coin := ct.State.allCoins[i]
 		name := strings.ToLower(coin.Name)
 		symbol := strings.ToLower(coin.Symbol)
-		if strings.HasPrefix(name, q) || symbol == q {
-			ct.GoToGlobalIndex(currentIndex + i)
+		// if query matches name or symbol, return immediately
+		if name == q || symbol == q {
+			ct.GoToGlobalIndex(i)
 			return nil
 		}
+
+		// store index with the smallest levenshtein
+		dist := levenshtein.DamerauLevenshteinDistance(name, q)
+		if min == -1 || dist <= min {
+			idx = i
+			min = dist
+		}
+		// store index where query is substring to name
+		if strings.HasPrefix(name, q) {
+			if len(hasprefixdist) == 0 || dist < hasprefixdist[0] {
+				hasprefixidx = append(hasprefixidx, i)
+				hasprefixdist = append(hasprefixdist, dist)
+			}
+		}
+	}
+	// go to row if prefix match
+	if len(hasprefixidx) > 0 && hasprefixidx[0] != -1 && min > 0 {
+		ct.GoToGlobalIndex(hasprefixidx[0])
+		return nil
+	}
+	// go to row if levenshtein distance is small enough
+	if idx > -1 && min <= 6 {
+		ct.GoToGlobalIndex(idx)
+		return nil
 	}
 	return nil
 }
