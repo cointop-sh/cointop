@@ -4,7 +4,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/cointop-sh/cointop/pkg/levenshtein"
 	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
@@ -78,49 +77,33 @@ func (ct *Cointop) DoSearch() error {
 
 // Search performs the search and filtering
 func (ct *Cointop) Search(q string) error {
-	log.Debug("Search()")
+	log.Debugf("Search(%s)", q)
+
+	// If there are no coins, return no result
+	if len(ct.State.coins) == 0 {
+		return nil
+	}
+
+	// If search term is empty, use the previous search term.
 	q = strings.TrimSpace(strings.ToLower(q))
-	idx := -1
-	min := -1
-	var hasprefixidx []int
-	var hasprefixdist []int
-	for i := range ct.State.allCoins {
-		coin := ct.State.allCoins[i]
+	if q == "" {
+		q = ct.State.lastSearchQuery
+	} else {
+		ct.State.lastSearchQuery = q
+	}
+
+	// Start the search from the current position (+1), looking names that start with the search term, or symbols that match completely
+	currentIndex := ct.GetGlobalCoinIndex(ct.HighlightedRowCoin()) + 1
+	if ct.IsLastPage() && ct.IsLastRow() {
+		currentIndex = 0
+	}
+	for i, coin := range ct.State.allCoins[currentIndex:] {
 		name := strings.ToLower(coin.Name)
 		symbol := strings.ToLower(coin.Symbol)
-		// if query matches symbol, return immediately
-		if symbol == q {
-			ct.GoToGlobalIndex(i)
+		if strings.HasPrefix(name, q) || symbol == q {
+			ct.GoToGlobalIndex(currentIndex + i)
 			return nil
 		}
-		// if query matches name, return immediately
-		if name == q {
-			ct.GoToGlobalIndex(i)
-			return nil
-		}
-		// store index with the smallest levenshtein
-		dist := levenshtein.DamerauLevenshteinDistance(name, q)
-		if min == -1 || dist <= min {
-			idx = i
-			min = dist
-		}
-		// store index where query is substring to name
-		if strings.HasPrefix(name, q) {
-			if len(hasprefixdist) == 0 || dist < hasprefixdist[0] {
-				hasprefixidx = append(hasprefixidx, i)
-				hasprefixdist = append(hasprefixdist, dist)
-			}
-		}
-	}
-	// go to row if prefix match
-	if len(hasprefixidx) > 0 && hasprefixidx[0] != -1 && min > 0 {
-		ct.GoToGlobalIndex(hasprefixidx[0])
-		return nil
-	}
-	// go to row if levenshtein distance is small enough
-	if idx > -1 && min <= 6 {
-		ct.GoToGlobalIndex(idx)
-		return nil
 	}
 	return nil
 }
