@@ -107,12 +107,16 @@ func (ct *Cointop) Search(q string) error {
 		coin := ct.State.allCoins[i]
 		name := strings.ToLower(coin.Name)
 		symbol := strings.ToLower(coin.Symbol)
-		// if query matches name or symbol, return immediately
-		if name == q || symbol == q {
+		// if query matches symbol, return immediately
+		if symbol == q {
 			ct.GoToGlobalIndex(i)
 			return nil
 		}
-
+		// if query matches name, return immediately
+		if name == q {
+			ct.GoToGlobalIndex(i)
+			return nil
+		}
 		// store index with the smallest levenshtein
 		dist := levenshtein.DamerauLevenshteinDistance(name, q)
 		if min == -1 || dist <= min {
