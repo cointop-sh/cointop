@@ -66,7 +66,7 @@ func (ct *Cointop) DoSearch() error {
 	if n == 0 {
 		return nil
 	}
-	q := string(b)
+	q := strings.TrimSpace(string(b[:n]))
 	// remove slash
 	regex := regexp.MustCompile(`/(.*)`)
 	matches := regex.FindStringSubmatch(q)
