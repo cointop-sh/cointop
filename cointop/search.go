@@ -66,7 +66,7 @@ func (ct *Cointop) DoSearch() error {
 	if n == 0 {
 		return nil
 	}
-	q := string(b)
+	q := strings.TrimSpace(string(b[:n]))
 	// remove slash
 	regex := regexp.MustCompile(`/(.*)`)
 	matches := regex.FindStringSubmatch(q)
@@ -78,13 +78,32 @@ func (ct *Cointop) DoSearch() error {
 
 // Search performs the search and filtering
 func (ct *Cointop) Search(q string) error {
-	log.Debug("Search()")
+	log.Debugf("Search(%s)", q)
+
+	// If there are no coins, return no result
+	if len(ct.State.coins) == 0 {
+		return nil
+	}
+
+	// If search term is empty, use the previous search term.
 	q = strings.TrimSpace(strings.ToLower(q))
+	if q == "" {
+		q = ct.State.lastSearchQuery
+	} else {
+		ct.State.lastSearchQuery = q
+	}
+
 	idx := -1
 	min := -1
 	var hasprefixidx []int
 	var hasprefixdist []int
-	for i := range ct.State.allCoins {
+
+	// Start the search from the current position (+1), looking names that start with the search term, or symbols that match completely
+	currentIndex := ct.GetGlobalCoinIndex(ct.HighlightedRowCoin()) + 1
+	if ct.IsLastPage() && ct.IsLastRow() {
+		currentIndex = 0
+	}
+	for i := currentIndex; i < len(ct.State.allCoins); i++ {
 		coin := ct.State.allCoins[i]
 		name := strings.ToLower(coin.Name)
 		symbol := strings.ToLower(coin.Symbol)

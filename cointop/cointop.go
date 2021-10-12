@@ -69,6 +69,7 @@ type State struct {
 	refreshRate                time.Duration
 	running                    bool
 	searchFieldVisible         bool
+	lastSearchQuery            string
 	selectedCoin               *Coin
 	selectedChartRange         string
 	selectedView               string
