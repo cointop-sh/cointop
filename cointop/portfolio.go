@@ -492,15 +492,11 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 	var ok bool
 	key := strings.ToLower(c.Name)
 	if p, ok = ct.State.portfolio.Entries[key]; !ok {
-		// NOTE: if not found then try the symbol
-		key := strings.ToLower(c.Symbol)
-		if p, ok = ct.State.portfolio.Entries[key]; !ok {
-			p = &PortfolioEntry{
-				Coin:     c.Name,
-				Holdings: 0,
-			}
-			isNew = true
+		p = &PortfolioEntry{
+			Coin:     c.Name,
+			Holdings: 0,
 		}
+		isNew = true
 	}
 
 	return p, isNew
