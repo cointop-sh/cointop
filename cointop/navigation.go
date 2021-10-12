@@ -418,7 +418,6 @@ func (ct *Cointop) GoToGlobalIndex(idx int) error {
 	// Look for the coin in the current page
 	for i, coin := range ct.State.coins {
 		if coin == target {
-			log.Debugf("XXX found %s (%s) at index %d", target.Name, target.Symbol, i)
 			ct.HighlightRow(i)
 		}
 	}
