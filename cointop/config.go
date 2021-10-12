@@ -214,10 +214,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		return favoritesIfc[i].(string) < favoritesIfc[j].(string)
 	})
 
-	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols":          favoritesBySymbolIfc,
 		"names":            favoritesIfc,
 		"columns":          ct.State.favoritesTableColumns,
 		"character":        ct.State.favoriteChar,
@@ -509,13 +506,6 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 			continue
 		}
 		switch k {
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		case "symbols":
-			for _, ifc := range ifcs {
-				if v, ok := ifc.(string); ok {
-					ct.State.favoritesBySymbol[strings.ToUpper(v)] = true
-				}
-			}
 		case "names":
 			for _, ifc := range ifcs {
 				if v, ok := ifc.(string); ok {
