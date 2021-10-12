@@ -556,25 +556,12 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 		return sliced
 	}
 
-OUTER:
 	for i := range ct.State.allCoins {
 		coin := ct.State.allCoins[i]
 		p, isNew := ct.PortfolioEntry(coin)
 		if isNew {
 			continue
 		}
-		// check not already found
-		updateSlice := -1
-		for j := range sliced {
-			if coin.Symbol == sliced[j].Symbol {
-				if coin.Rank >= sliced[j].Rank {
-					continue OUTER // skip updates from lower-ranked coins
-				}
-				updateSlice = j // update this later
-				break
-			}
-		}
-
 		coin.Holdings = p.Holdings
 		balance := coin.Price * p.Holdings
 		balancestr := fmt.Sprintf("%.2f", balance)
@@ -583,12 +570,7 @@ OUTER:
 		}
 		balance, _ = strconv.ParseFloat(balancestr, 64)
 		coin.Balance = balance
-		if updateSlice == -1 {
-			sliced = append(sliced, coin)
-		} else {
-			sliced[updateSlice] = coin
-		}
-
+		sliced = append(sliced, coin)
 	}
 
 	sort.Slice(sliced, func(i, j int) bool {
