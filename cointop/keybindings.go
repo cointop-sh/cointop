@@ -218,6 +218,8 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 		view = "help"
 	case "first_page":
 		fn = ct.Keyfn(ct.FirstPage)
+	case "move_to_first_page_first_row":
+		fn = ct.Keyfn(ct.NavigateToFirstPageFirstRow)
 	case "sort_column_1h_change":
 		fn = ct.Sortfn("1h_change", true)
 	case "sort_column_24h_change":

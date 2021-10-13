@@ -309,6 +309,13 @@ func (ct *Cointop) PrevPageTop() error {
 	return nil
 }
 
+// NavigateToFirstPageFirstRow navigates to the first row on the first page
+func (ct *Cointop) NavigateToFirstPageFirstRow() error {
+	log.Debug("TopCoin()")
+	ct.GoToGlobalIndex(0)
+	return nil
+}
+
 // FirstPage navigates to the first page
 func (ct *Cointop) FirstPage() error {
 	log.Debug("FirstPage()")
