@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.9] - 2021-10-12
+### Added
+- Chart x-axis date labels
+- Configurable favorite character
+- Configurable chart width
+- Save chart height
+
+### Changed
+- Renamed organization `miguelmota` → `cointop-sh`
+
+### Fixed
+- Global chart currency
+- Chart resampling and interpolation
+- Chart time periods
+- Use preferred cache directory
+- Currency symbol width
+
 ## [1.6.8] - 2021-09-13
 ### Fixed
 - Hide holdings amount when using command hide flag
@@ -55,49 +72,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Config option to keep row focus on sort
 
 ## [1.6.1] - 2021-02-12
+### Added
+- Multiple coin support in price command
+
 ### Fixed
 - Chart data interpolation
 - CoinMarketCap graph data endpoint
 
-### Added
-- Multiple coin support in price command
-
 ## [1.6.0] - 2021-02-12
-### Fixed
-- Coin chart lookup
-- Dynamic column widths
-
 ### Added
 - Configurable table columns
 - Basic price alerts
 
-## [1.5.5] - 2020-11-15
 ### Fixed
-- Termux cache directory
-- Open command on Windows
+- Coin chart lookup
+- Dynamic column widths
 
+## [1.5.5] - 2020-11-15
 ### Added
 - Currency convesion option to holdings command
 - Sort by percent holdings shortcut
 
-## [1.5.4] - 2020-08-24
 ### Fixed
-- Rank order for low market cap coins
+- Termux cache directory
+- Open command on Windows
 
+## [1.5.4] - 2020-08-24
 ### Added
 - Colorschemes directory flag
+
+### Fixed
+- Rank order for low market cap coins
 
 ## [1.5.3] - 2020-08-14
 ### Fixed
 - Build error
 
 ## [1.5.2] - 2020-08-13
-### Fixed
-- `XDG_CONFIG_HOME` config path
-
 ### Added
 - Holdings command with sorting and filter options
 - Bitcoin dominance command
+
+### Fixed
+- `XDG_CONFIG_HOME` config path
 
 ## [1.5.1] - 2020-08-05
 ### Fixed
@@ -124,23 +141,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase number of page results from CoinGecko
 
 ## [1.4.5] - 2020-02-18
-### Fixed
-- Convert to chosen currency for market data
-
 ### Added
 - VND currency conversion
+
+### Fixed
+- Convert to chosen currency for market data
 
 ## [1.4.4] - 2019-12-31
 ### Fixed
 - Flathub app release version
 
 ## [1.4.3] - 2019-12-29
+### Added
+- Tab keybinding
+
 ### Fixed
 - Chart update bug fixes
 - Marketbar currency bug fixes
-
-### Added
-- Tab keybinding
 
 ## [1.4.2] - 2019-12-29
 ### Fixed
@@ -209,24 +226,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Release archive to contain latest source code
 
 ## [1.1.4] - 2019-04-21
-### Changed
-- CoinMarketCap legacy V2 API to Pro V1 API
-
 ### Added
 - Config option to use CoinMarketCap Pro V1 API KEY
+
+### Changed
+- CoinMarketCap legacy V2 API to Pro V1 API
 
 ## [1.1.3] - 2019-02-25
 ### Fixed
 - Vendor dependencies
 
 ## [1.1.2] - 2018-12-30
-### Fixed
-- Paginate CoinMarketCap V1 API responses due to their backward-incompatible update
-
 ### Added
 - `-clean` flag to clean cache
 - `-reset` flag to clean cache and delete config
 - `-config` flag to use a different specified config file
+
+### Fixed
+- Paginate CoinMarketCap V1 API responses due to their backward-incompatible update
 
 ## [1.1.1] - 2018-12-26
 ### Changed
