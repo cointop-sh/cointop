@@ -48,9 +48,6 @@ type State struct {
 	defaultChartRange  string
 	maxChartWidth      int
 
-	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
-	favoritesBySymbol map[string]bool
-
 	favorites                  map[string]bool
 	favoritesTableColumns      []string
 	favoriteChar               string
@@ -72,6 +69,7 @@ type State struct {
 	refreshRate                time.Duration
 	running                    bool
 	searchFieldVisible         bool
+	lastSearchQuery            string
 	selectedCoin               *Coin
 	selectedChartRange         string
 	selectedView               string
@@ -259,14 +257,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 		limiter:        time.NewTicker(2 * time.Second).C,
 		filecache:      nil,
 		State: &State{
-			allCoins:           []*Coin{},
-			cacheDir:           DefaultCacheDir,
-			coinsTableColumns:  DefaultCoinTableHeaders,
-			currencyConversion: DefaultCurrency,
-			defaultChartRange:  DefaultChartRange,
-			maxChartWidth:      DefaultMaxChartWidth,
-			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-			favoritesBySymbol:     make(map[string]bool),
+			allCoins:              []*Coin{},
+			cacheDir:              DefaultCacheDir,
+			coinsTableColumns:     DefaultCoinTableHeaders,
+			currencyConversion:    DefaultCurrency,
+			defaultChartRange:     DefaultChartRange,
+			maxChartWidth:         DefaultMaxChartWidth,
 			favorites:             make(map[string]bool),
 			favoritesTableColumns: DefaultCoinTableHeaders,
 			favoriteChar:          DefaultFavoriteChar,
@@ -453,21 +449,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.allCoins, false)
 		ct.State.coins = ct.State.allCoins[0:max]
 	}
-
-	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-	// Here we're doing a lookup based on symbol and setting the favorite to the coin name instead of coin symbol.
-	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
-		if coin, ok := value.(*Coin); ok {
-			for k := range ct.State.favoritesBySymbol {
-				if coin.Symbol == k {
-					ct.State.favorites[coin.Name] = true
-					delete(ct.State.favoritesBySymbol, k)
-				}
-			}
-		}
-
-		return true
-	})
 
 	var globaldata []float64
 	chartcachekey := ct.CompositeCacheKey("globaldata", "", "", ct.State.selectedChartRange)
