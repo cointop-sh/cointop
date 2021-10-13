@@ -162,6 +162,10 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 		key = gocui.KeyEnd
 	case "\\\\":
 		key = '\\'
+	case "scrollup":
+		key = gocui.MouseWheelUp
+	case "scrolldown":
+		key = gocui.MouseWheelDown
 	}
 
 	return key, mod
@@ -372,8 +376,8 @@ func (ct *Cointop) SetKeybindings() error {
 	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.MouseLeftClick), "")
 	ct.SetKeybindingMod(gocui.MouseMiddle, gocui.ModNone, ct.Keyfn(ct.MouseMiddleClick), "")
 	ct.SetKeybindingMod(gocui.MouseRight, gocui.ModNone, ct.Keyfn(ct.MouseRightClick), "")
-	ct.SetKeybindingMod(gocui.MouseWheelUp, gocui.ModNone, ct.Keyfn(ct.MouseWheelUp), "")
-	ct.SetKeybindingMod(gocui.MouseWheelDown, gocui.ModNone, ct.Keyfn(ct.MouseWheelDown), "")
+	// ct.SetKeybindingMod(gocui.MouseWheelUp, gocui.ModNone, ct.Keyfn(ct.MouseWheelUp), "")
+	// ct.SetKeybindingMod(gocui.MouseWheelDown, gocui.ModNone, ct.Keyfn(ct.MouseWheelDown), "")
 
 	// character key press to select option
 	// TODO: use scrolling table
