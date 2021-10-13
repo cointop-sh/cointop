@@ -132,6 +132,7 @@ draft: false
 ## How do I search?
 
   The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
+  Each search starts from the current cursor position. To search for the same term again, hit <kbd>/</kbd> then <kbd>Enter</kbd>.
 
 ## How do I exit search?
 
