@@ -556,10 +556,11 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 		return sliced
 	}
 
-	for i := range ct.State.allCoins {
-		coin := ct.State.allCoins[i]
-		p, isNew := ct.PortfolioEntry(coin)
-		if isNew {
+	for _, p := range ct.State.portfolio.Entries {
+		coinIfc, _ := ct.State.allCoinsSlugMap.Load(p.Coin)
+		coin, ok := coinIfc.(*Coin)
+		if !ok {
+			log.Errorf("Could not find coin %s", p.Coin)
 			continue
 		}
 		coin.Holdings = p.Holdings
