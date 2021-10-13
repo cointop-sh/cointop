@@ -4,7 +4,7 @@ package cointop
 func ActionsMap() map[string]bool {
 	return map[string]bool{
 		"first_page":                        true,
-		"top_coin":                          true,
+		"move_to_first_page_first_row":      true,
 		"help":                              true,
 		"toggle_show_help":                  true,
 		"close_help":                        true,

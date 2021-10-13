@@ -36,7 +36,7 @@ func DefaultShortcuts() map[string]string {
 		"alt+right":  "sort_right_column",
 		"F1":         "help",
 		"F5":         "refresh",
-		"0":          "top_coin",
+		"0":          "move_to_first_page_first_row",
 		"1":          "sort_column_1h_change",
 		"2":          "sort_column_24h_change",
 		"3":          "sort_column_30d_change",

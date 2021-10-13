@@ -309,8 +309,8 @@ func (ct *Cointop) PrevPageTop() error {
 	return nil
 }
 
-// TopCoin navigates to the first row on the first page
-func (ct *Cointop) TopCoin() error {
+// NavigateToFirstPageFirstRow navigates to the first row on the first page
+func (ct *Cointop) NavigateToFirstPageFirstRow() error {
 	log.Debug("TopCoin()")
 	ct.GoToGlobalIndex(0)
 	return nil
