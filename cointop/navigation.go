@@ -409,13 +409,18 @@ func (ct *Cointop) GoToPageRowIndex(idx int) error {
 
 // GoToGlobalIndex navigates to the selected row index of all page rows
 func (ct *Cointop) GoToGlobalIndex(idx int) error {
-	log.Debug("GoToGlobalIndex()")
+	log.Debugf("GoToGlobalIndex(%d)", idx)
+	target := ct.State.allCoins[idx]
 	l := ct.TableRowsLen()
 	atpage := idx / l
 	ct.SetPage(atpage)
-	rowIndex := idx % l
-	ct.HighlightRow(rowIndex)
 	ct.UpdateTable()
+	// Look for the coin in the current page
+	for i, coin := range ct.State.coins {
+		if coin == target {
+			ct.HighlightRow(i)
+		}
+	}
 	return nil
 }
 
