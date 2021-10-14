@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/miguelmota/gocui"
+	log "github.com/sirupsen/logrus"
 )
 
 // ParseKeys returns string keyboard key as gocui key type
@@ -372,12 +373,17 @@ func (ct *Cointop) SetKeybindings() error {
 	ct.DeleteKeybindingMod(key, mod, "")
 
 	// mouse events
-	ct.SetKeybindingMod(gocui.MouseRelease, gocui.ModNone, ct.Keyfn(ct.MouseRelease), "")
-	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.MouseLeftClick), "")
-	ct.SetKeybindingMod(gocui.MouseMiddle, gocui.ModNone, ct.Keyfn(ct.MouseMiddleClick), "")
-	ct.SetKeybindingMod(gocui.MouseRight, gocui.ModNone, ct.Keyfn(ct.MouseRightClick), "")
+	// ct.SetKeybindingMod(gocui.MouseRelease, gocui.ModNone, ct.Keyfn(ct.MouseRelease), "")
+	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.MouseLeftClick), ct.Views.Table.Name()) // click to focus
+	// ct.SetKeybindingMod(gocui.MouseMiddle, gocui.ModNone, ct.Keyfn(ct.MouseMiddleClick), "")
+	// ct.SetKeybindingMod(gocui.MouseRight, gocui.ModNone, ct.Keyfn(ct.MouseRightClick), "")
 	// ct.SetKeybindingMod(gocui.MouseWheelUp, gocui.ModNone, ct.Keyfn(ct.MouseWheelUp), "")
 	// ct.SetKeybindingMod(gocui.MouseWheelDown, gocui.ModNone, ct.Keyfn(ct.MouseWheelDown), "")
+
+	// clicking table headers sorts table
+	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.TableHeaderMouseLeftClick), ct.Views.TableHeader.Name())
+	// debug mouse clicks
+	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.MouseDebug), "")
 
 	// character key press to select option
 	// TODO: use scrolling table
@@ -386,6 +392,17 @@ func (ct *Cointop) SetKeybindings() error {
 		ct.SetKeybindingMod(alphanumericcharacters[i], gocui.ModNone, ct.Keyfn(ct.SetCurrencyConverstionFn(k)), ct.Views.Menu.Name())
 	}
 
+	return nil
+}
+
+// MouseLeftClickDebug emit a debug message about which View and coordinates are in MouseClick
+// TODO: delete before merge
+func (ct *Cointop) MouseDebug() error {
+	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+	log.Debugf("XXX MouseLeftClick view=%s %d,%d", v.Name(), x, y)
 	return nil
 }
 

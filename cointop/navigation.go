@@ -567,13 +567,7 @@ func (ct *Cointop) MouseRelease() error {
 
 // MouseLeftClick is called on mouse left click event
 func (ct *Cointop) MouseLeftClick() error {
-	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
-	if err != nil {
-		return err
-	}
-	log.Debugf("XXX MouseLeftClick %s %d,%d", v.Name(), x, y)
 	ct.g.SetCursorFromCurrentMouseEvent()
-
 	return nil
 }
 
