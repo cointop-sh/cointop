@@ -3,6 +3,7 @@ package cointop
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -300,4 +301,24 @@ func CurrencySymbol(currency string) string {
 	}
 
 	return "?"
+}
+
+// StatusbarMouseLeftClick is called on mouse left click event
+func (ct *Cointop) ConversionMouseLeftClick() error {
+	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+
+	// Find the menu entry that includes the mouse position
+	line := v.BufferLines()[y]
+	matches := regexp.MustCompile(`\[ . \] \w+ [^\[]+`).FindAllStringIndex(line, -1)
+	for _, match := range matches {
+		if x >= match[0] && x <= match[1] {
+			s := line[match[0]:match[1]]
+			convert := strings.Split(s, " ")[3]
+			return ct.SetCurrencyConverstionFn(convert)()
+		}
+	}
+	return nil
 }

@@ -392,7 +392,7 @@ func (ct *Cointop) SetKeybindings() error {
 	for i, k := range keys {
 		ct.SetKeybindingMod(alphanumericcharacters[i], gocui.ModNone, ct.Keyfn(ct.SetCurrencyConverstionFn(k)), ct.Views.Menu.Name())
 	}
-
+	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.ConversionMouseLeftClick), ct.Views.Menu.Name())
 	return nil
 }
 
@@ -403,7 +403,7 @@ func (ct *Cointop) MouseDebug() error {
 	if err != nil {
 		return err
 	}
-	log.Debugf("XXX MouseLeftClick view=%s %d,%d", v.Name(), x, y)
+	log.Debugf("XXX MouseDebug view=%s %d,%d", v.Name(), x, y)
 	return nil
 }
 
