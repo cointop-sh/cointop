@@ -2,6 +2,8 @@ package cointop
 
 import (
 	"fmt"
+	"regexp"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/cointop-sh/cointop/pkg/open"
@@ -80,6 +82,46 @@ func (ct *Cointop) RefreshRowLink() error {
 
 	url := ct.RowLinkShort()
 	ct.UpdateStatusbar(fmt.Sprintf("%s%s", shortcut, url))
+
+	return nil
+}
+
+// StatusbarMouseLeftClick is called on mouse left click event
+func (ct *Cointop) StatusbarMouseLeftClick() error {
+	_, x, _, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+
+	// Parse the statusbar text to identify hotspots and actions
+	b := make([]byte, 1000)
+	ct.Views.Statusbar.Rewind()
+	if n, err := ct.Views.Statusbar.Read(b); err == nil {
+
+		// Find all the "[X]word" substrings, then look for the one that was clicked
+		matches := regexp.MustCompile(`\[.*?\]\w+`).FindAllIndex(b[:n], -1)
+		for _, match := range matches {
+			if x >= match[0] && x <= match[1] {
+				s := string(b[match[0]:match[1]])
+				word := strings.Split(s, "]")[1]
+
+				// Quit/Return Help Chart Range Search Convert Favorites Portfolio Edit(portfolio) Unfavorite
+				switch word {
+				case "Help":
+					ct.ToggleHelp()
+				case "Search":
+					ct.OpenSearch()
+				case "Convert":
+					ct.ToggleConvertMenu()
+				case "Favorites":
+					ct.SetSelectedView(FavoritesView)
+				case "Portfolio":
+					ct.SetSelectedView(PortfolioView)
+				}
+
+			}
+		}
+	}
 
 	return nil
 }

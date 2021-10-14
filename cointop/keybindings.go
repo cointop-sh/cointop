@@ -382,6 +382,7 @@ func (ct *Cointop) SetKeybindings() error {
 
 	// clicking table headers sorts table
 	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.TableHeaderMouseLeftClick), ct.Views.TableHeader.Name())
+	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.StatusbarMouseLeftClick), ct.Views.Statusbar.Name())
 	// debug mouse clicks
 	ct.SetKeybindingMod(gocui.MouseLeft, gocui.ModNone, ct.Keyfn(ct.MouseDebug), "")
 
