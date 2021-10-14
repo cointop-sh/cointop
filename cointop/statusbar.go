@@ -103,20 +103,28 @@ func (ct *Cointop) StatusbarMouseLeftClick() error {
 		for _, match := range matches {
 			if x >= match[0] && x <= match[1] {
 				s := string(b[match[0]:match[1]])
-				word := strings.Split(s, "]")[1]
+				bits := strings.Split(s, "]")
+				word := bits[len(bits)-1]
 
 				// Quit/Return Help Chart Range Search Convert Favorites Portfolio Edit(portfolio) Unfavorite
 				switch word {
 				case "Help":
 					ct.ToggleHelp()
+				case "Range":
+					// left hand edge of "Range" is Prev, the rest is Next
+					if x-match[0] < 3 {
+						ct.PrevChartRange()
+					} else {
+						ct.NextChartRange()
+					}
 				case "Search":
 					ct.OpenSearch()
 				case "Convert":
 					ct.ToggleConvertMenu()
 				case "Favorites":
-					ct.SetSelectedView(FavoritesView)
+					ct.ToggleSelectedView(FavoritesView)
 				case "Portfolio":
-					ct.SetSelectedView(PortfolioView)
+					ct.ToggleSelectedView(PortfolioView)
 				}
 
 			}
