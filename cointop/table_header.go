@@ -265,7 +265,7 @@ func (ct *Cointop) TableHeaderMouseLeftClick() error {
 	// Figure out which column they clicked on
 	if ct.State.columnLookup[x] != "" {
 		fn := ct.Sortfn(ct.State.columnLookup[x], false)
-		fn(ct.g, ct.Views.Table.Backing())
+		return fn(ct.g, ct.Views.Table.Backing())
 	}
 
 	return nil

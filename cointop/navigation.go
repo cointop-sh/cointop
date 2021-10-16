@@ -560,35 +560,9 @@ func (ct *Cointop) TableScrollRight() error {
 	return nil
 }
 
-// MouseRelease is called on mouse releae event
-func (ct *Cointop) MouseRelease() error {
-	return nil
-}
-
 // MouseLeftClick is called on mouse left click event
 func (ct *Cointop) MouseLeftClick() error {
-	ct.g.SetCursorFromCurrentMouseEvent()
-	return nil
-}
-
-// MouseMiddleClick is called on mouse middle click event
-func (ct *Cointop) MouseMiddleClick() error {
-	return nil
-}
-
-// MouseRightClick is called on mouse right click event
-func (ct *Cointop) MouseRightClick() error {
-	return ct.OpenLink()
-}
-
-// MouseWheelUp is called on mouse wheel up event
-func (ct *Cointop) MouseWheelUp() error {
-	return nil
-}
-
-// MouseWheelDown is called on mouse wheel down event
-func (ct *Cointop) MouseWheelDown() error {
-	return nil
+	return ct.g.SetCursorFromCurrentMouseEvent()
 }
 
 // TableRowsLen returns the number of table row entries
