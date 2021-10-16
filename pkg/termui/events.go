@@ -39,6 +39,8 @@ func evtKbd(e termbox.Event) EvtKbd {
 		mod = "M-"
 	}
 	if e.Ch == 0 {
+		// Doesn't appear to be used by cointop
+
 		// TODO: FIXME
 		// if e.Key > 0xFFFF-12 {
 		// 	k = "<f" + strconv.Itoa(0xFFFF-int(e.Key)+1) + ">"
@@ -47,11 +49,12 @@ func evtKbd(e termbox.Event) EvtKbd {
 		// 	k = ks[0xFFFF-int(e.Key)-12]
 		// }
 
+		// TODO: FIXME
 		if e.Key <= 0x7F {
 			pre = "C-"
 			k = fmt.Sprintf("%v", 'a'-1+int(e.Key))
 			kmap := map[termbox.Key][2]string{
-				// termbox.KeyCtrlSpace:     {"C-", "<space>"}, // TODO: FIXME
+				termbox.KeyCtrlSpace:     {"C-", "<space>"}, // TODO: FIXME
 				termbox.KeyBackspace:     {"", "<backspace>"},
 				termbox.KeyTab:           {"", "<tab>"},
 				termbox.KeyEnter:         {"", "<enter>"},
@@ -59,7 +62,7 @@ func evtKbd(e termbox.Event) EvtKbd {
 				termbox.KeyCtrlBackslash: {"C-", "\\"},
 				termbox.KeyCtrlSlash:     {"C-", "/"},
 				termbox.KeySpace:         {"", "<space>"},
-				// termbox.KeyCtrl8:         {"C-", "8"}, // TODO: FIXME
+				termbox.KeyCtrl8:         {"C-", "8"}, // TODO: FIXME
 			}
 			if sk, ok := kmap[e.Key]; ok {
 				pre = sk[0]
