@@ -247,11 +247,11 @@ func (ct *Cointop) UpdateTableHeader() error {
 		columnLookup = append(columnLookup, "")
 	}
 
+	ct.State.columnLookup = columnLookup
+
 	ct.UpdateUI(func() error {
 		return ct.Views.TableHeader.Update(strings.Join(headers, ""))
 	})
-
-	ct.State.columnLookup = columnLookup
 
 	return nil
 }

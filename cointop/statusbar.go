@@ -103,8 +103,7 @@ func (ct *Cointop) StatusbarMouseLeftClick() error {
 		for _, match := range matches {
 			if x >= match[0] && x <= match[1] {
 				s := string(b[match[0]:match[1]])
-				bits := strings.Split(s, "]")
-				word := bits[len(bits)-1]
+				word := strings.Split(s, "]")[1] // matches the \w+ from regex
 
 				// Quit/Return Help Chart Range Search Convert Favorites Portfolio Edit(portfolio) Unfavorite
 				switch word {
