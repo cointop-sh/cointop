@@ -290,6 +290,7 @@ const (
 	KeyPgup           = Key(tcell.KeyPgUp)
 	KeySpace          = Key(tcell.Key(' '))
 	KeyTilde          = Key(tcell.Key('~'))
+	KeyCtrlSpace      = Key(tcell.KeyCtrlSpace)
 
 	// The following assignments are provided for termbox
 	// compatibility.  Their use in applications is discouraged.
@@ -301,12 +302,14 @@ const (
 	MouseRelease      = Key(tcell.KeyF60)
 	MouseWheelUp      = Key(tcell.KeyF59)
 	MouseWheelDown    = Key(tcell.KeyF58)
-	KeyCtrl2          = Key(tcell.KeyNUL) // termbox defines theses
+	KeyCtrlTilde      = Key(tcell.KeyCtrlSpace) // termbox defines a bunch of weird ones, don't use them
+	KeyCtrl2          = Key(tcell.KeyNUL)
 	KeyCtrl3          = Key(tcell.KeyEscape)
 	KeyCtrl4          = Key(tcell.KeyCtrlBackslash)
 	KeyCtrl5          = Key(tcell.KeyCtrlRightSq)
 	KeyCtrl6          = Key(tcell.KeyCtrlCarat)
 	KeyCtrl7          = Key(tcell.KeyCtrlUnderscore)
+	KeyCtrl8          = Key(tcell.KeyDEL)
 	KeyCtrlSlash      = Key(tcell.KeyCtrlUnderscore)
 	KeyCtrlRsqBracket = Key(tcell.KeyCtrlRightSq)
 	KeyCtrlBackslash  = Key(tcell.KeyCtrlBackslash)
