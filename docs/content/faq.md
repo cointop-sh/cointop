@@ -493,3 +493,14 @@ draft: false
   ```bash
   GO111MODULE=on go get github.com/cointop-sh/cointop
   ```
+
+## How can I get more information when something is going wrong?
+
+  Cointop creates a logfile at `/tmp/cointop.log`. Normally nothing is written to this, but if you set the environment variable
+  `DEBUG=1` cointop will write a lot of output describing its operation.  Furthermore, if you also set `DEBUG_HTTP=1` it will 
+  emit lots about every HTTP request that cointop makes to coingecko (backend).  Developers may ask for this information
+  to help diagnose any problems you may experience.
+
+  ```bash
+  DEBUG=1 DEBUG_HTTP=1 cointop
+  ```
