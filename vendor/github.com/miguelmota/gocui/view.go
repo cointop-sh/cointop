@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/miguelmota/termbox-go"
+	"github.com/cointop-sh/cointop/pkg/termbox"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor

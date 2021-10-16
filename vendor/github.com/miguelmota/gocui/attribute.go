@@ -4,7 +4,7 @@
 
 package gocui
 
-import "github.com/miguelmota/termbox-go"
+import "github.com/cointop-sh/cointop/pkg/termbox"
 
 // Attribute represents a terminal attribute, like color, font style, etc. They
 // can be combined using bitwise OR (|). Note that it is not possible to

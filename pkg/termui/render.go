@@ -18,8 +18,8 @@ import (
 
 	"bytes"
 
+	tm "github.com/cointop-sh/cointop/pkg/termbox"
 	"github.com/maruel/panicparse/stack"
-	tm "github.com/miguelmota/termbox-go"
 )
 
 // Bufferer should be implemented by all renderable components.

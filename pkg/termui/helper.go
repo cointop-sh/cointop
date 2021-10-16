@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"strings"
 
-	tm "github.com/miguelmota/termbox-go"
+	tm "github.com/cointop-sh/cointop/pkg/termbox"
 
 	rw "github.com/mattn/go-runewidth"
 )
