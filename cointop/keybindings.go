@@ -35,8 +35,8 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 				key = gocui.KeyCtrl6
 			case "7":
 				key = gocui.KeyCtrl7
-			// case "8":
-			// 	key = gocui.KeyCtrl8
+			case "8":
+				key = gocui.KeyCtrl8
 			case "9":
 				key = '9'
 			case "a":
@@ -91,14 +91,14 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, gocui.Modifier) {
 				key = gocui.KeyCtrlY
 			case "z":
 				key = gocui.KeyCtrlZ
-			// case "~":
-			// 	key = gocui.KeyCtrlTilde
+			case "~":
+				key = gocui.KeyCtrlTilde
 			case "[", "lsqrbracket", "leftsqrbracket", "leftsquarebracket":
 				key = gocui.KeyCtrlLsqBracket
 			case "]", "rsqrbracket", "rightsqrbracket", "rightsquarebracket":
 				key = gocui.KeyCtrlRsqBracket
-			// case "space":
-			// 	key = gocui.KeyCtrlSpace
+			case "space":
+				key = gocui.KeyCtrlSpace
 			case "backslash":
 				key = gocui.KeyCtrlBackslash
 			case "underscore":
