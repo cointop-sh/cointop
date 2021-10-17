@@ -504,3 +504,5 @@ draft: false
   ```bash
   DEBUG=1 DEBUG_HTTP=1 cointop
   ```
+
+  If you set environment variable `DEBUG_FILE` you can explicitly provide a logfile location, rather than `/tmp/cointop.log`
