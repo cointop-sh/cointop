@@ -53,6 +53,7 @@ func NormalizePath(path string) string {
 	userHome := UserPreferredHomeDir()
 	userConfigHome := UserPreferredConfigDir()
 	userCacheHome := UserPreferredCacheDir()
+	userTempDir := os.TempDir()
 
 	// expand tilde
 	if strings.HasPrefix(path, "~/") {
@@ -62,6 +63,7 @@ func NormalizePath(path string) string {
 	path = strings.Replace(path, ":HOME:", userHome, -1)
 	path = strings.Replace(path, ":PREFERRED_CONFIG_HOME:", userConfigHome, -1)
 	path = strings.Replace(path, ":PREFERRED_CACHE_HOME:", userCacheHome, -1)
+	path = strings.Replace(path, ":PREFERRED_TEMP_DIR:", userTempDir, -1)
 	path = strings.Replace(path, "/", string(filepath.Separator), -1)
 
 	return filepath.Clean(path)
