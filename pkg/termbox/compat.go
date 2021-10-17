@@ -34,7 +34,6 @@ func Init() error {
 		return e
 	} else {
 		screen = s
-		s.EnableMouse()
 		return nil
 	}
 }
@@ -151,8 +150,11 @@ const (
 	InputMouse
 )
 
-// SetInputMode does not do anything in this version.
+// SetInputMode enables mouse if requested
 func SetInputMode(mode InputMode) InputMode {
+	if mode&InputMouse > 0 {
+		screen.EnableMouse()
+	}
 	// We don't do anything else right now
 	return InputEsc
 }
@@ -381,7 +383,7 @@ func makeEvent(tev tcell.Event) Event {
 			MouseX: x,
 			MouseY: y,
 			Key:    key,
-			Mod:    0, // tcell.ModNone, // TODO: check out  tev.Modifiers()
+			Mod:    0, // not currently supported
 		}
 	default:
 		return Event{Type: EventNone}
