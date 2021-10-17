@@ -34,6 +34,7 @@ func Init() error {
 		return e
 	} else {
 		screen = s
+		s.EnableMouse()
 		return nil
 	}
 }
@@ -356,6 +357,26 @@ func makeEvent(tev tcell.Event) Event {
 			Key:  Key(k),
 			Ch:   ch,
 			Mod:  Modifier(mod),
+		}
+	case *tcell.EventMouse:
+		x, y := tev.Position()
+		button := tev.Buttons()
+
+		// Don't worry about combo buttons for now
+		key := Key(tcell.KeyNUL)
+		if button&tcell.Button1 > 0 {
+			key = MouseLeft
+		} else if button&tcell.Button2 > 0 {
+			key = MouseRight
+		} else if button&tcell.Button3 > 0 {
+			key = MouseMiddle
+		}
+		return Event{
+			Type:   EventMouse,
+			MouseX: x,
+			MouseY: y,
+			Key:    key,
+			Mod:    0, // tcell.ModNone, // TODO: check out  tev.Modifiers()
 		}
 	default:
 		return Event{Type: EventNone}
