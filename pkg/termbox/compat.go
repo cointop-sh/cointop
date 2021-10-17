@@ -191,10 +191,21 @@ func Sync() error {
 	return nil
 }
 
+// scaledColor returns a Color that is proportional to the x/y coordinates
+func scaledColor(x, y int) tcell.Color {
+	w, h := screen.Size()
+	blu := int32(255 * float64(x) / float64(w))
+	grn := int32(255 * float64(y) / float64(h))
+	red := int32(200)
+	return tcell.NewRGBColor(red, grn, blu)
+}
+
 // SetCell sets the character cell at a given location to the given
 // content (rune) and attributes.
 func SetCell(x, y int, ch rune, fg, bg Attribute) {
 	st := mkStyle(fg, bg)
+	// Set the foreground color to a scaled version of the coordinates
+	st = st.Foreground(scaledColor(x, y))
 	screen.SetContent(x, y, ch, nil, st)
 }
 
