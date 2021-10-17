@@ -370,6 +370,10 @@ func makeEvent(tev tcell.Event) Event {
 			key = MouseRight
 		} else if button&tcell.Button3 > 0 {
 			key = MouseMiddle
+		} else if button&tcell.WheelUp > 0 {
+			key = MouseWheelUp
+		} else if button&tcell.WheelDown > 0 {
+			key = MouseWheelDown
 		}
 		return Event{
 			Type:   EventMouse,
