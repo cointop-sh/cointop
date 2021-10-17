@@ -361,7 +361,6 @@ func makeEvent(tev tcell.Event) Event {
 	case *tcell.EventMouse:
 		x, y := tev.Position()
 		button := tev.Buttons()
-
 		// Don't worry about combo buttons for now
 		key := Key(tcell.KeyNUL)
 		if button&tcell.Button1 > 0 {
@@ -374,6 +373,8 @@ func makeEvent(tev tcell.Event) Event {
 			key = MouseWheelUp
 		} else if button&tcell.WheelDown > 0 {
 			key = MouseWheelDown
+		} else {
+			return Event{Type: EventNone}
 		}
 		return Event{
 			Type:   EventMouse,
