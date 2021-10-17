@@ -64,7 +64,7 @@ func (ct *Cointop) GetFavoritesSlice() []*Coin {
 		}
 	}
 
-	sort.Slice(sliced, func(i, j int) bool {
+	sort.SliceStable(sliced, func(i, j int) bool {
 		return sliced[i].MarketCap > sliced[j].MarketCap
 	})
 

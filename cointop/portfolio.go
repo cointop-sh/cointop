@@ -574,7 +574,7 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 		sliced = append(sliced, coin)
 	}
 
-	sort.Slice(sliced, func(i, j int) bool {
+	sort.SliceStable(sliced, func(i, j int) bool {
 		return sliced[i].Balance > sliced[j].Balance
 	})
 
