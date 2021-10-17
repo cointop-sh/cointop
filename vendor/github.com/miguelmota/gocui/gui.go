@@ -66,6 +66,9 @@ type Gui struct {
 	// If ASCII is true then use ASCII instead of unicode to draw the
 	// interface. Using ASCII is more portable.
 	ASCII bool
+
+	// The current event while in the handlers.
+	CurrentEvent *termbox.Event
 }
 
 // NewGui returns a new Gui object with a given output mode.
@@ -601,19 +604,41 @@ func (g *Gui) onKey(ev *termbox.Event) error {
 			g.currentView.Editor.Edit(g.currentView, Key(ev.Key), ev.Ch, Modifier(ev.Mod))
 		}
 	case termbox.EventMouse:
-		mx, my := ev.MouseX, ev.MouseY
-		v, err := g.ViewByPosition(mx, my)
+		v, _, _, err := g.GetViewRelativeMousePosition(ev)
 		if err != nil {
 			break
 		}
-		if err := v.SetCursor(mx-v.x0-1, my-v.y0-1); err != nil {
-			return err
-		}
+		// If the key-binding wants to move the cursor, it should call SetCursorFromCurrentMouseEvent()
+		// Not all mouse events will want to do this (eg: scroll wheel)
+		g.CurrentEvent = ev
 		if _, err := g.execKeybindings(v, ev); err != nil {
 			return err
 		}
 	}
 
+	return nil
+}
+
+// GetViewRelativeMousePosition returns the View and relative x/y for the provided mouse event.
+func (g *Gui) GetViewRelativeMousePosition(ev *termbox.Event) (*View, int, int, error) {
+	// TODO: check ev.Type == termbox.EventMouse ?
+	mx, my := ev.MouseX, ev.MouseY
+	v, err := g.ViewByPosition(mx, my)
+	if err != nil {
+		return nil, 0, 0, err
+	}
+	return v, mx - v.x0 - 1, my - v.y0 - 1, nil
+}
+
+// SetCursorFromCurrentMouseEvent updates the cursor position based on the mouse coordinates.
+func (g *Gui) SetCursorFromCurrentMouseEvent() error {
+	v, x, y, err := g.GetViewRelativeMousePosition(g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+	if err := v.SetCursor(x, y); err != nil {
+		return err
+	}
 	return nil
 }
 

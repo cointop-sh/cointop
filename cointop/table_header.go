@@ -184,6 +184,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 
 	cols := ct.GetActiveTableHeaders()
 	var headers []string
+	var columnLookup []string // list of column-names or ""
 	for i, col := range cols {
 		hc, ok := HeaderColumns[col]
 		if !ok {
@@ -227,18 +228,45 @@ func (ct *Cointop) UpdateTableHeader() error {
 		if leftAlign {
 			padfn = pad.Right
 		}
+		padded := padfn(label, width+(1-padLeft), " ")
 		colStr := fmt.Sprintf(
 			"%s%s%s",
 			strings.Repeat(" ", padLeft),
-			colorfn(padfn(label, width+(1-padLeft), " ")),
+			colorfn(padded),
 			strings.Repeat(" ", 1),
 		)
 		headers = append(headers, colStr)
+
+		// Create a lookup table (pos to column)
+		for i := 0; i < padLeft; i++ {
+			columnLookup = append(columnLookup, "")
+		}
+		for i := 0; i < utf8.RuneCountInString(padded); i++ {
+			columnLookup = append(columnLookup, hc.Slug)
+		}
+		columnLookup = append(columnLookup, "")
 	}
+
+	ct.State.columnLookup = columnLookup
 
 	ct.UpdateUI(func() error {
 		return ct.Views.TableHeader.Update(strings.Join(headers, ""))
 	})
+
+	return nil
+}
+
+// MouseLeftClick is called on mouse left click event
+func (ct *Cointop) TableHeaderMouseLeftClick() error {
+	_, x, _, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+	// Figure out which column they clicked on
+	if ct.State.columnLookup[x] != "" {
+		fn := ct.Sortfn(ct.State.columnLookup[x], false)
+		return fn(ct.g, ct.Views.Table.Backing())
+	}
 
 	return nil
 }

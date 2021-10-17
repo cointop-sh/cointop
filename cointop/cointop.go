@@ -47,6 +47,7 @@ type State struct {
 	defaultView        string
 	defaultChartRange  string
 	maxChartWidth      int
+	columnLookup       []string
 
 	favorites                  map[string]bool
 	favoritesTableColumns      []string
