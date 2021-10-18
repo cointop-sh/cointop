@@ -3,7 +3,7 @@ package ui
 import (
 	"fmt"
 
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 )
 
 // IView is the view interface

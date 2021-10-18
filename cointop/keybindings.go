@@ -3,7 +3,7 @@ package cointop
 import (
 	"strings"
 
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	log "github.com/sirupsen/logrus"
 )
 

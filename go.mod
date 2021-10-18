@@ -16,7 +16,6 @@ require (
 	github.com/maruel/panicparse v1.6.1
 	github.com/mattn/go-runewidth v0.0.13
 	github.com/miguelmota/go-coinmarketcap v0.1.8
-	github.com/miguelmota/gocui v0.4.2
 	github.com/mitchellh/go-wordwrap v1.0.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible

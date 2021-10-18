@@ -120,9 +120,6 @@ github.com/mattn/go-runewidth
 github.com/miguelmota/go-coinmarketcap/pro/v1
 github.com/miguelmota/go-coinmarketcap/v2
 github.com/miguelmota/go-coinmarketcap/v2/types
-# github.com/miguelmota/gocui v0.4.2
-## explicit; go 1.13
-github.com/miguelmota/gocui
 # github.com/mitchellh/go-wordwrap v1.0.1
 ## explicit; go 1.14
 github.com/mitchellh/go-wordwrap

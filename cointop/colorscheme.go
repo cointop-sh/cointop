@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	fcolor "github.com/fatih/color"
-	"github.com/miguelmota/gocui"
 	"github.com/tomnomnom/xtermcolor"
 )
 

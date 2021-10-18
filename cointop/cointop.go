@@ -13,10 +13,11 @@ import (
 	"github.com/cointop-sh/cointop/pkg/api/types"
 	"github.com/cointop-sh/cointop/pkg/cache"
 	"github.com/cointop-sh/cointop/pkg/filecache"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	"github.com/cointop-sh/cointop/pkg/pathutil"
 	"github.com/cointop-sh/cointop/pkg/table"
 	"github.com/cointop-sh/cointop/pkg/ui"
-	"github.com/miguelmota/gocui"
+
 	log "github.com/sirupsen/logrus"
 )
 

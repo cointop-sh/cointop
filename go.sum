@@ -246,8 +246,6 @@ github.com/mgutz/ansi v0.0.0-20200706080929-d51e80ef957d/go.mod h1:01TrycV0kFyex
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miguelmota/go-coinmarketcap v0.1.8 h1:rZhB7xs1j7qxxd1zftjADhAv6ECJQVhBom1dh3zURKY=
 github.com/miguelmota/go-coinmarketcap v0.1.8/go.mod h1:hBjej1IiB5+pfj+0cZhnxRkAc2bgky8qWLhCJTQ3zjw=
-github.com/miguelmota/gocui v0.4.2 h1:nMYnYn3RjV7FlWFcidQa9eAkX3kT7XMI6yJMxEkAz6s=
-github.com/miguelmota/gocui v0.4.2/go.mod h1:wVtmhuLR+VAS9VRBIJZBNJS9IgH+9QOZ/m/MvRarOZ4=
 github.com/mitchellh/cli v1.0.0/go.mod h1:hNIlj7HEI86fIcpObd7a0FcrxTWetlwJDGcceTlRvqc=
 github.com/mitchellh/go-homedir v1.0.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/mitchellh/go-testing-interface v1.0.0/go.mod h1:kRemZodwjscx+RGhAo8eIhFbs2+BFgRtFPeD/KE+zxI=

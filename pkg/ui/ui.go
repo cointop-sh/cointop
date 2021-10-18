@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 )
 
 // UI is the UI view struct
