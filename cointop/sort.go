@@ -23,7 +23,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 	if len(list) < 2 {
 		return
 	}
-	sort.Slice(list[:], func(i, j int) bool {
+	sort.SliceStable(list[:], func(i, j int) bool {
 		if ct.State.sortDesc {
 			i, j = j, i
 		}
