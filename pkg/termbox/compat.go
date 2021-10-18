@@ -152,7 +152,7 @@ const (
 
 // SetInputMode enables mouse if requested
 func SetInputMode(mode InputMode) InputMode {
-	if mode&InputMouse > 0 {
+	if mode&InputMouse != 0 {
 		screen.EnableMouse()
 	}
 	// We don't do anything else right now
@@ -365,15 +365,15 @@ func makeEvent(tev tcell.Event) Event {
 		button := tev.Buttons()
 		// Don't worry about combo buttons for now
 		key := Key(tcell.KeyNUL)
-		if button&tcell.Button1 > 0 {
+		if button&tcell.Button1 != 0 {
 			key = MouseLeft
-		} else if button&tcell.Button2 > 0 {
+		} else if button&tcell.Button2 != 0 {
 			key = MouseRight
-		} else if button&tcell.Button3 > 0 {
+		} else if button&tcell.Button3 != 0 {
 			key = MouseMiddle
-		} else if button&tcell.WheelUp > 0 {
+		} else if button&tcell.WheelUp != 0 {
 			key = MouseWheelUp
-		} else if button&tcell.WheelDown > 0 {
+		} else if button&tcell.WheelDown != 0 {
 			key = MouseWheelDown
 		} else {
 			return Event{Type: EventNone}
