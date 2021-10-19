@@ -31,16 +31,16 @@ const ( // TODO: die
 )
 
 // Gui represents the whole User Interface, including the views, layouts
-// and keybindings.
+// and eventBindings.
 type Gui struct {
-	tbEvents    chan tcell.Event
-	userEvents  chan userEvent
-	views       []*View
-	currentView *View
-	managers    []Manager
-	keybindings []*keybinding
-	maxX, maxY  int
-	outputMode  OutputMode // TODO: die
+	tbEvents      chan tcell.Event
+	userEvents    chan userEvent
+	views         []*View
+	currentView   *View
+	managers      []Manager
+	eventBindings []*eventBinding
+	maxX, maxY    int
+	outputMode    OutputMode // TODO: die
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
@@ -258,63 +258,70 @@ func (g *Gui) CurrentView() *View {
 	return g.currentView
 }
 
-// SetKeybinding creates a new keybinding. If viewname equals to ""
-// (empty string) then the keybinding will apply to all views. key must
+// SetKeybinding creates a new eventBinding. If viewname equals to ""
+// (empty string) then the eventBinding will apply to all views. key must
 // be a rune or a Key.
 // TODO: split into key/mouse bindings?
 func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) error {
-	var kb *keybinding
+	//var kb *eventBinding
 
 	// k, ch, err := getKey(key)
 	// if err != nil {
 	// 	return err
 	// }
 	// TODO: get rid of this ugly mess
-	switch key {
-	case termbox.MouseLeft:
-		kb = newMouseBinding(viewname, tcell.Button1, mod, handler)
-	case termbox.MouseMiddle:
-		kb = newMouseBinding(viewname, tcell.Button3, mod, handler)
-	case termbox.MouseRight:
-		kb = newMouseBinding(viewname, tcell.Button2, mod, handler)
-	case termbox.MouseWheelUp:
-		kb = newMouseBinding(viewname, tcell.WheelUp, mod, handler)
-	case termbox.MouseWheelDown:
-		kb = newMouseBinding(viewname, tcell.WheelDown, mod, handler)
-	default:
-		kb = newKeybinding(viewname, key, ch, mod, handler)
-	}
-	g.keybindings = append(g.keybindings, kb)
+	//switch key {
+	//case termbox.MouseLeft:
+	//	kb = newMouseBinding(viewname, tcell.Button1, mod, handler)
+	//case termbox.MouseMiddle:
+	//	kb = newMouseBinding(viewname, tcell.Button3, mod, handler)
+	//case termbox.MouseRight:
+	//	kb = newMouseBinding(viewname, tcell.Button2, mod, handler)
+	//case termbox.MouseWheelUp:
+	//	kb = newMouseBinding(viewname, tcell.WheelUp, mod, handler)
+	//case termbox.MouseWheelDown:
+	//	kb = newMouseBinding(viewname, tcell.WheelDown, mod, handler)
+	//default:
+	//	kb = newKeybinding(viewname, key, ch, mod, handler)
+	//}
+	kb := newKeybinding(viewname, key, ch, mod, handler)
+	g.eventBindings = append(g.eventBindings, kb)
 	return nil
 }
 
-// DeleteKeybinding deletes a keybinding.
+func (g *Gui) SetMousebinding(viewname string, btn tcell.ButtonMask, mod tcell.ModMask, handler func(*Gui, *View) error) error {
+	kb := newMouseBinding(viewname, btn, mod, handler)
+	g.eventBindings = append(g.eventBindings, kb)
+	return nil
+}
+
+// DeleteKeybinding deletes a eventBinding.
 func (g *Gui) DeleteKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask) error {
 	// k, ch, err := getKey(key)
 	// if err != nil {
 	// 	return err
 	// }
 
-	for i, kb := range g.keybindings {
+	for i, kb := range g.eventBindings {
 		if kbe, ok := kb.ev.(*tcell.EventKey); ok {
 			if kb.viewName == viewname && kbe.Rune() == ch && kbe.Key() == key && kbe.Modifiers() == mod {
-				g.keybindings = append(g.keybindings[:i], g.keybindings[i+1:]...)
+				g.eventBindings = append(g.eventBindings[:i], g.eventBindings[i+1:]...)
 				return nil
 			}
 		}
 	}
-	return errors.New("keybinding not found")
+	return errors.New("eventBinding not found")
 }
 
-// DeleteKeybindings deletes all keybindings of view.
+// DeleteKeybindings deletes all eventBindings of view.
 func (g *Gui) DeleteKeybindings(viewname string) {
-	var s []*keybinding
-	for _, kb := range g.keybindings {
+	var s []*eventBinding
+	for _, kb := range g.eventBindings {
 		if kb.viewName != viewname {
 			s = append(s, kb)
 		}
 	}
-	g.keybindings = s
+	g.eventBindings = s
 }
 
 // getKey takes an empty interface with a key and returns the corresponding
@@ -362,18 +369,18 @@ func (f ManagerFunc) Layout(g *Gui) error {
 }
 
 // SetManager sets the given GUI managers. It deletes all views and
-// keybindings.
+// eventBindings.
 func (g *Gui) SetManager(managers ...Manager) {
 	g.managers = managers
 	g.currentView = nil
 	g.views = nil
-	g.keybindings = nil
+	g.eventBindings = nil
 
 	go func() { g.tbEvents <- tcell.NewEventResize(0, 0) }()
 }
 
 // SetManagerFunc sets the given manager function. It deletes all views and
-// keybindings.
+// eventBindings.
 func (g *Gui) SetManagerFunc(manager func(*Gui) error) {
 	g.SetManager(ManagerFunc(manager))
 }
@@ -612,13 +619,13 @@ func (g *Gui) draw(v *View) error {
 	return nil
 }
 
-// onEvent manages key/mouse events. A keybinding handler is called when
-// a key-press or mouse event satisfies a configured keybinding. Furthermore,
+// onEvent manages key/mouse events. A eventBinding handler is called when
+// a key-press or mouse event satisfies a configured eventBinding. Furthermore,
 // currentView's internal buffer is modified if currentView.Editable is true.
 func (g *Gui) onEvent(ev tcell.Event) error {
 	switch tev := ev.(type) {
 	case *tcell.EventKey:
-		matched, err := g.execKeybindings(g.currentView, ev)
+		matched, err := g.execEventBindings(g.currentView, ev)
 		if err != nil {
 			return err
 		}
@@ -636,7 +643,7 @@ func (g *Gui) onEvent(ev tcell.Event) error {
 		// If the key-binding wants to move the cursor, it should call SetCursorFromCurrentMouseEvent()
 		// Not all mouse events will want to do this (eg: scroll wheel)
 		g.CurrentEvent = ev
-		if _, err := g.execKeybindings(v, g.CurrentEvent); err != nil {
+		if _, err := g.execEventBindings(v, g.CurrentEvent); err != nil {
 			return err
 		}
 	}
@@ -669,18 +676,16 @@ func (g *Gui) SetCursorFromCurrentMouseEvent() error {
 	return nil
 }
 
-// execKeybindings executes the keybinding handlers that match the passed view
+// execEventBindings executes the handlers that match the passed view
 // and event. The value of matched is true if there is a match and no errors.
 // TODO: rename to more generic - it's not just keys (incl mouse)
-func (g *Gui) execKeybindings(v *View, xev tcell.Event) (matched bool, err error) {
-	// log.Debugf("XXX hunting for k=%d c=%d mod=%d", ev.Key, ev.Ch, ev.Mod)
+func (g *Gui) execEventBindings(v *View, xev tcell.Event) (matched bool, err error) {
 	matched = false
-	for _, kb := range g.keybindings {
+	for _, kb := range g.eventBindings {
 		if kb.handler == nil {
 			continue
 		}
 		if kb.matchEvent(xev) && kb.matchView(v) {
-			// log.Debugf("XXX dispatching %s", ev)
 			if err := kb.handler(g, v); err != nil {
 				return false, err
 			}

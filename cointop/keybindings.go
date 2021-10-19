@@ -99,10 +99,6 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	// 	key = tcell.KeyEnd
 	case "\\\\":
 		key = '\\'
-	case "scrollup":
-		key = gocui.MouseWheelUp // TODO: change to mouse event
-	case "scrolldown":
-		key = gocui.MouseWheelDown // TODO: change to mouse event
 	}
 
 	if key == nil {
@@ -313,13 +309,16 @@ func (ct *Cointop) SetKeybindings() error {
 	// ct.DeleteKeybindingMod(key, mod, "")
 
 	// mouse events
-	ct.SetKeybindingMod(gocui.MouseLeft, tcell.ModNone, ct.Keyfn(ct.MouseLeftClick), ct.Views.Table.Name()) // click to focus
+	ct.SetMousebindingMod(tcell.Button1, tcell.ModNone, ct.Keyfn(ct.MouseLeftClick), ct.Views.Table.Name()) // click to focus
 
 	// clicking table headers sorts table
-	ct.SetKeybindingMod(gocui.MouseLeft, tcell.ModNone, ct.Keyfn(ct.TableHeaderMouseLeftClick), ct.Views.TableHeader.Name())
-	ct.SetKeybindingMod(gocui.MouseLeft, tcell.ModNone, ct.Keyfn(ct.StatusbarMouseLeftClick), ct.Views.Statusbar.Name())
+	ct.SetMousebindingMod(tcell.Button1, tcell.ModNone, ct.Keyfn(ct.TableHeaderMouseLeftClick), ct.Views.TableHeader.Name())
+	ct.SetMousebindingMod(tcell.Button1, tcell.ModNone, ct.Keyfn(ct.StatusbarMouseLeftClick), ct.Views.Statusbar.Name())
 	// debug mouse clicks
-	ct.SetKeybindingMod(gocui.MouseLeft, tcell.ModNone, ct.Keyfn(ct.MouseDebug), "")
+	ct.SetMousebindingMod(tcell.Button1, tcell.ModNone, ct.Keyfn(ct.MouseDebug), "")
+
+	ct.SetMousebindingMod(tcell.WheelUp, tcell.ModNone, ct.Keyfn(ct.CursorUpOrPreviousPage), ct.Views.Table.Name())
+	ct.SetMousebindingMod(tcell.WheelDown, tcell.ModNone, ct.Keyfn(ct.CursorDownOrNextPage), ct.Views.Table.Name())
 
 	// character key press to select option
 	// TODO: use scrolling table
@@ -327,7 +326,7 @@ func (ct *Cointop) SetKeybindings() error {
 	for i, k := range keys {
 		ct.SetKeybindingMod(alphanumericcharacters[i], tcell.ModNone, ct.Keyfn(ct.SetCurrencyConverstionFn(k)), ct.Views.Menu.Name())
 	}
-	ct.SetKeybindingMod(gocui.MouseLeft, tcell.ModNone, ct.Keyfn(ct.ConversionMouseLeftClick), ct.Views.Menu.Name())
+	ct.SetMousebindingMod(tcell.Button1, tcell.ModNone, ct.Keyfn(ct.ConversionMouseLeftClick), ct.Views.Menu.Name())
 	return nil
 }
 
@@ -344,7 +343,7 @@ func (ct *Cointop) MouseDebug() error {
 
 // SetKeybindingMod sets the keybinding modifier key
 func (ct *Cointop) SetKeybindingMod(key interface{}, mod tcell.ModMask, callback func(g *gocui.Gui, v *gocui.View) error, view string) error {
-	// TODO: take EventKey
+	// TODO: take EventKey?
 	var err error
 	switch t := key.(type) {
 	case tcell.Key:
@@ -353,6 +352,11 @@ func (ct *Cointop) SetKeybindingMod(key interface{}, mod tcell.ModMask, callback
 		err = ct.g.SetKeybinding(view, tcell.KeyRune, t, mod, callback)
 	}
 	return err
+}
+
+// SetMousebindingMod adds a binding for a mouse eventdef
+func (ct *Cointop) SetMousebindingMod(btn tcell.ButtonMask, mod tcell.ModMask, callback func(g *gocui.Gui, v *gocui.View) error, view string) error {
+	return ct.g.SetMousebinding(view, btn, mod, callback)
 }
 
 // DeleteKeybinding ...

@@ -42,7 +42,7 @@ type View struct {
 	Editable bool
 
 	// Editor allows to define the editor that manages the edition mode,
-	// including keybindings or cursor behaviour. DefaultEditor is used by
+	// including eventBindings or cursor behaviour. DefaultEditor is used by
 	// default.
 	Editor Editor
 

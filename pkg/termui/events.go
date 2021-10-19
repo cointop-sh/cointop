@@ -37,7 +37,7 @@ func evtKbd(e tcell.EventKey) EvtKbd {
 	pre := ""
 	mod := ""
 
-	if e.Modifiers() == termbox.ModAlt {
+	if e.Modifiers() == tcell.ModAlt {
 		mod = "M-"
 	}
 	if e.Rune() == 0 {

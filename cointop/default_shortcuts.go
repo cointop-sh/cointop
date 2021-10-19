@@ -85,7 +85,5 @@ func DefaultShortcuts() map[string]string {
 		"<":          "scroll_left",
 		"+":          "show_price_alert_add_menu",
 		"\\\\":       "toggle_table_fullscreen",
-		"scrollup":   "move_up_or_previous_page",
-		"scrolldown": "move_down_or_next_page",
 	}
 }

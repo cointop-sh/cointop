@@ -5,21 +5,19 @@
 package gocui
 
 import (
-	"github.com/cointop-sh/cointop/pkg/termbox"
 	"github.com/gdamore/tcell/v2"
 )
 
-// Keybidings are used to link a given key-press event with a handler.
-type keybinding struct {
+// eventBinding are used to link a given key-press event with a handler.
+type eventBinding struct {
 	viewName string
 	ev       tcell.Event // ignore the Time
 	handler  func(*Gui, *View) error
 }
 
-// newKeybinding returns a new Keybinding object.
-func newKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) (kb *keybinding) {
-	// TODO: take Event
-	kb = &keybinding{
+// newKeybinding returns a new eventBinding object for a key event.
+func newKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) (kb *eventBinding) {
+	kb = &eventBinding{
 		viewName: viewname,
 		ev:       tcell.NewEventKey(key, ch, mod),
 		handler:  handler,
@@ -27,8 +25,9 @@ func newKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, h
 	return kb
 }
 
-func newMouseBinding(viewname string, btn tcell.ButtonMask, mod tcell.ModMask, handler func(*Gui, *View) error) (kb *keybinding) {
-	kb = &keybinding{
+// newKeybinding returns a new eventBinding object for a mouse event.
+func newMouseBinding(viewname string, btn tcell.ButtonMask, mod tcell.ModMask, handler func(*Gui, *View) error) (kb *eventBinding) {
+	kb = &eventBinding{
 		viewName: viewname,
 		ev:       tcell.NewEventMouse(0, 0, btn, mod),
 		handler:  handler,
@@ -36,7 +35,7 @@ func newMouseBinding(viewname string, btn tcell.ButtonMask, mod tcell.ModMask, h
 	return kb
 }
 
-func (kb *keybinding) matchEvent(e tcell.Event) bool {
+func (kb *eventBinding) matchEvent(e tcell.Event) bool {
 	// TODO: check mask not ==mod?
 	switch tev := e.(type) {
 	case *tcell.EventKey:
@@ -56,23 +55,10 @@ func (kb *keybinding) matchEvent(e tcell.Event) bool {
 	return false
 }
 
-// matchView returns if the keybinding matches the current view.
-func (kb *keybinding) matchView(v *View) bool {
+// matchView returns if the eventBinding matches the current view.
+func (kb *eventBinding) matchView(v *View) bool {
 	if kb.viewName == "" {
 		return true
 	}
 	return v != nil && kb.viewName == v.name
 }
-
-// Key represents special keys or keys combinations.
-// type Key tcell.Key
-
-// Special keys.
-const (
-	MouseLeft      = termbox.MouseLeft
-	MouseMiddle    = termbox.MouseMiddle
-	MouseRight     = termbox.MouseRight
-	MouseRelease   = termbox.MouseRelease
-	MouseWheelUp   = termbox.MouseWheelUp
-	MouseWheelDown = termbox.MouseWheelDown
-)

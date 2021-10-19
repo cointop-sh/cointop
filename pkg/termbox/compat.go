@@ -103,7 +103,6 @@ func Clear(fg, bg Attribute) {
 	}
 }
 
-
 // OutputMode represents an output mode, which determines how colors
 // are used.  See the termbox documentation for an explanation.
 type OutputMode int
@@ -150,21 +149,6 @@ func SetCell(x, y int, ch rune, fg, bg Attribute) {
 	st = st.Foreground(scaledColor(x, y))
 	screen.SetContent(x, y, ch, nil, st)
 }
-
-// Keys codes.
-const (
-	MouseLeft      = tcell.KeyF63 // arbitrary assignments
-	MouseRight     = tcell.KeyF62
-	MouseMiddle    = tcell.KeyF61
-	MouseRelease   = tcell.KeyF60
-	MouseWheelUp   = tcell.KeyF59
-	MouseWheelDown = tcell.KeyF58
-)
-
-// Modifiers.
-const (
-	ModAlt = tcell.ModAlt
-)
 
 // PollEvent blocks until an event is ready, and then returns it.
 func PollEvent() tcell.Event {
