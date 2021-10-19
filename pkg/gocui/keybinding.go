@@ -56,29 +56,6 @@ func (kb *keybinding) matchEvent(e tcell.Event) bool {
 	return false
 }
 
-// matchKeypress returns if the keybinding matches the keypress.
-func (kb *keybinding) matchKeypress(e tcell.Event) bool {
-	// TODO: add compare method to EventKey?
-	// TODO: check mask not ==mod?
-	// TODO: bad variable names here!
-	switch tev := e.(type) {
-	case *tcell.EventKey:
-		if kbe, ok := kb.ev.(*tcell.EventKey); ok {
-			if tev.Key() == tcell.KeyRune {
-				return tev.Key() == kbe.Key() && tev.Rune() == kbe.Rune() && tev.Modifiers() == kbe.Modifiers()
-			}
-			return tev.Key() == kbe.Key() && tev.Modifiers() == kbe.Modifiers()
-		}
-
-		// case *tcell.EventMouse:
-		// 	if kbe, ok := kb.ev.(*tcell.EventMouse); ok {
-		// 		return kbe.Buttons() == tev.Buttons() && kbe.Modifiers() == tev.Modifiers()
-		// 	}
-
-	}
-	return false
-}
-
 // matchView returns if the keybinding matches the current view.
 func (kb *keybinding) matchView(v *View) bool {
 	if kb.viewName == "" {
@@ -92,29 +69,6 @@ func (kb *keybinding) matchView(v *View) bool {
 
 // Special keys.
 const (
-	// KeyF1         Key = tcell.KeyF1
-	// KeyF2             = tcell.KeyF2
-	// KeyF3             = tcell.KeyF3
-	// KeyF4             = tcell.KeyF4
-	// KeyF5             = tcell.KeyF5
-	// KeyF6             = tcell.KeyF6
-	// KeyF7             = tcell.KeyF7
-	// KeyF8             = tcell.KeyF8
-	// KeyF9             = tcell.KeyF9
-	// KeyF10            = tcell.KeyF10
-	// KeyF11            = tcell.KeyF11
-	// KeyF12            = tcell.KeyF12
-	// KeyInsert         = tcell.KeyInsert
-	// KeyDelete         = tcell.KeyDelete
-	// KeyHome           = tcell.KeyHome
-	// KeyEnd            = tcell.KeyEnd
-	// KeyPgup           = tcell.KeyPgup
-	// KeyPgdn           = tcell.KeyPgdn
-	// KeyArrowUp        = tcell.KeyArrowUp
-	// KeyArrowDown      = tcell.KeyArrowDown
-	// KeyArrowLeft      = tcell.KeyArrowLeft
-	// KeyArrowRight     = tcell.KeyArrowRight
-
 	MouseLeft      = termbox.MouseLeft
 	MouseMiddle    = termbox.MouseMiddle
 	MouseRight     = termbox.MouseRight
@@ -122,63 +76,3 @@ const (
 	MouseWheelUp   = termbox.MouseWheelUp
 	MouseWheelDown = termbox.MouseWheelDown
 )
-
-// Keys combinations.
-// const (
-// 	KeyCtrlTilde      tcell.Key = tcell.KeyCtrlTilde
-// 	KeyCtrl2              = tcell.KeyCtrl2
-// 	KeyCtrlSpace          = tcell.KeyCtrlSpace
-// 	KeyCtrlA              = tcell.KeyCtrlA
-// 	KeyCtrlB              = tcell.KeyCtrlB
-// 	KeyCtrlC              = tcell.KeyCtrlC
-// 	KeyCtrlD              = tcell.KeyCtrlD
-// 	KeyCtrlE              = tcell.KeyCtrlE
-// 	KeyCtrlF              = tcell.KeyCtrlF
-// 	KeyCtrlG              = tcell.KeyCtrlG
-// 	KeyBackspace          = tcell.KeyBackspace
-// 	KeyCtrlH              = tcell.KeyCtrlH
-// 	KeyTab                = tcell.KeyTab
-// 	KeyCtrlI              = tcell.KeyCtrlI
-// 	KeyCtrlJ              = tcell.KeyCtrlJ
-// 	KeyCtrlK              = tcell.KeyCtrlK
-// 	KeyCtrlL              = tcell.KeyCtrlL
-// 	KeyEnter              = tcell.KeyEnter
-// 	KeyCtrlM              = tcell.KeyCtrlM
-// 	KeyCtrlN              = tcell.KeyCtrlN
-// 	KeyCtrlO              = tcell.KeyCtrlO
-// 	KeyCtrlP              = tcell.KeyCtrlP
-// 	KeyCtrlQ              = tcell.KeyCtrlQ
-// 	KeyCtrlR              = tcell.KeyCtrlR
-// 	KeyCtrlS              = tcell.KeyCtrlS
-// 	KeyCtrlT              = tcell.KeyCtrlT
-// 	KeyCtrlU              = tcell.KeyCtrlU
-// 	KeyCtrlV              = tcell.KeyCtrlV
-// 	KeyCtrlW              = tcell.KeyCtrlW
-// 	KeyCtrlX              = tcell.KeyCtrlX
-// 	KeyCtrlY              = tcell.KeyCtrlY
-// 	KeyCtrlZ              = tcell.KeyCtrlZ
-// 	KeyEsc                = tcell.KeyEsc
-// 	KeyCtrlLsqBracket     = tcell.KeyCtrlLsqBracket
-// 	KeyCtrl3              = tcell.KeyCtrl3
-// 	KeyCtrl4              = tcell.KeyCtrl4
-// 	KeyCtrlBackslash      = tcell.KeyCtrlBackslash
-// 	KeyCtrl5              = tcell.KeyCtrl5
-// 	KeyCtrlRsqBracket     = tcell.KeyCtrlRsqBracket
-// 	KeyCtrl6              = tcell.KeyCtrl6
-// 	KeyCtrl7              = tcell.KeyCtrl7
-// 	KeyCtrlSlash          = tcell.KeyCtrlSlash
-// 	KeyCtrlUnderscore     = tcell.KeyCtrlUnderscore
-// 	KeySpace              = tcell.KeySpace
-// 	KeyBackspace2         = tcell.KeyBackspace2
-// 	KeyCtrl8              = tcell.KeyCtrl8
-// )
-
-// Modifier allows to define special keys combinations. They can be used
-// in combination with Keys or Runes when a new keybinding is defined.
-// type Modifier tcell.ModMask
-
-// Modifiers.
-// const (
-// 	ModNone Modifier = Modifier(0)
-// 	ModAlt           = Modifier(termbox.ModAlt)
-// )
