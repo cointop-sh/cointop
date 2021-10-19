@@ -4,29 +4,12 @@
 
 package termui
 
-import (
-	"image"
-	"io"
-	"sync"
-	"time"
-
-	"fmt"
-
-	"os"
-
-	"runtime/debug"
-
-	"bytes"
-
-	tm "github.com/cointop-sh/cointop/pkg/termbox"
-	"github.com/maruel/panicparse/stack"
-)
-
 // Bufferer should be implemented by all renderable components.
 type Bufferer interface {
 	Buffer() Buffer
 }
 
+/*
 // Init initializes termui library. This function should be called before any others.
 // After initialization, the library must be finalized by 'Close' function.
 func Init() error {
@@ -188,3 +171,4 @@ func Render(bs ...Bufferer) {
 	//go func() { renderJobs <- bs }()
 	renderJobs <- bs
 }
+*/

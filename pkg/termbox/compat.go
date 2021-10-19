@@ -20,46 +20,12 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
+// Ugly globals
 var screen tcell.Screen
 var outMode OutputMode
 
-// Init initializes the screen for use.
-func Init() error {
-	outMode = OutputNormal
-	if s, e := tcell.NewScreen(); e != nil {
-		return e
-	} else if e = s.Init(); e != nil {
-		return e
-	} else {
-		screen = s
-		return nil
-	}
-}
-
-// Close cleans up the terminal, restoring terminal modes, etc.
-func Close() {
-	screen.Fini()
-}
-
-// Flush updates the screen.
-func Flush() error {
-	screen.Show()
-	return nil
-}
-
-// SetCursor displays the terminal cursor at the given location.
-func SetCursor(x, y int) {
-	screen.ShowCursor(x, y)
-}
-
-// HideCursor hides the terminal cursor.
-func HideCursor() {
-	SetCursor(-1, -1)
-}
-
-// Size returns the screen size as width, height in character cells.
-func Size() (int, int) {
-	return screen.Size()
+func SetScreen(s tcell.Screen) {
+	screen = s
 }
 
 // Attribute affects the presentation of characters, such as color, boldness,
@@ -137,25 +103,6 @@ func Clear(fg, bg Attribute) {
 	}
 }
 
-// InputMode is not used.
-type InputMode int
-
-// Unused input modes; here for compatibility.
-const (
-	InputCurrent InputMode = iota
-	InputEsc
-	InputAlt
-	InputMouse
-)
-
-// SetInputMode enables mouse if requested
-func SetInputMode(mode InputMode) InputMode {
-	if mode&InputMouse != 0 {
-		screen.EnableMouse()
-	}
-	// We don't do anything else right now
-	return InputEsc
-}
 
 // OutputMode represents an output mode, which determines how colors
 // are used.  See the termbox documentation for an explanation.
@@ -184,12 +131,6 @@ func SetOutputMode(mode OutputMode) OutputMode {
 	default:
 		return outMode
 	}
-}
-
-// Sync forces a resync of the screen.
-func Sync() error {
-	screen.Sync()
-	return nil
 }
 
 // scaledColor returns a Color that is proportional to the x/y coordinates
@@ -228,11 +169,4 @@ const (
 // PollEvent blocks until an event is ready, and then returns it.
 func PollEvent() tcell.Event {
 	return screen.PollEvent()
-}
-
-// Cell represents a single character cell on screen.
-type Cell struct {
-	Ch rune
-	Fg Attribute
-	Bg Attribute
 }

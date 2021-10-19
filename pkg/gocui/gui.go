@@ -20,9 +20,9 @@ var (
 )
 
 // OutputMode represents the terminal's output mode (8 or 256 colors).
-type OutputMode termbox.OutputMode
+type OutputMode termbox.OutputMode // TODO: die
 
-const (
+const ( // TODO: die
 	// OutputNormal provides 8-colors terminal mode.
 	OutputNormal = OutputMode(termbox.OutputNormal)
 
@@ -40,7 +40,7 @@ type Gui struct {
 	managers    []Manager
 	keybindings []*keybinding
 	maxX, maxY  int
-	outputMode  OutputMode
+	outputMode  OutputMode // TODO: die
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
@@ -70,23 +70,34 @@ type Gui struct {
 
 	// The current event while in the handlers.
 	CurrentEvent tcell.Event
+
+	// The formerly-global Screen used by this gui.
+	Screen tcell.Screen
 }
 
 // NewGui returns a new Gui object with a given output mode.
 func NewGui(mode OutputMode) (*Gui, error) {
-	if err := termbox.Init(); err != nil {
-		return nil, err
-	}
 
 	g := &Gui{}
 
+	//outMode = OutputNormal
+	if s, e := tcell.NewScreen(); e != nil {
+		return nil, e
+	} else if e = s.Init(); e != nil {
+		return nil, e
+	} else {
+		g.Screen = s
+
+	}
+
 	g.outputMode = mode
+	termbox.SetScreen(g.Screen) // ugly global
 	termbox.SetOutputMode(termbox.OutputMode(mode))
 
 	g.tbEvents = make(chan tcell.Event, 20)
 	g.userEvents = make(chan userEvent, 20)
 
-	g.maxX, g.maxY = termbox.Size()
+	g.maxX, g.maxY = g.Screen.Size()
 
 	g.BgColor, g.FgColor = ColorDefault, ColorDefault
 	g.SelBgColor, g.SelFgColor = ColorDefault, ColorDefault
@@ -97,7 +108,7 @@ func NewGui(mode OutputMode) (*Gui, error) {
 // Close finalizes the library. It should be called after a successful
 // initialization and when gocui is not needed anymore.
 func (g *Gui) Close() {
-	termbox.Close()
+	g.Screen.Fini()
 }
 
 // Size returns the terminal's size.
@@ -376,14 +387,10 @@ func (g *Gui) MainLoop() error {
 		}
 	}()
 
-	inputMode := termbox.InputAlt
-	if g.InputEsc {
-		inputMode = termbox.InputEsc
-	}
 	if g.Mouse {
-		inputMode |= termbox.InputMouse
+		g.Screen.EnableMouse()
 	}
-	termbox.SetInputMode(inputMode)
+	// s.EnablePaste()
 
 	if err := g.flush(); err != nil {
 		return err
@@ -443,7 +450,7 @@ func (g *Gui) handleEvent(ev tcell.Event) error {
 func (g *Gui) flush() error {
 	termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
 
-	maxX, maxY := termbox.Size()
+	maxX, maxY := g.Screen.Size()
 	// if GUI's size has changed, we need to redraw all views
 	if maxX != g.maxX || maxY != g.maxY {
 		for _, v := range g.views {
@@ -484,7 +491,7 @@ func (g *Gui) flush() error {
 			return err
 		}
 	}
-	termbox.Flush()
+	g.Screen.Show()
 	return nil
 }
 
@@ -589,13 +596,13 @@ func (g *Gui) draw(v *View) error {
 			gMaxX, gMaxY := g.Size()
 			cx, cy := curview.x0+curview.cx+1, curview.y0+curview.cy+1
 			if cx >= 0 && cx < gMaxX && cy >= 0 && cy < gMaxY {
-				termbox.SetCursor(cx, cy)
+				g.Screen.ShowCursor(cx, cy)
 			} else {
-				termbox.HideCursor()
+				g.Screen.ShowCursor(-1, -1) // HideCursor
 			}
 		}
 	} else {
-		termbox.HideCursor()
+		g.Screen.ShowCursor(-1, -1) // HideCursor
 	}
 
 	v.clearRunes()
