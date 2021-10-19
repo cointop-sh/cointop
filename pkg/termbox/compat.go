@@ -17,8 +17,6 @@
 package termbox
 
 import (
-	"errors"
-
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -212,40 +210,6 @@ func SetCell(x, y int, ch rune, fg, bg Attribute) {
 	screen.SetContent(x, y, ch, nil, st)
 }
 
-// EventType represents the type of event.
-type EventType uint8
-
-// Modifier represents the possible modifier keys.
-// type Modifier tcell.ModMask
-
-// Key is a key press.
-// type Key tcell.Key
-
-// Event represents an event like a key press, mouse action, or window resize.
-type Event struct {
-	Type   EventType
-	Mod    tcell.ModMask
-	Key    tcell.Key
-	Ch     rune
-	Width  int
-	Height int
-	Err    error
-	MouseX int
-	MouseY int
-	N      int
-}
-
-// Event types.
-const (
-	EventNone EventType = iota
-	EventKey
-	EventResize
-	EventMouse
-	EventInterrupt
-	EventError
-	EventRaw
-)
-
 // Keys codes.
 const (
 	MouseLeft      = tcell.KeyF63 // arbitrary assignments
@@ -261,83 +225,9 @@ const (
 	ModAlt = tcell.ModAlt
 )
 
-func makeEvent(tev tcell.Event) Event {
-	switch tev := tev.(type) {
-	case *tcell.EventInterrupt:
-		return Event{Type: EventInterrupt}
-	case *tcell.EventResize:
-		w, h := tev.Size()
-		return Event{Type: EventResize, Width: w, Height: h}
-	case *tcell.EventKey:
-		// k := tev.Key()
-		// ch := rune(0)
-		// Remove space hack
-		// if k == tcell.KeyRune {
-		// 	ch = tev.Rune()
-		// 	if ch == ' ' {
-		// 		k = tcell.Key(' ')
-		// 	} else {
-		// 		k = tcell.Key(0)
-		// 	}
-		// }
-		// mod := tev.Modifiers()
-		return Event{
-			Type: EventKey,
-			Key:  tev.Key(),
-			Ch:   tev.Rune(),
-			Mod:  tev.Modifiers(),
-		}
-	case *tcell.EventMouse:
-		x, y := tev.Position()
-		button := tev.Buttons()
-		// Don't worry about combo buttons for now
-		key := tcell.KeyNUL
-		if button&tcell.Button1 != 0 {
-			key = MouseLeft
-		} else if button&tcell.Button2 != 0 {
-			key = MouseRight
-		} else if button&tcell.Button3 != 0 {
-			key = MouseMiddle
-		} else if button&tcell.WheelUp != 0 {
-			key = MouseWheelUp
-		} else if button&tcell.WheelDown != 0 {
-			key = MouseWheelDown
-		} else {
-			return Event{Type: EventNone}
-		}
-		return Event{
-			Type:   EventMouse,
-			MouseX: x,
-			MouseY: y,
-			Key:    key,
-			Mod:    0, // not currently supported
-		}
-	default:
-		return Event{Type: EventNone}
-	}
-}
-
-// ParseEvent is not supported.
-func ParseEvent(data []byte) Event {
-	// Not supported
-	return Event{Type: EventError, Err: errors.New("no raw events")}
-}
-
-// PollRawEvent is not supported.
-func PollRawEvent(data []byte) Event {
-	// Not supported
-	return Event{Type: EventError, Err: errors.New("no raw events")}
-}
-
 // PollEvent blocks until an event is ready, and then returns it.
-func PollEvent() Event {
-	ev := screen.PollEvent()
-	return makeEvent(ev)
-}
-
-// Interrupt posts an interrupt event.
-func Interrupt() {
-	screen.PostEvent(tcell.NewEventInterrupt(nil))
+func PollEvent() tcell.Event {
+	return screen.PollEvent()
 }
 
 // Cell represents a single character cell on screen.

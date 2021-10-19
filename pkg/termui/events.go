@@ -5,11 +5,14 @@
 package termui
 
 import (
+	"errors"
 	"path"
 	"sync"
 	"time"
 
 	"github.com/cointop-sh/cointop/pkg/termbox"
+	"github.com/gdamore/tcell/v2"
+	log "github.com/sirupsen/logrus"
 )
 
 type Event struct {
@@ -27,17 +30,17 @@ type EvtKbd struct {
 	KeyStr string
 }
 
-func evtKbd(e termbox.Event) EvtKbd {
+func evtKbd(e tcell.EventKey) EvtKbd {
 	ek := EvtKbd{}
 
-	k := string(e.Ch)
+	k := string(e.Rune())
 	pre := ""
 	mod := ""
 
-	if e.Mod == termbox.ModAlt {
+	if e.Modifiers() == termbox.ModAlt {
 		mod = "M-"
 	}
-	if e.Ch == 0 {
+	if e.Rune() == 0 {
 		// Doesn't appear to be used by cointop
 
 		// TODO: FIXME
@@ -74,39 +77,40 @@ func evtKbd(e termbox.Event) EvtKbd {
 	return ek
 }
 
-func crtTermboxEvt(e termbox.Event) Event {
-	systypemap := map[termbox.EventType]string{
-		termbox.EventKey:       "keyboard",
-		termbox.EventResize:    "window",
-		termbox.EventMouse:     "mouse",
-		termbox.EventError:     "error",
-		termbox.EventInterrupt: "interrupt",
-	}
-	ne := Event{From: "/sys", Time: time.Now().Unix()}
-	typ := e.Type
-	ne.Type = systypemap[typ]
-
-	switch typ {
-	case termbox.EventKey:
-		kbd := evtKbd(e)
-		ne.Path = "/sys/kbd/" + kbd.KeyStr
-		ne.Data = kbd
-	case termbox.EventResize:
+func crtTermboxEvt(e tcell.Event) Event {
+	log.Debugf("XXX crtTermboxEvt")
+	ne := Event{From: "/sys", Time: e.When().Unix()}
+	switch tev := e.(type) {
+	case *tcell.EventResize:
 		wnd := EvtWnd{}
-		wnd.Width = e.Width
-		wnd.Height = e.Height
+		wnd.Width, wnd.Height = tev.Size()
 		ne.Path = "/sys/wnd/resize"
 		ne.Data = wnd
-	case termbox.EventError:
-		err := EvtErr(e.Err)
-		ne.Path = "/sys/err"
-		ne.Data = err
-	case termbox.EventMouse:
+		ne.Type = "window"
+		log.Debugf("XXX Resized to %d,%d", wnd.Width, wnd.Height)
+		return ne
+	case *tcell.EventMouse:
 		m := EvtMouse{}
-		m.X = e.MouseX
-		m.Y = e.MouseY
+		m.X, m.Y = tev.Position()
 		ne.Path = "/sys/mouse"
 		ne.Data = m
+		ne.Type = "mouse"
+		return ne
+	case *tcell.EventKey:
+		kbd := evtKbd(*tev)
+		ne.Path = "/sys/kbd/" + kbd.KeyStr
+		ne.Data = kbd
+		ne.Type = "keyboard"
+		return ne
+	case *tcell.EventError:
+		ne.Path = "/sys/err"
+		ne.Data = errors.New(tev.Error())
+		ne.Type = "error"
+		return ne
+	case *tcell.EventInterrupt:
+		ne.Type = "interrupt"
+	default:
+		ne.Type = "" // TODO: unhandled event?
 	}
 	return ne
 }
@@ -125,9 +129,10 @@ type EvtMouse struct {
 type EvtErr error
 
 func hookTermboxEvt() {
+	log.Debugf("XXX hookTermboxEvt")
 	for {
 		e := termbox.PollEvent()
-
+		log.Debugf("XXX event %s", e)
 		for _, c := range sysEvtChs {
 			func(ch chan Event) {
 				ch <- crtTermboxEvt(e)

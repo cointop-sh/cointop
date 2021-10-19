@@ -9,7 +9,6 @@ import (
 
 	"github.com/cointop-sh/cointop/pkg/termbox"
 	"github.com/gdamore/tcell/v2"
-	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -34,7 +33,7 @@ const (
 // Gui represents the whole User Interface, including the views, layouts
 // and keybindings.
 type Gui struct {
-	tbEvents    chan termbox.Event
+	tbEvents    chan tcell.Event
 	userEvents  chan userEvent
 	views       []*View
 	currentView *View
@@ -70,7 +69,7 @@ type Gui struct {
 	ASCII bool
 
 	// The current event while in the handlers.
-	CurrentEvent *termbox.Event
+	CurrentEvent tcell.Event
 }
 
 // NewGui returns a new Gui object with a given output mode.
@@ -84,7 +83,7 @@ func NewGui(mode OutputMode) (*Gui, error) {
 	g.outputMode = mode
 	termbox.SetOutputMode(termbox.OutputMode(mode))
 
-	g.tbEvents = make(chan termbox.Event, 20)
+	g.tbEvents = make(chan tcell.Event, 20)
 	g.userEvents = make(chan userEvent, 20)
 
 	g.maxX, g.maxY = termbox.Size()
@@ -251,6 +250,7 @@ func (g *Gui) CurrentView() *View {
 // SetKeybinding creates a new keybinding. If viewname equals to ""
 // (empty string) then the keybinding will apply to all views. key must
 // be a rune or a Key.
+// TODO: split into key/mouse bindings?
 func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) error {
 	var kb *keybinding
 
@@ -258,7 +258,21 @@ func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.M
 	// if err != nil {
 	// 	return err
 	// }
-	kb = newKeybinding(viewname, key, ch, mod, handler)
+	// TODO: get rid of this ugly mess
+	switch key {
+	case termbox.MouseLeft:
+		kb = newMouseBinding(viewname, tcell.Button1, mod, handler)
+	case termbox.MouseMiddle:
+		kb = newMouseBinding(viewname, tcell.Button3, mod, handler)
+	case termbox.MouseRight:
+		kb = newMouseBinding(viewname, tcell.Button2, mod, handler)
+	case termbox.MouseWheelUp:
+		kb = newMouseBinding(viewname, tcell.WheelUp, mod, handler)
+	case termbox.MouseWheelDown:
+		kb = newMouseBinding(viewname, tcell.WheelDown, mod, handler)
+	default:
+		kb = newKeybinding(viewname, key, ch, mod, handler)
+	}
 	g.keybindings = append(g.keybindings, kb)
 	return nil
 }
@@ -271,9 +285,11 @@ func (g *Gui) DeleteKeybinding(viewname string, key tcell.Key, ch rune, mod tcel
 	// }
 
 	for i, kb := range g.keybindings {
-		if kb.viewName == viewname && kb.ch == ch && kb.key == key && kb.mod == mod {
-			g.keybindings = append(g.keybindings[:i], g.keybindings[i+1:]...)
-			return nil
+		if kbe, ok := kb.ev.(*tcell.EventKey); ok {
+			if kb.viewName == viewname && kbe.Rune() == ch && kbe.Key() == key && kbe.Modifiers() == mod {
+				g.keybindings = append(g.keybindings[:i], g.keybindings[i+1:]...)
+				return nil
+			}
 		}
 	}
 	return errors.New("keybinding not found")
@@ -342,7 +358,7 @@ func (g *Gui) SetManager(managers ...Manager) {
 	g.views = nil
 	g.keybindings = nil
 
-	go func() { g.tbEvents <- termbox.Event{Type: termbox.EventResize} }()
+	go func() { g.tbEvents <- tcell.NewEventResize(0, 0) }()
 }
 
 // SetManagerFunc sets the given manager function. It deletes all views and
@@ -375,7 +391,7 @@ func (g *Gui) MainLoop() error {
 	for {
 		select {
 		case ev := <-g.tbEvents:
-			if err := g.handleEvent(&ev); err != nil {
+			if err := g.handleEvent(ev); err != nil {
 				return err
 			}
 		case ev := <-g.userEvents:
@@ -397,7 +413,7 @@ func (g *Gui) consumeevents() error {
 	for {
 		select {
 		case ev := <-g.tbEvents:
-			if err := g.handleEvent(&ev); err != nil {
+			if err := g.handleEvent(ev); err != nil {
 				return err
 			}
 		case ev := <-g.userEvents:
@@ -412,12 +428,12 @@ func (g *Gui) consumeevents() error {
 
 // handleEvent handles an event, based on its type (key-press, error,
 // etc.)
-func (g *Gui) handleEvent(ev *termbox.Event) error {
-	switch ev.Type {
-	case termbox.EventKey, termbox.EventMouse:
-		return g.onKey(ev)
-	case termbox.EventError:
-		return ev.Err
+func (g *Gui) handleEvent(ev tcell.Event) error {
+	switch tev := ev.(type) {
+	case *tcell.EventMouse, *tcell.EventKey:
+		return g.onEvent(tev)
+	case *tcell.EventError:
+		return errors.New(tev.Error())
 	default:
 		return nil
 	}
@@ -589,12 +605,12 @@ func (g *Gui) draw(v *View) error {
 	return nil
 }
 
-// onKey manages key-press events. A keybinding handler is called when
+// onEvent manages key/mouse events. A keybinding handler is called when
 // a key-press or mouse event satisfies a configured keybinding. Furthermore,
 // currentView's internal buffer is modified if currentView.Editable is true.
-func (g *Gui) onKey(ev *termbox.Event) error {
-	switch ev.Type {
-	case termbox.EventKey:
+func (g *Gui) onEvent(ev tcell.Event) error {
+	switch tev := ev.(type) {
+	case *tcell.EventKey:
 		matched, err := g.execKeybindings(g.currentView, ev)
 		if err != nil {
 			return err
@@ -603,33 +619,35 @@ func (g *Gui) onKey(ev *termbox.Event) error {
 			break
 		}
 		if g.currentView != nil && g.currentView.Editable && g.currentView.Editor != nil {
-			g.currentView.Editor.Edit(g.currentView, ev.Key, ev.Ch, ev.Mod)
+			g.currentView.Editor.Edit(g.currentView, tev.Key(), tev.Rune(), tev.Modifiers())
 		}
-	case termbox.EventMouse:
-		v, _, _, err := g.GetViewRelativeMousePosition(ev)
+	case *tcell.EventMouse:
+		v, _, _, err := g.GetViewRelativeMousePosition(tev)
 		if err != nil {
 			break
 		}
 		// If the key-binding wants to move the cursor, it should call SetCursorFromCurrentMouseEvent()
 		// Not all mouse events will want to do this (eg: scroll wheel)
 		g.CurrentEvent = ev
-		if _, err := g.execKeybindings(v, ev); err != nil {
+		if _, err := g.execKeybindings(v, g.CurrentEvent); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
 // GetViewRelativeMousePosition returns the View and relative x/y for the provided mouse event.
-func (g *Gui) GetViewRelativeMousePosition(ev *termbox.Event) (*View, int, int, error) {
-	// TODO: check ev.Type == termbox.EventMouse ?
-	mx, my := ev.MouseX, ev.MouseY
-	v, err := g.ViewByPosition(mx, my)
-	if err != nil {
-		return nil, 0, 0, err
+func (g *Gui) GetViewRelativeMousePosition(ev tcell.Event) (*View, int, int, error) {
+
+	if kbe, ok := ev.(*tcell.EventMouse); ok {
+		mx, my := kbe.Position()
+		v, err := g.ViewByPosition(mx, my)
+		if err != nil {
+			return nil, 0, 0, err
+		}
+		return v, mx - v.x0 - 1, my - v.y0 - 1, nil
 	}
-	return v, mx - v.x0 - 1, my - v.y0 - 1, nil
+	return nil, 0, 0, errors.New("Cannot GetViewRelativeMousePosition on non-mouse event")
 }
 
 // SetCursorFromCurrentMouseEvent updates the cursor position based on the mouse coordinates.
@@ -646,15 +664,16 @@ func (g *Gui) SetCursorFromCurrentMouseEvent() error {
 
 // execKeybindings executes the keybinding handlers that match the passed view
 // and event. The value of matched is true if there is a match and no errors.
-func (g *Gui) execKeybindings(v *View, ev *termbox.Event) (matched bool, err error) {
-	log.Debugf("XXX hunting for k=%d c=%d mod=%d", ev.Key, ev.Ch, ev.Mod)
+// TODO: rename to more generic - it's not just keys (incl mouse)
+func (g *Gui) execKeybindings(v *View, xev tcell.Event) (matched bool, err error) {
+	// log.Debugf("XXX hunting for k=%d c=%d mod=%d", ev.Key, ev.Ch, ev.Mod)
 	matched = false
 	for _, kb := range g.keybindings {
 		if kb.handler == nil {
 			continue
 		}
-		if kb.matchKeypress(ev.Key, ev.Ch, ev.Mod) && kb.matchView(v) {
-			log.Debugf("XXX dispatching k=%d c=%d mod=%d", ev.Key, ev.Ch, ev.Mod)
+		if kb.matchEvent(xev) && kb.matchView(v) {
+			// log.Debugf("XXX dispatching %s", ev)
 			if err := kb.handler(g, v); err != nil {
 				return false, err
 			}
