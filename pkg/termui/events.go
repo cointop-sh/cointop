@@ -5,7 +5,6 @@
 package termui
 
 import (
-	"fmt"
 	"path"
 	"sync"
 	"time"
@@ -50,25 +49,25 @@ func evtKbd(e termbox.Event) EvtKbd {
 		// }
 
 		// TODO: FIXME
-		if e.Key <= 0x7F {
-			pre = "C-"
-			k = fmt.Sprintf("%v", 'a'-1+int(e.Key))
-			kmap := map[termbox.Key][2]string{
-				termbox.KeyCtrlSpace:     {"C-", "<space>"}, // TODO: FIXME
-				termbox.KeyBackspace:     {"", "<backspace>"},
-				termbox.KeyTab:           {"", "<tab>"},
-				termbox.KeyEnter:         {"", "<enter>"},
-				termbox.KeyEsc:           {"", "<escape>"},
-				termbox.KeyCtrlBackslash: {"C-", "\\"},
-				termbox.KeyCtrlSlash:     {"C-", "/"},
-				termbox.KeySpace:         {"", "<space>"},
-				termbox.KeyCtrl8:         {"C-", "8"}, // TODO: FIXME
-			}
-			if sk, ok := kmap[e.Key]; ok {
-				pre = sk[0]
-				k = sk[1]
-			}
-		}
+		// if e.Key <= 0x7F {
+		// 	pre = "C-"
+		// 	k = fmt.Sprintf("%v", 'a'-1+int(e.Key))
+		// 	kmap := map[termbox.Key][2]string{
+		// 		termbox.KeyCtrlSpace:     {"C-", "<space>"}, // TODO: FIXME
+		// 		termbox.KeyBackspace:     {"", "<backspace>"},
+		// 		termbox.KeyTab:           {"", "<tab>"},
+		// 		termbox.KeyEnter:         {"", "<enter>"},
+		// 		termbox.KeyEsc:           {"", "<escape>"},
+		// 		termbox.KeyCtrlBackslash: {"C-", "\\"},
+		// 		termbox.KeyCtrlSlash:     {"C-", "/"},
+		// 		termbox.KeySpace:         {"", "<space>"},
+		// 		termbox.KeyCtrl8:         {"C-", "8"}, // TODO: FIXME
+		// 	}
+		// 	if sk, ok := kmap[e.Key]; ok {
+		// 		pre = sk[0]
+		// 		k = sk[1]
+		// 	}
+		// }
 	}
 
 	ek.KeyStr = pre + mod + k

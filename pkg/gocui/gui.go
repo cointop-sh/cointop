@@ -8,6 +8,8 @@ import (
 	"errors"
 
 	"github.com/cointop-sh/cointop/pkg/termbox"
+	"github.com/gdamore/tcell/v2"
+	log "github.com/sirupsen/logrus"
 )
 
 var (
@@ -249,27 +251,27 @@ func (g *Gui) CurrentView() *View {
 // SetKeybinding creates a new keybinding. If viewname equals to ""
 // (empty string) then the keybinding will apply to all views. key must
 // be a rune or a Key.
-func (g *Gui) SetKeybinding(viewname string, key interface{}, mod Modifier, handler func(*Gui, *View) error) error {
+func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) error {
 	var kb *keybinding
 
-	k, ch, err := getKey(key)
-	if err != nil {
-		return err
-	}
-	kb = newKeybinding(viewname, k, ch, mod, handler)
+	// k, ch, err := getKey(key)
+	// if err != nil {
+	// 	return err
+	// }
+	kb = newKeybinding(viewname, key, ch, mod, handler)
 	g.keybindings = append(g.keybindings, kb)
 	return nil
 }
 
 // DeleteKeybinding deletes a keybinding.
-func (g *Gui) DeleteKeybinding(viewname string, key interface{}, mod Modifier) error {
-	k, ch, err := getKey(key)
-	if err != nil {
-		return err
-	}
+func (g *Gui) DeleteKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask) error {
+	// k, ch, err := getKey(key)
+	// if err != nil {
+	// 	return err
+	// }
 
 	for i, kb := range g.keybindings {
-		if kb.viewName == viewname && kb.ch == ch && kb.key == k && kb.mod == mod {
+		if kb.viewName == viewname && kb.ch == ch && kb.key == key && kb.mod == mod {
 			g.keybindings = append(g.keybindings[:i], g.keybindings[i+1:]...)
 			return nil
 		}
@@ -290,16 +292,16 @@ func (g *Gui) DeleteKeybindings(viewname string) {
 
 // getKey takes an empty interface with a key and returns the corresponding
 // typed Key or rune.
-func getKey(key interface{}) (Key, rune, error) {
-	switch t := key.(type) {
-	case Key:
-		return t, 0, nil
-	case rune:
-		return 0, t, nil
-	default:
-		return 0, 0, errors.New("unknown type")
-	}
-}
+// func getKey(key interface{}) (tcell.Key, rune, error) {
+// 	switch t := key.(type) {
+// 	case Key:
+// 		return t, 0, nil
+// 	case rune:
+// 		return 0, t, nil
+// 	default:
+// 		return 0, 0, errors.New("unknown type")
+// 	}
+// }
 
 // userEvent represents an event triggered by the user.
 type userEvent struct {
@@ -601,7 +603,7 @@ func (g *Gui) onKey(ev *termbox.Event) error {
 			break
 		}
 		if g.currentView != nil && g.currentView.Editable && g.currentView.Editor != nil {
-			g.currentView.Editor.Edit(g.currentView, Key(ev.Key), ev.Ch, Modifier(ev.Mod))
+			g.currentView.Editor.Edit(g.currentView, ev.Key, ev.Ch, ev.Mod)
 		}
 	case termbox.EventMouse:
 		v, _, _, err := g.GetViewRelativeMousePosition(ev)
@@ -645,12 +647,14 @@ func (g *Gui) SetCursorFromCurrentMouseEvent() error {
 // execKeybindings executes the keybinding handlers that match the passed view
 // and event. The value of matched is true if there is a match and no errors.
 func (g *Gui) execKeybindings(v *View, ev *termbox.Event) (matched bool, err error) {
+	log.Debugf("XXX hunting for k=%d c=%d mod=%d", ev.Key, ev.Ch, ev.Mod)
 	matched = false
 	for _, kb := range g.keybindings {
 		if kb.handler == nil {
 			continue
 		}
-		if kb.matchKeypress(Key(ev.Key), ev.Ch, Modifier(ev.Mod)) && kb.matchView(v) {
+		if kb.matchKeypress(ev.Key, ev.Ch, ev.Mod) && kb.matchView(v) {
+			log.Debugf("XXX dispatching k=%d c=%d mod=%d", ev.Key, ev.Ch, ev.Mod)
 			if err := kb.handler(g, v); err != nil {
 				return false, err
 			}

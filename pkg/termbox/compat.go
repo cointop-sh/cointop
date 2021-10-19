@@ -216,16 +216,16 @@ func SetCell(x, y int, ch rune, fg, bg Attribute) {
 type EventType uint8
 
 // Modifier represents the possible modifier keys.
-type Modifier tcell.ModMask
+// type Modifier tcell.ModMask
 
 // Key is a key press.
-type Key tcell.Key
+// type Key tcell.Key
 
 // Event represents an event like a key press, mouse action, or window resize.
 type Event struct {
 	Type   EventType
-	Mod    Modifier
-	Key    Key
+	Mod    tcell.ModMask
+	Key    tcell.Key
 	Ch     rune
 	Width  int
 	Height int
@@ -248,91 +248,17 @@ const (
 
 // Keys codes.
 const (
-	KeyF1             = Key(tcell.KeyF1)
-	KeyF2             = Key(tcell.KeyF2)
-	KeyF3             = Key(tcell.KeyF3)
-	KeyF4             = Key(tcell.KeyF4)
-	KeyF5             = Key(tcell.KeyF5)
-	KeyF6             = Key(tcell.KeyF6)
-	KeyF7             = Key(tcell.KeyF7)
-	KeyF8             = Key(tcell.KeyF8)
-	KeyF9             = Key(tcell.KeyF9)
-	KeyF10            = Key(tcell.KeyF10)
-	KeyF11            = Key(tcell.KeyF11)
-	KeyF12            = Key(tcell.KeyF12)
-	KeyInsert         = Key(tcell.KeyInsert)
-	KeyDelete         = Key(tcell.KeyDelete)
-	KeyHome           = Key(tcell.KeyHome)
-	KeyEnd            = Key(tcell.KeyEnd)
-	KeyArrowUp        = Key(tcell.KeyUp)
-	KeyArrowDown      = Key(tcell.KeyDown)
-	KeyArrowRight     = Key(tcell.KeyRight)
-	KeyArrowLeft      = Key(tcell.KeyLeft)
-	KeyCtrlA          = Key(tcell.KeyCtrlA)
-	KeyCtrlB          = Key(tcell.KeyCtrlB)
-	KeyCtrlC          = Key(tcell.KeyCtrlC)
-	KeyCtrlD          = Key(tcell.KeyCtrlD)
-	KeyCtrlE          = Key(tcell.KeyCtrlE)
-	KeyCtrlF          = Key(tcell.KeyCtrlF)
-	KeyCtrlG          = Key(tcell.KeyCtrlG)
-	KeyCtrlH          = Key(tcell.KeyCtrlH)
-	KeyCtrlI          = Key(tcell.KeyCtrlI)
-	KeyCtrlJ          = Key(tcell.KeyCtrlJ)
-	KeyCtrlK          = Key(tcell.KeyCtrlK)
-	KeyCtrlL          = Key(tcell.KeyCtrlL)
-	KeyCtrlM          = Key(tcell.KeyCtrlM)
-	KeyCtrlN          = Key(tcell.KeyCtrlN)
-	KeyCtrlO          = Key(tcell.KeyCtrlO)
-	KeyCtrlP          = Key(tcell.KeyCtrlP)
-	KeyCtrlQ          = Key(tcell.KeyCtrlQ)
-	KeyCtrlR          = Key(tcell.KeyCtrlR)
-	KeyCtrlS          = Key(tcell.KeyCtrlS)
-	KeyCtrlT          = Key(tcell.KeyCtrlT)
-	KeyCtrlU          = Key(tcell.KeyCtrlU)
-	KeyCtrlV          = Key(tcell.KeyCtrlV)
-	KeyCtrlW          = Key(tcell.KeyCtrlW)
-	KeyCtrlX          = Key(tcell.KeyCtrlX)
-	KeyCtrlY          = Key(tcell.KeyCtrlY)
-	KeyCtrlZ          = Key(tcell.KeyCtrlZ)
-	KeyCtrlUnderscore = Key(tcell.KeyCtrlUnderscore)
-	KeyBackspace      = Key(tcell.KeyBackspace)
-	KeyBackspace2     = Key(tcell.KeyBackspace2)
-	KeyTab            = Key(tcell.KeyTab)
-	KeyEnter          = Key(tcell.KeyEnter)
-	KeyEsc            = Key(tcell.KeyEscape)
-	KeyPgdn           = Key(tcell.KeyPgDn)
-	KeyPgup           = Key(tcell.KeyPgUp)
-	KeySpace          = Key(tcell.Key(' '))
-	KeyTilde          = Key(tcell.Key('~'))
-	KeyCtrlSpace      = Key(tcell.KeyCtrlSpace)
-
-	// The following assignments are provided for termbox
-	// compatibility.  Their use in applications is discouraged.
-	// The mouse keys are completely not supported as tcell uses
-	// a separate mouse event instead of key strokes.
-	MouseLeft         = Key(tcell.KeyF63) // arbitrary assignments
-	MouseRight        = Key(tcell.KeyF62)
-	MouseMiddle       = Key(tcell.KeyF61)
-	MouseRelease      = Key(tcell.KeyF60)
-	MouseWheelUp      = Key(tcell.KeyF59)
-	MouseWheelDown    = Key(tcell.KeyF58)
-	KeyCtrlTilde      = Key(tcell.KeyCtrlSpace) // termbox defines a bunch of weird ones, don't use them
-	KeyCtrl2          = Key(tcell.KeyNUL)
-	KeyCtrl3          = Key(tcell.KeyEscape)
-	KeyCtrl4          = Key(tcell.KeyCtrlBackslash)
-	KeyCtrl5          = Key(tcell.KeyCtrlRightSq)
-	KeyCtrl6          = Key(tcell.KeyCtrlCarat)
-	KeyCtrl7          = Key(tcell.KeyCtrlUnderscore)
-	KeyCtrl8          = Key(tcell.KeyDEL)
-	KeyCtrlSlash      = Key(tcell.KeyCtrlUnderscore)
-	KeyCtrlRsqBracket = Key(tcell.KeyCtrlRightSq)
-	KeyCtrlBackslash  = Key(tcell.KeyCtrlBackslash)
-	KeyCtrlLsqBracket = Key(tcell.KeyCtrlLeftSq)
+	MouseLeft      = tcell.KeyF63 // arbitrary assignments
+	MouseRight     = tcell.KeyF62
+	MouseMiddle    = tcell.KeyF61
+	MouseRelease   = tcell.KeyF60
+	MouseWheelUp   = tcell.KeyF59
+	MouseWheelDown = tcell.KeyF58
 )
 
 // Modifiers.
 const (
-	ModAlt = Modifier(tcell.ModAlt)
+	ModAlt = tcell.ModAlt
 )
 
 func makeEvent(tev tcell.Event) Event {
@@ -343,28 +269,29 @@ func makeEvent(tev tcell.Event) Event {
 		w, h := tev.Size()
 		return Event{Type: EventResize, Width: w, Height: h}
 	case *tcell.EventKey:
-		k := tev.Key()
-		ch := rune(0)
-		if k == tcell.KeyRune {
-			ch = tev.Rune()
-			if ch == ' ' {
-				k = tcell.Key(' ')
-			} else {
-				k = tcell.Key(0)
-			}
-		}
-		mod := tev.Modifiers()
+		// k := tev.Key()
+		// ch := rune(0)
+		// Remove space hack
+		// if k == tcell.KeyRune {
+		// 	ch = tev.Rune()
+		// 	if ch == ' ' {
+		// 		k = tcell.Key(' ')
+		// 	} else {
+		// 		k = tcell.Key(0)
+		// 	}
+		// }
+		// mod := tev.Modifiers()
 		return Event{
 			Type: EventKey,
-			Key:  Key(k),
-			Ch:   ch,
-			Mod:  Modifier(mod),
+			Key:  tev.Key(),
+			Ch:   tev.Rune(),
+			Mod:  tev.Modifiers(),
 		}
 	case *tcell.EventMouse:
 		x, y := tev.Position()
 		button := tev.Buttons()
 		// Don't worry about combo buttons for now
-		key := Key(tcell.KeyNUL)
+		key := tcell.KeyNUL
 		if button&tcell.Button1 != 0 {
 			key = MouseLeft
 		} else if button&tcell.Button2 != 0 {
