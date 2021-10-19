@@ -8,101 +8,92 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// keyMap translates key alternative names to a canonical version
 func keyMap(k string) string {
-	// compatability mapping
 	key := k
-	switch k {
+	switch strings.ToLower(k) {
 	case "lsqrbracket", "leftsqrbracket", "leftsquarebracket":
 		key = "["
 	case "rsqrbracket", "rightsqrbracket", "rightsquarebracket":
 		key = "]"
-	case "space":
-		key = " "
-	case "backslash":
+	case "space", "spacebar":
+		key = " " // with meta should be "space"
+	case "\\\\", "backslash":
 		key = "\\"
 	case "underscore":
 		key = "_"
-		// case "\\\\":
-		// 	key = '\\'
+	case "arrowup", "uparrow":
+		key = "Up"
+	case "arrowdown", "downarrow":
+		key = "Down"
+	case "arrowleft", "leftarrow":
+		key = "Left"
+	case "arrowright", "rightarrow":
+		key = "Right"
+	case "return":
+		key = "Enter"
+	case "escape":
+		key = "Esc"
+	case "pageup":
+		key = "PgUp"
+	case "pagedown", "pgdown":
+		key = "PgDn"
 	}
 	return key
 }
 
 // ParseKeys returns string keyboard key as gocui key type
 func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
-	// TODO: change file convention to match tcell
-
-	// TODO: change to return EventKey
+	// TODO: change file convention to match tcell (no aliases, dash between mod and key)
+	// TODO: change to return EventKey?
 	var key interface{}
 	mod := tcell.ModNone
 
+	// translate legacy and special names for keys
+	keyName := strings.TrimSpace(strings.Replace(s, "+", "-", -1))
+	split := strings.Split(keyName, "-")
+	if len(split) > 1 {
+		m := strings.ToLower(strings.TrimSpace(split[0]))
+		k := strings.TrimSpace(split[1])
+		k = keyMap(k)
+		if k == " " {
+			k = "Space" // fix mod+space
+		}
+
+		if m == "alt" {
+			mod = tcell.ModAlt
+			keyName = k
+		} else if m == "ctrl" {
+			// let the lookup handle it
+			keyName = m + "-" + k
+		} else {
+			keyName = m + "-" + k
+		}
+		// TODO: other mods?
+	} else {
+		keyName = keyMap(keyName)
+	}
+
 	// First try looking up keyname directly
-	keyName := strings.ToLower(strings.TrimSpace(strings.Replace(s, "+", "-", -1)))
+	lcKeyName := strings.ToLower(keyName)
 	for key, name := range tcell.KeyNames {
-		if strings.ToLower(name) == keyName {
-			// Found direct match
+		if strings.ToLower(name) == lcKeyName {
 			if strings.HasPrefix(name, "Ctrl-") {
 				mod = tcell.ModCtrl
 			}
-			// log.Debugf("XXX direct map %s: %d %s", s, key, mod) // TODO: remove
 			return key, mod
 		}
 	}
 
-	split := strings.Split(s, "+")
-	if len(split) > 1 {
-		m := strings.ToLower(strings.TrimSpace(split[0]))
-		k := strings.ToLower(strings.TrimSpace(split[1]))
-		k = keyMap(k)
-		if m == "alt" {
-			mod = tcell.ModAlt
-			s = k
-		} else if m == "ctrl" {
-			// k = keyMap(k)
-		}
-		// 	return key, mod
-	}
-
-	s = keyMap(s)
-	if len(s) == 1 {
-		r := []rune(s)
+	// Then try one-rune variants
+	if len(keyName) == 1 {
+		r := []rune(keyName)
 		key = r[0]
-		// log.Debugf("XXX one-rune map %s: %d %s", s, key, mod) // TODO: remove
 		return key, mod
 	}
 
-	s = strings.ToLower(s)
-	switch s {
-	// case "arrowup", "uparrow", "up":
-	// 	key = tcell.KeyUp
-	// case "arrowdown", "downarrow", "down":
-	// 	key = tcell.KeyDown
-	// case "arrowleft", "leftarrow", "left":
-	// 	key = tcell.KeyLeft
-	// case "arrowright", "rightarrow", "right":
-	// 	key = tcell.KeyRight
-	// case "enter", "return":
-	// 	key = tcell.KeyEnter
-	// case "space", "spacebar":
-	// key = " "
-	// case "esc", "escape":
-	// 	key = tcell.KeyEsc
-	// case "tab":
-	// 	key = tcell.KeyTab
-	case "pageup", "pgup":
-		key = tcell.KeyPgUp
-	case "pagedown", "pgdown", "pgdn":
-		key = tcell.KeyPgDn
-	// case "home":
-	// 	key = tcell.KeyHome
-	// case "end":
-	// 	key = tcell.KeyEnd
-	case "\\\\":
-		key = '\\'
-	}
-
 	if key == nil {
-		log.Debugf("XXX NO map %s: %d %s", s, key, mod) // TODO: remove
+		log.Debugf("Could not map key descriptio '%s' to key", s)
 	}
 	return key, mod
 }
