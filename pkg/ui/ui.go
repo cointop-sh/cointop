@@ -38,12 +38,12 @@ func (ui *UI) SetBgColor(bgColor gocui.Attribute) {
 
 // SetInputEsc enables the escape key
 func (ui *UI) SetInputEsc(enabled bool) {
-	ui.g.InputEsc = true
+	ui.g.InputEsc = enabled
 }
 
 // SetMouse enables the mouse
 func (ui *UI) SetMouse(enabled bool) {
-	ui.g.Mouse = true
+	ui.g.Mouse = enabled
 }
 
 // SetCursor enables the input field cursor
@@ -53,7 +53,7 @@ func (ui *UI) SetCursor(enabled bool) {
 
 // SetHighlight enables the highlight active state
 func (ui *UI) SetHighlight(enabled bool) {
-	ui.g.Highlight = true
+	ui.g.Highlight = enabled
 }
 
 // SetManagerFunc sets the function to call for rendering UI
