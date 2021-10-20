@@ -227,9 +227,12 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		if !ok || entry.Coin == "" {
 			continue
 		}
-		amount := strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
-		coinName := entry.Coin
-		tuple := []string{coinName, amount}
+		tuple := []string{
+			entry.Coin,
+			strconv.FormatFloat(entry.Holdings, 'f', -1, 64),
+			strconv.FormatFloat(entry.BuyPrice, 'f', -1, 64),
+			entry.BuyCurrency,
+		}
 		holdingsIfc = append(holdingsIfc, tuple)
 	}
 	sort.Slice(holdingsIfc, func(i, j int) bool {
@@ -594,7 +597,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				if !ok {
 					continue
 				}
-				if len(tupleIfc) > 2 {
+				if len(tupleIfc) > 4 {
 					continue
 				}
 				name, ok := tupleIfc[0].(string)
@@ -607,7 +610,27 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 					return nil
 				}
 
-				if err := ct.SetPortfolioEntry(name, holdings); err != nil {
+				buyPrice := 0.0
+				if len(tupleIfc) >= 3 {
+					parsePrice, err := ct.InterfaceToFloat64(tupleIfc[2])
+					if err == nil {
+						buyPrice = parsePrice
+					} else {
+						return nil
+					}
+				}
+
+				buyCurrency := ""
+				if len(tupleIfc) >= 4 {
+					parseCurrency, ok := tupleIfc[3].(string)
+					if ok {
+						buyCurrency = parseCurrency
+					} else {
+						return nil
+					}
+				}
+
+				if err := ct.SetPortfolioEntry(name, holdings, buyPrice, buyCurrency); err != nil {
 					return err
 				}
 			}
@@ -620,7 +643,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				return err
 			}
 
-			if err := ct.SetPortfolioEntry(key, holdings); err != nil {
+			if err := ct.SetPortfolioEntry(key, holdings, 0.0, ""); err != nil {
 				return err
 			}
 		}

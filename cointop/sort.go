@@ -68,6 +68,14 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 			return a.AvailableSupply < b.AvailableSupply
 		case "last_updated":
 			return a.LastUpdated < b.LastUpdated
+		case "buy_price":
+			return a.BuyPrice < b.BuyPrice
+		case "buy_currency":
+			return a.BuyCurrency < b.BuyCurrency
+		case "profit":
+			return (a.Price - a.BuyPrice) < (b.Price - b.BuyPrice)
+		case "profit_percent":
+			return (a.Price - a.BuyPrice) < (b.Price - b.BuyPrice)
 		default:
 			return a.Rank < b.Rank
 		}

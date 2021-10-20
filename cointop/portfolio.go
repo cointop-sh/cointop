@@ -35,6 +35,11 @@ var SupportedPortfolioTableHeaders = []string{
 	"1y_change",
 	"percent_holdings",
 	"last_updated",
+	"buy_price",
+	"buy_currency",
+	// "buy_cost" // holdings * buy_price * conversion??
+	"profit",
+	"profit_percent",
 }
 
 // DefaultPortfolioTableHeaders are the default portfolio table header columns
@@ -301,6 +306,92 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Color:       ct.colorscheme.TableRow,
 						Text:        lastUpdated,
 					})
+			case "buy_price":
+				// TODO: finish
+				text := ct.FormatPrice(coin.BuyPrice)
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
+				if coin.BuyPrice == 0.0 {
+					text = ""
+				}
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
+					})
+			case "buy_currency":
+				// TODO: finish - merge with buy_price?
+				text := coin.BuyCurrency
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
+					})
+			case "profit":
+				// TODO: finish
+				text := ""
+				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+					// TODO: currency conversion
+					profit := coin.Holdings * (coin.Price - coin.BuyPrice)
+					text = ct.FormatPrice(profit)
+					// text := strconv.FormatFloat(coin.Holdings, 'f', -1, 64)
+
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
+					})
+			case "profit_percent":
+				profitPercent := 0.0
+				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+					// TODO: currency conversion
+					profitPercent = 100 * (coin.Price/coin.BuyPrice - 1)
+				}
+				// text = ct.FormatPrice(profit)
+				colorProfit := ct.colorscheme.TableColumnChange
+				if profitPercent > 0 {
+					colorProfit = ct.colorscheme.TableColumnChangeUp
+				}
+				if profitPercent < 0 {
+					colorProfit = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", profitPercent)
+				if coin.BuyPrice == 0.0 {
+					text = ""
+				}
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       colorProfit,
+						Text:        text,
+					})
 			}
 		}
 
@@ -456,8 +547,12 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	}
 	shouldDelete := holdings == 0
 
+	// TODO: add fields to form, parse here
+	buyPrice := 0.0
+	buyCurrency := ""
+
 	idx := ct.GetPortfolioCoinIndex(coin)
-	if err := ct.SetPortfolioEntry(coin.Name, holdings); err != nil {
+	if err := ct.SetPortfolioEntry(coin.Name, holdings, buyPrice, buyCurrency); err != nil {
 		return err
 	}
 
@@ -503,7 +598,7 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 }
 
 // SetPortfolioEntry sets a portfolio entry
-func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
+func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64, buyPrice float64, buyCurrency string) error {
 	log.Debug("SetPortfolioEntry()")
 	ic, _ := ct.State.allCoinsSlugMap.Load(strings.ToLower(coin))
 	c, _ := ic.(*Coin)
@@ -511,8 +606,10 @@ func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
 	if isNew {
 		key := strings.ToLower(coin)
 		ct.State.portfolio.Entries[key] = &PortfolioEntry{
-			Coin:     coin,
-			Holdings: holdings,
+			Coin:        coin,
+			Holdings:    holdings,
+			BuyPrice:    buyPrice,
+			BuyCurrency: buyCurrency,
 		}
 	} else {
 		p.Holdings = holdings
@@ -564,6 +661,8 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 			continue
 		}
 		coin.Holdings = p.Holdings
+		coin.BuyPrice = p.BuyPrice
+		coin.BuyCurrency = p.BuyCurrency
 		balance := coin.Price * p.Holdings
 		balancestr := fmt.Sprintf("%.2f", balance)
 		if ct.State.currencyConversion == "ETH" || ct.State.currencyConversion == "BTC" {
@@ -688,6 +787,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	records := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
 
+	// TODO: buy_price, buy_currency, profit, profit_percent, etc
 	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
 	if len(filterCols) > 0 {
 		for _, col := range filterCols {
