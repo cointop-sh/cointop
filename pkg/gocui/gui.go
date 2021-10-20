@@ -7,7 +7,6 @@ package gocui
 import (
 	"errors"
 
-	"github.com/cointop-sh/cointop/pkg/termbox"
 	"github.com/gdamore/tcell/v2"
 )
 
@@ -20,15 +19,15 @@ var (
 )
 
 // OutputMode represents the terminal's output mode (8 or 256 colors).
-type OutputMode termbox.OutputMode // TODO: die
+// type OutputMode termbox.OutputMode // TODO: die
 
-const ( // TODO: die
-	// OutputNormal provides 8-colors terminal mode.
-	OutputNormal = OutputMode(termbox.OutputNormal)
+// const ( // TODO: die
+// 	// OutputNormal provides 8-colors terminal mode.
+// 	OutputNormal = OutputMode(termbox.OutputNormal)
 
-	// Output256 provides 256-colors terminal mode.
-	Output256 = OutputMode(termbox.Output256)
-)
+// 	// Output256 provides 256-colors terminal mode.
+// 	Output256 = OutputMode(termbox.Output256)
+// )
 
 // Gui represents the whole User Interface, including the views, layouts
 // and eventBindings.
@@ -40,7 +39,8 @@ type Gui struct {
 	managers      []Manager
 	eventBindings []*eventBinding
 	maxX, maxY    int
-	outputMode    OutputMode // TODO: die
+	// outputMode    OutputMode // TODO: die
+	screen tcell.Screen
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
@@ -70,13 +70,11 @@ type Gui struct {
 
 	// The current event while in the handlers.
 	CurrentEvent tcell.Event
-
-	// The formerly-global Screen used by this gui.
-	Screen tcell.Screen
 }
 
 // NewGui returns a new Gui object with a given output mode.
-func NewGui(mode OutputMode) (*Gui, error) {
+// func NewGui(mode OutputMode) (*Gui, error) {
+func NewGui() (*Gui, error) {
 
 	g := &Gui{}
 
@@ -86,18 +84,18 @@ func NewGui(mode OutputMode) (*Gui, error) {
 	} else if e = s.Init(); e != nil {
 		return nil, e
 	} else {
-		g.Screen = s
+		g.screen = s
 
 	}
 
-	g.outputMode = mode
-	termbox.SetScreen(g.Screen) // ugly global
-	termbox.SetOutputMode(termbox.OutputMode(mode))
+	// g.outputMode = mode
+	// termbox.SetScreen(g.Screen) // ugly global
+	// termbox.SetOutputMode(termbox.OutputMode(mode))
 
 	g.tbEvents = make(chan tcell.Event, 20)
 	g.userEvents = make(chan userEvent, 20)
 
-	g.maxX, g.maxY = g.Screen.Size()
+	g.maxX, g.maxY = g.screen.Size()
 
 	g.BgColor, g.FgColor = ColorDefault, ColorDefault
 	g.SelBgColor, g.SelFgColor = ColorDefault, ColorDefault
@@ -108,7 +106,7 @@ func NewGui(mode OutputMode) (*Gui, error) {
 // Close finalizes the library. It should be called after a successful
 // initialization and when gocui is not needed anymore.
 func (g *Gui) Close() {
-	g.Screen.Fini()
+	g.screen.Fini()
 }
 
 // Size returns the terminal's size.
@@ -123,7 +121,12 @@ func (g *Gui) SetRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
-	termbox.SetCell(x, y, ch, termbox.Attribute(fgColor), termbox.Attribute(bgColor))
+	// compat
+	// termbox.SetCell(x, y, ch, termbox.Attribute(fgColor), termbox.Attribute(fgColor))
+	st := g.MkStyle(fgColor, bgColor)
+	st = st.Foreground(g.scaledColor(x, y))
+	g.screen.SetContent(x, y, ch, nil, st)
+
 	return nil
 }
 
@@ -159,7 +162,7 @@ func (g *Gui) SetView(name string, x0, y0, x1, y1 int) (*View, error) {
 		return v, nil
 	}
 
-	v := newView(name, x0, y0, x1, y1, g.outputMode)
+	v := newView(name, x0, y0, x1, y1, g)
 	v.BgColor, v.FgColor = g.BgColor, g.FgColor
 	v.SelBgColor, v.SelFgColor = g.SelBgColor, g.SelFgColor
 	g.views = append(g.views, v)
@@ -390,12 +393,12 @@ func (g *Gui) SetManagerFunc(manager func(*Gui) error) {
 func (g *Gui) MainLoop() error {
 	go func() {
 		for {
-			g.tbEvents <- termbox.PollEvent()
+			g.tbEvents <- g.screen.PollEvent()
 		}
 	}()
 
 	if g.Mouse {
-		g.Screen.EnableMouse()
+		g.screen.EnableMouse()
 	}
 	// s.EnablePaste()
 
@@ -453,11 +456,69 @@ func (g *Gui) handleEvent(ev tcell.Event) error {
 	}
 }
 
+// TODO: delete termbox compat
+func (g *Gui) fixColor(c tcell.Color) tcell.Color {
+	if c == tcell.ColorDefault {
+		return c
+	}
+	c = tcell.PaletteColor(int(c) & 0xff)
+	// switch g.outputMode {
+	// case OutputNormal:
+	// 	c = tcell.PaletteColor(int(c) & 0xf)
+	// case Output256:
+	// 	c = tcell.PaletteColor(int(c) & 0xff)
+	// case Output216:
+	// 	c = tcell.PaletteColor(int(c)%216 + 16)
+	// case OutputGrayscale:
+	// 	c %= tcell.PaletteColor(int(c)%24 + 232)
+	// default:
+	// 	c = tcell.ColorDefault
+	// }
+	return c
+}
+
+// TODO: delete termbox compat
+func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
+	st := tcell.StyleDefault
+
+	f := tcell.PaletteColor(int(fg)&0x1ff - 1)
+	b := tcell.PaletteColor(int(bg)&0x1ff - 1)
+
+	f = g.fixColor(f)
+	b = g.fixColor(b)
+	st = st.Foreground(f).Background(b)
+	if (fg|bg)&AttrBold != 0 {
+		st = st.Bold(true)
+	}
+	if (fg|bg)&AttrUnderline != 0 {
+		st = st.Underline(true)
+	}
+	if (fg|bg)&AttrReverse != 0 {
+		st = st.Reverse(true)
+	}
+	return st
+}
+
+func (g *Gui) scaledColor(x, y int) tcell.Color {
+	w, h := g.screen.Size()
+	blu := int32(255 * float64(x) / float64(w))
+	grn := int32(255 * float64(y) / float64(h))
+	red := int32(200)
+	return tcell.NewRGBColor(red, grn, blu)
+}
+
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {
-	termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
+	// termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
+	st := g.MkStyle(g.FgColor, g.BgColor)
+	w, h := g.screen.Size() // TODO: merge with maxX, maxY below
+	for row := 0; row < h; row++ {
+		for col := 0; col < w; col++ {
+			g.screen.SetContent(col, row, ' ', nil, st)
+		}
+	}
 
-	maxX, maxY := g.Screen.Size()
+	maxX, maxY := g.screen.Size()
 	// if GUI's size has changed, we need to redraw all views
 	if maxX != g.maxX || maxY != g.maxY {
 		for _, v := range g.views {
@@ -498,7 +559,7 @@ func (g *Gui) flush() error {
 			return err
 		}
 	}
-	g.Screen.Show()
+	g.screen.Show()
 	return nil
 }
 
@@ -603,13 +664,13 @@ func (g *Gui) draw(v *View) error {
 			gMaxX, gMaxY := g.Size()
 			cx, cy := curview.x0+curview.cx+1, curview.y0+curview.cy+1
 			if cx >= 0 && cx < gMaxX && cy >= 0 && cy < gMaxY {
-				g.Screen.ShowCursor(cx, cy)
+				g.screen.ShowCursor(cx, cy)
 			} else {
-				g.Screen.ShowCursor(-1, -1) // HideCursor
+				g.screen.ShowCursor(-1, -1) // HideCursor
 			}
 		}
 	} else {
-		g.Screen.ShowCursor(-1, -1) // HideCursor
+		g.screen.ShowCursor(-1, -1) // HideCursor
 	}
 
 	v.clearRunes()

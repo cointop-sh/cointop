@@ -10,7 +10,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/cointop-sh/cointop/pkg/termbox"
 	"github.com/gdamore/tcell/v2"
 	log "github.com/sirupsen/logrus"
 )
@@ -128,18 +127,18 @@ type EvtMouse struct {
 
 type EvtErr error
 
-func hookTermboxEvt() {
-	log.Debugf("XXX hookTermboxEvt")
-	for {
-		e := termbox.PollEvent()
-		log.Debugf("XXX event %s", e)
-		for _, c := range sysEvtChs {
-			func(ch chan Event) {
-				ch <- crtTermboxEvt(e)
-			}(c)
-		}
-	}
-}
+// func hookTermboxEvt() {
+// 	log.Debugf("XXX hookTermboxEvt")
+// 	for {
+// 		e := termbox.PollEvent()
+// 		log.Debugf("XXX event %s", e)
+// 		for _, c := range sysEvtChs {
+// 			func(ch chan Event) {
+// 				ch <- crtTermboxEvt(e)
+// 			}(c)
+// 		}
+// 	}
+// }
 
 func NewSysEvtCh() chan Event {
 	ec := make(chan Event)

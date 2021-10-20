@@ -14,7 +14,7 @@ type escapeInterpreter struct {
 	curch                  rune
 	csiParam               []string
 	curFgColor, curBgColor Attribute
-	mode                   OutputMode
+	// mode                   OutputMode
 }
 
 type escapeState int
@@ -54,12 +54,12 @@ func (ei *escapeInterpreter) runes() []rune {
 
 // newEscapeInterpreter returns an escapeInterpreter that will be able to parse
 // terminal escape sequences.
-func newEscapeInterpreter(mode OutputMode) *escapeInterpreter {
+func newEscapeInterpreter() *escapeInterpreter {
 	ei := &escapeInterpreter{
 		state:      stateNone,
 		curFgColor: ColorDefault,
 		curBgColor: ColorDefault,
-		mode:       mode,
+		// mode:       mode,
 	}
 	return ei
 }
@@ -120,12 +120,13 @@ func (ei *escapeInterpreter) parseOne(ch rune) (isEscape bool, err error) {
 			return true, nil
 		case ch == 'm':
 			var err error
-			switch ei.mode {
-			case OutputNormal:
-				err = ei.outputNormal()
-			case Output256:
-				err = ei.output256()
-			}
+			err = ei.output256()
+			// switch ei.mode {
+			// case OutputNormal:
+			// 	err = ei.outputNormal()
+			// case Output256:
+			// 	err = ei.output256()
+			// }
 			if err != nil {
 				return false, errCSIParseError
 			}

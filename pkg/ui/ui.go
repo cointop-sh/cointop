@@ -11,7 +11,7 @@ type UI struct {
 
 // NewUI returns a new UI instance
 func NewUI() (*UI, error) {
-	g, err := gocui.NewGui(gocui.Output256)
+	g, err := gocui.NewGui()
 	if err != nil {
 		return nil, err
 	}

@@ -9,8 +9,6 @@ import (
 	"errors"
 	"io"
 	"strings"
-
-	"github.com/cointop-sh/cointop/pkg/termbox"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor
@@ -71,6 +69,9 @@ type View struct {
 	// If Mask is true, the View will display the mask instead of the real
 	// content
 	Mask rune
+
+	// The gui that owns this view
+	g *Gui
 }
 
 type viewLine struct {
@@ -95,7 +96,7 @@ func (l lineType) String() string {
 }
 
 // newView returns a new View object.
-func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
+func newView(name string, x0, y0, x1, y1 int, g *Gui) *View {
 	v := &View{
 		name:    name,
 		x0:      x0,
@@ -105,7 +106,8 @@ func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
 		Frame:   true,
 		Editor:  DefaultEditor,
 		tainted: true,
-		ei:      newEscapeInterpreter(mode),
+		ei:      newEscapeInterpreter(),
+		g:       g,
 	}
 	return v
 }
@@ -153,8 +155,7 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 		bgColor = v.SelBgColor
 	}
 
-	termbox.SetCell(v.x0+x+1, v.y0+y+1, ch,
-		termbox.Attribute(fgColor), termbox.Attribute(bgColor))
+	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, fgColor, bgColor)
 
 	return nil
 }
@@ -402,8 +403,7 @@ func (v *View) clearRunes() {
 	maxX, maxY := v.Size()
 	for x := 0; x < maxX; x++ {
 		for y := 0; y < maxY; y++ {
-			termbox.SetCell(v.x0+x+1, v.y0+y+1, ' ',
-				termbox.Attribute(v.FgColor), termbox.Attribute(v.BgColor))
+			v.g.SetRune(v.x0+x+1, v.y0+y+1, ' ', v.FgColor, v.BgColor)
 		}
 	}
 }
