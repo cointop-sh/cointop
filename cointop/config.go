@@ -49,6 +49,7 @@ type ConfigFileConfig struct {
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CacheDir          interface{}            `toml:"cache_dir"`
 	CompactNotation   interface{}            `toml:"compact_notation"`
+	EnableMouse       interface{}            `toml:"enable_mouse"`
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -72,6 +73,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadRefreshRateFromConfig,
 		ct.loadCacheDirFromConfig,
 		ct.loadCompactNotationFromConfig,
+		ct.loadEnableMouseFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -289,6 +291,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 		CompactNotation:   ct.State.compactNotation,
+		EnableMouse:       ct.State.enableMouse,
 	}
 
 	var b bytes.Buffer
@@ -501,6 +504,16 @@ func (ct *Cointop) loadCompactNotationFromConfig() error {
 	log.Debug("loadCompactNotationFromConfig()")
 	if compactNotation, ok := ct.config.CompactNotation.(bool); ok {
 		ct.State.compactNotation = compactNotation
+	}
+
+	return nil
+}
+
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadEnableMouseFromConfig() error {
+	log.Debug("loadEnableMouseFromConfig()")
+	if enableMouse, ok := ct.config.EnableMouse.(bool); ok {
+		ct.State.enableMouse = enableMouse
 	}
 
 	return nil
