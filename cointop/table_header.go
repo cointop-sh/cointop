@@ -138,13 +138,13 @@ var HeaderColumns = map[string]*HeaderColumn{
 	},
 	"profit": {
 		Slug:       "profit",
-		Label:      "profit",
-		PlainLabel: "profit",
+		Label:      "PNL",
+		PlainLabel: "PNL",
 	},
 	"profit_percent": {
 		Slug:       "profit_percent",
-		Label:      "profit%",
-		PlainLabel: "profit%",
+		Label:      "PNL%",
+		PlainLabel: "PNL%",
 	},
 }
 
