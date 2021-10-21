@@ -346,9 +346,8 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
 					// TODO: currency conversion
 					profit := coin.Holdings * (coin.Price - coin.BuyPrice)
+					profit = math.Round(100*profit) / 100 // cheesy round
 					text = ct.FormatPrice(profit)
-					// text := strconv.FormatFloat(coin.Holdings, 'f', -1, 64)
-
 				}
 				if ct.State.hidePortfolioBalances {
 					text = HiddenBalanceChars
