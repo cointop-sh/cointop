@@ -346,8 +346,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
 					if err == nil {
 						profit := (coin.Price - costPrice) * coin.Holdings
-						profit = math.Round(100*profit) / 100 // cheesy round
-						text = ct.FormatPrice(profit)
+						text = humanize.FixedMonetaryf(profit, 2)
 					} else {
 						text = "?"
 					}
