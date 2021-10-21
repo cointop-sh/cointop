@@ -341,13 +341,16 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Text:        text,
 					})
 			case "profit":
-				// TODO: finish
 				text := ""
 				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
-					// TODO: currency conversion
-					profit := coin.Holdings * (coin.Price - coin.BuyPrice)
-					profit = math.Round(100*profit) / 100 // cheesy round
-					text = ct.FormatPrice(profit)
+					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
+					if err == nil {
+						profit := (coin.Price - costPrice) * coin.Holdings
+						profit = math.Round(100*profit) / 100 // cheesy round
+						text = ct.FormatPrice(profit)
+					} else {
+						text = "?"
+					}
 				}
 				if ct.State.hidePortfolioBalances {
 					text = HiddenBalanceChars
@@ -366,10 +369,11 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 			case "profit_percent":
 				profitPercent := 0.0
 				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
-					// TODO: currency conversion
-					profitPercent = 100 * (coin.Price/coin.BuyPrice - 1)
+					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
+					if err == nil {
+						profitPercent = 100 * (coin.Price/costPrice - 1)
+					}
 				}
-				// text = ct.FormatPrice(profit)
 				colorProfit := ct.colorscheme.TableColumnChange
 				if profitPercent > 0 {
 					colorProfit = ct.colorscheme.TableColumnChangeUp
