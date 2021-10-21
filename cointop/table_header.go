@@ -236,7 +236,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 		}
 		leftAlign := ct.GetTableColumnAlignLeft(col)
 		switch col {
-		case "price", "balance", "profit":
+		case "price", "balance", "profit", "cost":
 			label = fmt.Sprintf("%s%s", ct.CurrencySymbol(), label)
 		}
 		if leftAlign {

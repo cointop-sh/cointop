@@ -309,11 +309,8 @@ func (ct *Cointop) Convert(convertFrom string, convertTo string, amount float64)
 	var rate float64
 	if convertFrom == convertTo {
 		rate = 1.0
-	} else if convertFrom == "usd" && convertTo == "aud" {
-		rate = 1.33 // TODO: cache exchange rates and remove this dodgy hack
-		log.Debugf("XXX DODGY HACK Convert(%s, %s, %f) = %f", convertFrom, convertTo, amount, rate*amount)
 	} else {
-		crate, err := ct.api.GetExchangeRate(convertFrom, convertTo)
+		crate, err := ct.api.GetExchangeRate(convertFrom, convertTo, true)
 		if err != nil {
 			return 0, err
 		}
