@@ -146,6 +146,11 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Label:      "PNL%",
 		PlainLabel: "PNL%",
 	},
+	"cost": {
+		Slug:       "cost",
+		Label:      "cost",
+		PlainLabel: "cost",
+	},
 }
 
 // GetLabel fetch the label to use for the heading (depends on configuration)

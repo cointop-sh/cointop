@@ -76,6 +76,9 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 			return (a.Price - a.BuyPrice) < (b.Price - b.BuyPrice)
 		case "profit_percent":
 			return (a.Price - a.BuyPrice) < (b.Price - b.BuyPrice)
+		case "cost":
+			// TODO: convert?
+			return (a.BuyPrice * a.Holdings) < (b.BuyPrice * b.Holdings)
 		default:
 			return a.Rank < b.Rank
 		}
