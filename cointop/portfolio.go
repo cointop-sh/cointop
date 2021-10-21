@@ -431,7 +431,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						LeftMargin:  leftMargin,
 						RightMargin: rightMargin,
 						LeftAlign:   false,
-						Color:       ct.colorscheme.TableRow,
+						Color:       ct.colorscheme.TableColumnPrice,
 						Text:        text,
 					})
 			}
