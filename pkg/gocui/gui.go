@@ -154,8 +154,10 @@ func (g *Gui) SetRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
-	// st := g.MkStyle(fgColor, bgColor)
-	st := g.prettyColor(x, y, fgColor, bgColor)
+	st := g.MkStyle(fgColor, bgColor)
+	if bgColor == ColorBlack {
+		st = g.prettyColor(x, y, fgColor, bgColor)
+	}
 	return g.SetRuneNew(x, y, ch, st)
 }
 
