@@ -126,15 +126,15 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Label:      "last [u]pdated",
 		PlainLabel: "last updated",
 	},
-	"buy_price": {
-		Slug:       "buy_price",
-		Label:      "buy price",
-		PlainLabel: "buy price",
+	"cost_price": {
+		Slug:       "cost_price",
+		Label:      "cost price",
+		PlainLabel: "cost price",
 	},
-	"buy_currency": { // TODO: merge with price?
-		Slug:       "buy_curency",
-		Label:      "bcur",
-		PlainLabel: "bcur",
+	"cost": {
+		Slug:       "cost",
+		Label:      "cost[!]",
+		PlainLabel: "cost",
 	},
 	"profit": {
 		Slug:       "profit",
@@ -145,11 +145,6 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Slug:       "profit_percent",
 		Label:      "PNL%[#]",
 		PlainLabel: "PNL%",
-	},
-	"cost": {
-		Slug:       "cost",
-		Label:      "cost[!]",
-		PlainLabel: "cost",
 	},
 }
 

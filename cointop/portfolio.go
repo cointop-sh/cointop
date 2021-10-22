@@ -35,12 +35,10 @@ var SupportedPortfolioTableHeaders = []string{
 	"1y_change",
 	"percent_holdings",
 	"last_updated",
-	"buy_price",
-	"buy_currency",
-	// "buy_cost" // holdings * buy_price * conversion??
+	"cost_price",
+	"cost",
 	"profit",
 	"profit_percent",
-	"cost",
 }
 
 // DefaultPortfolioTableHeaders are the default portfolio table header columns
@@ -307,13 +305,12 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Color:       ct.colorscheme.TableRow,
 						Text:        lastUpdated,
 					})
-			case "buy_price":
-				// TODO: finish
-				text := ct.FormatPrice(coin.BuyPrice)
+			case "cost_price":
+				text := fmt.Sprintf("%s %s", coin.BuyCurrency, ct.FormatPrice(coin.BuyPrice))
 				if ct.State.hidePortfolioBalances {
 					text = HiddenBalanceChars
 				}
-				if coin.BuyPrice == 0.0 {
+				if coin.BuyPrice == 0.0 || coin.BuyCurrency == "" {
 					text = ""
 				}
 				symbolPadding := 1
@@ -327,9 +324,23 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Color:       ct.colorscheme.TableRow,
 						Text:        text,
 					})
-			case "buy_currency":
-				// TODO: finish - merge with buy_price?
-				text := coin.BuyCurrency
+			case "cost":
+				cost := 0.0
+				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
+					if err == nil {
+						cost = costPrice * coin.Holdings
+					}
+				}
+				// text := ct.FormatPrice(cost)
+				text := humanize.FixedMonetaryf(cost, 2)
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
+				if coin.BuyPrice == 0.0 {
+					text = ""
+				}
+
 				symbolPadding := 1
 				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
 				ct.SetTableColumnAlignLeft(header, false)
@@ -338,7 +349,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						LeftMargin:  leftMargin,
 						RightMargin: rightMargin,
 						LeftAlign:   false,
-						Color:       ct.colorscheme.TableRow,
+						Color:       ct.colorscheme.TableColumnPrice,
 						Text:        text,
 					})
 			case "profit":
@@ -404,34 +415,6 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						RightMargin: rightMargin,
 						LeftAlign:   false,
 						Color:       colorProfit,
-						Text:        text,
-					})
-			case "cost":
-				cost := 0.0
-				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
-					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
-					if err == nil {
-						cost = costPrice * coin.Holdings
-					}
-				}
-				// text := ct.FormatPrice(cost)
-				text := humanize.FixedMonetaryf(cost, 2)
-				if ct.State.hidePortfolioBalances {
-					text = HiddenBalanceChars
-				}
-				if coin.BuyPrice == 0.0 {
-					text = ""
-				}
-
-				symbolPadding := 1
-				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
-				ct.SetTableColumnAlignLeft(header, false)
-				rowCells = append(rowCells,
-					&table.RowCell{
-						LeftMargin:  leftMargin,
-						RightMargin: rightMargin,
-						LeftAlign:   false,
-						Color:       ct.colorscheme.TableColumnPrice,
 						Text:        text,
 					})
 			}
