@@ -114,6 +114,39 @@ func (g *Gui) Size() (x, y int) {
 	return g.maxX, g.maxY
 }
 
+// temporary kludge for the pretty
+func (g *Gui) prettyColor(x, y int, fgColor, bgColor Attribute) tcell.Style {
+	st := g.MkStyle(fgColor, bgColor)
+	fg, bg, _ := st.Decompose()
+
+	// log.Debugf("XXX bg=%s", bg)
+	w, h := g.screen.Size()
+	if true {
+		red := int32(0)
+		grn := int32(0)
+		blu := int32(50 * float64(y) / float64(h))
+		bg = tcell.NewRGBColor(red, grn, blu)
+		st = st.Background(bg)
+
+	}
+	// if bg == 0x100000006 {
+	// 	bg = tcell.ColorRed
+	// 	st = st.Background(bg)
+	// }
+
+	if true {
+		red := int32(200)
+		grn := int32(255 * float64(y) / float64(h))
+		blu := int32(255 * float64(x) / float64(w))
+		fg = tcell.NewRGBColor(red, grn, blu)
+		st = st.Foreground(fg)
+	}
+
+	// st := tcell.StyleDefault
+	// return st.Foreground(fg).Background(bg).Attributes(attr)
+	return st
+}
+
 // SetRune writes a rune at the given point, relative to the top-left
 // corner of the terminal. It checks if the position is valid and applies
 // the given colors.
@@ -121,12 +154,13 @@ func (g *Gui) SetRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
-	// compat
-	// termbox.SetCell(x, y, ch, termbox.Attribute(fgColor), termbox.Attribute(fgColor))
-	st := g.MkStyle(fgColor, bgColor)
-	st = st.Foreground(g.scaledColor(x, y))
-	g.screen.SetContent(x, y, ch, nil, st)
+	// st := g.MkStyle(fgColor, bgColor)
+	st := g.prettyColor(x, y, fgColor, bgColor)
+	return g.SetRuneNew(x, y, ch, st)
+}
 
+func (g *Gui) SetRuneNew(x, y int, ch rune, st tcell.Style) error {
+	g.screen.SetContent(x, y, ch, nil, st)
 	return nil
 }
 
@@ -497,14 +531,6 @@ func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
 		st = st.Reverse(true)
 	}
 	return st
-}
-
-func (g *Gui) scaledColor(x, y int) tcell.Color {
-	w, h := g.screen.Size()
-	blu := int32(255 * float64(x) / float64(w))
-	grn := int32(255 * float64(y) / float64(h))
-	red := int32(200)
-	return tcell.NewRGBColor(red, grn, blu)
 }
 
 // flush updates the gui, re-drawing frames and buffers.
