@@ -337,11 +337,11 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					})
 			case "cost_price":
 				text := fmt.Sprintf("%s %s", coin.BuyCurrency, ct.FormatPrice(coin.BuyPrice))
-				if ct.State.hidePortfolioBalances {
-					text = HiddenBalanceChars
-				}
 				if coin.BuyPrice == 0.0 || coin.BuyCurrency == "" {
 					text = ""
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
 				}
 				symbolPadding := 1
 				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
@@ -363,11 +363,11 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					}
 				}
 				text := humanize.FixedMonetaryf(cost, 2)
-				if ct.State.hidePortfolioBalances {
-					text = HiddenBalanceChars
-				}
 				if coin.BuyPrice == 0.0 {
 					text = ""
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
 				}
 
 				symbolPadding := 1
@@ -429,12 +429,12 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 					colorProfit = ct.colorscheme.TableColumnChangeDown
 				}
 				text := fmt.Sprintf("%.2f%%", profitPercent)
+				if coin.BuyPrice == 0.0 {
+					text = ""
+				}
 				if ct.State.hidePortfolioBalances {
 					text = HiddenBalanceChars
 					colorProfit = ct.colorscheme.TableColumnChange
-				}
-				if coin.BuyPrice == 0.0 {
-					text = ""
 				}
 				ct.SetTableColumnWidthFromString(header, text)
 				ct.SetTableColumnAlignLeft(header, false)
