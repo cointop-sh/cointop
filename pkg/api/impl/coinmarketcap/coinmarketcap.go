@@ -432,7 +432,7 @@ func getChartInterval(start, end int64) string {
 }
 
 // GetExchangeRate gets the current excange rate between two currencies
-func (s *Service) GetExchangeRate(convertFrom string, convertTo string, cached bool) (float64, error) {
+func (s *Service) GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) {
 	if convertFrom == convertTo {
 		return 1.0, nil
 	}

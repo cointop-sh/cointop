@@ -161,7 +161,7 @@ func (s *Service) GetExchangeRates(cached bool) (*types.ExchangeRatesItem, error
 }
 
 // GetExchangeRate gets the current excange rate between two currencies
-func (s *Service) GetExchangeRate(convertFrom string, convertTo string, cached bool) (float64, error) {
+func (s *Service) GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) {
 	convertFrom = strings.ToLower(convertFrom)
 	convertTo = strings.ToLower(convertTo)
 	if convertFrom == convertTo {

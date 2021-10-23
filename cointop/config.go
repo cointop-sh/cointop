@@ -647,10 +647,8 @@ func (ct *Cointop) loadPortfolioHoldingsFromConfig(holdingsIfc []interface{}) er
 
 		buyPrice := 0.0
 		if len(tupleIfc) >= 3 {
-			if parsePrice, err := ct.InterfaceToFloat64(tupleIfc[2]); err != nil {
+			if buyPrice, err = ct.InterfaceToFloat64(tupleIfc[2]); err != nil {
 				return err
-			} else {
-				buyPrice = parsePrice
 			}
 		}
 

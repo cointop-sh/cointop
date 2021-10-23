@@ -302,19 +302,19 @@ func CurrencySymbol(currency string) string {
 	return "?"
 }
 
-func (ct *Cointop) Convert(convertFrom string, convertTo string, amount float64) (float64, error) {
+// Convert converts an amount to another currency type
+func (ct *Cointop) Convert(convertFrom, convertTo string, amount float64) (float64, error) {
 	convertFrom = strings.ToLower(convertFrom)
 	convertTo = strings.ToLower(convertTo)
 
-	var rate float64
 	if convertFrom == convertTo {
-		rate = 1.0
-	} else {
-		crate, err := ct.api.GetExchangeRate(convertFrom, convertTo, true)
-		if err != nil {
-			return 0, err
-		}
-		rate = crate
+		return amount, nil
 	}
+
+	rate, err := ct.api.GetExchangeRate(convertFrom, convertTo, true)
+	if err != nil {
+		return 0, err
+	}
+
 	return rate * amount, nil
 }

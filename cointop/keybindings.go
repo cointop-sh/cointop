@@ -328,9 +328,9 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 	case "sort_column_cost":
 		fn = ct.Sortfn("cost", true)
 	case "sort_column_pnl":
-		fn = ct.Sortfn("profit", true)
+		fn = ct.Sortfn("pnl", true)
 	case "sort_column_pnl_percent":
-		fn = ct.Sortfn("profit_percent", true)
+		fn = ct.Sortfn("pnl_percent", true)
 	default:
 		fn = ct.Keyfn(ct.Noop)
 	}
