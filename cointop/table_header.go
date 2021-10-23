@@ -133,17 +133,17 @@ var HeaderColumns = map[string]*HeaderColumn{
 	},
 	"cost": {
 		Slug:       "cost",
-		Label:      "cost[!]",
+		Label:      "[!]cost",
 		PlainLabel: "cost",
 	},
-	"profit": {
-		Slug:       "profit",
-		Label:      "PNL[@]",
+	"pnl": {
+		Slug:       "pnl",
+		Label:      "[@]PNL",
 		PlainLabel: "PNL",
 	},
-	"profit_percent": {
-		Slug:       "profit_percent",
-		Label:      "PNL%[#]",
+	"pnl_percent": {
+		Slug:       "pnl_percent",
+		Label:      "[#]PNL%",
 		PlainLabel: "PNL%",
 	},
 }
@@ -231,7 +231,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 		}
 		leftAlign := ct.GetTableColumnAlignLeft(col)
 		switch col {
-		case "price", "balance", "profit", "cost":
+		case "price", "balance", "pnl", "cost":
 			label = fmt.Sprintf("%s%s", ct.CurrencySymbol(), label)
 		}
 		if leftAlign {

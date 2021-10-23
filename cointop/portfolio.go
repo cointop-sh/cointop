@@ -37,8 +37,8 @@ var SupportedPortfolioTableHeaders = []string{
 	"last_updated",
 	"cost_price",
 	"cost",
-	"profit",
-	"profit_percent",
+	"pnl",
+	"pnl_percent",
 }
 
 // DefaultPortfolioTableHeaders are the default portfolio table header columns
@@ -53,11 +53,22 @@ var DefaultPortfolioTableHeaders = []string{
 	"24h_change",
 	"7d_change",
 	"percent_holdings",
+	"cost_price",
+	"cost",
+	"pnl",
+	"pnl_percent",
 	"last_updated",
 }
 
 // HiddenBalanceChars are the characters to show when hidding balances
 var HiddenBalanceChars = "********"
+
+var costColumns = map[string]bool{
+	"cost_price":  true,
+	"cost":        true,
+	"pnl":         true,
+	"pnl_percent": true,
+}
 
 // ValidPortfolioTableHeader returns the portfolio table headers
 func (ct *Cointop) ValidPortfolioTableHeader(name string) bool {
@@ -84,6 +95,25 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 	headers := ct.GetPortfolioTableHeaders()
 	ct.ClearSyncMap(&ct.State.tableColumnWidths)
 	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
+
+	displayCostColumns := false
+	for _, coin := range ct.State.coins {
+		if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+			displayCostColumns = true
+			break
+		}
+	}
+
+	if !displayCostColumns {
+		filtered := make([]string, 0)
+		for _, header := range headers {
+			if _, ok := costColumns[header]; !ok {
+				filtered = append(filtered, header)
+			}
+		}
+		headers = filtered
+	}
+
 	for _, coin := range ct.State.coins {
 		leftMargin := 1
 		rightMargin := 1
@@ -332,7 +362,6 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						cost = costPrice * coin.Holdings
 					}
 				}
-				// text := ct.FormatPrice(cost)
 				text := humanize.FixedMonetaryf(cost, 2)
 				if ct.State.hidePortfolioBalances {
 					text = HiddenBalanceChars
@@ -352,7 +381,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Color:       ct.colorscheme.TableColumnPrice,
 						Text:        text,
 					})
-			case "profit":
+			case "pnl":
 				text := ""
 				colorProfit := ct.colorscheme.TableColumnChange
 				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
@@ -385,7 +414,7 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Color:       colorProfit,
 						Text:        text,
 					})
-			case "profit_percent":
+			case "pnl_percent":
 				profitPercent := 0.0
 				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
 					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
@@ -812,8 +841,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	records := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
 
-	// TODO: buy_price, buy_currency, profit, profit_percent, etc
-	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
+	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings", "buy_price", "buy_currency", "pnl", "pnl_percent"}
 	if len(filterCols) > 0 {
 		for _, col := range filterCols {
 			valid := false

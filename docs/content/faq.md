@@ -186,11 +186,11 @@ draft: false
 
 ## How do I include buy/cost price in my portfolio?
 
-  Currently there is no UI for this.  If you want to include the cost of your coins in the Portfolio screen, you will need to edit your config.toml
+  Currently there is no UI for this. If you want to include the cost of your coins in the Portfolio screen, you will need to edit your config.toml
 
-  Each coin consists of four values:  coin name, coin amount, cost-price, cost-currency.
+  Each coin consists of four values: coin name, coin amount, cost-price, cost-currency.
 
-  For example, the following configuration includes 100 ALGO at USD1.95 each; and 0.1 BTC at AUD50100.83 each. 
+  For example, the following configuration includes 100 ALGO at USD1.95 each; and 0.1 BTC at AUD50100.83 each.
 
   ```toml
    holdings = [["Algorand", "100", "1.95", "USD"], ["Bitcoin", "0.1", "50100.83", "AUD"]]
@@ -200,12 +200,12 @@ draft: false
 
   - `cost_price` the price and currency that the coins were purchased at
   - `cost` the cost (in the current currency) of the coins
-  - `profit` the PNL of the coins (current value vs original cost)
-  - `profit_percent` the PNL of the coins as a fraction of the original cost
+  - `pnl` the PNL of the coins (current value vs original cost)
+  - `pnl_percent` the PNL of the coins as a fraction of the original cost
 
   With the holdings above, and the currency set to GBP (British Pounds) cointop will look something like this:
-  
-  ![Screen Shot 2021-10-22 at 8 41 21 am](https://user-images.githubusercontent.com/122371/138361142-8e1f32b5-ca24-471d-a628-06968f07c65f.png)
+
+  ![portfolio profit and loss](https://user-images.githubusercontent.com/122371/138361142-8e1f32b5-ca24-471d-a628-06968f07c65f.png)
 
 ## How do I hide my portfolio balances (private mode)?
 
@@ -520,7 +520,7 @@ draft: false
 ## How can I get more information when something is going wrong?
 
   Cointop creates a logfile at `/tmp/cointop.log`. Normally nothing is written to this, but if you set the environment variable
-  `DEBUG=1` cointop will write a lot of output describing its operation.  Furthermore, if you also set `DEBUG_HTTP=1` it will 
+  `DEBUG=1` cointop will write a lot of output describing its operation.  Furthermore, if you also set `DEBUG_HTTP=1` it will
   emit lots about every HTTP request that cointop makes to coingecko (backend).  Developers may ask for this information
   to help diagnose any problems you may experience.
 
