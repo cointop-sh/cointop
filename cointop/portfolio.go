@@ -841,7 +841,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	records := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
 
-	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings", "buy_price", "buy_currency", "pnl", "pnl_percent"}
+	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings", "cost_price", "cost", "pnl", "pnl_percent"}
 	if len(filterCols) > 0 {
 		for _, col := range filterCols {
 			valid := false
@@ -934,6 +934,70 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(percentHoldings, 2))
 				} else {
 					item[i] = fmt.Sprintf("%.2f", percentHoldings)
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "cost_price":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					if humanReadable {
+						item[i] = fmt.Sprintf("%s %s", entry.BuyCurrency, ct.FormatPrice(entry.BuyPrice))
+					} else {
+						item[i] = fmt.Sprintf("%s %s", entry.BuyCurrency, strconv.FormatFloat(entry.BuyPrice, 'f', -1, 64))
+					}
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "cost":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					costPrice, err := ct.Convert(entry.BuyCurrency, ct.State.currencyConversion, entry.BuyPrice)
+					if err == nil {
+						cost := costPrice * entry.Holdings
+						if humanReadable {
+							item[i] = fmt.Sprintf("%s%s", symbol, humanize.FixedMonetaryf(cost, 2))
+						} else {
+							item[i] = strconv.FormatFloat(cost, 'f', -1, 64)
+						}
+					} else {
+						item[i] = "?" // error
+					}
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "pnl":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					costPrice, err := ct.Convert(entry.BuyCurrency, ct.State.currencyConversion, entry.BuyPrice)
+					if err == nil {
+						profit := (entry.Price - costPrice) * entry.Holdings
+						if humanReadable {
+							// TODO: if <0 "£-3.71" should be "-£3.71"?
+							item[i] = fmt.Sprintf("%s%s", symbol, humanize.FixedMonetaryf(profit, 2))
+						} else {
+							item[i] = strconv.FormatFloat(profit, 'f', -1, 64)
+						}
+					} else {
+						item[i] = "?" // error
+					}
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "pnl_percent":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					costPrice, err := ct.Convert(entry.BuyCurrency, ct.State.currencyConversion, entry.BuyPrice)
+					if err == nil {
+						profitPercent := 100 * (entry.Price/costPrice - 1)
+						if humanReadable {
+							item[i] = fmt.Sprintf("%s%%", humanize.Numericf(profitPercent, 2))
+						} else {
+							item[i] = fmt.Sprintf("%.2f", profitPercent)
+						}
+
+					} else {
+						item[i] = "?" // error
+					}
 				}
 				if hideBalances {
 					item[i] = HiddenBalanceChars
