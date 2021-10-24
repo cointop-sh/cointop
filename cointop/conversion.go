@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// FiatCurrencyNames is a mpa of currency symbols to names.
+// FiatCurrencyNames is a map of currency symbols to names.
 // Keep these in alphabetical order.
 var FiatCurrencyNames = map[string]string{
 	"AUD": "Australian Dollar",
@@ -300,4 +300,21 @@ func CurrencySymbol(currency string) string {
 	}
 
 	return "?"
+}
+
+func (ct *Cointop) Convert(convertFrom string, convertTo string, amount float64) (float64, error) {
+	convertFrom = strings.ToLower(convertFrom)
+	convertTo = strings.ToLower(convertTo)
+
+	var rate float64
+	if convertFrom == convertTo {
+		rate = 1.0
+	} else {
+		crate, err := ct.api.GetExchangeRate(convertFrom, convertTo, true)
+		if err != nil {
+			return 0, err
+		}
+		rate = crate
+	}
+	return rate * amount, nil
 }

@@ -16,4 +16,5 @@ type Interface interface {
 	CoinLink(name string) string
 	SupportedCurrencies() []string
 	Price(name string, convert string) (float64, error)
+	GetExchangeRate(convertFrom string, convertTo string, cached bool) (float64, error) // I don't love this caching
 }
