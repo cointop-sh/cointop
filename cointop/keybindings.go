@@ -325,6 +325,12 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 		fn = ct.Keyfn(ct.CursorDownOrNextPage)
 	case "move_up_or_previous_page":
 		fn = ct.Keyfn(ct.CursorUpOrPreviousPage)
+	case "sort_column_cost":
+		fn = ct.Sortfn("cost", true)
+	case "sort_column_pnl":
+		fn = ct.Sortfn("pnl", true)
+	case "sort_column_pnl_percent":
+		fn = ct.Sortfn("pnl_percent", true)
 	default:
 		fn = ct.Keyfn(ct.Noop)
 	}

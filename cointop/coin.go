@@ -23,8 +23,10 @@ type Coin struct {
 	// for favorites
 	Favorite bool
 	// for portfolio
-	Holdings float64
-	Balance  float64
+	Holdings    float64
+	Balance     float64
+	BuyPrice    float64
+	BuyCurrency string
 }
 
 // AllCoins returns a slice of all the coins
