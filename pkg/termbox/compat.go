@@ -195,12 +195,29 @@ func Sync() error {
 }
 
 // scaledColor returns a Color that is proportional to the x/y coordinates
-func scaledColor(x, y int) tcell.Color {
+// temporary kludge for the pretty
+func prettyColor(x, y int, st tcell.Style) tcell.Style {
+	// fg, bg, _ := st.Decompose()
+
 	w, h := screen.Size()
-	blu := int32(255 * float64(x) / float64(w))
-	grn := int32(255 * float64(y) / float64(h))
-	red := int32(200)
-	return tcell.NewRGBColor(red, grn, blu)
+	if true {
+		red := int32(0)
+		grn := int32(0)
+		blu := int32(50 * float64(y) / float64(h))
+		bg := tcell.NewRGBColor(red, grn, blu)
+		st = st.Background(bg)
+
+	}
+
+	if true {
+		red := int32(200)
+		grn := int32(255 * float64(y) / float64(h))
+		blu := int32(255 * float64(x) / float64(w))
+		fg := tcell.NewRGBColor(red, grn, blu)
+		st = st.Foreground(fg)
+	}
+
+	return st
 }
 
 // SetCell sets the character cell at a given location to the given
@@ -208,7 +225,9 @@ func scaledColor(x, y int) tcell.Color {
 func SetCell(x, y int, ch rune, fg, bg Attribute) {
 	st := mkStyle(fg, bg)
 	// Set the foreground color to a scaled version of the coordinates
-	st = st.Foreground(scaledColor(x, y))
+	if bg == ColorBlack {
+		st = prettyColor(x, y, st)
+	}
 	screen.SetContent(x, y, ch, nil, st)
 }
 
