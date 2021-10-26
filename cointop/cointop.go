@@ -94,6 +94,7 @@ type State struct {
 	tableCompactNotation     bool
 	favoritesCompactNotation bool
 	portfolioCompactNotation bool
+	enableMouse              bool
 }
 
 // Cointop cointop
@@ -127,8 +128,10 @@ type Cointop struct {
 
 // PortfolioEntry is portfolio entry
 type PortfolioEntry struct {
-	Coin     string
-	Holdings float64
+	Coin        string
+	Holdings    float64
+	BuyPrice    float64
+	BuyCurrency string
 }
 
 // Portfolio is portfolio structure
@@ -188,6 +191,9 @@ var DefaultChartRange = "1Y"
 
 // DefaultCompactNotation ...
 var DefaultCompactNotation = false
+
+// DefaultEnableMouse ...
+var DefaultEnableMouse = true
 
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
@@ -298,6 +304,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 				SoundEnabled: true,
 			},
 			compactNotation:          DefaultCompactNotation,
+			enableMouse:              DefaultEnableMouse,
 			tableCompactNotation:     DefaultCompactNotation,
 			favoritesCompactNotation: DefaultCompactNotation,
 			portfolioCompactNotation: DefaultCompactNotation,
@@ -490,7 +497,7 @@ func (ct *Cointop) Run() error {
 	defer ui.Close()
 
 	ui.SetInputEsc(true)
-	ui.SetMouse(true)
+	ui.SetMouse(ct.State.enableMouse)
 	ui.SetHighlight(true)
 	ui.SetManagerFunc(ct.layout)
 	if err := ct.SetKeybindings(); err != nil {

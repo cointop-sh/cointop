@@ -34,6 +34,11 @@ func Monetaryf(value float64, precision int) string {
 	return f(value, precision, "LC_MONETARY", false)
 }
 
+// FixedMonetaryf produces a fixed-precision monetary-value string. See Monetaryf.
+func FixedMonetaryf(value float64, precision int) string {
+	return f(value, precision, "LC_MONETARY", true)
+}
+
 // borrowed from go-locale/util.go
 func splitLocale(locale string) (string, string) {
 	// Remove the encoding, if present

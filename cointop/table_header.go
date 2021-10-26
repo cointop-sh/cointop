@@ -126,6 +126,26 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Label:      "last [u]pdated",
 		PlainLabel: "last updated",
 	},
+	"cost_price": {
+		Slug:       "cost_price",
+		Label:      "cost price",
+		PlainLabel: "cost price",
+	},
+	"cost": {
+		Slug:       "cost",
+		Label:      "[!]cost",
+		PlainLabel: "cost",
+	},
+	"pnl": {
+		Slug:       "pnl",
+		Label:      "[@]PNL",
+		PlainLabel: "PNL",
+	},
+	"pnl_percent": {
+		Slug:       "pnl_percent",
+		Label:      "[#]PNL%",
+		PlainLabel: "PNL%",
+	},
 }
 
 // GetLabel fetch the label to use for the heading (depends on configuration)
@@ -212,7 +232,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 		}
 		leftAlign := ct.GetTableColumnAlignLeft(col)
 		switch col {
-		case "price", "balance":
+		case "price", "balance", "pnl", "cost":
 			label = fmt.Sprintf("%s%s", ct.CurrencySymbol(), label)
 		}
 		if leftAlign {
@@ -293,6 +313,9 @@ func (ct *Cointop) SetTableColumnWidth(header string, width int) {
 		prev = prevIfc.(int)
 	} else {
 		hc := HeaderColumns[header]
+		if hc == nil {
+			log.Warnf("SetTableColumnWidth(%s) not found", header)
+		}
 		prev = utf8.RuneCountInString(ct.GetLabel(hc)) + 1
 		switch header {
 		case "price", "balance":

@@ -315,10 +315,15 @@ func (ct *Cointop) PortfolioChart() error {
 
 		// Scale Portfolio Balances to hide value
 		if ct.State.hidePortfolioBalances {
-			var lastPrice = data[len(data)-1]
-			if lastPrice > 0.0 {
+			scalePrice := 0.0
+			for _, price := range data {
+				if price > scalePrice {
+					scalePrice = price
+				}
+			}
+			if scalePrice > 0.0 {
 				for i, price := range data {
-					data[i] = 100 * price / lastPrice
+					data[i] = 100 * price / scalePrice
 				}
 			}
 		}

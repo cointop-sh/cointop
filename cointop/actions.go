@@ -69,6 +69,9 @@ func ActionsMap() map[string]bool {
 		"move_down_or_next_page":            true,
 		"show_price_alert_add_menu":         true,
 		"sort_column_balance":               true,
+		"sort_column_cost":                  true,
+		"sort_column_pnl":                   true,
+		"sort_column_pnl_percent":           true,
 	}
 }
 
