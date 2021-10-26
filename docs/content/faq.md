@@ -134,6 +134,8 @@ draft: false
   The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
   Each search starts from the current cursor position. To search for the same term again, hit <kbd>/</kbd> then <kbd>Enter</kbd>.
 
+  The default behaviour will start to search by symbol first, then it will continues searching by name if there is no result. To search by only symbol, type the search query after `/s:`. To search by only name, type the search query after `/n:`.
+
 ## How do I exit search?
 
   Press <kbd>Esc</kbd> to exit search.
