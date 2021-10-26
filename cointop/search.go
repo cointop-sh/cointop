@@ -93,26 +93,20 @@ func (ct *Cointop) Search(q string) error {
 		ct.State.lastSearchQuery = q
 	}
 
-	hasPrefix := false
 	canSearchSymbol := true
 	canSearchName := true
 	if strings.HasPrefix(q, "s:") {
 		canSearchSymbol = true
 		canSearchName = false
-		hasPrefix = true
+		q = q[2:]
 		log.Debug("Search, by keyword")
 	}
 
 	if strings.HasPrefix(q, "n:") {
 		canSearchSymbol = false
 		canSearchName = true
-		hasPrefix = true
-		log.Debug("Search, by name")
-	}
-
-	if hasPrefix {
 		q = q[2:]
-		log.Debugf("Search, truncated query '%s'", q)
+		log.Debug("Search, by name")
 	}
 
 	idx := -1
