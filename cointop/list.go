@@ -46,7 +46,7 @@ func (ct *Cointop) UpdateCoins() error {
 	return nil
 }
 
-// UpdateCoins updates all the coins in the current page
+// UpdateCurrentPageCoins updates all the coins in the current page
 func (ct *Cointop) UpdateCurrentPageCoins() error {
 	log.Debugf("UpdateCurrentPageCoins(%d)", len(ct.State.coins))
 	currentPageCoins := make([]string, len(ct.State.coins))
