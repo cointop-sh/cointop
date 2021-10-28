@@ -179,7 +179,7 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 	return cols
 }
 
-// GetActiveTableHeaders returns the list of active table headers
+// IsActiveTableCompactNotation returns whether the current view is using compact-notation
 func (ct *Cointop) IsActiveTableCompactNotation() bool {
 	var compact bool
 	switch ct.State.selectedView {
