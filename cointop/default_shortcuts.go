@@ -85,5 +85,8 @@ func DefaultShortcuts() map[string]string {
 		"<":          "scroll_left",
 		"+":          "show_price_alert_add_menu",
 		"\\\\":       "toggle_table_fullscreen",
+		"!":          "sort_column_cost",
+		"@":          "sort_column_pnl",
+		"#":          "sort_column_pnl_percent",
 	}
 }

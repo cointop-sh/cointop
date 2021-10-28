@@ -128,8 +128,10 @@ type Cointop struct {
 
 // PortfolioEntry is portfolio entry
 type PortfolioEntry struct {
-	Coin     string
-	Holdings float64
+	Coin        string
+	Holdings    float64
+	BuyPrice    float64
+	BuyCurrency string
 }
 
 // Portfolio is portfolio structure

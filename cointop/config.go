@@ -229,9 +229,12 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		if !ok || entry.Coin == "" {
 			continue
 		}
-		amount := strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
-		coinName := entry.Coin
-		tuple := []string{coinName, amount}
+		tuple := []string{
+			entry.Coin,
+			strconv.FormatFloat(entry.Holdings, 'f', -1, 64),
+			strconv.FormatFloat(entry.BuyPrice, 'f', -1, 64),
+			entry.BuyCurrency,
+		}
 		holdingsIfc = append(holdingsIfc, tuple)
 	}
 	sort.Slice(holdingsIfc, func(i, j int) bool {
@@ -597,33 +600,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				}
 			}
 		} else if key == "holdings" {
-			holdingsIfc, ok := valueIfc.([]interface{})
-			if !ok {
-				continue
-			}
-
-			for _, itemIfc := range holdingsIfc {
-				tupleIfc, ok := itemIfc.([]interface{})
-				if !ok {
-					continue
-				}
-				if len(tupleIfc) > 2 {
-					continue
-				}
-				name, ok := tupleIfc[0].(string)
-				if !ok {
-					continue
-				}
-
-				holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
-				if err != nil {
-					return nil
-				}
-
-				if err := ct.SetPortfolioEntry(name, holdings); err != nil {
-					return err
-				}
-			}
+			// Defer until the end to work around premature-save issue
 		} else if key == "compact_notation" {
 			ct.State.portfolioCompactNotation = valueIfc.(bool)
 		} else {
@@ -633,12 +610,62 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				return err
 			}
 
-			if err := ct.SetPortfolioEntry(key, holdings); err != nil {
+			if err := ct.SetPortfolioEntry(key, holdings, 0.0, ""); err != nil {
 				return err
 			}
 		}
 	}
 
+	// Process holdings last because it causes a ct.Save()
+	if valueIfc, ok := ct.config.Portfolio["holdings"]; ok {
+		if holdingsIfc, ok := valueIfc.([]interface{}); ok {
+			ct.loadPortfolioHoldingsFromConfig(holdingsIfc)
+		}
+	}
+
+	return nil
+}
+
+func (ct *Cointop) loadPortfolioHoldingsFromConfig(holdingsIfc []interface{}) error {
+	for _, itemIfc := range holdingsIfc {
+		tupleIfc, ok := itemIfc.([]interface{})
+		if !ok {
+			continue
+		}
+		if len(tupleIfc) > 4 {
+			continue
+		}
+		name, ok := tupleIfc[0].(string)
+		if !ok {
+			continue // was not a string
+		}
+
+		holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
+		if err != nil {
+			return err // was not a float64
+		}
+
+		buyPrice := 0.0
+		if len(tupleIfc) >= 3 {
+			if buyPrice, err = ct.InterfaceToFloat64(tupleIfc[2]); err != nil {
+				return err
+			}
+		}
+
+		buyCurrency := ""
+		if len(tupleIfc) >= 4 {
+			if parseCurrency, ok := tupleIfc[3].(string); !ok {
+				return err // was not a string
+			} else {
+				buyCurrency = parseCurrency
+			}
+		}
+
+		// Watch out - this calls ct.Save() which may save a half-loaded configuration
+		if err := ct.SetPortfolioEntry(name, holdings, buyPrice, buyCurrency); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
