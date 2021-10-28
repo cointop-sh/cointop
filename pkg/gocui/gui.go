@@ -516,13 +516,16 @@ func (g *Gui) fixColor(c tcell.Color) tcell.Color {
 // TODO: delete termbox compat
 func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
 	st := tcell.StyleDefault
-
-	f := tcell.PaletteColor(int(fg)&0x1ff - 1)
-	b := tcell.PaletteColor(int(bg)&0x1ff - 1)
-
-	f = g.fixColor(f)
-	b = g.fixColor(b)
-	st = st.Foreground(f).Background(b)
+	if fg != ColorDefault {
+		f := tcell.PaletteColor(int(fg)&0x1ff - 1)
+		f = g.fixColor(f)
+		st = st.Foreground(f)
+	}
+	if bg != ColorDefault {
+		b := tcell.PaletteColor(int(bg)&0x1ff - 1)
+		b = g.fixColor(b)
+		st = st.Background(b)
+	}
 	if (fg|bg)&AttrBold != 0 {
 		st = st.Bold(true)
 	}
