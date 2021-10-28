@@ -108,14 +108,19 @@ func fixColor(c tcell.Color) tcell.Color {
 }
 
 func mkStyle(fg, bg Attribute) tcell.Style {
-	st := tcell.StyleDefault
+	b := tcell.ColorDefault
+	if bg != ColorDefault {
+		b = tcell.PaletteColor(int(bg)&0x1ff - 1)
+		b = fixColor(b)
+	}
 
-	f := tcell.PaletteColor(int(fg)&0x1ff - 1)
-	b := tcell.PaletteColor(int(bg)&0x1ff - 1)
+	f := tcell.ColorDefault
+	if fg != ColorDefault {
+		f = tcell.PaletteColor(int(fg)&0x1ff - 1)
+		f = fixColor(f)
+	}
 
-	f = fixColor(f)
-	b = fixColor(b)
-	st = st.Foreground(f).Background(b)
+	st := tcell.StyleDefault.Foreground(f).Background(b)
 	if (fg|bg)&AttrBold != 0 {
 		st = st.Bold(true)
 	}
