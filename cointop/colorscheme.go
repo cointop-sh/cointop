@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/cointop-sh/cointop/pkg/gocui"
 	fcolor "github.com/fatih/color"
 	"github.com/gdamore/tcell/v2"
 	"github.com/tomnomnom/xtermcolor"
@@ -51,15 +50,15 @@ var BgColorschemeColorsMap = map[string]fcolor.Attribute{
 	"yellow":  fcolor.BgYellow,
 }
 
-var GocuiColorschemeColorsMap = map[string]gocui.Attribute{
-	"black":   gocui.ColorBlack,
-	"blue":    gocui.ColorBlue,
-	"cyan":    gocui.ColorCyan,
-	"green":   gocui.ColorGreen,
-	"magenta": gocui.ColorMagenta,
-	"red":     gocui.ColorRed,
-	"white":   gocui.ColorWhite,
-	"yellow":  gocui.ColorYellow,
+var TcellColorschemeColorsMap = map[string]tcell.Color{
+	"black":   tcell.ColorBlack,
+	"blue":    tcell.ColorBlue,
+	"cyan":    tcell.Color32,
+	"green":   tcell.ColorGreen,
+	"magenta": tcell.ColorFuchsia,
+	"red":     tcell.ColorRed,
+	"white":   tcell.ColorWhite,
+	"yellow":  tcell.ColorYellow,
 }
 
 // NewColorscheme ...
@@ -278,10 +277,9 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 
 func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
 	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
-	var attrs []gocui.Attribute
-	if v, ok := c.colors[name+"_fg"].(string); ok {
-		if fg, ok := c.ToGocuiAttr(v); ok {
-			attrs = append(attrs, fg)
+	if v, ok := c.colors[name+"_fg"].(string); !ok {
+		if color, ok := c.ToTcellColor(v); ok {
+			return color
 		}
 	}
 
@@ -297,26 +295,18 @@ func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
 	// 	}
 	// }
 
-	var combined gocui.Attribute
-	if len(attrs) > 0 {
-		for _, v := range attrs {
-			combined = combined ^ v
-		}
-	}
-
-	return convert2TcellColor(combined)
+	return tcell.ColorDefault
 }
 
 func (c *Colorscheme) TcellBgColor(name string) tcell.Color {
 	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
-	var attr gocui.Attribute
 	if v, ok := c.colors[name+"_bg"].(string); ok {
-		if bg, ok := c.ToGocuiAttr(v); ok {
-			attr = bg
+		if bg, ok := c.ToTcellColor(v); ok {
+			return bg
 		}
 	}
 
-	return convert2TcellColor(attr)
+	return tcell.ColorDefault
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
@@ -353,17 +343,13 @@ func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
 }
 
-// ToGocuiAttr converts a color string name to a gocui Attribute type
-func (c *Colorscheme) ToGocuiAttr(v string) (gocui.Attribute, bool) {
-	if attr, ok := GocuiColorschemeColorsMap[v]; ok {
+// ToTcellColor converts a color string name to a gocui Attribute type
+func (c *Colorscheme) ToTcellColor(v string) (tcell.Color, bool) {
+	if attr, ok := TcellColorschemeColorsMap[v]; ok {
 		return attr, true
 	}
 
-	if code, ok := HexToAnsi(v); ok {
-		return gocui.Attribute(code), true
-	}
-
-	return 0, false
+	return tcell.GetColor(v), true
 }
 
 // HexToAnsi converts a hex color string to a uint8 ansi code
@@ -385,16 +371,4 @@ func HexToAnsi(h string) (uint8, bool) {
 	}
 
 	return code, true
-}
-
-// gocui can use xterm colors
-
-// convert2TcellColor is temp converter for Attribute to TCell.Color
-func convert2TcellColor(a gocui.Attribute) tcell.Color {
-	c := tcell.PaletteColor(int(a)&0x1ff - 1)
-	if c != tcell.ColorDefault {
-		c = tcell.PaletteColor(int(c) & 0xff)
-	}
-
-	return c
 }
