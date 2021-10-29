@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
+	fcolor "github.com/fatih/color"
+
 	"github.com/cointop-sh/cointop/pkg/api/types"
-	"github.com/cointop-sh/cointop/pkg/color"
 	"github.com/cointop-sh/cointop/pkg/humanize"
 	"github.com/cointop-sh/cointop/pkg/pad"
 	"github.com/cointop-sh/cointop/pkg/ui"
@@ -28,7 +29,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 	maxX := ct.Width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemeName == "cointop" {
-		logo = fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
+		Green := fcolor.New(fcolor.FgGreen).SprintFunc()
+		Cyan := fcolor.New(fcolor.FgCyan).SprintFunc()
+		logo = fmt.Sprintf("%s%s%s%s", Green("❯"), Cyan("❯"), Green("❯"), Cyan("cointop"))
 	}
 	var content string
 
