@@ -46,6 +46,22 @@ func (ct *Cointop) UpdateCoins() error {
 	return nil
 }
 
+// UpdateCurrentPageCoins updates all the coins in the current page
+func (ct *Cointop) UpdateCurrentPageCoins() error {
+	log.Debugf("UpdateCurrentPageCoins(%d)", len(ct.State.coins))
+	currentPageCoins := make([]string, len(ct.State.coins))
+	for i, entry := range ct.State.coins {
+		currentPageCoins[i] = entry.Name
+	}
+
+	coins, err := ct.api.GetCoinDataBatch(currentPageCoins, ct.State.currencyConversion)
+	if err != nil {
+		return err
+	}
+	go ct.processCoins(coins)
+	return nil
+}
+
 // ProcessCoinsMap processes coins map
 func (ct *Cointop) processCoinsMap(coinsMap map[string]types.Coin) {
 	log.Debug("ProcessCoinsMap()")
