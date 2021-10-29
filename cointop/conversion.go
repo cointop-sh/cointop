@@ -242,7 +242,7 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 		if err := ct.Save(); err != nil {
 			return err
 		}
-
+		go ct.UpdateCurrentPageCoins()
 		go ct.RefreshAll()
 		return nil
 	}

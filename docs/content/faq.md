@@ -15,7 +15,8 @@ draft: false
 
 ## What coins does this support?
 
-  This supports any coin supported by the API being used to fetch coin information.
+  This supports any coin supported by the API being used to fetch coin information.  There is, however, a limit on the number of coins that
+  cointop fetches by default.  You can increase this by passing `--max-pages` and `--per-page` arguments on the command line.
 
 ## How do I set the API to use?
 
