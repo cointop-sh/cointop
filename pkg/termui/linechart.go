@@ -205,7 +205,7 @@ func shortenFloatVal(x float64) string {
 		return fmt.Sprintf("%.4fB", x/1e9)
 	}
 	if x > 1e6 {
-		return fmt.Sprintf("%.4fB", x/1e6)
+		return fmt.Sprintf("%.4fM", x/1e6)
 	}
 	return fmt.Sprintf("%.4f", x)
 }
