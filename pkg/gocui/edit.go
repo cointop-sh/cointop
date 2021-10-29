@@ -269,9 +269,8 @@ func (v *View) writeRune(x, y int, ch rune) error {
 		copy(v.lines[y][x+1:], v.lines[y][x:])
 	}
 	v.lines[y][x] = cell{
-		fgColor: v.FgColor,
-		bgColor: v.BgColor,
-		chr:     ch,
+		style: v.g.MkStyle(v.FgColor, v.BgColor),
+		chr:   ch,
 	}
 
 	return nil

@@ -282,16 +282,17 @@ func (c *Colorscheme) GocuiFgColor(name string) gocui.Attribute {
 			attrs = append(attrs, fg)
 		}
 	}
-	if v, ok := c.colors[name+"_bold"].(bool); ok {
-		if v {
-			attrs = append(attrs, gocui.AttrBold)
-		}
-	}
-	if v, ok := c.colors[name+"_underline"].(bool); ok {
-		if v {
-			attrs = append(attrs, gocui.AttrUnderline)
-		}
-	}
+	// TODO: fixme
+	// if v, ok := c.colors[name+"_bold"].(bool); ok {
+	// 	if v {
+	// 		attrs = append(attrs, gocui.AttrBold)
+	// 	}
+	// }
+	// if v, ok := c.colors[name+"_underline"].(bool); ok {
+	// 	if v {
+	// 		attrs = append(attrs, gocui.AttrUnderline)
+	// 	}
+	// }
 	if len(attrs) > 0 {
 		var combined gocui.Attribute
 		for _, v := range attrs {

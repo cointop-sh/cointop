@@ -9,6 +9,8 @@ import (
 	"errors"
 	"io"
 	"strings"
+
+	"github.com/gdamore/tcell/v2"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor
@@ -29,11 +31,11 @@ type View struct {
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the View.
-	BgColor, FgColor Attribute
+	BgColor, FgColor Attribute // TODO: merge to tcell.Style
 
 	// SelBgColor and SelFgColor are used to configure the background and
 	// foreground colors of the selected line, when it is highlighted.
-	SelBgColor, SelFgColor Attribute
+	SelBgColor, SelFgColor Attribute // TODO: merge to tcell.Style
 
 	// If Editable is true, keystrokes will be added to the view's internal
 	// buffer at the cursor position.
@@ -80,8 +82,9 @@ type viewLine struct {
 }
 
 type cell struct {
-	chr              rune
-	bgColor, fgColor Attribute
+	chr rune
+	// bgColor, fgColor Attribute
+	style tcell.Style
 }
 
 type lineType []cell
@@ -125,7 +128,7 @@ func (v *View) Name() string {
 // setRune sets a rune at the given point relative to the view. It applies the
 // specified colors, taking into account if the cell must be highlighted. Also,
 // it checks if the position is valid.
-func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
+func (v *View) setRune(x, y int, ch rune, st tcell.Style) error {
 	maxX, maxY := v.Size()
 	if x < 0 || x >= maxX || y < 0 || y >= maxY {
 		return errors.New("invalid point")
@@ -147,15 +150,13 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 	}
 
 	if v.Mask != 0 {
-		fgColor = v.FgColor
-		bgColor = v.BgColor
+		st = v.g.MkStyle(v.FgColor, v.BgColor)
 		ch = v.Mask
 	} else if v.Highlight && ry == rcy {
-		fgColor = v.SelFgColor
-		bgColor = v.SelBgColor
+		st = v.g.MkStyle(v.SelFgColor, v.SelBgColor)
 	}
 
-	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, fgColor, bgColor)
+	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, st)
 
 	return nil
 }
@@ -241,9 +242,10 @@ func (v *View) parseInput(ch rune) []cell {
 	if err != nil {
 		for _, r := range v.ei.runes() {
 			c := cell{
-				fgColor: v.FgColor,
-				bgColor: v.BgColor,
-				chr:     r,
+				// fgColor: v.FgColor,
+				// bgColor: v.BgColor,
+				style: v.g.MkStyle(v.FgColor, v.BgColor),
+				chr:   r,
 			}
 			cells = append(cells, c)
 		}
@@ -253,9 +255,10 @@ func (v *View) parseInput(ch rune) []cell {
 			return nil
 		}
 		c := cell{
-			fgColor: v.ei.curFgColor,
-			bgColor: v.ei.curBgColor,
-			chr:     ch,
+			// fgColor: v.ei.curFgColor,
+			// bgColor: v.ei.curBgColor,
+			style: v.ei.curStyle,
+			chr:   ch,
 		}
 		cells = append(cells, c)
 	}
@@ -342,16 +345,16 @@ func (v *View) draw() error {
 				break
 			}
 
-			fgColor := c.fgColor
-			if fgColor == ColorDefault {
-				fgColor = v.FgColor
-			}
-			bgColor := c.bgColor
-			if bgColor == ColorDefault {
-				bgColor = v.BgColor
-			}
+			// fgColor := c.fgColor
+			// if fgColor == ColorDefault {
+			// 	fgColor = v.FgColor
+			// }
+			// bgColor := c.bgColor
+			// if bgColor == ColorDefault {
+			// 	bgColor = v.BgColor
+			// }
 
-			if err := v.setRune(x, y, c.chr, fgColor, bgColor); err != nil {
+			if err := v.setRune(x, y, c.chr, c.style); err != nil {
 				return err
 			}
 			x++
@@ -401,9 +404,10 @@ func (v *View) Clear() {
 // clearRunes erases all the cells in the view.
 func (v *View) clearRunes() {
 	maxX, maxY := v.Size()
+	st := v.g.MkStyle(v.FgColor, v.BgColor) // TODO: push up
 	for x := 0; x < maxX; x++ {
 		for y := 0; y < maxY; y++ {
-			v.g.SetRune(v.x0+x+1, v.y0+y+1, ' ', v.FgColor, v.BgColor)
+			v.g.SetRune(v.x0+x+1, v.y0+y+1, ' ', st)
 		}
 	}
 }

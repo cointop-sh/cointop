@@ -42,11 +42,11 @@ const (
 )
 
 // Other attributes.
-const (
-	AttrBold Attribute = 1 << (9 + iota)
-	AttrUnderline
-	AttrReverse
-)
+// const (
+// 	AttrBold Attribute = 1 << (9 + iota)
+// 	AttrUnderline
+// 	AttrReverse
+// )
 
 // Clear clears the screen with the given attributes.
 // func Clear(fg, bg Attribute) {

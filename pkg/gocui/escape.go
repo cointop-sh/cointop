@@ -7,13 +7,15 @@ package gocui
 import (
 	"errors"
 	"strconv"
+
+	"github.com/gdamore/tcell/v2"
 )
 
 type escapeInterpreter struct {
-	state                  escapeState
-	curch                  rune
-	csiParam               []string
-	curFgColor, curBgColor Attribute
+	state    escapeState
+	curch    rune
+	csiParam []string
+	curStyle tcell.Style
 	// mode                   OutputMode
 }
 
@@ -56,9 +58,8 @@ func (ei *escapeInterpreter) runes() []rune {
 // terminal escape sequences.
 func newEscapeInterpreter() *escapeInterpreter {
 	ei := &escapeInterpreter{
-		state:      stateNone,
-		curFgColor: ColorDefault,
-		curBgColor: ColorDefault,
+		state:    stateNone,
+		curStyle: tcell.StyleDefault,
 		// mode:       mode,
 	}
 	return ei
@@ -67,8 +68,7 @@ func newEscapeInterpreter() *escapeInterpreter {
 // reset sets the escapeInterpreter in initial state.
 func (ei *escapeInterpreter) reset() {
 	ei.state = stateNone
-	ei.curFgColor = ColorDefault
-	ei.curBgColor = ColorDefault
+	ei.curStyle = tcell.StyleDefault
 	ei.csiParam = nil
 }
 
@@ -150,24 +150,25 @@ func (ei *escapeInterpreter) outputNormal() error {
 			return errCSIParseError
 		}
 
+		// see https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+		// see https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
 		switch {
 		case p >= 30 && p <= 37:
-			ei.curFgColor = Attribute(p - 30 + 1)
+			ei.curStyle = ei.curStyle.Foreground(tcell.PaletteColor(p - 30))
 		case p == 39:
-			ei.curFgColor = ColorDefault
+			ei.curStyle = ei.curStyle.Foreground(tcell.ColorDefault)
 		case p >= 40 && p <= 47:
-			ei.curBgColor = Attribute(p - 40 + 1)
+			ei.curStyle = ei.curStyle.Background(tcell.PaletteColor(p - 40))
 		case p == 49:
-			ei.curBgColor = ColorDefault
+			ei.curStyle = ei.curStyle.Background(tcell.ColorDefault)
 		case p == 1:
-			ei.curFgColor |= AttrBold
+			ei.curStyle = ei.curStyle.Bold(true)
 		case p == 4:
-			ei.curFgColor |= AttrUnderline
+			ei.curStyle = ei.curStyle.Underline(true)
 		case p == 7:
-			ei.curFgColor |= AttrReverse
+			ei.curStyle = ei.curStyle.Reverse(true)
 		case p == 0:
-			ei.curFgColor = ColorDefault
-			ei.curBgColor = ColorDefault
+			ei.curStyle = tcell.StyleDefault
 		}
 	}
 
@@ -203,7 +204,7 @@ func (ei *escapeInterpreter) output256() error {
 
 	switch fgbg {
 	case 38:
-		ei.curFgColor = Attribute(color + 1)
+		ei.curStyle = ei.curStyle.Foreground(tcell.PaletteColor(color + 1))
 
 		for _, param := range ei.csiParam[3:] {
 			p, err := strconv.Atoi(param)
@@ -213,15 +214,15 @@ func (ei *escapeInterpreter) output256() error {
 
 			switch {
 			case p == 1:
-				ei.curFgColor |= AttrBold
+				ei.curStyle = ei.curStyle.Bold(true)
 			case p == 4:
-				ei.curFgColor |= AttrUnderline
+				ei.curStyle = ei.curStyle.Underline(true)
 			case p == 7:
-				ei.curFgColor |= AttrReverse
+				ei.curStyle = ei.curStyle.Reverse(true)
 			}
 		}
 	case 48:
-		ei.curBgColor = Attribute(color + 1)
+		ei.curStyle = ei.curStyle.Background(tcell.PaletteColor(color + 1))
 	default:
 		return errCSIParseError
 	}

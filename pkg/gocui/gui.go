@@ -115,53 +115,34 @@ func (g *Gui) Size() (x, y int) {
 }
 
 // temporary kludge for the pretty
-func (g *Gui) prettyColor(x, y int, fgColor, bgColor Attribute) tcell.Style {
-	st := g.MkStyle(fgColor, bgColor)
-	fg, bg, _ := st.Decompose()
-
-	// log.Debugf("XXX bg=%s", bg)
-	w, h := g.screen.Size()
+func (g *Gui) prettyColor(x, y int, st tcell.Style) tcell.Style {
 	if true {
+		w, h := g.screen.Size()
+
+		// dark blue gradient background
 		red := int32(0)
 		grn := int32(0)
 		blu := int32(50 * float64(y) / float64(h))
-		bg = tcell.NewRGBColor(red, grn, blu)
-		st = st.Background(bg)
+		st = st.Background(tcell.NewRGBColor(red, grn, blu))
 
+		// two-axis green-blue gradient
+		red = int32(200)
+		grn = int32(255 * float64(y) / float64(h))
+		blu = int32(255 * float64(x) / float64(w))
+		st = st.Foreground(tcell.NewRGBColor(red, grn, blu))
 	}
-	// if bg == 0x100000006 {
-	// 	bg = tcell.ColorRed
-	// 	st = st.Background(bg)
-	// }
-
-	if true {
-		red := int32(200)
-		grn := int32(255 * float64(y) / float64(h))
-		blu := int32(255 * float64(x) / float64(w))
-		fg = tcell.NewRGBColor(red, grn, blu)
-		st = st.Foreground(fg)
-	}
-
-	// st := tcell.StyleDefault
-	// return st.Foreground(fg).Background(bg).Attributes(attr)
 	return st
 }
 
 // SetRune writes a rune at the given point, relative to the top-left
 // corner of the terminal. It checks if the position is valid and applies
 // the given colors.
-func (g *Gui) SetRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
+func (g *Gui) SetRune(x, y int, ch rune, st tcell.Style) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
-	st := g.MkStyle(fgColor, bgColor)
-	if bgColor == ColorBlack {
-		st = g.prettyColor(x, y, fgColor, bgColor)
-	}
-	return g.SetRuneNew(x, y, ch, st)
-}
-
-func (g *Gui) SetRuneNew(x, y int, ch rune, st tcell.Style) error {
+	// temporary kludge for the pretty
+	// st = g.prettyColor(x, y, st)
 	g.screen.SetContent(x, y, ch, nil, st)
 	return nil
 }
@@ -526,15 +507,16 @@ func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
 		b = g.fixColor(b)
 		st = st.Background(b)
 	}
-	if (fg|bg)&AttrBold != 0 {
-		st = st.Bold(true)
-	}
-	if (fg|bg)&AttrUnderline != 0 {
-		st = st.Underline(true)
-	}
-	if (fg|bg)&AttrReverse != 0 {
-		st = st.Reverse(true)
-	}
+	// TODO: fixme
+	// if (fg|bg)&AttrBold != 0 {
+	// 	st = st.Bold(true)
+	// }
+	// if (fg|bg)&AttrUnderline != 0 {
+	// 	st = st.Underline(true)
+	// }
+	// if (fg|bg)&AttrReverse != 0 {
+	// 	st = st.Reverse(true)
+	// }
 	return st
 }
 
@@ -600,18 +582,19 @@ func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
 	if g.ASCII {
 		runeH, runeV = '-', '|'
 	}
+	st := g.MkStyle(fgColor, bgColor) // TODO: push up
 
 	for x := v.x0 + 1; x < v.x1 && x < g.maxX; x++ {
 		if x < 0 {
 			continue
 		}
 		if v.y0 > -1 && v.y0 < g.maxY {
-			if err := g.SetRune(x, v.y0, runeH, fgColor, bgColor); err != nil {
+			if err := g.SetRune(x, v.y0, runeH, st); err != nil {
 				return err
 			}
 		}
 		if v.y1 > -1 && v.y1 < g.maxY {
-			if err := g.SetRune(x, v.y1, runeH, fgColor, bgColor); err != nil {
+			if err := g.SetRune(x, v.y1, runeH, st); err != nil {
 				return err
 			}
 		}
@@ -621,12 +604,12 @@ func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
 			continue
 		}
 		if v.x0 > -1 && v.x0 < g.maxX {
-			if err := g.SetRune(v.x0, y, runeV, fgColor, bgColor); err != nil {
+			if err := g.SetRune(v.x0, y, runeV, st); err != nil {
 				return err
 			}
 		}
 		if v.x1 > -1 && v.x1 < g.maxX {
-			if err := g.SetRune(v.x1, y, runeV, fgColor, bgColor); err != nil {
+			if err := g.SetRune(v.x1, y, runeV, st); err != nil {
 				return err
 			}
 		}
@@ -646,9 +629,10 @@ func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
 		ch   rune
 	}{{v.x0, v.y0, runeTL}, {v.x1, v.y0, runeTR}, {v.x0, v.y1, runeBL}, {v.x1, v.y1, runeBR}}
 
+	st := g.MkStyle(fgColor, bgColor) // TODO: push up
 	for _, c := range corners {
 		if c.x >= 0 && c.y >= 0 && c.x < g.maxX && c.y < g.maxY {
-			if err := g.SetRune(c.x, c.y, c.ch, fgColor, bgColor); err != nil {
+			if err := g.SetRune(c.x, c.y, c.ch, st); err != nil {
 				return err
 			}
 		}
@@ -662,6 +646,7 @@ func (g *Gui) drawTitle(v *View, fgColor, bgColor Attribute) error {
 		return nil
 	}
 
+	st := g.MkStyle(fgColor, bgColor) // TODO: push up
 	for i, ch := range v.Title {
 		x := v.x0 + i + 2
 		if x < 0 {
@@ -669,7 +654,7 @@ func (g *Gui) drawTitle(v *View, fgColor, bgColor Attribute) error {
 		} else if x > v.x1-2 || x >= g.maxX {
 			break
 		}
-		if err := g.SetRune(x, v.y0, ch, fgColor, bgColor); err != nil {
+		if err := g.SetRune(x, v.y0, ch, st); err != nil {
 			return err
 		}
 	}
