@@ -276,11 +276,13 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 }
 
 func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
-	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
+	color := tcell.ColorDefault
 	if v, ok := c.colors[name+"_fg"].(string); !ok {
-		if color, ok := c.ToTcellColor(v); ok {
-			return color
-		}
+		color = c.ToTcellColor(v)
+	}
+
+	if color != tcell.ColorDefault {
+		return tcell.PaletteColor(int(color) & 0xff)
 	}
 
 	// TODO: fixme
@@ -295,18 +297,21 @@ func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
 	// 	}
 	// }
 
-	return tcell.ColorDefault
+	return color
 }
 
 func (c *Colorscheme) TcellBgColor(name string) tcell.Color {
 	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
+	color := tcell.ColorDefault
 	if v, ok := c.colors[name+"_bg"].(string); ok {
-		if bg, ok := c.ToTcellColor(v); ok {
-			return bg
-		}
+		color = c.ToTcellColor(v)
 	}
 
-	return tcell.ColorDefault
+	if color != tcell.ColorDefault {
+		return tcell.PaletteColor(int(color) & 0xff)
+	}
+
+	return color
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
@@ -344,12 +349,12 @@ func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 }
 
 // ToTcellColor converts a color string name to a gocui Attribute type
-func (c *Colorscheme) ToTcellColor(v string) (tcell.Color, bool) {
+func (c *Colorscheme) ToTcellColor(v string) tcell.Color {
 	if attr, ok := TcellColorschemeColorsMap[v]; ok {
-		return attr, true
+		return attr
 	}
 
-	return tcell.GetColor(v), true
+	return tcell.GetColor(v)
 }
 
 // HexToAnsi converts a hex color string to a uint8 ansi code
