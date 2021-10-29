@@ -58,8 +58,8 @@ func (ct *Cointop) layout() error {
 	} else {
 		if err := ct.ui.SetView(ct.Views.Marketbar, 0, topOffset-1, maxX, marketbarHeight+1); err != nil {
 			ct.Views.Marketbar.SetFrame(false)
-			ct.Views.Marketbar.SetFgColor(ct.colorscheme.GocuiFgColor(ct.Views.Marketbar.Name()))
-			ct.Views.Marketbar.SetBgColor(ct.colorscheme.GocuiBgColor(ct.Views.Marketbar.Name()))
+			ct.Views.Marketbar.SetFgColor(ct.colorscheme.TcellFgColor(ct.Views.Marketbar.Name()))
+			ct.Views.Marketbar.SetBgColor(ct.colorscheme.TcellBgColor(ct.Views.Marketbar.Name()))
 			go func() {
 				ct.UpdateMarketbar()
 				_, found := ct.cache.Get(ct.Views.Marketbar.Name())
@@ -92,8 +92,8 @@ func (ct *Cointop) layout() error {
 		if err := ct.ui.SetView(ct.Views.Chart, 0, chartTopOffset, maxX, topOffset+chartHeight); err != nil {
 			ct.Views.Chart.Clear()
 			ct.Views.Chart.SetFrame(false)
-			ct.Views.Chart.SetFgColor(ct.colorscheme.GocuiFgColor(ct.Views.Chart.Name()))
-			ct.Views.Chart.SetBgColor(ct.colorscheme.GocuiBgColor(ct.Views.Chart.Name()))
+			ct.Views.Chart.SetFgColor(ct.colorscheme.TcellFgColor(ct.Views.Chart.Name()))
+			ct.Views.Chart.SetBgColor(ct.colorscheme.TcellBgColor(ct.Views.Chart.Name()))
 			go func() {
 				ct.UpdateChart()
 				cachekey := ct.CompositeCacheKey("globaldata", "", "", ct.State.selectedChartRange)
@@ -124,8 +124,8 @@ func (ct *Cointop) layout() error {
 		topOffset = topOffset + chartHeight
 		if err := ct.ui.SetView(ct.Views.TableHeader, tableOffsetX, topOffset-1, maxX, topOffset+1); err != nil {
 			ct.Views.TableHeader.SetFrame(false)
-			ct.Views.TableHeader.SetFgColor(ct.colorscheme.GocuiFgColor(ct.Views.TableHeader.Name()))
-			ct.Views.TableHeader.SetBgColor(ct.colorscheme.GocuiBgColor(ct.Views.TableHeader.Name()))
+			ct.Views.TableHeader.SetFgColor(ct.colorscheme.TcellFgColor(ct.Views.TableHeader.Name()))
+			ct.Views.TableHeader.SetBgColor(ct.colorscheme.TcellBgColor(ct.Views.TableHeader.Name()))
 			go ct.UpdateTableHeader()
 		}
 
@@ -133,8 +133,8 @@ func (ct *Cointop) layout() error {
 		if err := ct.ui.SetView(ct.Views.Table, tableOffsetX, topOffset-1, maxX, maxY-statusbarHeight); err != nil {
 			ct.Views.Table.SetFrame(false)
 			ct.Views.Table.SetHighlight(true)
-			ct.Views.Table.SetSelFgColor(ct.colorscheme.GocuiFgColor("table_row_active"))
-			ct.Views.Table.SetSelBgColor(ct.colorscheme.GocuiBgColor("table_row_active"))
+			ct.Views.Table.SetSelFgColor(ct.colorscheme.TcellFgColor("table_row_active"))
+			ct.Views.Table.SetSelBgColor(ct.colorscheme.TcellBgColor("table_row_active"))
 			_, found := ct.cache.Get("allCoinsSlugMap")
 			if found {
 				ct.cache.Delete("allCoinsSlugMap")
@@ -149,8 +149,8 @@ func (ct *Cointop) layout() error {
 	if !ct.State.hideStatusbar {
 		if err := ct.ui.SetView(ct.Views.Statusbar, 0, maxY-statusbarHeight-1, maxX, maxY); err != nil {
 			ct.Views.Statusbar.SetFrame(false)
-			ct.Views.Statusbar.SetFgColor(ct.colorscheme.GocuiFgColor(ct.Views.Statusbar.Name()))
-			ct.Views.Statusbar.SetBgColor(ct.colorscheme.GocuiBgColor(ct.Views.Statusbar.Name()))
+			ct.Views.Statusbar.SetFgColor(ct.colorscheme.TcellFgColor(ct.Views.Statusbar.Name()))
+			ct.Views.Statusbar.SetBgColor(ct.colorscheme.TcellBgColor(ct.Views.Statusbar.Name()))
 			go ct.UpdateStatusbar("")
 		}
 	} else {
@@ -166,22 +166,22 @@ func (ct *Cointop) layout() error {
 		ct.Views.SearchField.SetEditable(true)
 		ct.Views.SearchField.SetWrap(true)
 		ct.Views.SearchField.SetFrame(false)
-		ct.Views.SearchField.SetFgColor(ct.colorscheme.GocuiFgColor("searchbar"))
-		ct.Views.SearchField.SetBgColor(ct.colorscheme.GocuiBgColor("searchbar"))
+		ct.Views.SearchField.SetFgColor(ct.colorscheme.TcellFgColor("searchbar"))
+		ct.Views.SearchField.SetBgColor(ct.colorscheme.TcellBgColor("searchbar"))
 	}
 
 	if err := ct.ui.SetView(ct.Views.Menu, 1, 1, maxX-1, maxY-1); err != nil {
 		ct.Views.Menu.SetFrame(false)
-		ct.Views.Menu.SetFgColor(ct.colorscheme.GocuiFgColor("menu"))
-		ct.Views.Menu.SetBgColor(ct.colorscheme.GocuiBgColor("menu"))
+		ct.Views.Menu.SetFgColor(ct.colorscheme.TcellFgColor("menu"))
+		ct.Views.Menu.SetBgColor(ct.colorscheme.TcellBgColor("menu"))
 	}
 
 	if err := ct.ui.SetView(ct.Views.Input, 3, 6, 30, 8); err != nil {
 		ct.Views.Input.SetFrame(true)
 		ct.Views.Input.SetEditable(true)
 		ct.Views.Input.SetWrap(true)
-		ct.Views.Input.SetFgColor(ct.colorscheme.GocuiFgColor("menu"))
-		ct.Views.Input.SetBgColor(ct.colorscheme.GocuiBgColor("menu"))
+		ct.Views.Input.SetFgColor(ct.colorscheme.TcellFgColor("menu"))
+		ct.Views.Input.SetBgColor(ct.colorscheme.TcellBgColor("menu"))
 
 		// run only once on init.
 		// this bit of code should be at the bottom

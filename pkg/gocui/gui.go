@@ -44,11 +44,11 @@ type Gui struct {
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
-	BgColor, FgColor Attribute
+	BgColor, FgColor tcell.Color
 
 	// SelBgColor and SelFgColor allow to configure the background and
 	// foreground colors of the frame of the current view.
-	SelBgColor, SelFgColor Attribute
+	SelBgColor, SelFgColor tcell.Color
 
 	// If Highlight is true, Sel{Bg,Fg}Colors will be used to draw the
 	// frame of the current view.
@@ -75,17 +75,15 @@ type Gui struct {
 // NewGui returns a new Gui object with a given output mode.
 // func NewGui(mode OutputMode) (*Gui, error) {
 func NewGui() (*Gui, error) {
-
 	g := &Gui{}
 
-	//outMode = OutputNormal
+	// outMode = OutputNormal
 	if s, e := tcell.NewScreen(); e != nil {
 		return nil, e
 	} else if e = s.Init(); e != nil {
 		return nil, e
 	} else {
 		g.screen = s
-
 	}
 
 	// g.outputMode = mode
@@ -97,8 +95,8 @@ func NewGui() (*Gui, error) {
 
 	g.maxX, g.maxY = g.screen.Size()
 
-	g.BgColor, g.FgColor = ColorDefault, ColorDefault
-	g.SelBgColor, g.SelFgColor = ColorDefault, ColorDefault
+	g.BgColor, g.FgColor = tcell.ColorDefault, tcell.ColorDefault
+	g.SelBgColor, g.SelFgColor = tcell.ColorDefault, tcell.ColorDefault
 
 	return g, nil
 }
@@ -283,7 +281,7 @@ func (g *Gui) CurrentView() *View {
 // be a rune or a Key.
 // TODO: split into key/mouse bindings?
 func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) error {
-	//var kb *eventBinding
+	// var kb *eventBinding
 
 	// k, ch, err := getKey(key)
 	// if err != nil {
@@ -494,19 +492,9 @@ func (g *Gui) fixColor(c tcell.Color) tcell.Color {
 	return c
 }
 
-// TODO: delete termbox compat
-func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
-	st := tcell.StyleDefault
-	if fg != ColorDefault {
-		f := tcell.PaletteColor(int(fg)&0x1ff - 1)
-		f = g.fixColor(f)
-		st = st.Foreground(f)
-	}
-	if bg != ColorDefault {
-		b := tcell.PaletteColor(int(bg)&0x1ff - 1)
-		b = g.fixColor(b)
-		st = st.Background(b)
-	}
+// TODO: fixme
+func (g *Gui) Style(fg, bg tcell.Color) tcell.Style {
+	st := tcell.StyleDefault.Foreground(fg).Background(bg)
 	// TODO: fixme
 	// if (fg|bg)&AttrBold != 0 {
 	// 	st = st.Bold(true)
@@ -517,13 +505,14 @@ func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
 	// if (fg|bg)&AttrReverse != 0 {
 	// 	st = st.Reverse(true)
 	// }
+
 	return st
 }
 
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {
 	// termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
-	st := g.MkStyle(g.FgColor, g.BgColor)
+	st := g.Style(g.FgColor, g.BgColor)
 	w, h := g.screen.Size() // TODO: merge with maxX, maxY below
 	for row := 0; row < h; row++ {
 		for col := 0; col < w; col++ {
@@ -547,23 +536,19 @@ func (g *Gui) flush() error {
 	}
 	for _, v := range g.views {
 		if v.Frame {
-			var fgColor, bgColor Attribute
+			st := g.Style(v.FgColor, v.BgColor)
 			if g.Highlight && v == g.currentView {
-				fgColor = g.SelFgColor
-				bgColor = g.SelBgColor
-			} else {
-				fgColor = g.FgColor
-				bgColor = g.BgColor
+				st = g.Style(g.SelFgColor, g.SelBgColor)
 			}
 
-			if err := g.drawFrameEdges(v, fgColor, bgColor); err != nil {
+			if err := g.drawFrameEdges(v, st); err != nil {
 				return err
 			}
-			if err := g.drawFrameCorners(v, fgColor, bgColor); err != nil {
+			if err := g.drawFrameCorners(v, st); err != nil {
 				return err
 			}
 			if v.Title != "" {
-				if err := g.drawTitle(v, fgColor, bgColor); err != nil {
+				if err := g.drawTitle(v, st); err != nil {
 					return err
 				}
 			}
@@ -577,12 +562,11 @@ func (g *Gui) flush() error {
 }
 
 // drawFrameEdges draws the horizontal and vertical edges of a view.
-func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
+func (g *Gui) drawFrameEdges(v *View, st tcell.Style) error {
 	runeH, runeV := '─', '│'
 	if g.ASCII {
 		runeH, runeV = '-', '|'
 	}
-	st := g.MkStyle(fgColor, bgColor) // TODO: push up
 
 	for x := v.x0 + 1; x < v.x1 && x < g.maxX; x++ {
 		if x < 0 {
@@ -618,7 +602,7 @@ func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
 }
 
 // drawFrameCorners draws the corners of the view.
-func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
+func (g *Gui) drawFrameCorners(v *View, st tcell.Style) error {
 	runeTL, runeTR, runeBL, runeBR := '┌', '┐', '└', '┘'
 	if g.ASCII {
 		runeTL, runeTR, runeBL, runeBR = '+', '+', '+', '+'
@@ -629,7 +613,6 @@ func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
 		ch   rune
 	}{{v.x0, v.y0, runeTL}, {v.x1, v.y0, runeTR}, {v.x0, v.y1, runeBL}, {v.x1, v.y1, runeBR}}
 
-	st := g.MkStyle(fgColor, bgColor) // TODO: push up
 	for _, c := range corners {
 		if c.x >= 0 && c.y >= 0 && c.x < g.maxX && c.y < g.maxY {
 			if err := g.SetRune(c.x, c.y, c.ch, st); err != nil {
@@ -641,12 +624,11 @@ func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
 }
 
 // drawTitle draws the title of the view.
-func (g *Gui) drawTitle(v *View, fgColor, bgColor Attribute) error {
+func (g *Gui) drawTitle(v *View, st tcell.Style) error {
 	if v.y0 < 0 || v.y0 >= g.maxY {
 		return nil
 	}
 
-	st := g.MkStyle(fgColor, bgColor) // TODO: push up
 	for i, ch := range v.Title {
 		x := v.x0 + i + 2
 		if x < 0 {
@@ -729,7 +711,6 @@ func (g *Gui) onEvent(ev tcell.Event) error {
 
 // GetViewRelativeMousePosition returns the View and relative x/y for the provided mouse event.
 func (g *Gui) GetViewRelativeMousePosition(ev tcell.Event) (*View, int, int, error) {
-
 	if kbe, ok := ev.(*tcell.EventMouse); ok {
 		mx, my := kbe.Position()
 		v, err := g.ViewByPosition(mx, my)

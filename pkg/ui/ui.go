@@ -2,6 +2,7 @@ package ui
 
 import (
 	"github.com/cointop-sh/cointop/pkg/gocui"
+	"github.com/gdamore/tcell/v2"
 )
 
 // UI is the UI view struct
@@ -27,12 +28,12 @@ func (ui *UI) GetGocui() *gocui.Gui {
 }
 
 // SetFgColor sets the foreground color
-func (ui *UI) SetFgColor(fgColor gocui.Attribute) {
+func (ui *UI) SetFgColor(fgColor tcell.Color) {
 	ui.g.FgColor = fgColor
 }
 
 // SetBgColor sets the background color
-func (ui *UI) SetBgColor(bgColor gocui.Attribute) {
+func (ui *UI) SetBgColor(bgColor tcell.Color) {
 	ui.g.BgColor = bgColor
 }
 

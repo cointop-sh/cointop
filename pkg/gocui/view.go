@@ -31,11 +31,11 @@ type View struct {
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the View.
-	BgColor, FgColor Attribute // TODO: merge to tcell.Style
+	BgColor, FgColor tcell.Color
 
 	// SelBgColor and SelFgColor are used to configure the background and
 	// foreground colors of the selected line, when it is highlighted.
-	SelBgColor, SelFgColor Attribute // TODO: merge to tcell.Style
+	SelBgColor, SelFgColor tcell.Color // TODO: merge to tcell.Style
 
 	// If Editable is true, keystrokes will be added to the view's internal
 	// buffer at the cursor position.
@@ -150,10 +150,10 @@ func (v *View) setRune(x, y int, ch rune, st tcell.Style) error {
 	}
 
 	if v.Mask != 0 {
-		st = v.g.MkStyle(v.FgColor, v.BgColor)
+		st = v.g.Style(v.FgColor, v.BgColor)
 		ch = v.Mask
 	} else if v.Highlight && ry == rcy {
-		st = v.g.MkStyle(v.SelFgColor, v.SelBgColor)
+		st = v.g.Style(v.SelFgColor, v.SelBgColor)
 	}
 
 	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, st)
@@ -242,9 +242,7 @@ func (v *View) parseInput(ch rune) []cell {
 	if err != nil {
 		for _, r := range v.ei.runes() {
 			c := cell{
-				// fgColor: v.FgColor,
-				// bgColor: v.BgColor,
-				style: v.g.MkStyle(v.FgColor, v.BgColor),
+				style: v.g.Style(v.FgColor, v.BgColor),
 				chr:   r,
 			}
 			cells = append(cells, c)
@@ -255,8 +253,6 @@ func (v *View) parseInput(ch rune) []cell {
 			return nil
 		}
 		c := cell{
-			// fgColor: v.ei.curFgColor,
-			// bgColor: v.ei.curBgColor,
 			style: v.ei.curStyle,
 			chr:   ch,
 		}
@@ -404,7 +400,7 @@ func (v *View) Clear() {
 // clearRunes erases all the cells in the view.
 func (v *View) clearRunes() {
 	maxX, maxY := v.Size()
-	st := v.g.MkStyle(v.FgColor, v.BgColor) // TODO: push up
+	st := v.g.Style(v.FgColor, v.BgColor)
 	for x := 0; x < maxX; x++ {
 		for y := 0; y < maxY; y++ {
 			v.g.SetRune(v.x0+x+1, v.y0+y+1, ' ', st)

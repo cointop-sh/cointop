@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cointop-sh/cointop/pkg/gocui"
+	"github.com/gdamore/tcell/v2"
 )
 
 // IView is the view interface
@@ -214,28 +215,28 @@ func (view *View) SetWrap(enabled bool) error {
 }
 
 // SetFgColor sets the foreground color
-func (view *View) SetFgColor(color gocui.Attribute) {
+func (view *View) SetFgColor(color tcell.Color) {
 	if view.HasBacking() {
 		view.backing.FgColor = color
 	}
 }
 
 // SetBgColor sets the background color
-func (view *View) SetBgColor(color gocui.Attribute) {
+func (view *View) SetBgColor(color tcell.Color) {
 	if view.HasBacking() {
 		view.backing.BgColor = color
 	}
 }
 
 // SetSelFgColor sets the foreground color for selection
-func (view *View) SetSelFgColor(color gocui.Attribute) {
+func (view *View) SetSelFgColor(color tcell.Color) {
 	if view.HasBacking() {
 		view.backing.SelFgColor = color
 	}
 }
 
 // SetSelBgColor sets the background color for selection
-func (view *View) SetSelBgColor(color gocui.Attribute) {
+func (view *View) SetSelBgColor(color tcell.Color) {
 	if view.HasBacking() {
 		view.backing.SelBgColor = color
 	}

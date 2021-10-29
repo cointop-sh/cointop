@@ -7,6 +7,7 @@ import (
 
 	"github.com/cointop-sh/cointop/pkg/gocui"
 	fcolor "github.com/fatih/color"
+	"github.com/gdamore/tcell/v2"
 	"github.com/tomnomnom/xtermcolor"
 )
 
@@ -71,13 +72,13 @@ func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 }
 
 // BaseFg ...
-func (c *Colorscheme) BaseFg() gocui.Attribute {
-	return c.GocuiFgColor("base")
+func (c *Colorscheme) BaseFg() tcell.Color {
+	return c.TcellFgColor("base")
 }
 
 // BaseBg ...
-func (c *Colorscheme) BaseBg() gocui.Attribute {
-	return c.GocuiBgColor("base")
+func (c *Colorscheme) BaseBg() tcell.Color {
+	return c.TcellBgColor("base")
 }
 
 // Chart ...
@@ -275,13 +276,15 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 	return c.ToSprintf(name)(a...)
 }
 
-func (c *Colorscheme) GocuiFgColor(name string) gocui.Attribute {
+func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
+	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
 	var attrs []gocui.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.ToGocuiAttr(v); ok {
 			attrs = append(attrs, fg)
 		}
 	}
+
 	// TODO: fixme
 	// if v, ok := c.colors[name+"_bold"].(bool); ok {
 	// 	if v {
@@ -293,25 +296,27 @@ func (c *Colorscheme) GocuiFgColor(name string) gocui.Attribute {
 	// 		attrs = append(attrs, gocui.AttrUnderline)
 	// 	}
 	// }
+
+	var combined gocui.Attribute
 	if len(attrs) > 0 {
-		var combined gocui.Attribute
 		for _, v := range attrs {
 			combined = combined ^ v
 		}
-		return combined
 	}
 
-	return gocui.ColorDefault
+	return convert2TcellColor(combined)
 }
 
-func (c *Colorscheme) GocuiBgColor(name string) gocui.Attribute {
+func (c *Colorscheme) TcellBgColor(name string) tcell.Color {
+	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
+	var attr gocui.Attribute
 	if v, ok := c.colors[name+"_bg"].(string); ok {
 		if bg, ok := c.ToGocuiAttr(v); ok {
-			return bg
+			attr = bg
 		}
 	}
 
-	return gocui.ColorDefault
+	return convert2TcellColor(attr)
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
@@ -383,3 +388,13 @@ func HexToAnsi(h string) (uint8, bool) {
 }
 
 // gocui can use xterm colors
+
+// convert2TcellColor is temp converter for Attribute to TCell.Color
+func convert2TcellColor(a gocui.Attribute) tcell.Color {
+	c := tcell.PaletteColor(int(a)&0x1ff - 1)
+	if c != tcell.ColorDefault {
+		c = tcell.PaletteColor(int(c) & 0xff)
+	}
+
+	return c
+}
