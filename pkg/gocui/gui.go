@@ -494,6 +494,14 @@ func (g *Gui) fixColor(c tcell.Color) tcell.Color {
 	return c
 }
 
+func (g *Gui) MkColor(color Attribute) tcell.Color {
+	if color == ColorDefault {
+		return tcell.ColorDefault
+	} else {
+		return g.fixColor(tcell.PaletteColor(int(color)&0x1ff - 1))
+	}
+}
+
 // TODO: delete termbox compat
 func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
 	st := tcell.StyleDefault
