@@ -8,8 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	tm "github.com/cointop-sh/cointop/pkg/termbox"
-
 	rw "github.com/mattn/go-runewidth"
 )
 
@@ -48,9 +46,9 @@ var (
 
 /* ----------------------- End ----------------------------- */
 
-func toTmAttr(x Attribute) tm.Attribute {
-	return tm.Attribute(x)
-}
+// func toTmAttr(x Attribute) tm.Attribute {
+// 	return tm.Attribute(x)
+// }
 
 func str2runes(s string) []rune {
 	return []rune(s)

@@ -493,10 +493,10 @@ func (g *Gui) fixColor(c tcell.Color) tcell.Color {
 }
 
 func (g *Gui) Style(fg, bg tcell.Color) tcell.Style {
-	st := tcell.StyleDefault.Foreground(fg).Background(bg)
-  	return st
+	return tcell.StyleDefault.Foreground(fg).Background(bg)
 }
 
+/*
 func (g *Gui) MkColor(color Attribute) tcell.Color {
 	if color == ColorDefault {
 		return tcell.ColorDefault
@@ -531,6 +531,7 @@ func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
 
 	return st
 }
+*/
 
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {

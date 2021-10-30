@@ -341,22 +341,13 @@ func (v *View) draw() error {
 				break
 			}
 
-			// fgColor := c.fgColor
-			// if fgColor == ColorDefault {
-			// 	fgColor = v.FgColor
-			// }
-			// bgColor := c.bgColor
-			// if bgColor == ColorDefault {
-			// 	bgColor = v.BgColor
-			// }
-
 			st := c.style
 			fgColor, bgColor, _ := c.style.Decompose()
 			if fgColor == tcell.ColorDefault {
-				st = st.Foreground(v.g.MkColor(v.FgColor))
+				st = st.Foreground(v.FgColor)
 			}
 			if bgColor == tcell.ColorDefault {
-				st = st.Background(v.g.MkColor(v.BgColor))
+				st = st.Background(v.BgColor)
 			}
 			if err := v.setRune(x, y, c.chr, st); err != nil {
 				return err
