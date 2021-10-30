@@ -350,7 +350,15 @@ func (v *View) draw() error {
 			// 	bgColor = v.BgColor
 			// }
 
-			if err := v.setRune(x, y, c.chr, c.style); err != nil {
+			st := c.style
+			fgColor, bgColor, _ := c.style.Decompose()
+			if fgColor == tcell.ColorDefault {
+				st = st.Foreground(v.g.MkColor(v.FgColor))
+			}
+			if bgColor == tcell.ColorDefault {
+				st = st.Background(v.g.MkColor(v.BgColor))
+			}
+			if err := v.setRune(x, y, c.chr, st); err != nil {
 				return err
 			}
 			x++
