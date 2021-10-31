@@ -50,15 +50,17 @@ var BgColorschemeColorsMap = map[string]fcolor.Attribute{
 	"yellow":  fcolor.BgYellow,
 }
 
+// See more: vendor/github.com/mattn/go-colorable/colorable_windows.go:905
+// any new color for the below mapping should be compatible with this above list
 var TcellColorschemeColorsMap = map[string]tcell.Color{
 	"black":   tcell.ColorBlack,
-	"blue":    tcell.ColorBlue,
-	"cyan":    tcell.Color32,
+	"blue":    tcell.ColorNavy,
+	"cyan":    tcell.ColorTeal,
 	"green":   tcell.ColorGreen,
-	"magenta": tcell.ColorFuchsia,
-	"red":     tcell.ColorRed,
-	"white":   tcell.ColorWhite,
-	"yellow":  tcell.ColorYellow,
+	"magenta": tcell.ColorPurple,
+	"red":     tcell.ColorMaroon,
+	"white":   tcell.ColorSilver,
+	"yellow":  tcell.ColorOlive,
 }
 
 // NewColorscheme ...
@@ -297,24 +299,21 @@ func (c *Colorscheme) BgColor(name string) tcell.Color {
 	return c.tcellColor(name + "_bg")
 }
 
+// tcellColor can supply for types of color name: specific mapped name, tcell color name, hex
+// Examples: black, honeydew, #000000
 func (c *Colorscheme) tcellColor(name string) tcell.Color {
-	color := tcell.ColorDefault
 	v, ok := c.colors[name].(string)
 	if ok {
-		// TODO: if we already have refactor colorscheme to use tcell.Color values as a right way
-		// then we can just remove this mapping lookup
-		// and just use tcell.GetColor(v) only
-		color, ok = TcellColorschemeColorsMap[v]
-		if !ok {
-			color = tcell.GetColor(v)
-		}
+		return TcellColorschemeColorsMap[v]
 	}
 
+	color := tcell.GetColor(name)
 	if color != tcell.ColorDefault {
-		return tcell.PaletteColor(int(color) & 0xff)
+		return color
 	}
 
-	return color
+	code, _ := HexToAnsi(v)
+	return tcell.PaletteColor(int(code) & 0xff)
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
