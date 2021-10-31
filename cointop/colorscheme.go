@@ -72,14 +72,8 @@ func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 	}
 }
 
-// BaseFg ...
-func (c *Colorscheme) BaseFg() tcell.Color {
-	return c.FgColor("base")
-}
-
-// BaseBg ...
-func (c *Colorscheme) BaseBg() tcell.Color {
-	return c.BgColor("base")
+func (c *Colorscheme) BaseStyle() tcell.Style {
+	return c.Style("base")
 }
 
 // Chart ...
@@ -277,26 +271,18 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 	return c.ToSprintf(name)(a...)
 }
 
-func (c *Colorscheme) FgColor(name string) tcell.Color {
-	fg := c.tcellColor(name + "_fg")
-
-	// TODO: fixme
-	// if v, ok := c.colors[name+"_bold"].(bool); ok {
-	// 	if v {
-	// 		attrs = append(attrs, gocui.AttrBold)
-	// 	}
-	// }
-	// if v, ok := c.colors[name+"_underline"].(bool); ok {
-	// 	if v {
-	// 		attrs = append(attrs, gocui.AttrUnderline)
-	// 	}
-	// }
-
-	return fg
-}
-
-func (c *Colorscheme) BgColor(name string) tcell.Color {
-	return c.tcellColor(name + "_bg")
+func (c *Colorscheme) Style(name string) tcell.Style {
+	st := tcell.StyleDefault
+	st = st.Foreground(c.tcellColor(name + "_fg"))
+	st = st.Foreground(c.tcellColor(name + "_bg"))
+	if v, ok := c.colors[name+"_bold"].(bool); ok {
+		st = st.Bold(v)
+	}
+	if v, ok := c.colors[name+"_underline"].(bool); ok {
+		st = st.Underline(v)
+	}
+	// TODO: Blink Dim Italic Reverse Strikethrough
+	return st
 }
 
 // tcellColor can supply for types of color name: specific mapped name, tcell color name, hex

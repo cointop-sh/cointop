@@ -27,14 +27,9 @@ func (ui *UI) GetGocui() *gocui.Gui {
 	return ui.g
 }
 
-// SetFgColor sets the foreground color
-func (ui *UI) SetFgColor(fgColor tcell.Color) {
-	ui.g.Style = ui.g.Style.Foreground(fgColor)
-}
-
-// SetBgColor sets the background color
-func (ui *UI) SetBgColor(bgColor tcell.Color) {
-	ui.g.Style = ui.g.Style.Background(bgColor)
+// SetFgColor sets the default style
+func (ui *UI) SetStyle(st tcell.Style) {
+	ui.g.Style = st
 }
 
 // SetInputEsc enables the escape key
