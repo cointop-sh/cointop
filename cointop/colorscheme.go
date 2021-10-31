@@ -72,12 +72,12 @@ func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 
 // BaseFg ...
 func (c *Colorscheme) BaseFg() tcell.Color {
-	return c.TcellFgColor("base")
+	return c.FgColor("base")
 }
 
 // BaseBg ...
 func (c *Colorscheme) BaseBg() tcell.Color {
-	return c.TcellBgColor("base")
+	return c.BgColor("base")
 }
 
 // Chart ...
@@ -275,15 +275,8 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 	return c.ToSprintf(name)(a...)
 }
 
-func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
-	color := tcell.ColorDefault
-	if v, ok := c.colors[name+"_fg"].(string); !ok {
-		color = c.ToTcellColor(v)
-	}
-
-	if color != tcell.ColorDefault {
-		return tcell.PaletteColor(int(color) & 0xff)
-	}
+func (c *Colorscheme) FgColor(name string) tcell.Color {
+	fg := c.tcellColor(name + "_fg")
 
 	// TODO: fixme
 	// if v, ok := c.colors[name+"_bold"].(bool); ok {
@@ -297,14 +290,24 @@ func (c *Colorscheme) TcellFgColor(name string) tcell.Color {
 	// 	}
 	// }
 
-	return color
+	return fg
 }
 
-func (c *Colorscheme) TcellBgColor(name string) tcell.Color {
-	// TODO: Parse config value to Tcell.Color and remove gocui.Attribute
+func (c *Colorscheme) BgColor(name string) tcell.Color {
+	return c.tcellColor(name + "_bg")
+}
+
+func (c *Colorscheme) tcellColor(name string) tcell.Color {
 	color := tcell.ColorDefault
-	if v, ok := c.colors[name+"_bg"].(string); ok {
-		color = c.ToTcellColor(v)
+	v, ok := c.colors[name].(string)
+	if ok {
+		// TODO: if we already have refactor colorscheme to use tcell.Color values as a right way
+		// then we can just remove this mapping lookup
+		// and just use tcell.GetColor(v) only
+		color, ok = TcellColorschemeColorsMap[v]
+		if !ok {
+			color = tcell.GetColor(v)
+		}
 	}
 
 	if color != tcell.ColorDefault {
@@ -346,15 +349,6 @@ func (c *Colorscheme) ToBoldAttr(v bool) (fcolor.Attribute, bool) {
 // ToUnderlineAttr converts a boolean to an Attribute type
 func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
-}
-
-// ToTcellColor converts a color string name to a gocui Attribute type
-func (c *Colorscheme) ToTcellColor(v string) tcell.Color {
-	if attr, ok := TcellColorschemeColorsMap[v]; ok {
-		return attr
-	}
-
-	return tcell.GetColor(v)
 }
 
 // HexToAnsi converts a hex color string to a uint8 ansi code
