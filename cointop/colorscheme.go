@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"sync"
 
-	"github.com/cointop-sh/cointop/pkg/gocui"
+	"github.com/cointop-sh/cointop/pkg/termbox"
 	fcolor "github.com/fatih/color"
 	"github.com/tomnomnom/xtermcolor"
 )
@@ -50,15 +50,15 @@ var BgColorschemeColorsMap = map[string]fcolor.Attribute{
 	"yellow":  fcolor.BgYellow,
 }
 
-var GocuiColorschemeColorsMap = map[string]gocui.Attribute{
-	"black":   gocui.ColorBlack,
-	"blue":    gocui.ColorBlue,
-	"cyan":    gocui.ColorCyan,
-	"green":   gocui.ColorGreen,
-	"magenta": gocui.ColorMagenta,
-	"red":     gocui.ColorRed,
-	"white":   gocui.ColorWhite,
-	"yellow":  gocui.ColorYellow,
+var GocuiColorschemeColorsMap = map[string]termbox.Attribute{
+	"black":   termbox.ColorBlack,
+	"blue":    termbox.ColorBlue,
+	"cyan":    termbox.ColorCyan,
+	"green":   termbox.ColorGreen,
+	"magenta": termbox.ColorMagenta,
+	"red":     termbox.ColorRed,
+	"white":   termbox.ColorWhite,
+	"yellow":  termbox.ColorYellow,
 }
 
 // NewColorscheme ...
@@ -71,12 +71,12 @@ func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 }
 
 // BaseFg ...
-func (c *Colorscheme) BaseFg() gocui.Attribute {
+func (c *Colorscheme) BaseFg() termbox.Attribute {
 	return c.GocuiFgColor("base")
 }
 
 // BaseBg ...
-func (c *Colorscheme) BaseBg() gocui.Attribute {
+func (c *Colorscheme) BaseBg() termbox.Attribute {
 	return c.GocuiBgColor("base")
 }
 
@@ -275,8 +275,8 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 	return c.ToSprintf(name)(a...)
 }
 
-func (c *Colorscheme) GocuiFgColor(name string) gocui.Attribute {
-	var attrs []gocui.Attribute
+func (c *Colorscheme) GocuiFgColor(name string) termbox.Attribute {
+	var attrs []termbox.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.ToGocuiAttr(v); ok {
 			attrs = append(attrs, fg)
@@ -294,24 +294,24 @@ func (c *Colorscheme) GocuiFgColor(name string) gocui.Attribute {
 	// 	}
 	// }
 	if len(attrs) > 0 {
-		var combined gocui.Attribute
+		var combined termbox.Attribute
 		for _, v := range attrs {
 			combined = combined ^ v
 		}
 		return combined
 	}
 
-	return gocui.ColorDefault
+	return termbox.ColorDefault
 }
 
-func (c *Colorscheme) GocuiBgColor(name string) gocui.Attribute {
+func (c *Colorscheme) GocuiBgColor(name string) termbox.Attribute {
 	if v, ok := c.colors[name+"_bg"].(string); ok {
 		if bg, ok := c.ToGocuiAttr(v); ok {
 			return bg
 		}
 	}
 
-	return gocui.ColorDefault
+	return termbox.ColorDefault
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
@@ -349,13 +349,13 @@ func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 }
 
 // ToGocuiAttr converts a color string name to a gocui Attribute type
-func (c *Colorscheme) ToGocuiAttr(v string) (gocui.Attribute, bool) {
+func (c *Colorscheme) ToGocuiAttr(v string) (termbox.Attribute, bool) {
 	if attr, ok := GocuiColorschemeColorsMap[v]; ok {
 		return attr, true
 	}
 
 	if code, ok := HexToAnsi(v); ok {
-		return gocui.Attribute(code), true
+		return termbox.Attribute(code), true
 	}
 
 	return 0, false

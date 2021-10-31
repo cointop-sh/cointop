@@ -2,6 +2,7 @@ package ui
 
 import (
 	"github.com/cointop-sh/cointop/pkg/gocui"
+	"github.com/cointop-sh/cointop/pkg/termbox"
 )
 
 // UI is the UI view struct
@@ -27,13 +28,13 @@ func (ui *UI) GetGocui() *gocui.Gui {
 }
 
 // SetFgColor sets the foreground color
-func (ui *UI) SetFgColor(fgColor gocui.Attribute) {
-	ui.g.FgColor = fgColor
+func (ui *UI) SetFgColor(fgColor termbox.Attribute) {
+	ui.g.Style = ui.g.Style.Foreground(termbox.MkColor(fgColor))
 }
 
 // SetBgColor sets the background color
-func (ui *UI) SetBgColor(bgColor gocui.Attribute) {
-	ui.g.BgColor = bgColor
+func (ui *UI) SetBgColor(bgColor termbox.Attribute) {
+	ui.g.Style = ui.g.Style.Background(termbox.MkColor(bgColor))
 }
 
 // SetInputEsc enables the escape key
