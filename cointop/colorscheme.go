@@ -303,8 +303,12 @@ func (c *Colorscheme) BgColor(name string) tcell.Color {
 // Examples: black, honeydew, #000000
 func (c *Colorscheme) tcellColor(name string) tcell.Color {
 	v, ok := c.colors[name].(string)
-	if ok {
-		return TcellColorschemeColorsMap[v]
+	if !ok {
+		return tcell.ColorDefault
+	}
+
+	if color, found := TcellColorschemeColorsMap[v]; found {
+		return color
 	}
 
 	color := tcell.GetColor(name)
