@@ -274,7 +274,7 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 func (c *Colorscheme) Style(name string) tcell.Style {
 	st := tcell.StyleDefault
 	st = st.Foreground(c.tcellColor(name + "_fg"))
-	st = st.Foreground(c.tcellColor(name + "_bg"))
+	st = st.Background(c.tcellColor(name + "_bg"))
 	if v, ok := c.colors[name+"_bold"].(bool); ok {
 		st = st.Bold(v)
 	}
