@@ -29,12 +29,12 @@ func (ui *UI) GetGocui() *gocui.Gui {
 
 // SetFgColor sets the foreground color
 func (ui *UI) SetFgColor(fgColor tcell.Color) {
-	ui.g.FgColor = fgColor
+	ui.g.Style = ui.g.Style.Foreground(fgColor)
 }
 
 // SetBgColor sets the background color
 func (ui *UI) SetBgColor(bgColor tcell.Color) {
-	ui.g.BgColor = bgColor
+	ui.g.Style = ui.g.Style.Background(bgColor)
 }
 
 // SetInputEsc enables the escape key

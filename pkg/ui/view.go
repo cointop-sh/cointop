@@ -217,28 +217,29 @@ func (view *View) SetWrap(enabled bool) error {
 // SetFgColor sets the foreground color
 func (view *View) SetFgColor(color tcell.Color) {
 	if view.HasBacking() {
-		view.backing.FgColor = color
+		view.backing.Style = view.backing.Style.Foreground(color)
 	}
 }
 
 // SetBgColor sets the background color
 func (view *View) SetBgColor(color tcell.Color) {
 	if view.HasBacking() {
-		view.backing.BgColor = color
+		// view.backing.BgColor = color
+		view.backing.Style = view.backing.Style.Background(color)
 	}
 }
 
 // SetSelFgColor sets the foreground color for selection
 func (view *View) SetSelFgColor(color tcell.Color) {
 	if view.HasBacking() {
-		view.backing.SelFgColor = color
+		view.backing.SelStyle = view.backing.SelStyle.Foreground(color)
 	}
 }
 
 // SetSelBgColor sets the background color for selection
 func (view *View) SetSelBgColor(color tcell.Color) {
 	if view.HasBacking() {
-		view.backing.SelBgColor = color
+		view.backing.SelStyle = view.backing.SelStyle.Background(color)
 	}
 }
 

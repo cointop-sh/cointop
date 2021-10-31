@@ -44,11 +44,11 @@ type Gui struct {
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
-	BgColor, FgColor tcell.Color
+	Style tcell.Style
 
 	// SelBgColor and SelFgColor allow to configure the background and
 	// foreground colors of the frame of the current view.
-	SelBgColor, SelFgColor tcell.Color
+	SelStyle tcell.Style
 
 	// If Highlight is true, Sel{Bg,Fg}Colors will be used to draw the
 	// frame of the current view.
@@ -95,8 +95,8 @@ func NewGui() (*Gui, error) {
 
 	g.maxX, g.maxY = g.screen.Size()
 
-	g.BgColor, g.FgColor = tcell.ColorDefault, tcell.ColorDefault
-	g.SelBgColor, g.SelFgColor = tcell.ColorDefault, tcell.ColorDefault
+	g.Style = tcell.StyleDefault
+	g.SelStyle = tcell.StyleDefault
 
 	return g, nil
 }
@@ -178,8 +178,8 @@ func (g *Gui) SetView(name string, x0, y0, x1, y1 int) (*View, error) {
 	}
 
 	v := newView(name, x0, y0, x1, y1, g)
-	v.BgColor, v.FgColor = g.BgColor, g.FgColor
-	v.SelBgColor, v.SelFgColor = g.SelBgColor, g.SelFgColor
+	v.Style = g.Style
+	v.SelStyle = g.SelStyle
 	g.views = append(g.views, v)
 	return v, ErrUnknownView
 }
@@ -471,76 +471,13 @@ func (g *Gui) handleEvent(ev tcell.Event) error {
 	}
 }
 
-// TODO: delete termbox compat
-func (g *Gui) fixColor(c tcell.Color) tcell.Color {
-	if c == tcell.ColorDefault {
-		return c
-	}
-	c = tcell.PaletteColor(int(c) & 0xff)
-	// switch g.outputMode {
-	// case OutputNormal:
-	// 	c = tcell.PaletteColor(int(c) & 0xf)
-	// case Output256:
-	// 	c = tcell.PaletteColor(int(c) & 0xff)
-	// case Output216:
-	// 	c = tcell.PaletteColor(int(c)%216 + 16)
-	// case OutputGrayscale:
-	// 	c %= tcell.PaletteColor(int(c)%24 + 232)
-	// default:
-	// 	c = tcell.ColorDefault
-	// }
-	return c
-}
-
-func (g *Gui) Style(fg, bg tcell.Color) tcell.Style {
-	return tcell.StyleDefault.Foreground(fg).Background(bg)
-}
-
-/*
-func (g *Gui) MkColor(color Attribute) tcell.Color {
-	if color == ColorDefault {
-		return tcell.ColorDefault
-	} else {
-		return g.fixColor(tcell.PaletteColor(int(color)&0x1ff - 1))
-	}
-}
-
-// TODO: delete termbox compat
-func (g *Gui) MkStyle(fg, bg Attribute) tcell.Style {
-	st := tcell.StyleDefault
-	if fg != ColorDefault {
-		f := tcell.PaletteColor(int(fg)&0x1ff - 1)
-		f = g.fixColor(f)
-		st = st.Foreground(f)
-	}
-	if bg != ColorDefault {
-		b := tcell.PaletteColor(int(bg)&0x1ff - 1)
-		b = g.fixColor(b)
-		st = st.Background(b)
-	}
-	// TODO: fixme
-	// if (fg|bg)&AttrBold != 0 {
-	// 	st = st.Bold(true)
-	// }
-	// if (fg|bg)&AttrUnderline != 0 {
-	// 	st = st.Underline(true)
-	// }
-	// if (fg|bg)&AttrReverse != 0 {
-	// 	st = st.Reverse(true)
-	// }
-
-	return st
-}
-*/
-
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {
 	// termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
-	st := g.Style(g.FgColor, g.BgColor)
 	w, h := g.screen.Size() // TODO: merge with maxX, maxY below
 	for row := 0; row < h; row++ {
 		for col := 0; col < w; col++ {
-			g.screen.SetContent(col, row, ' ', nil, st)
+			g.screen.SetContent(col, row, ' ', nil, g.Style)
 		}
 	}
 
@@ -560,9 +497,10 @@ func (g *Gui) flush() error {
 	}
 	for _, v := range g.views {
 		if v.Frame {
-			st := g.Style(v.FgColor, v.BgColor)
+			// var fgColor, bgColor Attribute
+			st := g.Style
 			if g.Highlight && v == g.currentView {
-				st = g.Style(g.SelFgColor, g.SelBgColor)
+				st = g.SelStyle
 			}
 
 			if err := g.drawFrameEdges(v, st); err != nil {
