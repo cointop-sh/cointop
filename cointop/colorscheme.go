@@ -241,6 +241,7 @@ func (c *Colorscheme) ToSprintf(name string) ISprintf {
 		return cached
 	}
 
+	// TODO: use c.Style(name)?
 	var attrs []fcolor.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.ToFgAttr(v); ok {
@@ -282,6 +283,7 @@ func (c *Colorscheme) Style(name string) tcell.Style {
 		st = st.Underline(v)
 	}
 	// TODO: Blink Dim Italic Reverse Strikethrough
+	// log.Debugf("XXX Style(%s) = %s", name, st)
 	return st
 }
 
@@ -290,20 +292,27 @@ func (c *Colorscheme) Style(name string) tcell.Style {
 func (c *Colorscheme) tcellColor(name string) tcell.Color {
 	v, ok := c.colors[name].(string)
 	if !ok {
+		// log.Debugf("XXX tcellColor(%s) could not be found!", name)
 		return tcell.ColorDefault
 	}
 
 	if color, found := TcellColorschemeColorsMap[v]; found {
+		// log.Debugf("XXX tcellColor(%s => %s) FOUND %s", name, v, color)
 		return color
 	}
 
-	color := tcell.GetColor(name)
+	color := tcell.GetColor(v)
 	if color != tcell.ColorDefault {
+		// log.Debugf("XXX tcellColor(%s => %s) GET %s", name, v, color)
 		return color
 	}
 
-	code, _ := HexToAnsi(v)
-	return tcell.PaletteColor(int(code) & 0xff)
+	if code, ok := HexToAnsi(v); ok {
+		// log.Debugf("XXX tcellColor(%s => %s) HEX %s", name, v, code)
+		return tcell.PaletteColor(int(code) & 0xff)
+	}
+	// log.Debugf("XXX tcellColor(%s => %s) FALLTHROUGH %s", name, v, color)
+	return color
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
