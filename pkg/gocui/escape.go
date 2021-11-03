@@ -120,7 +120,7 @@ func (ei *escapeInterpreter) parseOne(ch rune) (isEscape bool, err error) {
 			return true, nil
 		case ch == 'm':
 			var err error
-			err = ei.output256()
+			err = ei.parseEscapeParams()
 			// switch ei.mode {
 			// case OutputNormal:
 			// 	err = ei.outputNormal()
@@ -141,17 +141,34 @@ func (ei *escapeInterpreter) parseOne(ch rune) (isEscape bool, err error) {
 	return false, nil
 }
 
-// outputNormal provides 8 different colors:
-//   black, red, green, yellow, blue, magenta, cyan, white
-func (ei *escapeInterpreter) outputNormal() error {
-	for _, param := range ei.csiParam {
-		p, err := strconv.Atoi(param)
-		if err != nil {
+// parseEscapeParams interprets an escape sequence as a style modifier
+// allows you to leverage the 256-colors terminal mode:
+//   0x01 - 0x08: the 8 colors as in OutputNormal (black, red, green, yellow, blue, magenta, cyan, white)
+//   0x09 - 0x10: Color* | AttrBold
+//   0x11 - 0xe8: 216 different colors
+//   0xe9 - 0x1ff: 24 different shades of grey
+// see https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+// see https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
+// 256-colors: ESC[ 38;5;${ID}m   # foreground
+// 256-colors: ESC[ 48;5;${ID}m   # background
+// 24-bit ESC[ 38;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB foreground color
+// 24-bit ESC[ 48;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB background color
+func (ei *escapeInterpreter) parseEscapeParams() error {
+	// TODO: cache escape -> Style
+	// convert params to int
+	params := make([]int, len(ei.csiParam))
+	for i, param := range ei.csiParam {
+		if p, err := strconv.Atoi(param); err == nil {
+			params[i] = p
+		} else {
 			return errCSIParseError
 		}
+	}
 
-		// see https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-		// see https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
+	// consume elements of params until done
+	pos := 0
+	for ok := true; ok; ok = pos < len(params) {
+		p := params[pos]
 		switch {
 		case p >= 30 && p <= 37:
 			ei.curStyle = ei.curStyle.Foreground(tcell.PaletteColor(p - 30))
@@ -169,63 +186,27 @@ func (ei *escapeInterpreter) outputNormal() error {
 			ei.curStyle = ei.curStyle.Reverse(true)
 		case p == 0:
 			ei.curStyle = tcell.StyleDefault
-		}
-	}
-
-	return nil
-}
-
-// output256 allows you to leverage the 256-colors terminal mode:
-//   0x01 - 0x08: the 8 colors as in OutputNormal
-//   0x09 - 0x10: Color* | AttrBold
-//   0x11 - 0xe8: 216 different colors
-//   0xe9 - 0x1ff: 24 different shades of grey
-func (ei *escapeInterpreter) output256() error {
-	if len(ei.csiParam) < 3 {
-		return ei.outputNormal()
-	}
-
-	mode, err := strconv.Atoi(ei.csiParam[1])
-	if err != nil {
-		return errCSIParseError
-	}
-	if mode != 5 {
-		return ei.outputNormal()
-	}
-
-	fgbg, err := strconv.Atoi(ei.csiParam[0])
-	if err != nil {
-		return errCSIParseError
-	}
-	color, err := strconv.Atoi(ei.csiParam[2])
-	if err != nil {
-		return errCSIParseError
-	}
-
-	switch fgbg {
-	case 38:
-		ei.curStyle = ei.curStyle.Foreground(tcell.PaletteColor(color + 1))
-
-		for _, param := range ei.csiParam[3:] {
-			p, err := strconv.Atoi(param)
-			if err != nil {
-				return errCSIParseError
+		case p == 38 || p == 48: // 256-color or 24-bit
+			// parse mode and additional params to generate a color
+			mode := params[pos+1] // second param - 2 or 5
+			var x tcell.Color
+			if mode == 5 { // 256 color
+				x = tcell.PaletteColor(params[pos+2] + 1)
+				pos += 2 // two additional (5+index)
+			} else if mode == 2 { // 24-bit
+				x = tcell.NewRGBColor(int32(params[pos+2]), int32(params[pos+3]), int32(params[pos+4]))
+				pos += 4 // four additional (2+r/g/b)
+			} else {
+				return errCSIParseError // invalid mode
 			}
-
-			switch {
-			case p == 1:
-				ei.curStyle = ei.curStyle.Bold(true)
-			case p == 4:
-				ei.curStyle = ei.curStyle.Underline(true)
-			case p == 7:
-				ei.curStyle = ei.curStyle.Reverse(true)
+			if p == 38 {
+				ei.curStyle = ei.curStyle.Foreground(x)
+			} else {
+				ei.curStyle = ei.curStyle.Background(x)
 			}
 		}
-	case 48:
-		ei.curStyle = ei.curStyle.Background(tcell.PaletteColor(color + 1))
-	default:
-		return errCSIParseError
-	}
 
+		pos += 1 // move along 1 by default
+	}
 	return nil
 }

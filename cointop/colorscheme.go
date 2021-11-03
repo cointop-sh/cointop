@@ -246,13 +246,39 @@ func (c *Colorscheme) ToSprintf(name string) ISprintf {
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.ToFgAttr(v); ok {
 			attrs = append(attrs, fg)
+		} else {
+			color := tcell.GetColor(v)
+			if color != tcell.ColorDefault {
+				// 24-bit foreground 38;2;⟨r⟩;⟨g⟩;⟨b⟩
+				r, g, b := color.RGB()
+				attrs = append(attrs, 38)
+				attrs = append(attrs, 2)
+				attrs = append(attrs, fcolor.Attribute(r))
+				attrs = append(attrs, fcolor.Attribute(g))
+				attrs = append(attrs, fcolor.Attribute(b))
+				// log.Debugf("XXX added FG color %s", attrs)
+			}
 		}
 	}
+
 	if v, ok := c.colors[name+"_bg"].(string); ok {
 		if bg, ok := c.ToBgAttr(v); ok {
 			attrs = append(attrs, bg)
+		} else {
+			color := tcell.GetColor(v)
+			if color != tcell.ColorDefault {
+				// 24-bit background 48;2;⟨r⟩;⟨g⟩;⟨b⟩
+				r, g, b := color.RGB()
+				attrs = append(attrs, 48)
+				attrs = append(attrs, 2)
+				attrs = append(attrs, fcolor.Attribute(r))
+				attrs = append(attrs, fcolor.Attribute(g))
+				attrs = append(attrs, fcolor.Attribute(b))
+				// log.Debugf("XXX added BG color %s", attrs)
+			}
 		}
 	}
+
 	if v, ok := c.colors[name+"_bold"].(bool); ok {
 		if bold, ok := c.ToBoldAttr(v); ok {
 			attrs = append(attrs, bold)
@@ -283,7 +309,6 @@ func (c *Colorscheme) Style(name string) tcell.Style {
 		st = st.Underline(v)
 	}
 	// TODO: Blink Dim Italic Reverse Strikethrough
-	// log.Debugf("XXX Style(%s) = %s", name, st)
 	return st
 }
 
@@ -307,10 +332,11 @@ func (c *Colorscheme) tcellColor(name string) tcell.Color {
 		return color
 	}
 
-	if code, ok := HexToAnsi(v); ok {
-		// log.Debugf("XXX tcellColor(%s => %s) HEX %s", name, v, code)
-		return tcell.PaletteColor(int(code) & 0xff)
-	}
+	// find closest X11 color to RGB
+	// if code, ok := HexToAnsi(v); ok {
+	// 	// log.Debugf("XXX tcellColor(%s => %s) HEX %s", name, v, code)
+	// 	return tcell.PaletteColor(int(code) & 0xff)
+	// }
 	// log.Debugf("XXX tcellColor(%s => %s) FALLTHROUGH %s", name, v, color)
 	return color
 }
@@ -320,9 +346,10 @@ func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := HexToAnsi(v); ok {
-		return fcolor.Attribute(code), true
-	}
+	// find closest X11 color to RGB
+	// if code, ok := HexToAnsi(v); ok {
+	// 	return fcolor.Attribute(code), true
+	// }
 
 	return 0, false
 }
@@ -332,9 +359,10 @@ func (c *Colorscheme) ToBgAttr(v string) (fcolor.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := HexToAnsi(v); ok {
-		return fcolor.Attribute(code), true
-	}
+	// find closest X11 color to RGB
+	// if code, ok := HexToAnsi(v); ok {
+	// 	return fcolor.Attribute(code), true
+	// }
 
 	return 0, false
 }
@@ -362,6 +390,7 @@ func HexToAnsi(h string) (uint8, bool) {
 		}
 	}
 
+	// TODO: only use if exact, otherwise use 24-bit version
 	code, err := xtermcolor.FromHexStr(h)
 	if err != nil {
 		return 0, false
