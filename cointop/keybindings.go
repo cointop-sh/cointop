@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/cointop-sh/cointop/pkg/gocui"
 	"github.com/gdamore/tcell/v2"
@@ -89,6 +90,7 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	if len(keyName) == 1 {
 		r := []rune(keyName)
 		key = r[0]
+
 		return key, mod
 	}
 
@@ -267,6 +269,13 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 	}
 
 	ct.SetKeybindingMod(key, mod, fn, view)
+
+	// Bind `shift+key` for uppercased character
+	r, isRune := key.(rune)
+	if isRune && unicode.IsUpper(r) {
+		ct.SetKeybindingMod(key, tcell.ModShift, fn, view)
+	}
+
 	return nil
 }
 

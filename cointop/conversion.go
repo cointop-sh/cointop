@@ -305,7 +305,7 @@ func CurrencySymbol(currency string) string {
 	return "?"
 }
 
-// StatusbarMouseLeftClick is called on mouse left click event
+// ConversionMouseLeftClick is called on mouse left click event
 func (ct *Cointop) ConversionMouseLeftClick() error {
 	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
 	if err != nil {
