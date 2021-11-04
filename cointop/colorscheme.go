@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 
 	fcolor "github.com/fatih/color"
@@ -65,6 +66,23 @@ var TcellColorschemeColorsMap = map[string]tcell.Color{
 
 // NewColorscheme ...
 func NewColorscheme(colors ColorschemeColors) *Colorscheme {
+	// Build lookup table for defined values, then replace references to these
+	const prefix = "define_"
+	const reference = "&"
+	defines := ColorschemeColors{}
+	for k, v := range colors {
+		if strings.HasPrefix(k, prefix) {
+			defines[k[len(prefix):]] = v
+		}
+	}
+	for k, v := range colors {
+		if vs, ok := v.(string); ok {
+			if strings.HasPrefix(vs, reference) {
+				colors[k] = defines[vs[len(reference):]]
+			}
+		}
+	}
+
 	return &Colorscheme{
 		colors:     colors,
 		cache:      make(ColorCache),
