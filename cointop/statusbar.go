@@ -96,8 +96,9 @@ func (ct *Cointop) StatusbarMouseLeftClick() error {
 	// Parse the statusbar text to identify hotspots and actions
 	b := make([]byte, 1000)
 	ct.Views.Statusbar.Rewind()
-	if n, err := ct.Views.Statusbar.Read(b); err == nil {
-
+	if n, err := ct.Views.Statusbar.Read(b); err != nil {
+		return err
+	} else {
 		// Find all the "[X]word" substrings, then look for the one that was clicked
 		matches := regexp.MustCompile(`\[.*?\]\w+`).FindAllIndex(b[:n], -1)
 		for _, match := range matches {
