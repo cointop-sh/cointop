@@ -274,7 +274,6 @@ func (c *Colorscheme) ToSprintf(name string) ISprintf {
 				attrs = append(attrs, fcolor.Attribute(r))
 				attrs = append(attrs, fcolor.Attribute(g))
 				attrs = append(attrs, fcolor.Attribute(b))
-				// log.Debugf("XXX added FG color %s", attrs)
 			}
 		}
 	}
@@ -292,7 +291,6 @@ func (c *Colorscheme) ToSprintf(name string) ISprintf {
 				attrs = append(attrs, fcolor.Attribute(r))
 				attrs = append(attrs, fcolor.Attribute(g))
 				attrs = append(attrs, fcolor.Attribute(b))
-				// log.Debugf("XXX added BG color %s", attrs)
 			}
 		}
 	}
@@ -335,27 +333,22 @@ func (c *Colorscheme) Style(name string) tcell.Style {
 func (c *Colorscheme) tcellColor(name string) tcell.Color {
 	v, ok := c.colors[name].(string)
 	if !ok {
-		// log.Debugf("XXX tcellColor(%s) could not be found!", name)
 		return tcell.ColorDefault
 	}
 
 	if color, found := TcellColorschemeColorsMap[v]; found {
-		// log.Debugf("XXX tcellColor(%s => %s) FOUND %s", name, v, color)
 		return color
 	}
 
 	color := tcell.GetColor(v)
 	if color != tcell.ColorDefault {
-		// log.Debugf("XXX tcellColor(%s => %s) GET %s", name, v, color)
 		return color
 	}
 
 	// find closest X11 color to RGB
 	// if code, ok := HexToAnsi(v); ok {
-	// 	// log.Debugf("XXX tcellColor(%s => %s) HEX %s", name, v, code)
 	// 	return tcell.PaletteColor(int(code) & 0xff)
 	// }
-	// log.Debugf("XXX tcellColor(%s => %s) FALLTHROUGH %s", name, v, color)
 	return color
 }
 

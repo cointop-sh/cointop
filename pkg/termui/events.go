@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2"
-	log "github.com/sirupsen/logrus"
 )
 
 type Event struct {
@@ -77,7 +76,6 @@ func evtKbd(e tcell.EventKey) EvtKbd {
 }
 
 func crtTermboxEvt(e tcell.Event) Event {
-	log.Debugf("XXX crtTermboxEvt")
 	ne := Event{From: "/sys", Time: e.When().Unix()}
 	switch tev := e.(type) {
 	case *tcell.EventResize:
@@ -86,7 +84,7 @@ func crtTermboxEvt(e tcell.Event) Event {
 		ne.Path = "/sys/wnd/resize"
 		ne.Data = wnd
 		ne.Type = "window"
-		log.Debugf("XXX Resized to %d,%d", wnd.Width, wnd.Height)
+		// log.Debugf("XXX Resized to %d,%d", wnd.Width, wnd.Height)
 		return ne
 	case *tcell.EventMouse:
 		m := EvtMouse{}
