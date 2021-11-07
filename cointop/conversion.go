@@ -3,10 +3,12 @@ package cointop
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 
-	"github.com/cointop-sh/cointop/pkg/color"
+	fcolor "github.com/fatih/color"
+
 	"github.com/cointop-sh/cointop/pkg/pad"
 	"github.com/mattn/go-runewidth"
 	log "github.com/sirupsen/logrus"
@@ -176,9 +178,10 @@ func (ct *Cointop) UpdateConvertMenu() error {
 		}
 		shortcut := string(alphanumericcharacters[i])
 		if key == ct.State.currencyConversion {
-			shortcut = ct.colorscheme.MenuLabelActive(color.Bold("*"))
-			key = ct.colorscheme.Menu(color.Bold(key))
-			currency = ct.colorscheme.MenuLabelActive(color.Bold(currency))
+			Bold := fcolor.New(fcolor.Bold).SprintFunc()
+			shortcut = ct.colorscheme.MenuLabelActive(Bold("*"))
+			key = ct.colorscheme.Menu(Bold(key))
+			currency = ct.colorscheme.MenuLabelActive(Bold(currency))
 		} else {
 			key = ct.colorscheme.Menu(key)
 			currency = ct.colorscheme.MenuLabel(currency)
@@ -241,7 +244,7 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 		if err := ct.Save(); err != nil {
 			return err
 		}
-
+		go ct.UpdateCurrentPageCoins()
 		go ct.RefreshAll()
 		return nil
 	}
@@ -300,6 +303,26 @@ func CurrencySymbol(currency string) string {
 	}
 
 	return "?"
+}
+
+// ConversionMouseLeftClick is called on mouse left click event
+func (ct *Cointop) ConversionMouseLeftClick() error {
+	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+
+	// Find the menu entry that includes the mouse position
+	line := v.BufferLines()[y]
+	matches := regexp.MustCompile(`\[ . \] \w+ [^\[]+`).FindAllStringIndex(line, -1)
+	for _, match := range matches {
+		if x >= match[0] && x <= match[1] {
+			s := line[match[0]:match[1]]
+			convert := strings.Split(s, " ")[3]
+			return ct.SetCurrencyConverstionFn(convert)()
+		}
+	}
+	return nil
 }
 
 // Convert converts an amount to another currency type

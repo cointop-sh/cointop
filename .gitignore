@@ -57,6 +57,7 @@ wasm
 .appimage_workspace
 
 todo.txt
+.vscode
 
 docs/public
 deploy_docs.sh

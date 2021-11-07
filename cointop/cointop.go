@@ -13,10 +13,11 @@ import (
 	"github.com/cointop-sh/cointop/pkg/api/types"
 	"github.com/cointop-sh/cointop/pkg/cache"
 	"github.com/cointop-sh/cointop/pkg/filecache"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	"github.com/cointop-sh/cointop/pkg/pathutil"
 	"github.com/cointop-sh/cointop/pkg/table"
 	"github.com/cointop-sh/cointop/pkg/ui"
-	"github.com/miguelmota/gocui"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -47,6 +48,7 @@ type State struct {
 	defaultView        string
 	defaultChartRange  string
 	maxChartWidth      int
+	columnLookup       []string
 
 	favorites                  map[string]bool
 	favoritesTableColumns      []string
@@ -206,7 +208,7 @@ var DefaultSortBy = "rank"
 var DefaultPerPage = uint(100)
 
 // DefaultMaxPages ...
-var DefaultMaxPages = uint(35)
+var DefaultMaxPages = uint(10)
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"
@@ -488,8 +490,7 @@ func (ct *Cointop) Run() error {
 		return err
 	}
 
-	ui.SetFgColor(ct.colorscheme.BaseFg())
-	ui.SetBgColor(ct.colorscheme.BaseBg())
+	ui.SetStyle(ct.colorscheme.BaseStyle())
 	ct.ui = ui
 	ct.g = ui.GetGocui()
 	defer ui.Close()

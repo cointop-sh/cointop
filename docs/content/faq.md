@@ -15,7 +15,8 @@ draft: false
 
 ## What coins does this support?
 
-  This supports any coin supported by the API being used to fetch coin information.
+  This supports any coin supported by the API being used to fetch coin information.  There is, however, a limit on the number of coins that
+  cointop fetches by default.  You can increase this by passing `--max-pages` and `--per-page` arguments on the command line.
 
 ## How do I set the API to use?
 
@@ -41,13 +42,18 @@ draft: false
 
   Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.config/cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
 
+  You can use any of the 250-odd X11 colors by name. See https://en.wikipedia.org/wiki/X11_color_names (use lower-case and without spaces).   You can also include 24-bit colors by using the #rrggbb hex code.
+
+  You can also define values in the colorscheme file, and reference them from throughout the file, using the following syntax:
+
+  ```toml
+  define_base03 = "#002b36"
+  menu_header_fg = "$base03"
+  ```
+
 ## How do I make the background color transparent?
 
   Change the background color options in the colorscheme file to `default` to use the system default color, eg. `base_bg = "default"`
-
-## Why don't colorschemes support RGB or hex colors?
-
-  Some of the cointop underlying rendering libraries don't support true colors. See [issue](https://github.com/nsf/termbox/issues/37).
 
 ## Where is the config file located?
 
@@ -133,6 +139,8 @@ draft: false
 
   The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
   Each search starts from the current cursor position. To search for the same term again, hit <kbd>/</kbd> then <kbd>Enter</kbd>.
+
+  The default behaviour will start to search by symbol first, then it will continues searching by name if there is no result. To search by only symbol, type the search query after `/s:`. To search by only name, type the search query after `/n:`.
 
 ## How do I exit search?
 
