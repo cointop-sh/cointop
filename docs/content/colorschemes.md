@@ -16,6 +16,8 @@ $ cd ~/.config/cointop
 $ git clone git@github.com:cointop-sh/colors.git
 ```
 
+Note: depending on your system, this may not be the correct location. The "colors" directory needs to go in the same place as your config.toml file.
+
 Then edit your config `~/.config/cointop/config.toml` and set the colorscheme you want to use:
 
 ```toml

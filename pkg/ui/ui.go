@@ -1,7 +1,8 @@
 package ui
 
 import (
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
+	"github.com/gdamore/tcell/v2"
 )
 
 // UI is the UI view struct
@@ -11,7 +12,7 @@ type UI struct {
 
 // NewUI returns a new UI instance
 func NewUI() (*UI, error) {
-	g, err := gocui.NewGui(gocui.Output256)
+	g, err := gocui.NewGui()
 	if err != nil {
 		return nil, err
 	}
@@ -26,14 +27,9 @@ func (ui *UI) GetGocui() *gocui.Gui {
 	return ui.g
 }
 
-// SetFgColor sets the foreground color
-func (ui *UI) SetFgColor(fgColor gocui.Attribute) {
-	ui.g.FgColor = fgColor
-}
-
-// SetBgColor sets the background color
-func (ui *UI) SetBgColor(bgColor gocui.Attribute) {
-	ui.g.BgColor = bgColor
+// SetFgColor sets the default style
+func (ui *UI) SetStyle(style tcell.Style) {
+	ui.g.Style = style
 }
 
 // SetInputEsc enables the escape key

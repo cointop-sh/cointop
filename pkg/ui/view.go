@@ -3,7 +3,8 @@ package ui
 import (
 	"fmt"
 
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
+	"github.com/gdamore/tcell/v2"
 )
 
 // IView is the view interface
@@ -213,31 +214,17 @@ func (view *View) SetWrap(enabled bool) error {
 	return nil
 }
 
-// SetFgColor sets the foreground color
-func (view *View) SetFgColor(color gocui.Attribute) {
+// SetStyle sets the text style for the view
+func (view *View) SetStyle(style tcell.Style) {
 	if view.HasBacking() {
-		view.backing.FgColor = color
+		view.backing.Style = style
 	}
 }
 
-// SetBgColor sets the background color
-func (view *View) SetBgColor(color gocui.Attribute) {
+// SetStyle sets the selection text style for the view
+func (view *View) SetSelStyle(style tcell.Style) {
 	if view.HasBacking() {
-		view.backing.BgColor = color
-	}
-}
-
-// SetSelFgColor sets the foreground color for selection
-func (view *View) SetSelFgColor(color gocui.Attribute) {
-	if view.HasBacking() {
-		view.backing.SelFgColor = color
-	}
-}
-
-// SetSelBgColor sets the background color for selection
-func (view *View) SetSelBgColor(color gocui.Attribute) {
-	if view.HasBacking() {
-		view.backing.SelBgColor = color
+		view.backing.SelStyle = style
 	}
 }
 
