@@ -4,22 +4,26 @@
 
 package gocui
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/gdamore/tcell/v2"
+)
 
 const maxInt = int(^uint(0) >> 1)
 
 // Editor interface must be satisfied by gocui editors.
 type Editor interface {
-	Edit(v *View, key Key, ch rune, mod Modifier)
+	Edit(v *View, key tcell.Key, ch rune, mod tcell.ModMask)
 }
 
 // The EditorFunc type is an adapter to allow the use of ordinary functions as
 // Editors. If f is a function with the appropriate signature, EditorFunc(f)
 // is an Editor object that calls f.
-type EditorFunc func(v *View, key Key, ch rune, mod Modifier)
+type EditorFunc func(v *View, key tcell.Key, ch rune, mod tcell.ModMask)
 
 // Edit calls f(v, key, ch, mod)
-func (f EditorFunc) Edit(v *View, key Key, ch rune, mod Modifier) {
+func (f EditorFunc) Edit(v *View, key tcell.Key, ch rune, mod tcell.ModMask) {
 	f(v, key, ch, mod)
 }
 
@@ -27,27 +31,27 @@ func (f EditorFunc) Edit(v *View, key Key, ch rune, mod Modifier) {
 var DefaultEditor Editor = EditorFunc(simpleEditor)
 
 // simpleEditor is used as the default gocui editor.
-func simpleEditor(v *View, key Key, ch rune, mod Modifier) {
+func simpleEditor(v *View, key tcell.Key, ch rune, mod tcell.ModMask) {
 	switch {
-	case ch != 0 && mod == 0:
+	case key == tcell.KeyRune && ch != 0 && mod == 0:
 		v.EditWrite(ch)
-	case key == KeySpace:
+	case key == ' ':
 		v.EditWrite(' ')
-	case key == KeyBackspace || key == KeyBackspace2:
+	case key == tcell.KeyBackspace || key == tcell.KeyBackspace2:
 		v.EditDelete(true)
-	case key == KeyDelete:
+	case key == tcell.KeyDelete:
 		v.EditDelete(false)
-	case key == KeyInsert:
+	case key == tcell.KeyInsert:
 		v.Overwrite = !v.Overwrite
-	case key == KeyEnter:
+	case key == tcell.KeyEnter:
 		v.EditNewLine()
-	case key == KeyArrowDown:
+	case key == tcell.KeyDown:
 		v.MoveCursor(0, 1, false)
-	case key == KeyArrowUp:
+	case key == tcell.KeyUp:
 		v.MoveCursor(0, -1, false)
-	case key == KeyArrowLeft:
+	case key == tcell.KeyLeft:
 		v.MoveCursor(-1, 0, false)
-	case key == KeyArrowRight:
+	case key == tcell.KeyRight:
 		v.MoveCursor(1, 0, false)
 	}
 }
@@ -265,9 +269,8 @@ func (v *View) writeRune(x, y int, ch rune) error {
 		copy(v.lines[y][x+1:], v.lines[y][x:])
 	}
 	v.lines[y][x] = cell{
-		fgColor: v.FgColor,
-		bgColor: v.BgColor,
-		chr:     ch,
+		style: v.Style,
+		chr:   ch,
 	}
 
 	return nil

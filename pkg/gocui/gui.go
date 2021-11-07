@@ -7,7 +7,7 @@ package gocui
 import (
 	"errors"
 
-	"github.com/cointop-sh/cointop/pkg/termbox"
+	"github.com/gdamore/tcell/v2"
 )
 
 var (
@@ -19,35 +19,36 @@ var (
 )
 
 // OutputMode represents the terminal's output mode (8 or 256 colors).
-type OutputMode termbox.OutputMode
+// type OutputMode termbox.OutputMode // TODO: die
 
-const (
-	// OutputNormal provides 8-colors terminal mode.
-	OutputNormal = OutputMode(termbox.OutputNormal)
+// const ( // TODO: die
+// 	// OutputNormal provides 8-colors terminal mode.
+// 	OutputNormal = OutputMode(termbox.OutputNormal)
 
-	// Output256 provides 256-colors terminal mode.
-	Output256 = OutputMode(termbox.Output256)
-)
+// 	// Output256 provides 256-colors terminal mode.
+// 	Output256 = OutputMode(termbox.Output256)
+// )
 
 // Gui represents the whole User Interface, including the views, layouts
-// and keybindings.
+// and eventBindings.
 type Gui struct {
-	tbEvents    chan termbox.Event
-	userEvents  chan userEvent
-	views       []*View
-	currentView *View
-	managers    []Manager
-	keybindings []*keybinding
-	maxX, maxY  int
-	outputMode  OutputMode
+	tbEvents      chan tcell.Event
+	userEvents    chan userEvent
+	views         []*View
+	currentView   *View
+	managers      []Manager
+	eventBindings []*eventBinding
+	maxX, maxY    int
+	// outputMode    OutputMode // TODO: die
+	screen tcell.Screen
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the GUI.
-	BgColor, FgColor Attribute
+	Style tcell.Style
 
 	// SelBgColor and SelFgColor allow to configure the background and
 	// foreground colors of the frame of the current view.
-	SelBgColor, SelFgColor Attribute
+	SelStyle tcell.Style
 
 	// If Highlight is true, Sel{Bg,Fg}Colors will be used to draw the
 	// frame of the current view.
@@ -68,27 +69,34 @@ type Gui struct {
 	ASCII bool
 
 	// The current event while in the handlers.
-	CurrentEvent *termbox.Event
+	CurrentEvent tcell.Event
 }
 
 // NewGui returns a new Gui object with a given output mode.
-func NewGui(mode OutputMode) (*Gui, error) {
-	if err := termbox.Init(); err != nil {
-		return nil, err
-	}
-
+// func NewGui(mode OutputMode) (*Gui, error) {
+func NewGui() (*Gui, error) {
 	g := &Gui{}
 
-	g.outputMode = mode
-	termbox.SetOutputMode(termbox.OutputMode(mode))
+	// outMode = OutputNormal
+	if s, e := tcell.NewScreen(); e != nil {
+		return nil, e
+	} else if e = s.Init(); e != nil {
+		return nil, e
+	} else {
+		g.screen = s
+	}
 
-	g.tbEvents = make(chan termbox.Event, 20)
+	// g.outputMode = mode
+	// termbox.SetScreen(g.Screen) // ugly global
+	// termbox.SetOutputMode(termbox.OutputMode(mode))
+
+	g.tbEvents = make(chan tcell.Event, 20)
 	g.userEvents = make(chan userEvent, 20)
 
-	g.maxX, g.maxY = termbox.Size()
+	g.maxX, g.maxY = g.screen.Size()
 
-	g.BgColor, g.FgColor = ColorDefault, ColorDefault
-	g.SelBgColor, g.SelFgColor = ColorDefault, ColorDefault
+	g.Style = tcell.StyleDefault
+	g.SelStyle = tcell.StyleDefault
 
 	return g, nil
 }
@@ -96,7 +104,7 @@ func NewGui(mode OutputMode) (*Gui, error) {
 // Close finalizes the library. It should be called after a successful
 // initialization and when gocui is not needed anymore.
 func (g *Gui) Close() {
-	termbox.Close()
+	g.screen.Fini()
 }
 
 // Size returns the terminal's size.
@@ -104,14 +112,36 @@ func (g *Gui) Size() (x, y int) {
 	return g.maxX, g.maxY
 }
 
+// temporary kludge for the pretty
+func (g *Gui) prettyColor(x, y int, st tcell.Style) tcell.Style {
+	if true {
+		w, h := g.screen.Size()
+
+		// dark blue gradient background
+		red := int32(0)
+		grn := int32(0)
+		blu := int32(50 * float64(y) / float64(h))
+		st = st.Background(tcell.NewRGBColor(red, grn, blu))
+
+		// two-axis green-blue gradient
+		red = int32(200)
+		grn = int32(255 * float64(y) / float64(h))
+		blu = int32(255 * float64(x) / float64(w))
+		st = st.Foreground(tcell.NewRGBColor(red, grn, blu))
+	}
+	return st
+}
+
 // SetRune writes a rune at the given point, relative to the top-left
 // corner of the terminal. It checks if the position is valid and applies
 // the given colors.
-func (g *Gui) SetRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
+func (g *Gui) SetRune(x, y int, ch rune, st tcell.Style) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
-	termbox.SetCell(x, y, ch, termbox.Attribute(fgColor), termbox.Attribute(bgColor))
+	// temporary kludge for the pretty
+	// st = g.prettyColor(x, y, st)
+	g.screen.SetContent(x, y, ch, nil, st)
 	return nil
 }
 
@@ -147,9 +177,9 @@ func (g *Gui) SetView(name string, x0, y0, x1, y1 int) (*View, error) {
 		return v, nil
 	}
 
-	v := newView(name, x0, y0, x1, y1, g.outputMode)
-	v.BgColor, v.FgColor = g.BgColor, g.FgColor
-	v.SelBgColor, v.SelFgColor = g.SelBgColor, g.SelFgColor
+	v := newView(name, x0, y0, x1, y1, g)
+	v.Style = g.Style
+	v.SelStyle = g.SelStyle
 	g.views = append(g.views, v)
 	return v, ErrUnknownView
 }
@@ -246,60 +276,84 @@ func (g *Gui) CurrentView() *View {
 	return g.currentView
 }
 
-// SetKeybinding creates a new keybinding. If viewname equals to ""
-// (empty string) then the keybinding will apply to all views. key must
+// SetKeybinding creates a new eventBinding. If viewname equals to ""
+// (empty string) then the eventBinding will apply to all views. key must
 // be a rune or a Key.
-func (g *Gui) SetKeybinding(viewname string, key interface{}, mod Modifier, handler func(*Gui, *View) error) error {
-	var kb *keybinding
+// TODO: split into key/mouse bindings?
+func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) error {
+	// var kb *eventBinding
 
-	k, ch, err := getKey(key)
-	if err != nil {
-		return err
-	}
-	kb = newKeybinding(viewname, k, ch, mod, handler)
-	g.keybindings = append(g.keybindings, kb)
+	// k, ch, err := getKey(key)
+	// if err != nil {
+	// 	return err
+	// }
+	// TODO: get rid of this ugly mess
+	//switch key {
+	//case termbox.MouseLeft:
+	//	kb = newMouseBinding(viewname, tcell.Button1, mod, handler)
+	//case termbox.MouseMiddle:
+	//	kb = newMouseBinding(viewname, tcell.Button3, mod, handler)
+	//case termbox.MouseRight:
+	//	kb = newMouseBinding(viewname, tcell.Button2, mod, handler)
+	//case termbox.MouseWheelUp:
+	//	kb = newMouseBinding(viewname, tcell.WheelUp, mod, handler)
+	//case termbox.MouseWheelDown:
+	//	kb = newMouseBinding(viewname, tcell.WheelDown, mod, handler)
+	//default:
+	//	kb = newKeybinding(viewname, key, ch, mod, handler)
+	//}
+	kb := newKeybinding(viewname, key, ch, mod, handler)
+	g.eventBindings = append(g.eventBindings, kb)
 	return nil
 }
 
-// DeleteKeybinding deletes a keybinding.
-func (g *Gui) DeleteKeybinding(viewname string, key interface{}, mod Modifier) error {
-	k, ch, err := getKey(key)
-	if err != nil {
-		return err
-	}
-
-	for i, kb := range g.keybindings {
-		if kb.viewName == viewname && kb.ch == ch && kb.key == k && kb.mod == mod {
-			g.keybindings = append(g.keybindings[:i], g.keybindings[i+1:]...)
-			return nil
-		}
-	}
-	return errors.New("keybinding not found")
+func (g *Gui) SetMousebinding(viewname string, btn tcell.ButtonMask, mod tcell.ModMask, handler func(*Gui, *View) error) error {
+	kb := newMouseBinding(viewname, btn, mod, handler)
+	g.eventBindings = append(g.eventBindings, kb)
+	return nil
 }
 
-// DeleteKeybindings deletes all keybindings of view.
+// DeleteKeybinding deletes a eventBinding.
+func (g *Gui) DeleteKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask) error {
+	// k, ch, err := getKey(key)
+	// if err != nil {
+	// 	return err
+	// }
+
+	for i, kb := range g.eventBindings {
+		if kbe, ok := kb.ev.(*tcell.EventKey); ok {
+			if kb.viewName == viewname && kbe.Rune() == ch && kbe.Key() == key && kbe.Modifiers() == mod {
+				g.eventBindings = append(g.eventBindings[:i], g.eventBindings[i+1:]...)
+				return nil
+			}
+		}
+	}
+	return errors.New("eventBinding not found")
+}
+
+// DeleteKeybindings deletes all eventBindings of view.
 func (g *Gui) DeleteKeybindings(viewname string) {
-	var s []*keybinding
-	for _, kb := range g.keybindings {
+	var s []*eventBinding
+	for _, kb := range g.eventBindings {
 		if kb.viewName != viewname {
 			s = append(s, kb)
 		}
 	}
-	g.keybindings = s
+	g.eventBindings = s
 }
 
 // getKey takes an empty interface with a key and returns the corresponding
 // typed Key or rune.
-func getKey(key interface{}) (Key, rune, error) {
-	switch t := key.(type) {
-	case Key:
-		return t, 0, nil
-	case rune:
-		return 0, t, nil
-	default:
-		return 0, 0, errors.New("unknown type")
-	}
-}
+// func getKey(key interface{}) (tcell.Key, rune, error) {
+// 	switch t := key.(type) {
+// 	case Key:
+// 		return t, 0, nil
+// 	case rune:
+// 		return 0, t, nil
+// 	default:
+// 		return 0, 0, errors.New("unknown type")
+// 	}
+// }
 
 // userEvent represents an event triggered by the user.
 type userEvent struct {
@@ -333,18 +387,18 @@ func (f ManagerFunc) Layout(g *Gui) error {
 }
 
 // SetManager sets the given GUI managers. It deletes all views and
-// keybindings.
+// eventBindings.
 func (g *Gui) SetManager(managers ...Manager) {
 	g.managers = managers
 	g.currentView = nil
 	g.views = nil
-	g.keybindings = nil
+	g.eventBindings = nil
 
-	go func() { g.tbEvents <- termbox.Event{Type: termbox.EventResize} }()
+	go func() { g.tbEvents <- tcell.NewEventResize(0, 0) }()
 }
 
 // SetManagerFunc sets the given manager function. It deletes all views and
-// keybindings.
+// eventBindings.
 func (g *Gui) SetManagerFunc(manager func(*Gui) error) {
 	g.SetManager(ManagerFunc(manager))
 }
@@ -354,18 +408,14 @@ func (g *Gui) SetManagerFunc(manager func(*Gui) error) {
 func (g *Gui) MainLoop() error {
 	go func() {
 		for {
-			g.tbEvents <- termbox.PollEvent()
+			g.tbEvents <- g.screen.PollEvent()
 		}
 	}()
 
-	inputMode := termbox.InputAlt
-	if g.InputEsc {
-		inputMode = termbox.InputEsc
-	}
 	if g.Mouse {
-		inputMode |= termbox.InputMouse
+		g.screen.EnableMouse()
 	}
-	termbox.SetInputMode(inputMode)
+	// s.EnablePaste()
 
 	if err := g.flush(); err != nil {
 		return err
@@ -373,7 +423,7 @@ func (g *Gui) MainLoop() error {
 	for {
 		select {
 		case ev := <-g.tbEvents:
-			if err := g.handleEvent(&ev); err != nil {
+			if err := g.handleEvent(ev); err != nil {
 				return err
 			}
 		case ev := <-g.userEvents:
@@ -395,7 +445,7 @@ func (g *Gui) consumeevents() error {
 	for {
 		select {
 		case ev := <-g.tbEvents:
-			if err := g.handleEvent(&ev); err != nil {
+			if err := g.handleEvent(ev); err != nil {
 				return err
 			}
 		case ev := <-g.userEvents:
@@ -410,12 +460,12 @@ func (g *Gui) consumeevents() error {
 
 // handleEvent handles an event, based on its type (key-press, error,
 // etc.)
-func (g *Gui) handleEvent(ev *termbox.Event) error {
-	switch ev.Type {
-	case termbox.EventKey, termbox.EventMouse:
-		return g.onKey(ev)
-	case termbox.EventError:
-		return ev.Err
+func (g *Gui) handleEvent(ev tcell.Event) error {
+	switch tev := ev.(type) {
+	case *tcell.EventMouse, *tcell.EventKey:
+		return g.onEvent(tev)
+	case *tcell.EventError:
+		return errors.New(tev.Error())
 	default:
 		return nil
 	}
@@ -423,9 +473,15 @@ func (g *Gui) handleEvent(ev *termbox.Event) error {
 
 // flush updates the gui, re-drawing frames and buffers.
 func (g *Gui) flush() error {
-	termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
+	// termbox.Clear(termbox.Attribute(g.FgColor), termbox.Attribute(g.BgColor))
+	w, h := g.screen.Size() // TODO: merge with maxX, maxY below
+	for row := 0; row < h; row++ {
+		for col := 0; col < w; col++ {
+			g.screen.SetContent(col, row, ' ', nil, g.Style)
+		}
+	}
 
-	maxX, maxY := termbox.Size()
+	maxX, maxY := g.screen.Size()
 	// if GUI's size has changed, we need to redraw all views
 	if maxX != g.maxX || maxY != g.maxY {
 		for _, v := range g.views {
@@ -441,23 +497,20 @@ func (g *Gui) flush() error {
 	}
 	for _, v := range g.views {
 		if v.Frame {
-			var fgColor, bgColor Attribute
+			// var fgColor, bgColor Attribute
+			st := g.Style
 			if g.Highlight && v == g.currentView {
-				fgColor = g.SelFgColor
-				bgColor = g.SelBgColor
-			} else {
-				fgColor = g.FgColor
-				bgColor = g.BgColor
+				st = g.SelStyle
 			}
 
-			if err := g.drawFrameEdges(v, fgColor, bgColor); err != nil {
+			if err := g.drawFrameEdges(v, st); err != nil {
 				return err
 			}
-			if err := g.drawFrameCorners(v, fgColor, bgColor); err != nil {
+			if err := g.drawFrameCorners(v, st); err != nil {
 				return err
 			}
 			if v.Title != "" {
-				if err := g.drawTitle(v, fgColor, bgColor); err != nil {
+				if err := g.drawTitle(v, st); err != nil {
 					return err
 				}
 			}
@@ -466,12 +519,12 @@ func (g *Gui) flush() error {
 			return err
 		}
 	}
-	termbox.Flush()
+	g.screen.Show()
 	return nil
 }
 
 // drawFrameEdges draws the horizontal and vertical edges of a view.
-func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
+func (g *Gui) drawFrameEdges(v *View, st tcell.Style) error {
 	runeH, runeV := '─', '│'
 	if g.ASCII {
 		runeH, runeV = '-', '|'
@@ -482,12 +535,12 @@ func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
 			continue
 		}
 		if v.y0 > -1 && v.y0 < g.maxY {
-			if err := g.SetRune(x, v.y0, runeH, fgColor, bgColor); err != nil {
+			if err := g.SetRune(x, v.y0, runeH, st); err != nil {
 				return err
 			}
 		}
 		if v.y1 > -1 && v.y1 < g.maxY {
-			if err := g.SetRune(x, v.y1, runeH, fgColor, bgColor); err != nil {
+			if err := g.SetRune(x, v.y1, runeH, st); err != nil {
 				return err
 			}
 		}
@@ -497,12 +550,12 @@ func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
 			continue
 		}
 		if v.x0 > -1 && v.x0 < g.maxX {
-			if err := g.SetRune(v.x0, y, runeV, fgColor, bgColor); err != nil {
+			if err := g.SetRune(v.x0, y, runeV, st); err != nil {
 				return err
 			}
 		}
 		if v.x1 > -1 && v.x1 < g.maxX {
-			if err := g.SetRune(v.x1, y, runeV, fgColor, bgColor); err != nil {
+			if err := g.SetRune(v.x1, y, runeV, st); err != nil {
 				return err
 			}
 		}
@@ -511,7 +564,7 @@ func (g *Gui) drawFrameEdges(v *View, fgColor, bgColor Attribute) error {
 }
 
 // drawFrameCorners draws the corners of the view.
-func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
+func (g *Gui) drawFrameCorners(v *View, st tcell.Style) error {
 	runeTL, runeTR, runeBL, runeBR := '┌', '┐', '└', '┘'
 	if g.ASCII {
 		runeTL, runeTR, runeBL, runeBR = '+', '+', '+', '+'
@@ -524,7 +577,7 @@ func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
 
 	for _, c := range corners {
 		if c.x >= 0 && c.y >= 0 && c.x < g.maxX && c.y < g.maxY {
-			if err := g.SetRune(c.x, c.y, c.ch, fgColor, bgColor); err != nil {
+			if err := g.SetRune(c.x, c.y, c.ch, st); err != nil {
 				return err
 			}
 		}
@@ -533,7 +586,7 @@ func (g *Gui) drawFrameCorners(v *View, fgColor, bgColor Attribute) error {
 }
 
 // drawTitle draws the title of the view.
-func (g *Gui) drawTitle(v *View, fgColor, bgColor Attribute) error {
+func (g *Gui) drawTitle(v *View, st tcell.Style) error {
 	if v.y0 < 0 || v.y0 >= g.maxY {
 		return nil
 	}
@@ -545,7 +598,7 @@ func (g *Gui) drawTitle(v *View, fgColor, bgColor Attribute) error {
 		} else if x > v.x1-2 || x >= g.maxX {
 			break
 		}
-		if err := g.SetRune(x, v.y0, ch, fgColor, bgColor); err != nil {
+		if err := g.SetRune(x, v.y0, ch, st); err != nil {
 			return err
 		}
 	}
@@ -571,13 +624,13 @@ func (g *Gui) draw(v *View) error {
 			gMaxX, gMaxY := g.Size()
 			cx, cy := curview.x0+curview.cx+1, curview.y0+curview.cy+1
 			if cx >= 0 && cx < gMaxX && cy >= 0 && cy < gMaxY {
-				termbox.SetCursor(cx, cy)
+				g.screen.ShowCursor(cx, cy)
 			} else {
-				termbox.HideCursor()
+				g.screen.ShowCursor(-1, -1) // HideCursor
 			}
 		}
 	} else {
-		termbox.HideCursor()
+		g.screen.ShowCursor(-1, -1) // HideCursor
 	}
 
 	v.clearRunes()
@@ -587,13 +640,13 @@ func (g *Gui) draw(v *View) error {
 	return nil
 }
 
-// onKey manages key-press events. A keybinding handler is called when
-// a key-press or mouse event satisfies a configured keybinding. Furthermore,
+// onEvent manages key/mouse events. A eventBinding handler is called when
+// a key-press or mouse event satisfies a configured eventBinding. Furthermore,
 // currentView's internal buffer is modified if currentView.Editable is true.
-func (g *Gui) onKey(ev *termbox.Event) error {
-	switch ev.Type {
-	case termbox.EventKey:
-		matched, err := g.execKeybindings(g.currentView, ev)
+func (g *Gui) onEvent(ev tcell.Event) error {
+	switch tev := ev.(type) {
+	case *tcell.EventKey:
+		matched, err := g.execEventBindings(g.currentView, ev)
 		if err != nil {
 			return err
 		}
@@ -601,33 +654,34 @@ func (g *Gui) onKey(ev *termbox.Event) error {
 			break
 		}
 		if g.currentView != nil && g.currentView.Editable && g.currentView.Editor != nil {
-			g.currentView.Editor.Edit(g.currentView, Key(ev.Key), ev.Ch, Modifier(ev.Mod))
+			g.currentView.Editor.Edit(g.currentView, tev.Key(), tev.Rune(), tev.Modifiers())
 		}
-	case termbox.EventMouse:
-		v, _, _, err := g.GetViewRelativeMousePosition(ev)
+	case *tcell.EventMouse:
+		v, _, _, err := g.GetViewRelativeMousePosition(tev)
 		if err != nil {
 			break
 		}
 		// If the key-binding wants to move the cursor, it should call SetCursorFromCurrentMouseEvent()
 		// Not all mouse events will want to do this (eg: scroll wheel)
 		g.CurrentEvent = ev
-		if _, err := g.execKeybindings(v, ev); err != nil {
+		if _, err := g.execEventBindings(v, g.CurrentEvent); err != nil {
 			return err
 		}
 	}
-
 	return nil
 }
 
 // GetViewRelativeMousePosition returns the View and relative x/y for the provided mouse event.
-func (g *Gui) GetViewRelativeMousePosition(ev *termbox.Event) (*View, int, int, error) {
-	// TODO: check ev.Type == termbox.EventMouse ?
-	mx, my := ev.MouseX, ev.MouseY
-	v, err := g.ViewByPosition(mx, my)
-	if err != nil {
-		return nil, 0, 0, err
+func (g *Gui) GetViewRelativeMousePosition(ev tcell.Event) (*View, int, int, error) {
+	if kbe, ok := ev.(*tcell.EventMouse); ok {
+		mx, my := kbe.Position()
+		v, err := g.ViewByPosition(mx, my)
+		if err != nil {
+			return nil, 0, 0, err
+		}
+		return v, mx - v.x0 - 1, my - v.y0 - 1, nil
 	}
-	return v, mx - v.x0 - 1, my - v.y0 - 1, nil
+	return nil, 0, 0, errors.New("Cannot GetViewRelativeMousePosition on non-mouse event")
 }
 
 // SetCursorFromCurrentMouseEvent updates the cursor position based on the mouse coordinates.
@@ -642,15 +696,16 @@ func (g *Gui) SetCursorFromCurrentMouseEvent() error {
 	return nil
 }
 
-// execKeybindings executes the keybinding handlers that match the passed view
+// execEventBindings executes the handlers that match the passed view
 // and event. The value of matched is true if there is a match and no errors.
-func (g *Gui) execKeybindings(v *View, ev *termbox.Event) (matched bool, err error) {
+// TODO: rename to more generic - it's not just keys (incl mouse)
+func (g *Gui) execEventBindings(v *View, xev tcell.Event) (matched bool, err error) {
 	matched = false
-	for _, kb := range g.keybindings {
+	for _, kb := range g.eventBindings {
 		if kb.handler == nil {
 			continue
 		}
-		if kb.matchKeypress(Key(ev.Key), ev.Ch, Modifier(ev.Mod)) && kb.matchView(v) {
+		if kb.matchEvent(xev) && kb.matchView(v) {
 			if err := kb.handler(g, v); err != nil {
 				return false, err
 			}

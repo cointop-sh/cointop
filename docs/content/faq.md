@@ -42,13 +42,18 @@ draft: false
 
   Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.config/cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
 
+  You can use any of the 250-odd X11 colors by name. See https://en.wikipedia.org/wiki/X11_color_names (use lower-case and without spaces).   You can also include 24-bit colors by using the #rrggbb hex code.
+
+  You can also define values in the colorscheme file, and reference them from throughout the file, using the following syntax:
+
+  ```toml
+  define_base03 = "#002b36"
+  menu_header_fg = "$base03"
+  ```
+
 ## How do I make the background color transparent?
 
   Change the background color options in the colorscheme file to `default` to use the system default color, eg. `base_bg = "default"`
-
-## Why don't colorschemes support RGB or hex colors?
-
-  Some of the cointop underlying rendering libraries don't support true colors. See [issue](https://github.com/nsf/termbox/issues/37).
 
 ## Where is the config file located?
 

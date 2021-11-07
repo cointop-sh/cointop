@@ -10,7 +10,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/cointop-sh/cointop/pkg/termbox"
+	"github.com/gdamore/tcell/v2"
 )
 
 // A View is a window. It maintains its own internal buffer and cursor
@@ -31,18 +31,18 @@ type View struct {
 
 	// BgColor and FgColor allow to configure the background and foreground
 	// colors of the View.
-	BgColor, FgColor Attribute
+	Style tcell.Style
 
 	// SelBgColor and SelFgColor are used to configure the background and
 	// foreground colors of the selected line, when it is highlighted.
-	SelBgColor, SelFgColor Attribute
+	SelStyle tcell.Style
 
 	// If Editable is true, keystrokes will be added to the view's internal
 	// buffer at the cursor position.
 	Editable bool
 
 	// Editor allows to define the editor that manages the edition mode,
-	// including keybindings or cursor behaviour. DefaultEditor is used by
+	// including eventBindings or cursor behaviour. DefaultEditor is used by
 	// default.
 	Editor Editor
 
@@ -71,6 +71,9 @@ type View struct {
 	// If Mask is true, the View will display the mask instead of the real
 	// content
 	Mask rune
+
+	// The gui that owns this view
+	g *Gui
 }
 
 type viewLine struct {
@@ -79,8 +82,9 @@ type viewLine struct {
 }
 
 type cell struct {
-	chr              rune
-	bgColor, fgColor Attribute
+	chr rune
+	// bgColor, fgColor Attribute
+	style tcell.Style
 }
 
 type lineType []cell
@@ -95,7 +99,7 @@ func (l lineType) String() string {
 }
 
 // newView returns a new View object.
-func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
+func newView(name string, x0, y0, x1, y1 int, g *Gui) *View {
 	v := &View{
 		name:    name,
 		x0:      x0,
@@ -105,7 +109,8 @@ func newView(name string, x0, y0, x1, y1 int, mode OutputMode) *View {
 		Frame:   true,
 		Editor:  DefaultEditor,
 		tainted: true,
-		ei:      newEscapeInterpreter(mode),
+		ei:      newEscapeInterpreter(),
+		g:       g,
 	}
 	return v
 }
@@ -123,7 +128,7 @@ func (v *View) Name() string {
 // setRune sets a rune at the given point relative to the view. It applies the
 // specified colors, taking into account if the cell must be highlighted. Also,
 // it checks if the position is valid.
-func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
+func (v *View) setRune(x, y int, ch rune, st tcell.Style) error {
 	maxX, maxY := v.Size()
 	if x < 0 || x >= maxX || y < 0 || y >= maxY {
 		return errors.New("invalid point")
@@ -145,16 +150,13 @@ func (v *View) setRune(x, y int, ch rune, fgColor, bgColor Attribute) error {
 	}
 
 	if v.Mask != 0 {
-		fgColor = v.FgColor
-		bgColor = v.BgColor
+		st = v.Style
 		ch = v.Mask
 	} else if v.Highlight && ry == rcy {
-		fgColor = v.SelFgColor
-		bgColor = v.SelBgColor
+		st = v.SelStyle
 	}
 
-	termbox.SetCell(v.x0+x+1, v.y0+y+1, ch,
-		termbox.Attribute(fgColor), termbox.Attribute(bgColor))
+	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, st)
 
 	return nil
 }
@@ -240,9 +242,8 @@ func (v *View) parseInput(ch rune) []cell {
 	if err != nil {
 		for _, r := range v.ei.runes() {
 			c := cell{
-				fgColor: v.FgColor,
-				bgColor: v.BgColor,
-				chr:     r,
+				style: v.Style,
+				chr:   r,
 			}
 			cells = append(cells, c)
 		}
@@ -252,9 +253,8 @@ func (v *View) parseInput(ch rune) []cell {
 			return nil
 		}
 		c := cell{
-			fgColor: v.ei.curFgColor,
-			bgColor: v.ei.curBgColor,
-			chr:     ch,
+			style: v.ei.curStyle,
+			chr:   ch,
 		}
 		cells = append(cells, c)
 	}
@@ -341,16 +341,16 @@ func (v *View) draw() error {
 				break
 			}
 
-			fgColor := c.fgColor
-			if fgColor == ColorDefault {
-				fgColor = v.FgColor
+			st := c.style
+			fgColor, bgColor, _ := c.style.Decompose()
+			vfgColor, vbgColor, _ := v.Style.Decompose()
+			if fgColor == tcell.ColorDefault {
+				st = st.Foreground(vfgColor)
 			}
-			bgColor := c.bgColor
-			if bgColor == ColorDefault {
-				bgColor = v.BgColor
+			if bgColor == tcell.ColorDefault {
+				st = st.Background(vbgColor)
 			}
-
-			if err := v.setRune(x, y, c.chr, fgColor, bgColor); err != nil {
+			if err := v.setRune(x, y, c.chr, st); err != nil {
 				return err
 			}
 			x++
@@ -402,8 +402,7 @@ func (v *View) clearRunes() {
 	maxX, maxY := v.Size()
 	for x := 0; x < maxX; x++ {
 		for y := 0; y < maxY; y++ {
-			termbox.SetCell(v.x0+x+1, v.y0+y+1, ' ',
-				termbox.Attribute(v.FgColor), termbox.Attribute(v.BgColor))
+			v.g.SetRune(v.x0+x+1, v.y0+y+1, ' ', v.Style)
 		}
 	}
 }

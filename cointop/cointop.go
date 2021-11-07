@@ -490,8 +490,7 @@ func (ct *Cointop) Run() error {
 		return err
 	}
 
-	ui.SetFgColor(ct.colorscheme.BaseFg())
-	ui.SetBgColor(ct.colorscheme.BaseBg())
+	ui.SetStyle(ct.colorscheme.BaseStyle())
 	ct.ui = ui
 	ct.g = ui.GetGocui()
 	defer ui.Close()
