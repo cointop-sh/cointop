@@ -229,6 +229,12 @@ release:
 	rm -rf dist
 	VERSION=$(VERSION) goreleaser
 
+docker-login:
+	docker login
+
+docker-login-ci:
+	docker login -u $DOCKER_USER -p $DOCKER_PASS
+
 docker-build:
 	docker build --build-arg VERSION=$(VERSION) --build-arg MAINTAINER=$(MAINTAINER) -t cointop/cointop .
 

@@ -4,7 +4,7 @@ orbs:
   base: dmx-io/base@2.0.88
 
 jobs:
-  build:
+  build_and_push:
     working_directory: /app
     docker:
       - image: docker:17.09.0-ce-git
@@ -16,7 +16,6 @@ jobs:
           command: |
             apk update
             apk upgrade
-            apk add --no-cache curl
             apk add --no-cache make
       - run:
           name: Build application Docker image
@@ -25,14 +24,14 @@ jobs:
       - deploy:
           name: Push Docker image to Docker Hub
           command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            make docker-login-ci
             make docker-tag-ci
             make docker-push-ci
 
 workflows:
   main:
     jobs:
-      - build:
+      - build_and_push:
           filters:
             branches:
               only:
