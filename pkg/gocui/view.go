@@ -341,15 +341,6 @@ func (v *View) draw() error {
 				break
 			}
 
-			// fgColor := c.fgColor
-			// if fgColor == ColorDefault {
-			// 	fgColor = v.FgColor
-			// }
-			// bgColor := c.bgColor
-			// if bgColor == ColorDefault {
-			// 	bgColor = v.BgColor
-			// }
-
 			st := c.style
 			fgColor, bgColor, _ := c.style.Decompose()
 			vfgColor, vbgColor, _ := v.Style.Decompose()

@@ -75,17 +75,15 @@ type Gui struct {
 // NewGui returns a new Gui object with a given output mode.
 // func NewGui(mode OutputMode) (*Gui, error) {
 func NewGui() (*Gui, error) {
-
 	g := &Gui{}
 
-	//outMode = OutputNormal
+	// outMode = OutputNormal
 	if s, e := tcell.NewScreen(); e != nil {
 		return nil, e
 	} else if e = s.Init(); e != nil {
 		return nil, e
 	} else {
 		g.screen = s
-
 	}
 
 	// g.outputMode = mode
@@ -283,7 +281,7 @@ func (g *Gui) CurrentView() *View {
 // be a rune or a Key.
 // TODO: split into key/mouse bindings?
 func (g *Gui) SetKeybinding(viewname string, key tcell.Key, ch rune, mod tcell.ModMask, handler func(*Gui, *View) error) error {
-	//var kb *eventBinding
+	// var kb *eventBinding
 
 	// k, ch, err := getKey(key)
 	// if err != nil {
@@ -675,7 +673,6 @@ func (g *Gui) onEvent(ev tcell.Event) error {
 
 // GetViewRelativeMousePosition returns the View and relative x/y for the provided mouse event.
 func (g *Gui) GetViewRelativeMousePosition(ev tcell.Event) (*View, int, int, error) {
-
 	if kbe, ok := ev.(*tcell.EventMouse); ok {
 		mx, my := kbe.Position()
 		v, err := g.ViewByPosition(mx, my)

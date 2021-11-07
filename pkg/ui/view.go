@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cointop-sh/cointop/pkg/gocui"
-	"github.com/cointop-sh/cointop/pkg/termbox"
+	"github.com/gdamore/tcell/v2"
 )
 
 // IView is the view interface
@@ -214,33 +214,14 @@ func (view *View) SetWrap(enabled bool) error {
 	return nil
 }
 
-// SetFgColor sets the foreground color
-func (view *View) SetFgColor(color termbox.Attribute) {
-	if view.HasBacking() {
-		view.backing.Style = view.backing.Style.Foreground(termbox.MkColor(color))
-	}
+// SetStyle sets the text style for the view
+func (view *View) SetStyle(st tcell.Style) {
+	view.backing.Style = st
 }
 
-// SetBgColor sets the background color
-func (view *View) SetBgColor(color termbox.Attribute) {
-	if view.HasBacking() {
-		// view.backing.BgColor = color
-		view.backing.Style = view.backing.Style.Background(termbox.MkColor(color))
-	}
-}
-
-// SetSelFgColor sets the foreground color for selection
-func (view *View) SetSelFgColor(color termbox.Attribute) {
-	if view.HasBacking() {
-		view.backing.SelStyle = view.backing.SelStyle.Foreground(termbox.MkColor(color))
-	}
-}
-
-// SetSelBgColor sets the background color for selection
-func (view *View) SetSelBgColor(color termbox.Attribute) {
-	if view.HasBacking() {
-		view.backing.SelStyle = view.backing.SelStyle.Background(termbox.MkColor(color))
-	}
+// SetStyle sets the selection text style for the view
+func (view *View) SetSelStyle(st tcell.Style) {
+	view.backing.SelStyle = st
 }
 
 // Read reads data in bytes buffer

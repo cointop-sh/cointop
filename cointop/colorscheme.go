@@ -3,10 +3,11 @@ package cointop
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"sync"
 
-	"github.com/cointop-sh/cointop/pkg/termbox"
 	fcolor "github.com/fatih/color"
+	"github.com/gdamore/tcell/v2"
 	"github.com/tomnomnom/xtermcolor"
 )
 
@@ -50,19 +51,38 @@ var BgColorschemeColorsMap = map[string]fcolor.Attribute{
 	"yellow":  fcolor.BgYellow,
 }
 
-var GocuiColorschemeColorsMap = map[string]termbox.Attribute{
-	"black":   termbox.ColorBlack,
-	"blue":    termbox.ColorBlue,
-	"cyan":    termbox.ColorCyan,
-	"green":   termbox.ColorGreen,
-	"magenta": termbox.ColorMagenta,
-	"red":     termbox.ColorRed,
-	"white":   termbox.ColorWhite,
-	"yellow":  termbox.ColorYellow,
+// See more: vendor/github.com/mattn/go-colorable/colorable_windows.go:905
+// any new color for the below mapping should be compatible with this above list
+var TcellColorschemeColorsMap = map[string]tcell.Color{
+	"black":   tcell.ColorBlack,
+	"blue":    tcell.ColorNavy,
+	"cyan":    tcell.ColorTeal,
+	"green":   tcell.ColorGreen,
+	"magenta": tcell.ColorPurple,
+	"red":     tcell.ColorMaroon,
+	"white":   tcell.ColorSilver,
+	"yellow":  tcell.ColorOlive,
 }
 
 // NewColorscheme ...
 func NewColorscheme(colors ColorschemeColors) *Colorscheme {
+	// Build lookup table for defined values, then replace references to these
+	const prefix = "define_"
+	const reference = "&"
+	defines := ColorschemeColors{}
+	for k, v := range colors {
+		if strings.HasPrefix(k, prefix) {
+			defines[k[len(prefix):]] = v
+		}
+	}
+	for k, v := range colors {
+		if vs, ok := v.(string); ok {
+			if strings.HasPrefix(vs, reference) {
+				colors[k] = defines[vs[len(reference):]]
+			}
+		}
+	}
+
 	return &Colorscheme{
 		colors:     colors,
 		cache:      make(ColorCache),
@@ -70,14 +90,8 @@ func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 	}
 }
 
-// BaseFg ...
-func (c *Colorscheme) BaseFg() termbox.Attribute {
-	return c.GocuiFgColor("base")
-}
-
-// BaseBg ...
-func (c *Colorscheme) BaseBg() termbox.Attribute {
-	return c.GocuiBgColor("base")
+func (c *Colorscheme) BaseStyle() tcell.Style {
+	return c.Style("base")
 }
 
 // Chart ...
@@ -245,17 +259,44 @@ func (c *Colorscheme) ToSprintf(name string) ISprintf {
 		return cached
 	}
 
+	// TODO: use c.Style(name)?
 	var attrs []fcolor.Attribute
 	if v, ok := c.colors[name+"_fg"].(string); ok {
 		if fg, ok := c.ToFgAttr(v); ok {
 			attrs = append(attrs, fg)
+		} else {
+			color := tcell.GetColor(v)
+			if color != tcell.ColorDefault {
+				// 24-bit foreground 38;2;⟨r⟩;⟨g⟩;⟨b⟩
+				r, g, b := color.RGB()
+				attrs = append(attrs, 38)
+				attrs = append(attrs, 2)
+				attrs = append(attrs, fcolor.Attribute(r))
+				attrs = append(attrs, fcolor.Attribute(g))
+				attrs = append(attrs, fcolor.Attribute(b))
+				// log.Debugf("XXX added FG color %s", attrs)
+			}
 		}
 	}
+
 	if v, ok := c.colors[name+"_bg"].(string); ok {
 		if bg, ok := c.ToBgAttr(v); ok {
 			attrs = append(attrs, bg)
+		} else {
+			color := tcell.GetColor(v)
+			if color != tcell.ColorDefault {
+				// 24-bit background 48;2;⟨r⟩;⟨g⟩;⟨b⟩
+				r, g, b := color.RGB()
+				attrs = append(attrs, 48)
+				attrs = append(attrs, 2)
+				attrs = append(attrs, fcolor.Attribute(r))
+				attrs = append(attrs, fcolor.Attribute(g))
+				attrs = append(attrs, fcolor.Attribute(b))
+				// log.Debugf("XXX added BG color %s", attrs)
+			}
 		}
 	}
+
 	if v, ok := c.colors[name+"_bold"].(bool); ok {
 		if bold, ok := c.ToBoldAttr(v); ok {
 			attrs = append(attrs, bold)
@@ -275,43 +316,47 @@ func (c *Colorscheme) Color(name string, a ...interface{}) string {
 	return c.ToSprintf(name)(a...)
 }
 
-func (c *Colorscheme) GocuiFgColor(name string) termbox.Attribute {
-	var attrs []termbox.Attribute
-	if v, ok := c.colors[name+"_fg"].(string); ok {
-		if fg, ok := c.ToGocuiAttr(v); ok {
-			attrs = append(attrs, fg)
-		}
+func (c *Colorscheme) Style(name string) tcell.Style {
+	st := tcell.StyleDefault
+	st = st.Foreground(c.tcellColor(name + "_fg"))
+	st = st.Background(c.tcellColor(name + "_bg"))
+	if v, ok := c.colors[name+"_bold"].(bool); ok {
+		st = st.Bold(v)
 	}
-	// TODO: fixme
-	// if v, ok := c.colors[name+"_bold"].(bool); ok {
-	// 	if v {
-	// 		attrs = append(attrs, gocui.AttrBold)
-	// 	}
-	// }
-	// if v, ok := c.colors[name+"_underline"].(bool); ok {
-	// 	if v {
-	// 		attrs = append(attrs, gocui.AttrUnderline)
-	// 	}
-	// }
-	if len(attrs) > 0 {
-		var combined termbox.Attribute
-		for _, v := range attrs {
-			combined = combined ^ v
-		}
-		return combined
+	if v, ok := c.colors[name+"_underline"].(bool); ok {
+		st = st.Underline(v)
 	}
-
-	return termbox.ColorDefault
+	// TODO: Blink Dim Italic Reverse Strikethrough
+	return st
 }
 
-func (c *Colorscheme) GocuiBgColor(name string) termbox.Attribute {
-	if v, ok := c.colors[name+"_bg"].(string); ok {
-		if bg, ok := c.ToGocuiAttr(v); ok {
-			return bg
-		}
+// tcellColor can supply for types of color name: specific mapped name, tcell color name, hex
+// Examples: black, honeydew, #000000
+func (c *Colorscheme) tcellColor(name string) tcell.Color {
+	v, ok := c.colors[name].(string)
+	if !ok {
+		// log.Debugf("XXX tcellColor(%s) could not be found!", name)
+		return tcell.ColorDefault
 	}
 
-	return termbox.ColorDefault
+	if color, found := TcellColorschemeColorsMap[v]; found {
+		// log.Debugf("XXX tcellColor(%s => %s) FOUND %s", name, v, color)
+		return color
+	}
+
+	color := tcell.GetColor(v)
+	if color != tcell.ColorDefault {
+		// log.Debugf("XXX tcellColor(%s => %s) GET %s", name, v, color)
+		return color
+	}
+
+	// find closest X11 color to RGB
+	// if code, ok := HexToAnsi(v); ok {
+	// 	// log.Debugf("XXX tcellColor(%s => %s) HEX %s", name, v, code)
+	// 	return tcell.PaletteColor(int(code) & 0xff)
+	// }
+	// log.Debugf("XXX tcellColor(%s => %s) FALLTHROUGH %s", name, v, color)
+	return color
 }
 
 func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
@@ -319,9 +364,10 @@ func (c *Colorscheme) ToFgAttr(v string) (fcolor.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := HexToAnsi(v); ok {
-		return fcolor.Attribute(code), true
-	}
+	// find closest X11 color to RGB
+	// if code, ok := HexToAnsi(v); ok {
+	// 	return fcolor.Attribute(code), true
+	// }
 
 	return 0, false
 }
@@ -331,9 +377,10 @@ func (c *Colorscheme) ToBgAttr(v string) (fcolor.Attribute, bool) {
 		return attr, true
 	}
 
-	if code, ok := HexToAnsi(v); ok {
-		return fcolor.Attribute(code), true
-	}
+	// find closest X11 color to RGB
+	// if code, ok := HexToAnsi(v); ok {
+	// 	return fcolor.Attribute(code), true
+	// }
 
 	return 0, false
 }
@@ -346,19 +393,6 @@ func (c *Colorscheme) ToBoldAttr(v bool) (fcolor.Attribute, bool) {
 // ToUnderlineAttr converts a boolean to an Attribute type
 func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
-}
-
-// ToGocuiAttr converts a color string name to a gocui Attribute type
-func (c *Colorscheme) ToGocuiAttr(v string) (termbox.Attribute, bool) {
-	if attr, ok := GocuiColorschemeColorsMap[v]; ok {
-		return attr, true
-	}
-
-	if code, ok := HexToAnsi(v); ok {
-		return termbox.Attribute(code), true
-	}
-
-	return 0, false
 }
 
 // HexToAnsi converts a hex color string to a uint8 ansi code
@@ -374,6 +408,7 @@ func HexToAnsi(h string) (uint8, bool) {
 		}
 	}
 
+	// TODO: only use if exact, otherwise use 24-bit version
 	code, err := xtermcolor.FromHexStr(h)
 	if err != nil {
 		return 0, false
@@ -381,5 +416,3 @@ func HexToAnsi(h string) (uint8, bool) {
 
 	return code, true
 }
-
-// gocui can use xterm colors
