@@ -242,9 +242,9 @@ docker-tag:
 	docker tag cointop/cointop:latest cointop/cointop:$(VERSION)
 
 docker-tag-ci:
-	test $(COMMIT_TAG) && docker tag cointop/cointop:latest cointop/cointop:$(COMMIT_TAG)
 	docker tag cointop/cointop:latest cointop/cointop:$(CIRCLE_SHA1)
 	docker tag cointop/cointop:latest cointop/cointop:$(CIRCLE_BRANCH)
+	test $(COMMIT_TAG) && docker tag cointop/cointop:latest cointop/cointop:$(COMMIT_TAG) && true
 
 docker-run:
 	docker run -it cointop/cointop
@@ -254,9 +254,9 @@ docker-push:
 	docker push cointop/cointop:latest
 
 docker-push-ci:
-	test $(COMMIT_TAG) && docker push cointop/cointop:$(COMMIT_TAG)
 	docker push cointop/cointop:$(CIRCLE_SHA1)
 	docker push cointop/cointop:$(CIRCLE_BRANCH)
+	test $(COMMIT_TAG) && docker push cointop/cointop:$(COMMIT_TAG) && true
 	test $(CIRCLE_BRANCH) == "master" && docker push cointop/cointop:latest; true
 
 docker-build-and-push: docker-build docker-tag docker-push
