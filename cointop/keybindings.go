@@ -310,9 +310,9 @@ func (ct *Cointop) SetKeybindings() error {
 	// keys to update portfolio holdings
 	ct.SetKeybindingMod(tcell.KeyEnter, tcell.ModNone, ct.Keyfn(ct.EnterKeyPressHandler), ct.Views.Input.Name())
 
-	// TODO: FIXME
-	// key, mod := ct.ParseKeys("/")
-	// ct.DeleteKeybindingMod(key, mod, "")
+	// Work around issue with key-binding for '/' interfering with expressions
+	key, mod := ct.ParseKeys("/")
+	ct.DeleteKeybindingMod(key, mod, "")
 
 	// mouse events
 	ct.SetMousebindingMod(tcell.Button1, tcell.ModNone, ct.Keyfn(ct.MouseLeftClick), ct.Views.Table.Name()) // click to focus
