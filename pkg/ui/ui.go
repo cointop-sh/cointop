@@ -27,7 +27,7 @@ func (ui *UI) GetGocui() *gocui.Gui {
 	return ui.g
 }
 
-// SetFgColor sets the default style
+// SetStyle sets the default style
 func (ui *UI) SetStyle(style tcell.Style) {
 	ui.g.Style = style
 }

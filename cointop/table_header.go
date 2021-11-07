@@ -276,7 +276,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 	return nil
 }
 
-// MouseLeftClick is called on mouse left click event
+// TableHeaderMouseLeftClick is called on mouse left click event
 func (ct *Cointop) TableHeaderMouseLeftClick() error {
 	_, x, _, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
 	if err != nil {
