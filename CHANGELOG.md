@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.10] - 2021-11-06
+### Added
+- Search by symbol or name
+- Purchase price option for portfolio entries
+- Mouse support for column sorting and menu options
+
+### Changed
+- `0` keybinding to go to first row of first page
+
+### Fixed
+- Coin sorting
+- Editable shortcuts
+- Duplicate portfolio entries
+
 ## [1.6.9] - 2021-10-12
 ### Added
 - Chart x-axis date labels
