@@ -48,7 +48,7 @@ draft: false
 
   ```toml
   define_base03 = "#002b36"
-  menu_header_fg = "&base03"
+  menu_header_fg = "$base03"
   ```
 
 ## How do I make the background color transparent?

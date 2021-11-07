@@ -68,7 +68,7 @@ var TcellColorschemeColorsMap = map[string]tcell.Color{
 func NewColorscheme(colors ColorschemeColors) *Colorscheme {
 	// Build lookup table for defined values, then replace references to these
 	const prefix = "define_"
-	const reference = "&"
+	const reference = "$"
 	defines := ColorschemeColors{}
 	for k, v := range colors {
 		if strings.HasPrefix(k, prefix) {
