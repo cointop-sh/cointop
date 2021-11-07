@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	log "github.com/sirupsen/logrus"
 )
 
