@@ -2,7 +2,7 @@ FROM golang:alpine AS build
 ARG VERSION
 RUN wget \
   --output-document "/cointop-$VERSION.tar.gz" \
-  "https://github.com/cointop-sh/cointop/archive/$VERSION.tar.gz" \
+  "https://github.com/cointop-sh/cointop/archive/refs/tags/$VERSION.tar.gz" \
 && wget \
   --output-document "/cointop-colors-master.tar.gz" \
   "https://github.com/cointop-sh/colors/archive/master.tar.gz" \
