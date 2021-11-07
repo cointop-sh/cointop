@@ -128,7 +128,7 @@ func (v *View) Name() string {
 // setRune sets a rune at the given point relative to the view. It applies the
 // specified colors, taking into account if the cell must be highlighted. Also,
 // it checks if the position is valid.
-func (v *View) setRune(x, y int, ch rune, st tcell.Style) error {
+func (v *View) setRune(x, y int, ch rune, style tcell.Style) error {
 	maxX, maxY := v.Size()
 	if x < 0 || x >= maxX || y < 0 || y >= maxY {
 		return errors.New("invalid point")
@@ -150,13 +150,13 @@ func (v *View) setRune(x, y int, ch rune, st tcell.Style) error {
 	}
 
 	if v.Mask != 0 {
-		st = v.Style
+		style = v.Style
 		ch = v.Mask
 	} else if v.Highlight && ry == rcy {
-		st = v.SelStyle
+		style = v.SelStyle
 	}
 
-	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, st)
+	v.g.SetRune(v.x0+x+1, v.y0+y+1, ch, style)
 
 	return nil
 }

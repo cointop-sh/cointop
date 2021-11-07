@@ -215,16 +215,16 @@ func (view *View) SetWrap(enabled bool) error {
 }
 
 // SetStyle sets the text style for the view
-func (view *View) SetStyle(st tcell.Style) {
+func (view *View) SetStyle(style tcell.Style) {
 	if view.HasBacking() {
-		view.backing.Style = st
+		view.backing.Style = style
 	}
 }
 
 // SetStyle sets the selection text style for the view
-func (view *View) SetSelStyle(st tcell.Style) {
+func (view *View) SetSelStyle(style tcell.Style) {
 	if view.HasBacking() {
-		view.backing.SelStyle = st
+		view.backing.SelStyle = style
 	}
 }
 

@@ -113,7 +113,7 @@ func (g *Gui) Size() (x, y int) {
 }
 
 // temporary kludge for the pretty
-func (g *Gui) prettyColor(x, y int, st tcell.Style) tcell.Style {
+func (g *Gui) prettyColor(x, y int, style tcell.Style) tcell.Style {
 	if true {
 		w, h := g.screen.Size()
 
@@ -121,27 +121,27 @@ func (g *Gui) prettyColor(x, y int, st tcell.Style) tcell.Style {
 		red := int32(0)
 		grn := int32(0)
 		blu := int32(50 * float64(y) / float64(h))
-		st = st.Background(tcell.NewRGBColor(red, grn, blu))
+		style = style.Background(tcell.NewRGBColor(red, grn, blu))
 
 		// two-axis green-blue gradient
 		red = int32(200)
 		grn = int32(255 * float64(y) / float64(h))
 		blu = int32(255 * float64(x) / float64(w))
-		st = st.Foreground(tcell.NewRGBColor(red, grn, blu))
+		style = style.Foreground(tcell.NewRGBColor(red, grn, blu))
 	}
-	return st
+	return style
 }
 
 // SetRune writes a rune at the given point, relative to the top-left
 // corner of the terminal. It checks if the position is valid and applies
 // the given colors.
-func (g *Gui) SetRune(x, y int, ch rune, st tcell.Style) error {
+func (g *Gui) SetRune(x, y int, ch rune, style tcell.Style) error {
 	if x < 0 || y < 0 || x >= g.maxX || y >= g.maxY {
 		return errors.New("invalid point")
 	}
 	// temporary kludge for the pretty
 	// st = g.prettyColor(x, y, st)
-	g.screen.SetContent(x, y, ch, nil, st)
+	g.screen.SetContent(x, y, ch, nil, style)
 	return nil
 }
 
@@ -524,7 +524,7 @@ func (g *Gui) flush() error {
 }
 
 // drawFrameEdges draws the horizontal and vertical edges of a view.
-func (g *Gui) drawFrameEdges(v *View, st tcell.Style) error {
+func (g *Gui) drawFrameEdges(v *View, style tcell.Style) error {
 	runeH, runeV := '─', '│'
 	if g.ASCII {
 		runeH, runeV = '-', '|'
@@ -535,12 +535,12 @@ func (g *Gui) drawFrameEdges(v *View, st tcell.Style) error {
 			continue
 		}
 		if v.y0 > -1 && v.y0 < g.maxY {
-			if err := g.SetRune(x, v.y0, runeH, st); err != nil {
+			if err := g.SetRune(x, v.y0, runeH, style); err != nil {
 				return err
 			}
 		}
 		if v.y1 > -1 && v.y1 < g.maxY {
-			if err := g.SetRune(x, v.y1, runeH, st); err != nil {
+			if err := g.SetRune(x, v.y1, runeH, style); err != nil {
 				return err
 			}
 		}
@@ -550,12 +550,12 @@ func (g *Gui) drawFrameEdges(v *View, st tcell.Style) error {
 			continue
 		}
 		if v.x0 > -1 && v.x0 < g.maxX {
-			if err := g.SetRune(v.x0, y, runeV, st); err != nil {
+			if err := g.SetRune(v.x0, y, runeV, style); err != nil {
 				return err
 			}
 		}
 		if v.x1 > -1 && v.x1 < g.maxX {
-			if err := g.SetRune(v.x1, y, runeV, st); err != nil {
+			if err := g.SetRune(v.x1, y, runeV, style); err != nil {
 				return err
 			}
 		}
@@ -564,7 +564,7 @@ func (g *Gui) drawFrameEdges(v *View, st tcell.Style) error {
 }
 
 // drawFrameCorners draws the corners of the view.
-func (g *Gui) drawFrameCorners(v *View, st tcell.Style) error {
+func (g *Gui) drawFrameCorners(v *View, style tcell.Style) error {
 	runeTL, runeTR, runeBL, runeBR := '┌', '┐', '└', '┘'
 	if g.ASCII {
 		runeTL, runeTR, runeBL, runeBR = '+', '+', '+', '+'
@@ -577,7 +577,7 @@ func (g *Gui) drawFrameCorners(v *View, st tcell.Style) error {
 
 	for _, c := range corners {
 		if c.x >= 0 && c.y >= 0 && c.x < g.maxX && c.y < g.maxY {
-			if err := g.SetRune(c.x, c.y, c.ch, st); err != nil {
+			if err := g.SetRune(c.x, c.y, c.ch, style); err != nil {
 				return err
 			}
 		}
@@ -586,7 +586,7 @@ func (g *Gui) drawFrameCorners(v *View, st tcell.Style) error {
 }
 
 // drawTitle draws the title of the view.
-func (g *Gui) drawTitle(v *View, st tcell.Style) error {
+func (g *Gui) drawTitle(v *View, style tcell.Style) error {
 	if v.y0 < 0 || v.y0 >= g.maxY {
 		return nil
 	}
@@ -598,7 +598,7 @@ func (g *Gui) drawTitle(v *View, st tcell.Style) error {
 		} else if x > v.x1-2 || x >= g.maxX {
 			break
 		}
-		if err := g.SetRune(x, v.y0, ch, st); err != nil {
+		if err := g.SetRune(x, v.y0, ch, style); err != nil {
 			return err
 		}
 	}

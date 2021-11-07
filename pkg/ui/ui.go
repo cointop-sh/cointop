@@ -28,8 +28,8 @@ func (ui *UI) GetGocui() *gocui.Gui {
 }
 
 // SetFgColor sets the default style
-func (ui *UI) SetStyle(st tcell.Style) {
-	ui.g.Style = st
+func (ui *UI) SetStyle(style tcell.Style) {
+	ui.g.Style = style
 }
 
 // SetInputEsc enables the escape key
