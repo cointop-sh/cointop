@@ -105,7 +105,6 @@ github.com/jeandeaual/go-locale
 github.com/lucasb-eyer/go-colorful
 # github.com/maruel/panicparse v1.6.1
 ## explicit; go 1.11
-github.com/maruel/panicparse/stack
 # github.com/mattn/go-colorable v0.1.9
 ## explicit; go 1.13
 github.com/mattn/go-colorable

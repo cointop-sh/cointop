@@ -13,7 +13,6 @@ require (
 	github.com/gliderlabs/ssh v0.3.3
 	github.com/goodsign/monday v1.0.0
 	github.com/jeandeaual/go-locale v0.0.0-20210323163322-5cf4ff553a8d
-	github.com/maruel/panicparse v1.6.1
 	github.com/mattn/go-runewidth v0.0.13
 	github.com/miguelmota/go-coinmarketcap v0.1.8
 	github.com/mitchellh/go-wordwrap v1.0.1
