@@ -73,3 +73,11 @@ Building snap
 ```bash
 make snap/build
 ```
+
+
+## Docker
+
+Build Docker image
+```bash
+docker build . --build-arg VERSION=${VERSION} --tag cointop:${VERSION}
+```
