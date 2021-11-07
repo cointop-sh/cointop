@@ -206,7 +206,7 @@ var DefaultSortBy = "rank"
 var DefaultPerPage = uint(100)
 
 // DefaultMaxPages ...
-var DefaultMaxPages = uint(35)
+var DefaultMaxPages = uint(10)
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"

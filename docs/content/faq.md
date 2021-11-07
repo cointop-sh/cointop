@@ -15,7 +15,8 @@ draft: false
 
 ## What coins does this support?
 
-  This supports any coin supported by the API being used to fetch coin information.
+  This supports any coin supported by the API being used to fetch coin information.  There is, however, a limit on the number of coins that
+  cointop fetches by default.  You can increase this by passing `--max-pages` and `--per-page` arguments on the command line.
 
 ## How do I set the API to use?
 
@@ -133,6 +134,8 @@ draft: false
 
   The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
   Each search starts from the current cursor position. To search for the same term again, hit <kbd>/</kbd> then <kbd>Enter</kbd>.
+
+  The default behaviour will start to search by symbol first, then it will continues searching by name if there is no result. To search by only symbol, type the search query after `/s:`. To search by only name, type the search query after `/n:`.
 
 ## How do I exit search?
 
