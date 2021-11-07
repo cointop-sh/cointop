@@ -1,4 +1,5 @@
 VERSION = $$(git describe --abbrev=0 --tags)
+COMMIT_TAG = $$(git tag --points-at HEAD)
 VERSION_DATE = $$(git log -1 --pretty='%ad' --date=format:'%Y-%m-%d' $(VERSION))
 COMMIT_REV = $$(git rev-list -n 1 $(VERSION))
 MAINTAINER = "Miguel Mota"
@@ -235,7 +236,7 @@ docker-tag:
 	docker tag cointop/cointop:latest cointop/cointop:$(VERSION)
 
 docker-tag-ci:
-	# docker tag cointop/cointop:latest cointop/cointop:$(VERSION)
+	test $(COMMIT_TAG) && docker tag cointop/cointop:latest cointop/cointop:$(COMMIT_TAG)
 	docker tag cointop/cointop:latest cointop/cointop:$(CIRCLE_SHA1)
 	docker tag cointop/cointop:latest cointop/cointop:$(CIRCLE_BRANCH)
 
@@ -247,7 +248,7 @@ docker-push:
 	docker push cointop/cointop:latest
 
 docker-push-ci:
-	# docker push cointop/cointop:$(VERSION)
+	test $(COMMIT_TAG) && docker push cointop/cointop:$(COMMIT_TAG)
 	docker push cointop/cointop:$(CIRCLE_SHA1)
 	docker push cointop/cointop:$(CIRCLE_BRANCH)
 	test $(CIRCLE_BRANCH) == "master" && docker push cointop/cointop:latest; true
