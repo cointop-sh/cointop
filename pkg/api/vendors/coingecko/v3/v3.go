@@ -210,7 +210,7 @@ func (c *Client) CoinsID(id string, localization bool, tickers bool, marketData 
 		return nil, fmt.Errorf("id is required")
 	}
 	params := url.Values{}
-	params.Add("localization", format.Bool2String(sparkline))
+	params.Add("localization", format.Bool2String(localization))
 	params.Add("tickers", format.Bool2String(tickers))
 	params.Add("market_data", format.Bool2String(marketData))
 	params.Add("community_data", format.Bool2String(communityData))
