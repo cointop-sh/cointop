@@ -2,13 +2,11 @@ package cointop
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"sync"
 
 	fcolor "github.com/fatih/color"
 	"github.com/gdamore/tcell/v2"
-	"github.com/tomnomnom/xtermcolor"
 )
 
 // TODO: fix hex color support
@@ -53,6 +51,8 @@ var BgColorschemeColorsMap = map[string]fcolor.Attribute{
 
 // See more: vendor/github.com/mattn/go-colorable/colorable_windows.go:905
 // any new color for the below mapping should be compatible with this above list
+
+// TcellColorschemeColorsMap map colorscheme names to tcell colors
 var TcellColorschemeColorsMap = map[string]tcell.Color{
 	"black":   tcell.ColorBlack,
 	"blue":    tcell.ColorNavy,
@@ -386,26 +386,4 @@ func (c *Colorscheme) ToBoldAttr(v bool) (fcolor.Attribute, bool) {
 // ToUnderlineAttr converts a boolean to an Attribute type
 func (c *Colorscheme) ToUnderlineAttr(v bool) (fcolor.Attribute, bool) {
 	return fcolor.Underline, v
-}
-
-// HexToAnsi converts a hex color string to a uint8 ansi code
-func HexToAnsi(h string) (uint8, bool) {
-	if h == "" {
-		return 0, false
-	}
-
-	n, err := strconv.Atoi(h)
-	if err == nil {
-		if n <= 255 {
-			return uint8(n), true
-		}
-	}
-
-	// TODO: only use if exact, otherwise use 24-bit version
-	code, err := xtermcolor.FromHexStr(h)
-	if err != nil {
-		return 0, false
-	}
-
-	return code, true
 }

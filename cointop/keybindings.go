@@ -336,8 +336,7 @@ func (ct *Cointop) SetKeybindings() error {
 	return nil
 }
 
-// MouseLeftClickDebug emit a debug message about which View and coordinates are in MouseClick
-// TODO: delete before merge
+// MouseDebug emit a debug message about which View and coordinates are in MouseClick
 func (ct *Cointop) MouseDebug() error {
 	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
 	if err != nil {
