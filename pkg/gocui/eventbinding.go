@@ -41,7 +41,7 @@ func (kb *eventBinding) matchEvent(e tcell.Event) bool {
 	case *tcell.EventKey:
 		if kbe, ok := kb.ev.(*tcell.EventKey); ok {
 			if tev.Key() == tcell.KeyRune {
-				return tev.Key() == kbe.Key() && tev.Rune() == kbe.Rune() && tev.Modifiers() == kbe.Modifiers()
+				return tev.Key() == kbe.Key() && tev.Rune() == kbe.Rune()
 			}
 			return tev.Key() == kbe.Key() && tev.Modifiers() == kbe.Modifiers()
 		}
