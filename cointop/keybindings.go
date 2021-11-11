@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/cointop-sh/cointop/pkg/gocui"
 	"github.com/gdamore/tcell/v2"
@@ -348,6 +349,15 @@ func (ct *Cointop) SetKeybindingMod(key interface{}, mod tcell.ModMask, callback
 		err = ct.g.SetKeybinding(view, t, 0, mod, callback)
 	case rune:
 		err = ct.g.SetKeybinding(view, tcell.KeyRune, t, mod, callback)
+		if err != nil {
+			return err
+		}
+
+		// Binding Shift+[key] if key is uppercase and modifiers missing Shift
+		// to support using on Windows
+		if unicode.ToUpper(t) == t && (tcell.ModShift&mod == 0) {
+			err = ct.g.SetKeybinding(view, tcell.KeyRune, t, mod|tcell.ModShift, callback)
+		}
 	}
 	return err
 }
