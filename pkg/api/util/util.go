@@ -29,6 +29,10 @@ func FormatName(name string) string {
 	return name
 }
 
+func FormatSlug(slug string) string {
+	return slug
+}
+
 // FormatRank formats the rank value
 func FormatRank(rank interface{}) int {
 	switch v := rank.(type) {

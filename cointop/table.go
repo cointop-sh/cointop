@@ -197,7 +197,7 @@ func (ct *Cointop) RowLink() string {
 		return ""
 	}
 
-	return ct.api.CoinLink(coin.Name)
+	return ct.api.CoinLink(coin.Slug)
 }
 
 // RowLinkShort returns a shortened version of the row url link

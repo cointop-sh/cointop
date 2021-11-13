@@ -90,6 +90,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int) ([]apitypes.C
 			PercentChange7D:  util.FormatPercentChange(quote.PercentChange7D),
 			Volume24H:        util.FormatVolume(v.Quote[convert].Volume24H),
 			LastUpdated:      util.FormatLastUpdated(v.LastUpdated),
+			Slug:             util.FormatSlug(v.Slug),
 		})
 	}
 	return ret, nil
@@ -297,7 +298,6 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 	market, err := s.client.GlobalMetrics.LatestQuotes(&cmc.QuoteOptions{
 		Convert: convert,
 	})
-
 	if err != nil {
 		return ret, err
 	}
@@ -332,8 +332,7 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 }
 
 // CoinLink returns the URL link for the coin
-func (s *Service) CoinLink(name string) string {
-	slug := util.NameToSlug(name)
+func (s *Service) CoinLink(slug string) string {
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
 }
 
