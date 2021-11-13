@@ -269,13 +269,12 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 
 // CoinLink returns the URL link for the coin
 func (s *Service) CoinLink(name string) string {
-	ID := s.coinNameToID(name)
-	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", ID)
+	// the URL can work with coin name or symbol
+	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", util.NameToSlug(name))
 }
 
 // SupportedCurrencies returns a list of supported currencies
 func (s *Service) SupportedCurrencies() []string {
-
 	// keep these in alphabetical order
 	return []string{
 		"AED",
