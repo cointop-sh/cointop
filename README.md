@@ -25,6 +25,8 @@ The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and sh
 
 ## Demo
 
+This connects to an instance of Cointop using SSH:
+
 ```bash
 ssh cointop.sh
 ```
