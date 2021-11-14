@@ -460,7 +460,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 				PercentChange1Y:  util.FormatPercentChange(percentChange1Y),
 				Volume24H:        util.FormatVolume(item.TotalVolume),
 				LastUpdated:      util.FormatLastUpdated(item.LastUpdated),
-				Slug:             item.ID,
+				Slug:             util.FormatSlug(item.ID),
 			})
 		}
 	}
