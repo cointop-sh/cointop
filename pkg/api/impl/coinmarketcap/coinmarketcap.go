@@ -334,7 +334,7 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 
 // CoinLink returns the URL link for the coin
 func (s *Service) CoinLink(slug string) string {
-	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
+	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s/", slug)
 }
 
 // SupportedCurrencies returns a list of supported currencies
