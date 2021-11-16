@@ -221,7 +221,7 @@ func (view *View) SetStyle(style tcell.Style) {
 	}
 }
 
-// SetStyle sets the selection text style for the view
+// SetSelStyle sets the selection text style for the view
 func (view *View) SetSelStyle(style tcell.Style) {
 	if view.HasBacking() {
 		view.backing.SelStyle = style

@@ -270,12 +270,6 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 
 	ct.SetKeybindingMod(key, mod, fn, view)
 
-	// Bind `shift+key` for uppercased character
-	r, isRune := key.(rune)
-	if isRune && unicode.IsUpper(r) {
-		ct.SetKeybindingMod(key, tcell.ModShift, fn, view)
-	}
-
 	return nil
 }
 
@@ -336,8 +330,7 @@ func (ct *Cointop) SetKeybindings() error {
 	return nil
 }
 
-// MouseLeftClickDebug emit a debug message about which View and coordinates are in MouseClick
-// TODO: delete before merge
+// MouseDebug emit a debug message about which View and coordinates are in MouseClick
 func (ct *Cointop) MouseDebug() error {
 	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
 	if err != nil {
@@ -356,6 +349,15 @@ func (ct *Cointop) SetKeybindingMod(key interface{}, mod tcell.ModMask, callback
 		err = ct.g.SetKeybinding(view, t, 0, mod, callback)
 	case rune:
 		err = ct.g.SetKeybinding(view, tcell.KeyRune, t, mod, callback)
+		if err != nil {
+			return err
+		}
+
+		// Binding Shift+[key] if key is uppercase and modifiers missing Shift
+		// to support using on Windows
+		if unicode.ToUpper(t) == t && (tcell.ModShift&mod == 0) {
+			err = ct.g.SetKeybinding(view, tcell.KeyRune, t, mod|tcell.ModShift, callback)
+		}
 	}
 	return err
 }

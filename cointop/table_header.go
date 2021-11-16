@@ -179,7 +179,7 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 	return cols
 }
 
-// GetActiveTableHeaders returns the list of active table headers
+// IsActiveTableCompactNotation returns whether the current view is using compact-notation
 func (ct *Cointop) IsActiveTableCompactNotation() bool {
 	var compact bool
 	switch ct.State.selectedView {
@@ -276,7 +276,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 	return nil
 }
 
-// MouseLeftClick is called on mouse left click event
+// TableHeaderMouseLeftClick is called on mouse left click event
 func (ct *Cointop) TableHeaderMouseLeftClick() error {
 	_, x, _, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
 	if err != nil {

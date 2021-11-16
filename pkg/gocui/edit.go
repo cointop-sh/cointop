@@ -33,7 +33,7 @@ var DefaultEditor Editor = EditorFunc(simpleEditor)
 // simpleEditor is used as the default gocui editor.
 func simpleEditor(v *View, key tcell.Key, ch rune, mod tcell.ModMask) {
 	switch {
-	case key == tcell.KeyRune && ch != 0 && mod == 0:
+	case key == tcell.KeyRune && ch != 0 && (mod == tcell.ModShift || mod == tcell.ModNone):
 		v.EditWrite(ch)
 	case key == ' ':
 		v.EditWrite(' ')

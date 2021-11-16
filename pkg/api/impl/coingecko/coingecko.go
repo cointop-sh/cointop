@@ -148,7 +148,7 @@ func (s *Service) GetCoinGraphData(convert, symbol, name string, start, end int6
 	return ret, nil
 }
 
-// GetCachedExchangeRates returns an indefinitely cached set of exchange rates
+// GetExchangeRates returns the exchange rates from the backend, or a cached copy if requested and available
 func (s *Service) GetExchangeRates(cached bool) (*types.ExchangeRatesItem, error) {
 	if s.cachedRates == nil || !cached {
 		rates, err := s.client.ExchangeRates()

@@ -219,9 +219,6 @@ var DefaultConfigFilepath = pathutil.NormalizePath(":PREFERRED_CONFIG_HOME:/coin
 // DefaultCacheDir ...
 var DefaultCacheDir = filecache.DefaultCacheDir
 
-// DefaultColorsDir ...
-var DefaultColorsDir = fmt.Sprintf("%s/colors", DefaultConfigFilepath)
-
 // DefaultFavoriteChar ...
 var DefaultFavoriteChar = "*"
 
