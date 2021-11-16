@@ -8,8 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var coinslock sync.Mutex
-var updatecoinsmux sync.Mutex
+var (
+	coinslock      sync.Mutex
+	updatecoinsmux sync.Mutex
+)
 
 // UpdateCoins updates coins view
 func (ct *Cointop) UpdateCoins() error {
@@ -110,6 +112,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 			PercentChange30D: v.PercentChange30D,
 			PercentChange1Y:  v.PercentChange1Y,
 			LastUpdated:      v.LastUpdated,
+			Slug:             v.Slug,
 		})
 		if ilast != nil {
 			last, _ := ilast.(*Coin)
@@ -162,6 +165,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 					c.PercentChange1Y = cm.PercentChange1Y
 					c.LastUpdated = cm.LastUpdated
 					c.Favorite = cm.Favorite
+					c.Slug = cm.Slug
 				}
 			}
 

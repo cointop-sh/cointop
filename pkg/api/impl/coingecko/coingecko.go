@@ -267,15 +267,13 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 	return 0, ErrNotFound
 }
 
-// CoinLink returns the URL link for the coin
-func (s *Service) CoinLink(name string) string {
-	ID := s.coinNameToID(name)
-	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", ID)
+func (s *Service) CoinLink(slug string) string {
+	// slug is API ID of coin
+	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", slug)
 }
 
 // SupportedCurrencies returns a list of supported currencies
 func (s *Service) SupportedCurrencies() []string {
-
 	// keep these in alphabetical order
 	return []string{
 		"AED",
@@ -462,6 +460,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 				PercentChange1Y:  util.FormatPercentChange(percentChange1Y),
 				Volume24H:        util.FormatVolume(item.TotalVolume),
 				LastUpdated:      util.FormatLastUpdated(item.LastUpdated),
+				Slug:             util.FormatSlug(item.ID),
 			})
 		}
 	}

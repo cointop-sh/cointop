@@ -197,7 +197,16 @@ func (ct *Cointop) RowLink() string {
 		return ""
 	}
 
-	return ct.api.CoinLink(coin.Name)
+	// TODO: Can remove this one after some releases
+	// because it is a way to force old client refresh coin to have a slug
+	if coin.Slug == "" {
+		if err := ct.UpdateCoin(coin); err != nil {
+			log.Debugf("RowLink() Update coin got err %s", err.Error())
+			return ""
+		}
+	}
+
+	return ct.api.CoinLink(coin.Slug)
 }
 
 // RowLinkShort returns a shortened version of the row url link
