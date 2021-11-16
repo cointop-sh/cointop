@@ -57,23 +57,19 @@ Documentation has been moved to [docs.cointop.sh](https://docs.cointop.sh/)
 
 ## Features
 
-- Quick sort shortcuts
-- Vim inspired shortcut keys, Custom key bindings configuration
-- Mouse support
-- Fast pagination
-- Charts for coins and global market graphs
-- Quick chart date range change
-- Fuzzy searching for finding coins
-- Currency conversion
-- Save and view favorite coins
-- Portfolio tracking of holdings, PNL
-- Price Alerts with Desktop Notifications
-- Custom colorschemes, 256-color and 24-bit support
-- Help menu
-- Auto-refresh, Offline cache
-- Supports multiple coin stat APIs
-- Works on macOS, Linux, and Windows
-- It's very lightweight; can be left running indefinitely
+- **Shortcut keys**: Vim-inspired shortcut keys, custom key bindings configuration
+- **Colorschemes**: Custom colorscheme configuration, 256-color and 24-bit support
+- **Favorites**: Save and view favorite coins
+- **Portfolio**: Portfolio tracking of holdings, view profit & loss
+- **Charts**: Charts for coin price history and global market graphs
+- **Search**: Fuzzy searching for finding coins
+- **Conversion**: Currency conversion
+- **Price Alerts**: Price alerts with desktop notifications
+- **Multiple APIs**: Supports multiple coin data APIs; CoinGecko and CoinMarketCap
+- **Mouse**: Mouse support
+- **Offline**: Offline cache
+- **Fast**: Fast sort shortcuts, pagination, chart date range change, auto-refresh
+- **Lightweight**: It's very lightweight; can be left running indefinitely
 
 ## Contributing
 
