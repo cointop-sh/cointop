@@ -165,6 +165,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 					c.PercentChange1Y = cm.PercentChange1Y
 					c.LastUpdated = cm.LastUpdated
 					c.Favorite = cm.Favorite
+					c.Slug = cm.Slug
 				}
 			}
 
