@@ -35,6 +35,11 @@ type Views struct {
 	Input       *InputView
 }
 
+type sortConstraint struct {
+	sortBy   string
+	sortDesc bool
+}
+
 // State is the state preferences of cointop
 type State struct {
 	allCoins           []*Coin
@@ -77,8 +82,7 @@ type State struct {
 	selectedView               string
 	lastSelectedView           string
 	shortcutKeys               map[string]string
-	sortDesc                   bool
-	sortBy                     string
+	viewSorts                  map[string]*sortConstraint
 	tableOffsetX               int
 	onlyTable                  bool
 	onlyChart                  bool
@@ -284,9 +288,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 			refreshRate:           60 * time.Second,
 			selectedChartRange:    DefaultChartRange,
 			shortcutKeys:          DefaultShortcuts(),
-			sortBy:                DefaultSortBy,
-			page:                  0,
-			perPage:               int(perPage),
+			selectedView:          CoinsView,
+			viewSorts: map[string]*sortConstraint{
+				CoinsView: {DefaultSortBy, false},
+			},
+			page:    0,
+			perPage: int(perPage),
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry),
 			},
@@ -452,7 +459,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		if max > 100 {
 			max = 100
 		}
-		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.allCoins, false)
+		ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.allCoins, false)
 		ct.State.coins = ct.State.allCoins[0:max]
 	}
 

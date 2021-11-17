@@ -11,12 +11,12 @@ import (
 var sortlock sync.Mutex
 
 // Sort sorts the list of coins
-func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bool) {
+func (ct *Cointop) Sort(sortCons *sortConstraint, list []*Coin, renderHeaders bool) {
 	log.Debug("Sort()")
 	sortlock.Lock()
 	defer sortlock.Unlock()
-	ct.State.sortBy = sortBy
-	ct.State.sortDesc = desc
+
+	ct.State.viewSorts[ct.State.selectedView] = sortCons
 	if list == nil {
 		return
 	}
@@ -24,7 +24,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 		return
 	}
 	sort.SliceStable(list[:], func(i, j int) bool {
-		if ct.State.sortDesc {
+		if sortCons.sortDesc {
 			i, j = j, i
 		}
 		a := list[i]
@@ -35,7 +35,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 		if b == nil {
 			return false
 		}
-		switch sortBy {
+		switch sortCons.sortBy {
 		case "rank":
 			return a.Rank < b.Rank
 		case "name":
@@ -89,7 +89,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 // SortAsc sorts list of coins in ascending order
 func (ct *Cointop) SortAsc() error {
 	log.Debug("SortAsc()")
-	ct.State.sortDesc = false
+	ct.State.viewSorts[ct.State.selectedView].sortDesc = true
 	ct.UpdateTable()
 	return nil
 }
@@ -97,7 +97,7 @@ func (ct *Cointop) SortAsc() error {
 // SortDesc sorts list of coins in descending order
 func (ct *Cointop) SortDesc() error {
 	log.Debug("SortDesc()")
-	ct.State.sortDesc = true
+	ct.State.viewSorts[ct.State.selectedView].sortDesc = true
 	ct.UpdateTable()
 	return nil
 }
@@ -112,7 +112,10 @@ func (ct *Cointop) SortPrevCol() error {
 		k = 0
 	}
 	nextsortBy := cols[k]
-	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
+
+	curSortConst := ct.State.viewSorts[ct.State.selectedView]
+	curSortConst.sortBy = nextsortBy
+	ct.Sort(curSortConst, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
 }
@@ -128,7 +131,9 @@ func (ct *Cointop) SortNextCol() error {
 		k = l - 1
 	}
 	nextsortBy := cols[k]
-	ct.Sort(nextsortBy, ct.State.sortDesc, ct.State.coins, true)
+	curSortCons := ct.State.viewSorts[ct.State.selectedView]
+	curSortCons.sortBy = nextsortBy
+	ct.Sort(curSortCons, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
 }
@@ -136,11 +141,15 @@ func (ct *Cointop) SortNextCol() error {
 // SortToggle toggles the sort order
 func (ct *Cointop) SortToggle(sortBy string, desc bool) error {
 	log.Debug("SortToggle()")
-	if ct.State.sortBy == sortBy {
-		desc = !ct.State.sortDesc
+	curSortCons := ct.State.viewSorts[ct.State.selectedView]
+	if curSortCons.sortBy == sortBy {
+		curSortCons.sortDesc = !curSortCons.sortDesc
+	} else {
+		curSortCons.sortBy = sortBy
+		curSortCons.sortDesc = desc
 	}
 
-	ct.Sort(sortBy, desc, ct.State.coins, true)
+	ct.Sort(curSortCons, ct.State.coins, true)
 	ct.UpdateTable()
 	return nil
 }
@@ -169,7 +178,7 @@ func (ct *Cointop) GetSortColIndex() int {
 	log.Debug("GetSortColIndex()")
 	cols := ct.GetActiveTableHeaders()
 	for i, col := range cols {
-		if ct.State.sortBy == col {
+		if ct.State.viewSorts[ct.State.selectedView].sortBy == col {
 			return i
 		}
 	}
