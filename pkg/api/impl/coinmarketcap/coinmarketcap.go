@@ -77,8 +77,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int) ([]apitypes.C
 		}
 
 		ret = append(ret, apitypes.Coin{
-			// TODO: Fix ID
-			ID:               util.FormatID(v.Name),
+			ID:               util.FormatID(fmt.Sprint(v.ID)),
 			Name:             util.FormatName(v.Name),
 			Symbol:           util.FormatSymbol(v.Symbol),
 			Rank:             util.FormatRank(v.CMCRank),
