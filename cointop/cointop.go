@@ -197,7 +197,7 @@ var DefaultCompactNotation = false
 var DefaultEnableMouse = true
 
 // DefaultAltCoinLinkCode
-var DefaultAltCoinLinkCode = "sprintf(\"https://www.tradingview.com/chart/?symbol=%sUSDT\", coin.Symbol)"
+var DefaultAltCoinLinkCode = "sprintf(\"https://www.tradingview.com/chart/?symbol=%sUSDT\", strings.ToUpper(coin.Symbol))"
 
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
