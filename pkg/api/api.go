@@ -6,8 +6,8 @@ import (
 )
 
 // NewCMC new CoinMarketCap API
-func NewCMC(apiKey string) Interface {
-	return cmc.NewCMC(apiKey)
+func NewCMC(apiKey string, altCoinLinkCode string) Interface {
+	return cmc.NewCMC(apiKey, altCoinLinkCode)
 }
 
 // NewCC new CryptoCompare API
@@ -16,9 +16,10 @@ func NewCC() {
 }
 
 // NewCG new CoinGecko API
-func NewCG(perPage, maxPages uint) Interface {
+func NewCG(perPage, maxPages uint, altCoinLinkCode string) Interface {
 	return cg.NewCoinGecko(&cg.Config{
-		PerPage:  perPage,
-		MaxPages: maxPages,
+		PerPage:         perPage,
+		MaxPages:        maxPages,
+		AltCoinLinkCode: altCoinLinkCode,
 	})
 }

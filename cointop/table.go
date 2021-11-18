@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	apitypes "github.com/cointop-sh/cointop/pkg/api/types"
 	"net/url"
 	"strings"
 
@@ -207,6 +208,25 @@ func (ct *Cointop) RowLink() string {
 	}
 
 	return ct.api.CoinLink(coin.Slug)
+}
+
+// RowLink returns the row url link
+func (ct *Cointop) RowAltLink() string {
+	log.Debug("RowAltLink()")
+	coin := ct.HighlightedRowCoin()
+	if coin == nil {
+		return ""
+	}
+
+	apiCoin := apitypes.Coin{
+		ID:     coin.ID,
+		Name:   coin.Name,
+		Symbol: coin.Symbol,
+		Rank:   coin.Rank,
+		Slug:   coin.Slug,
+	}
+
+	return ct.api.AltCoinLink(apiCoin)
 }
 
 // RowLinkShort returns a shortened version of the row url link

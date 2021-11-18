@@ -14,6 +14,8 @@ import (
 	gecko "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3"
 	"github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
 	geckoTypes "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
+	"github.com/cointop-sh/cointop/pkg/eval"
+	log "github.com/sirupsen/logrus"
 )
 
 // ErrPingFailed is the error for when pinging the API fails
@@ -24,8 +26,9 @@ var ErrNotFound = errors.New("not found")
 
 // Config config
 type Config struct {
-	PerPage  uint
-	MaxPages uint
+	PerPage         uint
+	MaxPages        uint
+	AltCoinLinkCode string
 }
 
 // Service service
@@ -33,6 +36,7 @@ type Service struct {
 	client            *gecko.Client
 	maxResultsPerPage uint
 	maxPages          uint
+	altCoinLinkCode   string
 	cacheMap          sync.Map
 	cachedRates       *types.ExchangeRatesItem
 }
@@ -57,6 +61,7 @@ func NewCoinGecko(config *Config) *Service {
 		client:            client,
 		maxResultsPerPage: uint(math.Min(float64(maxResults), float64(maxResultsPerPage))),
 		maxPages:          maxPages,
+		altCoinLinkCode:   config.AltCoinLinkCode,
 		cacheMap:          sync.Map{},
 	}
 	svc.cacheCoinsIDList()
@@ -270,6 +275,23 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 func (s *Service) CoinLink(slug string) string {
 	// slug is API ID of coin
 	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", slug)
+}
+
+func (s *Service) AltCoinLink(coin apitypes.Coin) string {
+	if s.altCoinLinkCode == "" {
+		return s.CoinLink(coin.Slug)
+	}
+
+	env := map[string]interface{}{
+		"sprintf": fmt.Sprintf,
+		"coin":    coin,
+	}
+	if s, err := eval.EvaluateExpressionToString(s.altCoinLinkCode, env); err == nil {
+		return s
+	} else {
+		log.Warnf("Error evaluating AltCoinLink: %v", err)
+		return ""
+	}
 }
 
 // SupportedCurrencies returns a list of supported currencies

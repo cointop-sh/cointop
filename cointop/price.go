@@ -55,9 +55,9 @@ func GetCoinPrices(config *PricesConfig) ([]string, error) {
 	}
 	var priceAPI api.Interface
 	if config.APIChoice == CoinMarketCap {
-		priceAPI = api.NewCMC("")
+		priceAPI = api.NewCMC("", DefaultAltCoinLinkCode)
 	} else if config.APIChoice == CoinGecko {
-		priceAPI = api.NewCG(0, 0)
+		priceAPI = api.NewCG(0, 0, DefaultAltCoinLinkCode)
 	} else {
 		return nil, ErrInvalidAPIChoice
 	}

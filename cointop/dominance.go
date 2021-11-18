@@ -20,9 +20,9 @@ func PrintBitcoinDominance(config *DominanceConfig) error {
 
 	var coinAPI api.Interface
 	if config.APIChoice == CoinMarketCap {
-		coinAPI = api.NewCMC("")
+		coinAPI = api.NewCMC("", DefaultAltCoinLinkCode)
 	} else if config.APIChoice == CoinGecko {
-		coinAPI = api.NewCG(0, 0)
+		coinAPI = api.NewCG(0, 0, DefaultAltCoinLinkCode)
 	} else {
 		return ErrInvalidAPIChoice
 	}

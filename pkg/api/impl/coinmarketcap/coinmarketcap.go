@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/cointop-sh/cointop/pkg/eval"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -28,11 +30,12 @@ var ErrFetchGraphData = errors.New("graph data fetch error")
 
 // Service service
 type Service struct {
-	client *cmc.Client
+	client          *cmc.Client
+	altCoinLinkCode string
 }
 
 // NewCMC new service
-func NewCMC(apiKey string) *Service {
+func NewCMC(apiKey string, altCoinLinkCode string) *Service {
 	if apiKey == "" {
 		apiKey = os.Getenv("CMC_PRO_API_KEY")
 	}
@@ -40,7 +43,8 @@ func NewCMC(apiKey string) *Service {
 		ProAPIKey: apiKey,
 	})
 	return &Service{
-		client: client,
+		client:          client,
+		altCoinLinkCode: altCoinLinkCode,
 	}
 }
 
@@ -335,6 +339,24 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 // CoinLink returns the URL link for the coin
 func (s *Service) CoinLink(slug string) string {
 	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s/", slug)
+}
+
+func (s *Service) AltCoinLink(coin apitypes.Coin) string {
+	if s.altCoinLinkCode == "" {
+		return s.CoinLink(coin.Slug)
+	}
+
+	// code := `sprintf("https://www.coingecko.com/en/coins/%s", coin.Slug)`
+	env := map[string]interface{}{
+		"sprintf": fmt.Sprintf,
+		"coin":    coin,
+	}
+	if s, err := eval.EvaluateExpressionToString(s.altCoinLinkCode, env); err == nil {
+		return s
+	} else {
+		log.Warnf("Error evaluating AltCoinLink: %v", err)
+		return ""
+	}
 }
 
 // SupportedCurrencies returns a list of supported currencies

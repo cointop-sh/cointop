@@ -50,6 +50,7 @@ type ConfigFileConfig struct {
 	CacheDir          interface{}            `toml:"cache_dir"`
 	CompactNotation   interface{}            `toml:"compact_notation"`
 	EnableMouse       interface{}            `toml:"enable_mouse"`
+	AltCoinLinkCode   interface{}            `toml:"alt_link_code"` // TODO: should really be in API-specific section
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -74,6 +75,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadCacheDirFromConfig,
 		ct.loadCompactNotationFromConfig,
 		ct.loadEnableMouseFromConfig,
+		ct.loadAltCoinLinkCodeFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -295,6 +297,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Chart:             chartMapIfc,
 		CompactNotation:   ct.State.compactNotation,
 		EnableMouse:       ct.State.enableMouse,
+		AltCoinLinkCode:   ct.State.altCoinLinkCode,
 	}
 
 	var b bytes.Buffer
@@ -517,6 +520,16 @@ func (ct *Cointop) loadEnableMouseFromConfig() error {
 	log.Debug("loadEnableMouseFromConfig()")
 	if enableMouse, ok := ct.config.EnableMouse.(bool); ok {
 		ct.State.enableMouse = enableMouse
+	}
+
+	return nil
+}
+
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadAltCoinLinkCodeFromConfig() error {
+	log.Debug("loadAltCoinLinkCodeFromConfig()")
+	if altCoinLinkCode, ok := ct.config.AltCoinLinkCode.(string); ok {
+		ct.State.altCoinLinkCode = altCoinLinkCode
 	}
 
 	return nil

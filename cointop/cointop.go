@@ -95,6 +95,7 @@ type State struct {
 	favoritesCompactNotation bool
 	portfolioCompactNotation bool
 	enableMouse              bool
+	altCoinLinkCode          string
 }
 
 // Cointop cointop
@@ -194,6 +195,9 @@ var DefaultCompactNotation = false
 
 // DefaultEnableMouse ...
 var DefaultEnableMouse = true
+
+// DefaultAltCoinLinkCode
+var DefaultAltCoinLinkCode = "sprintf(\"https://www.tradingview.com/chart/?symbol=%sUSDT\", coin.Symbol)"
 
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
@@ -302,6 +306,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			},
 			compactNotation:          DefaultCompactNotation,
 			enableMouse:              DefaultEnableMouse,
+			altCoinLinkCode:          DefaultAltCoinLinkCode,
 			tableCompactNotation:     DefaultCompactNotation,
 			favoritesCompactNotation: DefaultCompactNotation,
 			portfolioCompactNotation: DefaultCompactNotation,
@@ -412,9 +417,9 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	if ct.apiChoice == CoinMarketCap {
-		ct.api = api.NewCMC(ct.apiKeys.cmc)
+		ct.api = api.NewCMC(ct.apiKeys.cmc, ct.State.altCoinLinkCode)
 	} else if ct.apiChoice == CoinGecko {
-		ct.api = api.NewCG(perPage, maxPages)
+		ct.api = api.NewCG(perPage, maxPages, ct.State.altCoinLinkCode)
 	} else {
 		return nil, ErrInvalidAPIChoice
 	}

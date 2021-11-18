@@ -14,6 +14,7 @@ type Interface interface {
 	GetCoinData(name string, convert string) (types.Coin, error)
 	GetCoinDataBatch(names []string, convert string) ([]types.Coin, error)
 	CoinLink(slug string) string
+	AltCoinLink(coin types.Coin) string
 	SupportedCurrencies() []string
 	Price(name string, convert string) (float64, error)
 	GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) // I don't love this caching
