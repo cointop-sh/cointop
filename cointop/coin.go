@@ -1,8 +1,6 @@
 package cointop
 
 import (
-	"errors"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -106,12 +104,6 @@ func (ct *Cointop) UpdateCoin(coin *Coin) error {
 		return err
 	}
 
-	k, found := ct.State.allCoinsSlugMap.Load(coin.Name)
-	if !found {
-		log.Debugf("UpdateCoin() could not found coin %s in the slug map", coin.Name)
-		return errors.New("could not find coin index in allCoinsSlugMap")
-	}
-
 	coin = &Coin{
 		ID:               v.ID,
 		Name:             v.Name,
@@ -131,7 +123,7 @@ func (ct *Cointop) UpdateCoin(coin *Coin) error {
 		Slug:             v.Slug,
 	}
 
-	ct.State.allCoinsSlugMap.Store(k, coin)
+	ct.State.allCoinsSlugMap.Store(coin.Name, coin)
 
 	return nil
 }
