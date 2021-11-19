@@ -525,7 +525,7 @@ func (ct *Cointop) loadEnableMouseFromConfig() error {
 	return nil
 }
 
-// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+// loadAltCoinLinkCodeFromConfig loads AltCoinLinkCode setting from config file to struct
 func (ct *Cointop) loadAltCoinLinkCodeFromConfig() error {
 	log.Debug("loadAltCoinLinkCodeFromConfig()")
 	if altCoinLinkCode, ok := ct.config.AltCoinLinkCode.(string); ok {
