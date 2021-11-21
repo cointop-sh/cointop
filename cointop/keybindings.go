@@ -51,11 +51,12 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	mod := tcell.ModNone
 
 	// translate legacy and special names for keys
+	s = strings.TrimSpace(s)
 	keyName := keyMap(s)
 	if len(s) > 1 {
-		keyName := strings.TrimSpace(strings.Replace(s, "+", "-", -1))
-		split := strings.Split(keyName, "-")
+		keyName := strings.Replace(s, "+", "-", -1)
 
+		split := strings.Split(keyName, "-")
 		if len(split) > 1 {
 			m := strings.ToLower(strings.TrimSpace(split[0]))
 			k := strings.TrimSpace(split[1])
