@@ -132,7 +132,7 @@ func (ct *Cointop) UpdateCoin(coin *Coin) error {
 		Slug:             v.Slug,
 	}
 
-	ct.State.allCoinsSlugMap.Store(k, coin)
+	ct.State.allCoinsSlugMap.Store(coin.Name, coin)
 
 	return nil
 }
