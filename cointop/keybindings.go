@@ -51,28 +51,30 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	mod := tcell.ModNone
 
 	// translate legacy and special names for keys
-	keyName := strings.TrimSpace(strings.Replace(s, "+", "-", -1))
-	split := strings.Split(keyName, "-")
-	if len(split) > 1 {
-		m := strings.ToLower(strings.TrimSpace(split[0]))
-		k := strings.TrimSpace(split[1])
-		k = keyMap(k)
-		if k == " " {
-			k = "Space" // fix mod+space
-		}
+	keyName := keyMap(s)
+	if len(s) > 1 {
+		keyName := strings.TrimSpace(strings.Replace(s, "+", "-", -1))
+		split := strings.Split(keyName, "-")
 
-		if m == "alt" {
-			mod = tcell.ModAlt
-			keyName = k
-		} else if m == "ctrl" {
-			// let the lookup handle it
-			keyName = m + "-" + k
-		} else {
-			keyName = m + "-" + k
+		if len(split) > 1 {
+			m := strings.ToLower(strings.TrimSpace(split[0]))
+			k := strings.TrimSpace(split[1])
+			k = keyMap(k)
+			if k == " " {
+				k = "Space" // fix mod+space
+			}
+
+			if m == "alt" {
+				mod = tcell.ModAlt
+				keyName = k
+			} else if m == "ctrl" {
+				// let the lookup handle it
+				keyName = m + "-" + k
+			} else {
+				keyName = m + "-" + k
+			}
+			// TODO: other mods?
 		}
-		// TODO: other mods?
-	} else {
-		keyName = keyMap(keyName)
 	}
 
 	// First try looking up keyname directly
