@@ -1,8 +1,6 @@
 package cointop
 
 import (
-	"fmt"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -103,13 +101,6 @@ func (ct *Cointop) UpdateCoin(coin *Coin) error {
 	v, err := ct.api.GetCoinData(coin.Name, ct.State.currencyConversion)
 	if err != nil {
 		log.Debugf("UpdateCoin() could not fetch coin data %s", coin.Name)
-		return err
-	}
-
-	k, found := ct.State.allCoinsSlugMap.Load(coin.Name)
-	if !found {
-		err := fmt.Errorf("UpdateCoin() could not find coin %s in the slug map", coin.Name)
-		log.Debug(err.Error())
 		return err
 	}
 
