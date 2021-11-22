@@ -235,6 +235,10 @@ func (ct *Cointop) SetCurrencyConverstion(convert string) error {
 func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 	log.Debug("SetCurrencyConverstionFn()")
 	return func() error {
+		if !ct.State.convertMenuVisible {
+			return nil
+		}
+
 		ct.HideConvertMenu()
 
 		if err := ct.SetCurrencyConverstion(convert); err != nil {
