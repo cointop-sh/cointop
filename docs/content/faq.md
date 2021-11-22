@@ -15,7 +15,8 @@ draft: false
 
 ## What coins does this support?
 
-  This supports any coin supported by the API being used to fetch coin information.
+  This supports any coin supported by the API being used to fetch coin information.  There is, however, a limit on the number of coins that
+  cointop fetches by default.  You can increase this by passing `--max-pages` and `--per-page` arguments on the command line.
 
 ## How do I set the API to use?
 
@@ -41,13 +42,18 @@ draft: false
 
   Copy an existing [colorscheme](https://github.com/cointop-sh/colors/blob/master/cointop.toml) to `~/.config/cointop/colors/` and customize the colors. Then run cointop with `--colorscheme <colorscheme>` to use the colorscheme.
 
+  You can use any of the 250-odd X11 colors by name. See https://en.wikipedia.org/wiki/X11_color_names (use lower-case and without spaces).   You can also include 24-bit colors by using the #rrggbb hex code.
+
+  You can also define values in the colorscheme file, and reference them from throughout the file, using the following syntax:
+
+  ```toml
+  define_base03 = "#002b36"
+  menu_header_fg = "$base03"
+  ```
+
 ## How do I make the background color transparent?
 
   Change the background color options in the colorscheme file to `default` to use the system default color, eg. `base_bg = "default"`
-
-## Why don't colorschemes support RGB or hex colors?
-
-  Some of the cointop underlying rendering libraries don't support true colors. See [issue](https://github.com/nsf/termbox/issues/37).
 
 ## Where is the config file located?
 
@@ -132,6 +138,9 @@ draft: false
 ## How do I search?
 
   The default key to open search is <kbd>/</kbd>. Type the search query after the `/` in the field and hit <kbd>Enter</kbd>.
+  Each search starts from the current cursor position. To search for the same term again, hit <kbd>/</kbd> then <kbd>Enter</kbd>.
+
+  The default behaviour will start to search by symbol first, then it will continues searching by name if there is no result. To search by only symbol, type the search query after `/s:`. To search by only name, type the search query after `/n:`.
 
 ## How do I exit search?
 
@@ -182,6 +191,29 @@ draft: false
 ## How do I save my portfolio?
 
   Your portfolio is autosaved after you edit holdings. You can also press <kbd>ctrl</kbd>+<kbd>s</kbd> to manually save your portfolio holdings to the config file.
+
+## How do I include buy/cost price in my portfolio?
+
+  Currently there is no UI for this. If you want to include the cost of your coins in the Portfolio screen, you will need to edit your config.toml
+
+  Each coin consists of four values: coin name, coin amount, cost-price, cost-currency.
+
+  For example, the following configuration includes 100 ALGO at USD1.95 each; and 0.1 BTC at AUD50100.83 each.
+
+  ```toml
+   holdings = [["Algorand", "100", "1.95", "USD"], ["Bitcoin", "0.1", "50100.83", "AUD"]]
+   ```
+
+  With this configuration, four new columns are useful:
+
+  - `cost_price` the price and currency that the coins were purchased at
+  - `cost` the cost (in the current currency) of the coins
+  - `pnl` the PNL of the coins (current value vs original cost)
+  - `pnl_percent` the PNL of the coins as a fraction of the original cost
+
+  With the holdings above, and the currency set to GBP (British Pounds) cointop will look something like this:
+
+  ![portfolio profit and loss](https://user-images.githubusercontent.com/122371/138361142-8e1f32b5-ca24-471d-a628-06968f07c65f.png)
 
 ## How do I hide my portfolio balances (private mode)?
 
@@ -492,3 +524,16 @@ draft: false
   ```bash
   GO111MODULE=on go get github.com/cointop-sh/cointop
   ```
+
+## How can I get more information when something is going wrong?
+
+  Cointop creates a logfile at `/tmp/cointop.log`. Normally nothing is written to this, but if you set the environment variable
+  `DEBUG=1` cointop will write a lot of output describing its operation.  Furthermore, if you also set `DEBUG_HTTP=1` it will
+  emit lots about every HTTP request that cointop makes to coingecko (backend).  Developers may ask for this information
+  to help diagnose any problems you may experience.
+
+  ```bash
+  DEBUG=1 DEBUG_HTTP=1 cointop
+  ```
+
+  If you set environment variable `DEBUG_FILE` you can explicitly provide a logfile location, rather than `/tmp/cointop.log`

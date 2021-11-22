@@ -12,6 +12,7 @@ import (
 	apitypes "github.com/cointop-sh/cointop/pkg/api/types"
 	"github.com/cointop-sh/cointop/pkg/api/util"
 	gecko "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3"
+	"github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
 	geckoTypes "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
 )
 
@@ -33,6 +34,7 @@ type Service struct {
 	maxResultsPerPage uint
 	maxPages          uint
 	cacheMap          sync.Map
+	cachedRates       *types.ExchangeRatesItem
 }
 
 // NewCoinGecko new service
@@ -146,6 +148,45 @@ func (s *Service) GetCoinGraphData(convert, symbol, name string, start, end int6
 	return ret, nil
 }
 
+// GetExchangeRates returns the exchange rates from the backend, or a cached copy if requested and available
+func (s *Service) GetExchangeRates(cached bool) (*types.ExchangeRatesItem, error) {
+	if s.cachedRates == nil || !cached {
+		rates, err := s.client.ExchangeRates()
+		if err != nil {
+			return nil, err
+		}
+		s.cachedRates = rates
+	}
+	return s.cachedRates, nil
+}
+
+// GetExchangeRate gets the current excange rate between two currencies
+func (s *Service) GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) {
+	convertFrom = strings.ToLower(convertFrom)
+	convertTo = strings.ToLower(convertTo)
+	if convertFrom == convertTo {
+		return 1.0, nil
+	}
+	rates, err := s.GetExchangeRates(cached)
+	if err != nil {
+		return 0, err
+	}
+	if rates == nil {
+		return 0, fmt.Errorf("expected rates, received nil")
+	}
+	// Combined rate is convertFrom->BTC->convertTo
+	fromRate, found := (*rates)[convertFrom]
+	if !found {
+		return 0, fmt.Errorf("unsupported currency conversion: %s", convertFrom)
+	}
+	toRate, found := (*rates)[convertTo]
+	if !found {
+		return 0, fmt.Errorf("unsupported currency conversion: %s", convertTo)
+	}
+	rate := toRate.Value / fromRate.Value
+	return rate, nil
+}
+
 // GetGlobalMarketGraphData gets global market graph data
 func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int64) (apitypes.MarketGraph, error) {
 	days := strconv.Itoa(util.CalcDays(start, end))
@@ -160,25 +201,10 @@ func (s *Service) GetGlobalMarketGraphData(convert string, start int64, end int6
 	}
 
 	// This API does not appear to support vs_currency and only returns USD, so use ExchangeRates to convert
-	rate := 1.0
-	if convertTo != "usd" {
-		rates, err := s.client.ExchangeRates()
-		if err != nil {
-			return ret, err
-		}
-		if rates == nil {
-			return ret, fmt.Errorf("expected rates, received nil")
-		}
-		// Combined rate is USD->BTC->other
-		btcRate, found := (*rates)[convertTo]
-		if !found {
-			return ret, fmt.Errorf("unsupported currency conversion: %s", convertTo)
-		}
-		usdRate, found := (*rates)["usd"]
-		if !found {
-			return ret, fmt.Errorf("unsupported currency conversion: usd")
-		}
-		rate = btcRate.Value / usdRate.Value
+	// TODO: watch out - this is not cached, so we hit the backend every time!
+	rate, err := s.GetExchangeRate("usd", convertTo, true)
+	if err != nil {
+		return ret, err
 	}
 
 	var marketCapUSD [][]float64
@@ -241,15 +267,13 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 	return 0, ErrNotFound
 }
 
-// CoinLink returns the URL link for the coin
-func (s *Service) CoinLink(name string) string {
-	ID := s.coinNameToID(name)
-	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", ID)
+func (s *Service) CoinLink(slug string) string {
+	// slug is API ID of coin
+	return fmt.Sprintf("https://www.coingecko.com/en/coins/%s", slug)
 }
 
 // SupportedCurrencies returns a list of supported currencies
 func (s *Service) SupportedCurrencies() []string {
-
 	// keep these in alphabetical order
 	return []string{
 		"AED",
@@ -436,6 +460,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int, names []strin
 				PercentChange1Y:  util.FormatPercentChange(percentChange1Y),
 				Volume24H:        util.FormatVolume(item.TotalVolume),
 				LastUpdated:      util.FormatLastUpdated(item.LastUpdated),
+				Slug:             util.FormatSlug(item.ID),
 			})
 		}
 	}

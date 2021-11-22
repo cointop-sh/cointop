@@ -13,10 +13,11 @@ import (
 	"github.com/cointop-sh/cointop/pkg/api/types"
 	"github.com/cointop-sh/cointop/pkg/cache"
 	"github.com/cointop-sh/cointop/pkg/filecache"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	"github.com/cointop-sh/cointop/pkg/pathutil"
 	"github.com/cointop-sh/cointop/pkg/table"
 	"github.com/cointop-sh/cointop/pkg/ui"
-	"github.com/miguelmota/gocui"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -47,9 +48,7 @@ type State struct {
 	defaultView        string
 	defaultChartRange  string
 	maxChartWidth      int
-
-	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions.
-	favoritesBySymbol map[string]bool
+	columnLookup       []string
 
 	favorites                  map[string]bool
 	favoritesTableColumns      []string
@@ -72,6 +71,7 @@ type State struct {
 	refreshRate                time.Duration
 	running                    bool
 	searchFieldVisible         bool
+	lastSearchQuery            string
 	selectedCoin               *Coin
 	selectedChartRange         string
 	selectedView               string
@@ -94,6 +94,7 @@ type State struct {
 	tableCompactNotation     bool
 	favoritesCompactNotation bool
 	portfolioCompactNotation bool
+	enableMouse              bool
 }
 
 // Cointop cointop
@@ -127,8 +128,10 @@ type Cointop struct {
 
 // PortfolioEntry is portfolio entry
 type PortfolioEntry struct {
-	Coin     string
-	Holdings float64
+	Coin        string
+	Holdings    float64
+	BuyPrice    float64
+	BuyCurrency string
 }
 
 // Portfolio is portfolio structure
@@ -189,6 +192,9 @@ var DefaultChartRange = "1Y"
 // DefaultCompactNotation ...
 var DefaultCompactNotation = false
 
+// DefaultEnableMouse ...
+var DefaultEnableMouse = true
+
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
 
@@ -202,7 +208,7 @@ var DefaultSortBy = "rank"
 var DefaultPerPage = uint(100)
 
 // DefaultMaxPages ...
-var DefaultMaxPages = uint(35)
+var DefaultMaxPages = uint(10)
 
 // DefaultColorscheme ...
 var DefaultColorscheme = "cointop"
@@ -212,9 +218,6 @@ var DefaultConfigFilepath = pathutil.NormalizePath(":PREFERRED_CONFIG_HOME:/coin
 
 // DefaultCacheDir ...
 var DefaultCacheDir = filecache.DefaultCacheDir
-
-// DefaultColorsDir ...
-var DefaultColorsDir = fmt.Sprintf("%s/colors", DefaultConfigFilepath)
 
 // DefaultFavoriteChar ...
 var DefaultFavoriteChar = "*"
@@ -259,14 +262,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 		limiter:        time.NewTicker(2 * time.Second).C,
 		filecache:      nil,
 		State: &State{
-			allCoins:           []*Coin{},
-			cacheDir:           DefaultCacheDir,
-			coinsTableColumns:  DefaultCoinTableHeaders,
-			currencyConversion: DefaultCurrency,
-			defaultChartRange:  DefaultChartRange,
-			maxChartWidth:      DefaultMaxChartWidth,
-			// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-			favoritesBySymbol:     make(map[string]bool),
+			allCoins:              []*Coin{},
+			cacheDir:              DefaultCacheDir,
+			coinsTableColumns:     DefaultCoinTableHeaders,
+			currencyConversion:    DefaultCurrency,
+			defaultChartRange:     DefaultChartRange,
+			maxChartWidth:         DefaultMaxChartWidth,
 			favorites:             make(map[string]bool),
 			favoritesTableColumns: DefaultCoinTableHeaders,
 			favoriteChar:          DefaultFavoriteChar,
@@ -300,6 +301,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 				SoundEnabled: true,
 			},
 			compactNotation:          DefaultCompactNotation,
+			enableMouse:              DefaultEnableMouse,
 			tableCompactNotation:     DefaultCompactNotation,
 			favoritesCompactNotation: DefaultCompactNotation,
 			portfolioCompactNotation: DefaultCompactNotation,
@@ -454,21 +456,6 @@ func NewCointop(config *Config) (*Cointop, error) {
 		ct.State.coins = ct.State.allCoins[0:max]
 	}
 
-	// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-	// Here we're doing a lookup based on symbol and setting the favorite to the coin name instead of coin symbol.
-	ct.State.allCoinsSlugMap.Range(func(key, value interface{}) bool {
-		if coin, ok := value.(*Coin); ok {
-			for k := range ct.State.favoritesBySymbol {
-				if coin.Symbol == k {
-					ct.State.favorites[coin.Name] = true
-					delete(ct.State.favoritesBySymbol, k)
-				}
-			}
-		}
-
-		return true
-	})
-
 	var globaldata []float64
 	chartcachekey := ct.CompositeCacheKey("globaldata", "", "", ct.State.selectedChartRange)
 	if ct.filecache != nil {
@@ -500,14 +487,13 @@ func (ct *Cointop) Run() error {
 		return err
 	}
 
-	ui.SetFgColor(ct.colorscheme.BaseFg())
-	ui.SetBgColor(ct.colorscheme.BaseBg())
+	ui.SetStyle(ct.colorscheme.BaseStyle())
 	ct.ui = ui
 	ct.g = ui.GetGocui()
 	defer ui.Close()
 
 	ui.SetInputEsc(true)
-	ui.SetMouse(true)
+	ui.SetMouse(ct.State.enableMouse)
 	ui.SetHighlight(true)
 	ui.SetManagerFunc(ct.layout)
 	if err := ct.SetKeybindings(); err != nil {

@@ -36,7 +36,7 @@ func DefaultShortcuts() map[string]string {
 		"alt+right":  "sort_right_column",
 		"F1":         "help",
 		"F5":         "refresh",
-		"0":          "first_page",
+		"0":          "move_to_first_page_first_row",
 		"1":          "sort_column_1h_change",
 		"2":          "sort_column_24h_change",
 		"3":          "sort_column_30d_change",
@@ -85,5 +85,8 @@ func DefaultShortcuts() map[string]string {
 		"<":          "scroll_left",
 		"+":          "show_price_alert_add_menu",
 		"\\\\":       "toggle_table_fullscreen",
+		"!":          "sort_column_cost",
+		"@":          "sort_column_pnl",
+		"#":          "sort_column_pnl_percent",
 	}
 }

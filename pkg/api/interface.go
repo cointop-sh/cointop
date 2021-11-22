@@ -13,7 +13,8 @@ type Interface interface {
 	GetGlobalMarketData(convert string) (types.GlobalMarketData, error)
 	GetCoinData(name string, convert string) (types.Coin, error)
 	GetCoinDataBatch(names []string, convert string) ([]types.Coin, error)
-	CoinLink(name string) string
+	CoinLink(slug string) string
 	SupportedCurrencies() []string
 	Price(name string, convert string) (float64, error)
+	GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) // I don't love this caching
 }

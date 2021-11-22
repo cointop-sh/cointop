@@ -4,6 +4,7 @@ package cointop
 func ActionsMap() map[string]bool {
 	return map[string]bool{
 		"first_page":                        true,
+		"move_to_first_page_first_row":      true,
 		"help":                              true,
 		"toggle_show_help":                  true,
 		"close_help":                        true,
@@ -56,6 +57,21 @@ func ActionsMap() map[string]bool {
 		"toggle_show_portfolio":             true,
 		"enlarge_chart":                     true,
 		"shorten_chart":                     true,
+		"toggle_chart_fullscreen":           true,
+		"scroll_right":                      true,
+		"show_portfolio_edit_menu":          true,
+		"sort_column_percent_holdings":      true,
+		"toggle_portfolio_balances":         true,
+		"scroll_left":                       true,
+		"save":                              true,
+		"toggle_table_fullscreen":           true,
+		"toggle_price_alerts":               true,
+		"move_down_or_next_page":            true,
+		"show_price_alert_add_menu":         true,
+		"sort_column_balance":               true,
+		"sort_column_cost":                  true,
+		"sort_column_pnl":                   true,
+		"sort_column_pnl_percent":           true,
 	}
 }
 

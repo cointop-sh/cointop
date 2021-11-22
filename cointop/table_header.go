@@ -126,6 +126,26 @@ var HeaderColumns = map[string]*HeaderColumn{
 		Label:      "last [u]pdated",
 		PlainLabel: "last updated",
 	},
+	"cost_price": {
+		Slug:       "cost_price",
+		Label:      "cost price",
+		PlainLabel: "cost price",
+	},
+	"cost": {
+		Slug:       "cost",
+		Label:      "[!]cost",
+		PlainLabel: "cost",
+	},
+	"pnl": {
+		Slug:       "pnl",
+		Label:      "[@]PNL",
+		PlainLabel: "PNL",
+	},
+	"pnl_percent": {
+		Slug:       "pnl_percent",
+		Label:      "[#]PNL%",
+		PlainLabel: "PNL%",
+	},
 }
 
 // GetLabel fetch the label to use for the heading (depends on configuration)
@@ -159,7 +179,7 @@ func (ct *Cointop) GetActiveTableHeaders() []string {
 	return cols
 }
 
-// GetActiveTableHeaders returns the list of active table headers
+// IsActiveTableCompactNotation returns whether the current view is using compact-notation
 func (ct *Cointop) IsActiveTableCompactNotation() bool {
 	var compact bool
 	switch ct.State.selectedView {
@@ -184,6 +204,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 
 	cols := ct.GetActiveTableHeaders()
 	var headers []string
+	var columnLookup []string // list of column-names or ""
 	for i, col := range cols {
 		hc, ok := HeaderColumns[col]
 		if !ok {
@@ -211,7 +232,7 @@ func (ct *Cointop) UpdateTableHeader() error {
 		}
 		leftAlign := ct.GetTableColumnAlignLeft(col)
 		switch col {
-		case "price", "balance":
+		case "price", "balance", "pnl", "cost":
 			label = fmt.Sprintf("%s%s", ct.CurrencySymbol(), label)
 		}
 		if leftAlign {
@@ -227,18 +248,45 @@ func (ct *Cointop) UpdateTableHeader() error {
 		if leftAlign {
 			padfn = pad.Right
 		}
+		padded := padfn(label, width+(1-padLeft), " ")
 		colStr := fmt.Sprintf(
 			"%s%s%s",
 			strings.Repeat(" ", padLeft),
-			colorfn(padfn(label, width+(1-padLeft), " ")),
+			colorfn(padded),
 			strings.Repeat(" ", 1),
 		)
 		headers = append(headers, colStr)
+
+		// Create a lookup table (pos to column)
+		for i := 0; i < padLeft; i++ {
+			columnLookup = append(columnLookup, "")
+		}
+		for i := 0; i < utf8.RuneCountInString(padded); i++ {
+			columnLookup = append(columnLookup, hc.Slug)
+		}
+		columnLookup = append(columnLookup, "")
 	}
+
+	ct.State.columnLookup = columnLookup
 
 	ct.UpdateUI(func() error {
 		return ct.Views.TableHeader.Update(strings.Join(headers, ""))
 	})
+
+	return nil
+}
+
+// TableHeaderMouseLeftClick is called on mouse left click event
+func (ct *Cointop) TableHeaderMouseLeftClick() error {
+	_, x, _, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+	// Figure out which column they clicked on
+	if ct.State.columnLookup[x] != "" {
+		fn := ct.Sortfn(ct.State.columnLookup[x], false)
+		return fn(ct.g, ct.Views.Table.Backing())
+	}
 
 	return nil
 }
@@ -265,6 +313,9 @@ func (ct *Cointop) SetTableColumnWidth(header string, width int) {
 		prev = prevIfc.(int)
 	} else {
 		hc := HeaderColumns[header]
+		if hc == nil {
+			log.Warnf("SetTableColumnWidth(%s) not found", header)
+		}
 		prev = utf8.RuneCountInString(ct.GetLabel(hc)) + 1
 		switch header {
 		case "price", "balance":

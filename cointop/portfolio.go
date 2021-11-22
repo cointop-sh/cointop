@@ -35,6 +35,10 @@ var SupportedPortfolioTableHeaders = []string{
 	"1y_change",
 	"percent_holdings",
 	"last_updated",
+	"cost_price",
+	"cost",
+	"pnl",
+	"pnl_percent",
 }
 
 // DefaultPortfolioTableHeaders are the default portfolio table header columns
@@ -49,11 +53,22 @@ var DefaultPortfolioTableHeaders = []string{
 	"24h_change",
 	"7d_change",
 	"percent_holdings",
+	"cost_price",
+	"cost",
+	"pnl",
+	"pnl_percent",
 	"last_updated",
 }
 
 // HiddenBalanceChars are the characters to show when hidding balances
 var HiddenBalanceChars = "********"
+
+var costColumns = map[string]bool{
+	"cost_price":  true,
+	"cost":        true,
+	"pnl":         true,
+	"pnl_percent": true,
+}
 
 // ValidPortfolioTableHeader returns the portfolio table headers
 func (ct *Cointop) ValidPortfolioTableHeader(name string) bool {
@@ -80,6 +95,25 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 	headers := ct.GetPortfolioTableHeaders()
 	ct.ClearSyncMap(&ct.State.tableColumnWidths)
 	ct.ClearSyncMap(&ct.State.tableColumnAlignLeft)
+
+	displayCostColumns := false
+	for _, coin := range ct.State.coins {
+		if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+			displayCostColumns = true
+			break
+		}
+	}
+
+	if !displayCostColumns {
+		filtered := make([]string, 0)
+		for _, header := range headers {
+			if _, ok := costColumns[header]; !ok {
+				filtered = append(filtered, header)
+			}
+		}
+		headers = filtered
+	}
+
 	for _, coin := range ct.State.coins {
 		leftMargin := 1
 		rightMargin := 1
@@ -301,6 +335,117 @@ func (ct *Cointop) GetPortfolioTable() *table.Table {
 						Color:       ct.colorscheme.TableRow,
 						Text:        lastUpdated,
 					})
+			case "cost_price":
+				text := fmt.Sprintf("%s %s", coin.BuyCurrency, ct.FormatPrice(coin.BuyPrice))
+				if coin.BuyPrice == 0.0 || coin.BuyCurrency == "" {
+					text = ""
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableRow,
+						Text:        text,
+					})
+			case "cost":
+				cost := 0.0
+				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
+					if err == nil {
+						cost = costPrice * coin.Holdings
+					}
+				}
+				text := humanize.FixedMonetaryf(cost, 2)
+				if coin.BuyPrice == 0.0 {
+					text = ""
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+				}
+
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       ct.colorscheme.TableColumnPrice,
+						Text:        text,
+					})
+			case "pnl":
+				text := ""
+				colorProfit := ct.colorscheme.TableColumnChange
+				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
+					if err == nil {
+						profit := (coin.Price - costPrice) * coin.Holdings
+						text = humanize.FixedMonetaryf(profit, 2)
+						if profit > 0 {
+							colorProfit = ct.colorscheme.TableColumnChangeUp
+						} else if profit < 0 {
+							colorProfit = ct.colorscheme.TableColumnChangeDown
+						}
+					} else {
+						text = "?"
+					}
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+					colorProfit = ct.colorscheme.TableColumnChange
+				}
+
+				symbolPadding := 1
+				ct.SetTableColumnWidth(header, utf8.RuneCountInString(text)+symbolPadding)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       colorProfit,
+						Text:        text,
+					})
+			case "pnl_percent":
+				profitPercent := 0.0
+				if coin.BuyPrice > 0 && coin.BuyCurrency != "" {
+					costPrice, err := ct.Convert(coin.BuyCurrency, ct.State.currencyConversion, coin.BuyPrice)
+					if err == nil {
+						profitPercent = 100 * (coin.Price/costPrice - 1)
+					}
+				}
+				colorProfit := ct.colorscheme.TableColumnChange
+				if profitPercent > 0 {
+					colorProfit = ct.colorscheme.TableColumnChangeUp
+				} else if profitPercent < 0 {
+					colorProfit = ct.colorscheme.TableColumnChangeDown
+				}
+				text := fmt.Sprintf("%.2f%%", profitPercent)
+				if coin.BuyPrice == 0.0 {
+					text = ""
+				}
+				if ct.State.hidePortfolioBalances {
+					text = HiddenBalanceChars
+					colorProfit = ct.colorscheme.TableColumnChange
+				}
+				ct.SetTableColumnWidthFromString(header, text)
+				ct.SetTableColumnAlignLeft(header, false)
+				rowCells = append(rowCells,
+					&table.RowCell{
+						LeftMargin:  leftMargin,
+						RightMargin: rightMargin,
+						LeftAlign:   false,
+						Color:       colorProfit,
+						Text:        text,
+					})
 			}
 		}
 
@@ -456,8 +601,12 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 	}
 	shouldDelete := holdings == 0
 
+	// TODO: add fields to form, parse here
+	buyPrice := 0.0
+	buyCurrency := ""
+
 	idx := ct.GetPortfolioCoinIndex(coin)
-	if err := ct.SetPortfolioEntry(coin.Name, holdings); err != nil {
+	if err := ct.SetPortfolioEntry(coin.Name, holdings, buyPrice, buyCurrency); err != nil {
 		return err
 	}
 
@@ -492,22 +641,18 @@ func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
 	var ok bool
 	key := strings.ToLower(c.Name)
 	if p, ok = ct.State.portfolio.Entries[key]; !ok {
-		// NOTE: if not found then try the symbol
-		key := strings.ToLower(c.Symbol)
-		if p, ok = ct.State.portfolio.Entries[key]; !ok {
-			p = &PortfolioEntry{
-				Coin:     c.Name,
-				Holdings: 0,
-			}
-			isNew = true
+		p = &PortfolioEntry{
+			Coin:     c.Name,
+			Holdings: 0,
 		}
+		isNew = true
 	}
 
 	return p, isNew
 }
 
 // SetPortfolioEntry sets a portfolio entry
-func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
+func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64, buyPrice float64, buyCurrency string) error {
 	log.Debug("SetPortfolioEntry()")
 	ic, _ := ct.State.allCoinsSlugMap.Load(strings.ToLower(coin))
 	c, _ := ic.(*Coin)
@@ -515,8 +660,10 @@ func (ct *Cointop) SetPortfolioEntry(coin string, holdings float64) error {
 	if isNew {
 		key := strings.ToLower(coin)
 		ct.State.portfolio.Entries[key] = &PortfolioEntry{
-			Coin:     coin,
-			Holdings: holdings,
+			Coin:        coin,
+			Holdings:    holdings,
+			BuyPrice:    buyPrice,
+			BuyCurrency: buyCurrency,
 		}
 	} else {
 		p.Holdings = holdings
@@ -560,26 +707,16 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 		return sliced
 	}
 
-OUTER:
-	for i := range ct.State.allCoins {
-		coin := ct.State.allCoins[i]
-		p, isNew := ct.PortfolioEntry(coin)
-		if isNew {
+	for _, p := range ct.State.portfolio.Entries {
+		coinIfc, _ := ct.State.allCoinsSlugMap.Load(p.Coin)
+		coin, ok := coinIfc.(*Coin)
+		if !ok {
+			log.Errorf("Could not find coin %s", p.Coin)
 			continue
 		}
-		// check not already found
-		updateSlice := -1
-		for j := range sliced {
-			if coin.Symbol == sliced[j].Symbol {
-				if coin.Rank >= sliced[j].Rank {
-					continue OUTER // skip updates from lower-ranked coins
-				}
-				updateSlice = j // update this later
-				break
-			}
-		}
-
 		coin.Holdings = p.Holdings
+		coin.BuyPrice = p.BuyPrice
+		coin.BuyCurrency = p.BuyCurrency
 		balance := coin.Price * p.Holdings
 		balancestr := fmt.Sprintf("%.2f", balance)
 		if ct.State.currencyConversion == "ETH" || ct.State.currencyConversion == "BTC" {
@@ -587,15 +724,10 @@ OUTER:
 		}
 		balance, _ = strconv.ParseFloat(balancestr, 64)
 		coin.Balance = balance
-		if updateSlice == -1 {
-			sliced = append(sliced, coin)
-		} else {
-			sliced[updateSlice] = coin
-		}
-
+		sliced = append(sliced, coin)
 	}
 
-	sort.Slice(sliced, func(i, j int) bool {
+	sort.SliceStable(sliced, func(i, j int) bool {
 		return sliced[i].Balance > sliced[j].Balance
 	})
 
@@ -709,7 +841,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 	records := make([][]string, len(holdings))
 	symbol := ct.CurrencySymbol()
 
-	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings"}
+	headers := []string{"name", "symbol", "price", "holdings", "balance", "24h%", "%holdings", "cost_price", "cost", "pnl", "pnl_percent"}
 	if len(filterCols) > 0 {
 		for _, col := range filterCols {
 			valid := false
@@ -802,6 +934,70 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 					item[i] = fmt.Sprintf("%s%%", humanize.Numericf(percentHoldings, 2))
 				} else {
 					item[i] = fmt.Sprintf("%.2f", percentHoldings)
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "cost_price":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					if humanReadable {
+						item[i] = fmt.Sprintf("%s %s", entry.BuyCurrency, ct.FormatPrice(entry.BuyPrice))
+					} else {
+						item[i] = fmt.Sprintf("%s %s", entry.BuyCurrency, strconv.FormatFloat(entry.BuyPrice, 'f', -1, 64))
+					}
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "cost":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					costPrice, err := ct.Convert(entry.BuyCurrency, ct.State.currencyConversion, entry.BuyPrice)
+					if err == nil {
+						cost := costPrice * entry.Holdings
+						if humanReadable {
+							item[i] = fmt.Sprintf("%s%s", symbol, humanize.FixedMonetaryf(cost, 2))
+						} else {
+							item[i] = strconv.FormatFloat(cost, 'f', -1, 64)
+						}
+					} else {
+						item[i] = "?" // error
+					}
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "pnl":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					costPrice, err := ct.Convert(entry.BuyCurrency, ct.State.currencyConversion, entry.BuyPrice)
+					if err == nil {
+						profit := (entry.Price - costPrice) * entry.Holdings
+						if humanReadable {
+							// TODO: if <0 "£-3.71" should be "-£3.71"?
+							item[i] = fmt.Sprintf("%s%s", symbol, humanize.FixedMonetaryf(profit, 2))
+						} else {
+							item[i] = strconv.FormatFloat(profit, 'f', -1, 64)
+						}
+					} else {
+						item[i] = "?" // error
+					}
+				}
+				if hideBalances {
+					item[i] = HiddenBalanceChars
+				}
+			case "pnl_percent":
+				if entry.BuyPrice > 0 && entry.BuyCurrency != "" {
+					costPrice, err := ct.Convert(entry.BuyCurrency, ct.State.currencyConversion, entry.BuyPrice)
+					if err == nil {
+						profitPercent := 100 * (entry.Price/costPrice - 1)
+						if humanReadable {
+							item[i] = fmt.Sprintf("%s%%", humanize.Numericf(profitPercent, 2))
+						} else {
+							item[i] = fmt.Sprintf("%.2f", profitPercent)
+						}
+
+					} else {
+						item[i] = "?" // error
+					}
 				}
 				if hideBalances {
 					item[i] = HiddenBalanceChars

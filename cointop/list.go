@@ -8,8 +8,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var coinslock sync.Mutex
-var updatecoinsmux sync.Mutex
+var (
+	coinslock      sync.Mutex
+	updatecoinsmux sync.Mutex
+)
 
 // UpdateCoins updates coins view
 func (ct *Cointop) UpdateCoins() error {
@@ -43,6 +45,22 @@ func (ct *Cointop) UpdateCoins() error {
 		ct.processCoinsMap(allCoinsSlugMap)
 	}
 
+	return nil
+}
+
+// UpdateCurrentPageCoins updates all the coins in the current page
+func (ct *Cointop) UpdateCurrentPageCoins() error {
+	log.Debugf("UpdateCurrentPageCoins(%d)", len(ct.State.coins))
+	currentPageCoins := make([]string, len(ct.State.coins))
+	for i, entry := range ct.State.coins {
+		currentPageCoins[i] = entry.Name
+	}
+
+	coins, err := ct.api.GetCoinDataBatch(currentPageCoins, ct.State.currencyConversion)
+	if err != nil {
+		return err
+	}
+	go ct.processCoins(coins)
 	return nil
 }
 
@@ -94,6 +112,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 			PercentChange30D: v.PercentChange30D,
 			PercentChange1Y:  v.PercentChange1Y,
 			LastUpdated:      v.LastUpdated,
+			Slug:             v.Slug,
 		})
 		if ilast != nil {
 			last, _ := ilast.(*Coin)
@@ -146,6 +165,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 					c.PercentChange1Y = cm.PercentChange1Y
 					c.LastUpdated = cm.LastUpdated
 					c.Favorite = cm.Favorite
+					c.Slug = cm.Slug
 				}
 			}
 

@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/miguelmota/gocui"
+	"github.com/cointop-sh/cointop/pkg/gocui"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -23,7 +23,7 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 	if len(list) < 2 {
 		return
 	}
-	sort.Slice(list[:], func(i, j int) bool {
+	sort.SliceStable(list[:], func(i, j int) bool {
 		if ct.State.sortDesc {
 			i, j = j, i
 		}
@@ -68,6 +68,14 @@ func (ct *Cointop) Sort(sortBy string, desc bool, list []*Coin, renderHeaders bo
 			return a.AvailableSupply < b.AvailableSupply
 		case "last_updated":
 			return a.LastUpdated < b.LastUpdated
+		case "cost_price":
+			return a.BuyPrice < b.BuyPrice
+		case "cost":
+			return (a.BuyPrice * a.Holdings) < (b.BuyPrice * b.Holdings) // TODO: convert?
+		case "pnl":
+			return (a.Price - a.BuyPrice) < (b.Price - b.BuyPrice)
+		case "pnl_percent":
+			return (a.Price - a.BuyPrice) < (b.Price - b.BuyPrice)
 		default:
 			return a.Rank < b.Rank
 		}

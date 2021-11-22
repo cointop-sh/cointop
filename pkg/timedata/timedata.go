@@ -45,7 +45,11 @@ func LinearInterpolateTimeSeriesData(data [][]float64, start float64, end float6
 		idx := sort.Search(l, func(i int) bool { return data[i][0] >= pos })
 		var val float64
 		if idx == 0 {
-			val = math.NaN() // off the left
+			if data[0][0] == pos {
+				val = data[0][1] // exactly left
+			} else {
+				val = math.NaN() // off the left
+			}
 		} else if idx == l {
 			val = math.NaN() // off the right
 		} else {

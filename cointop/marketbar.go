@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
+	fcolor "github.com/fatih/color"
+
 	"github.com/cointop-sh/cointop/pkg/api/types"
-	"github.com/cointop-sh/cointop/pkg/color"
 	"github.com/cointop-sh/cointop/pkg/humanize"
 	"github.com/cointop-sh/cointop/pkg/pad"
 	"github.com/cointop-sh/cointop/pkg/ui"
@@ -28,7 +29,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 	maxX := ct.Width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemeName == "cointop" {
-		logo = fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
+		Green := fcolor.New(fcolor.FgGreen).SprintFunc()
+		Cyan := fcolor.New(fcolor.FgCyan).SprintFunc()
+		logo = fmt.Sprintf("%s%s%s%s", Green("❯"), Cyan("❯"), Green("❯"), Cyan("cointop"))
 	}
 	var content string
 
@@ -78,10 +81,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		chartInfo := ""
 		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
-				"[ Chart: %s %s %s ] ",
+				"[ Chart: %s %s ] ",
 				charttitle,
 				timeframe,
-				ct.State.currencyConversion,
 			)
 		}
 
@@ -92,8 +94,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		}
 
 		content = fmt.Sprintf(
-			"%sTotal Portfolio Value: %s • 24H: %s",
+			"%sTotal Portfolio Value %s: %s • 24H: %s",
 			chartInfo,
+			ct.State.currencyConversion,
 			ct.colorscheme.MarketBarLabelActive(totalstr),
 			percentChange24Hstr,
 		)
@@ -142,10 +145,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		chartInfo := ""
 		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
-				"[ Chart: %s %s %s] ",
+				"[ Chart: %s %s] ",
 				ct.colorscheme.MarketBarLabelActive(chartname),
 				timeframe,
-				ct.State.currencyConversion,
 			)
 		}
 
@@ -166,8 +168,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		}
 
 		content = fmt.Sprintf(
-			"%sGlobal ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
+			"%sGlobal %s ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
 			chartInfo,
+			ct.State.currencyConversion,
 			fmt.Sprintf("%s%s", ct.CurrencySymbol(), marketCapStr),
 			separator1,
 			fmt.Sprintf("%s%s", ct.CurrencySymbol(), volumeStr),

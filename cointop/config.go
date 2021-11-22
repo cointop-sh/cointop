@@ -49,6 +49,7 @@ type ConfigFileConfig struct {
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CacheDir          interface{}            `toml:"cache_dir"`
 	CompactNotation   interface{}            `toml:"compact_notation"`
+	EnableMouse       interface{}            `toml:"enable_mouse"`
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -72,6 +73,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadRefreshRateFromConfig,
 		ct.loadCacheDirFromConfig,
 		ct.loadCompactNotationFromConfig,
+		ct.loadEnableMouseFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -214,10 +216,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		return favoritesIfc[i].(string) < favoritesIfc[j].(string)
 	})
 
-	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols":          favoritesBySymbolIfc,
 		"names":            favoritesIfc,
 		"columns":          ct.State.favoritesTableColumns,
 		"character":        ct.State.favoriteChar,
@@ -230,9 +229,12 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		if !ok || entry.Coin == "" {
 			continue
 		}
-		amount := strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
-		coinName := entry.Coin
-		tuple := []string{coinName, amount}
+		tuple := []string{
+			entry.Coin,
+			strconv.FormatFloat(entry.Holdings, 'f', -1, 64),
+			strconv.FormatFloat(entry.BuyPrice, 'f', -1, 64),
+			entry.BuyCurrency,
+		}
 		holdingsIfc = append(holdingsIfc, tuple)
 	}
 	sort.Slice(holdingsIfc, func(i, j int) bool {
@@ -292,6 +294,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
 		CompactNotation:   ct.State.compactNotation,
+		EnableMouse:       ct.State.enableMouse,
 	}
 
 	var b bytes.Buffer
@@ -369,14 +372,44 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 // LoadShortcutsFromConfig loads keyboard shortcuts from config file to struct
 func (ct *Cointop) loadShortcutsFromConfig() error {
 	log.Debug("loadShortcutsFromConfig()")
+
+	// Load the shortcut config into a key:action map (filtering to actions that exist). Keep track of actions.
+	config := make(map[string]string)
+	actions := make(map[string]bool)
 	for k, ifc := range ct.config.Shortcuts {
 		if v, ok := ifc.(string); ok {
 			if !ct.ActionExists(v) {
+				log.Debugf("Shortcut '%s'=>%s is not a valid action", k, v)
 				continue
 			}
-			ct.State.shortcutKeys[k] = v
+			config[k] = v
+			actions[v] = true
 		}
 	}
+
+	// Count how many keys are configured per action.
+	actionCount := make(map[string]int)
+	for _, action := range ct.State.shortcutKeys {
+		actionCount[action] += 1
+	}
+
+	// merge defaults into the loaded config - if the key is not defined, and the action is not found, add it
+	for key, action := range ct.State.shortcutKeys {
+		if _, ok := config[key]; ok {
+			// k is already in the config - ignore it
+		} else if _, ok := actions[action]; ok {
+			if actionCount[action] == 1 {
+				// action is already in the config - ignore it
+			} else {
+				// there are multiple bindings, add them anyway
+				config[key] = action // add action
+			}
+		} else {
+			config[key] = action // add action
+		}
+	}
+	ct.State.shortcutKeys = config
+
 	return nil
 }
 
@@ -479,6 +512,16 @@ func (ct *Cointop) loadCompactNotationFromConfig() error {
 	return nil
 }
 
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadEnableMouseFromConfig() error {
+	log.Debug("loadEnableMouseFromConfig()")
+	if enableMouse, ok := ct.config.EnableMouse.(bool); ok {
+		ct.State.enableMouse = enableMouse
+	}
+
+	return nil
+}
+
 // LoadAPIChoiceFromConfig loads API choices from config file to struct
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
 	log.Debug("loadAPIKeysFromConfig()")
@@ -509,13 +552,6 @@ func (ct *Cointop) loadFavoritesFromConfig() error {
 			continue
 		}
 		switch k {
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		case "symbols":
-			for _, ifc := range ifcs {
-				if v, ok := ifc.(string); ok {
-					ct.State.favoritesBySymbol[strings.ToUpper(v)] = true
-				}
-			}
 		case "names":
 			for _, ifc := range ifcs {
 				if v, ok := ifc.(string); ok {
@@ -564,33 +600,7 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				}
 			}
 		} else if key == "holdings" {
-			holdingsIfc, ok := valueIfc.([]interface{})
-			if !ok {
-				continue
-			}
-
-			for _, itemIfc := range holdingsIfc {
-				tupleIfc, ok := itemIfc.([]interface{})
-				if !ok {
-					continue
-				}
-				if len(tupleIfc) > 2 {
-					continue
-				}
-				name, ok := tupleIfc[0].(string)
-				if !ok {
-					continue
-				}
-
-				holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
-				if err != nil {
-					return nil
-				}
-
-				if err := ct.SetPortfolioEntry(name, holdings); err != nil {
-					return err
-				}
-			}
+			// Defer until the end to work around premature-save issue
 		} else if key == "compact_notation" {
 			ct.State.portfolioCompactNotation = valueIfc.(bool)
 		} else {
@@ -600,12 +610,62 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				return err
 			}
 
-			if err := ct.SetPortfolioEntry(key, holdings); err != nil {
+			if err := ct.SetPortfolioEntry(key, holdings, 0.0, ""); err != nil {
 				return err
 			}
 		}
 	}
 
+	// Process holdings last because it causes a ct.Save()
+	if valueIfc, ok := ct.config.Portfolio["holdings"]; ok {
+		if holdingsIfc, ok := valueIfc.([]interface{}); ok {
+			ct.loadPortfolioHoldingsFromConfig(holdingsIfc)
+		}
+	}
+
+	return nil
+}
+
+func (ct *Cointop) loadPortfolioHoldingsFromConfig(holdingsIfc []interface{}) error {
+	for _, itemIfc := range holdingsIfc {
+		tupleIfc, ok := itemIfc.([]interface{})
+		if !ok {
+			continue
+		}
+		if len(tupleIfc) > 4 {
+			continue
+		}
+		name, ok := tupleIfc[0].(string)
+		if !ok {
+			continue // was not a string
+		}
+
+		holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
+		if err != nil {
+			return err // was not a float64
+		}
+
+		buyPrice := 0.0
+		if len(tupleIfc) >= 3 {
+			if buyPrice, err = ct.InterfaceToFloat64(tupleIfc[2]); err != nil {
+				return err
+			}
+		}
+
+		buyCurrency := ""
+		if len(tupleIfc) >= 4 {
+			if parseCurrency, ok := tupleIfc[3].(string); !ok {
+				return err // was not a string
+			} else {
+				buyCurrency = parseCurrency
+			}
+		}
+
+		// Watch out - this calls ct.Save() which may save a half-loaded configuration
+		if err := ct.SetPortfolioEntry(name, holdings, buyPrice, buyCurrency); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
