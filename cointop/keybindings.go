@@ -54,7 +54,7 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	s = strings.TrimSpace(s)
 	keyName := keyMap(s)
 	if len(s) > 1 {
-		keyName := strings.Replace(s, "+", "-", -1)
+		keyName = strings.Replace(s, "+", "-", -1)
 
 		split := strings.Split(keyName, "-")
 		if len(split) > 1 {
@@ -98,7 +98,7 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	}
 
 	if key == nil {
-		log.Debugf("Could not map key descriptio '%s' to key", s)
+		log.Debugf("Could not map key '%s' to key", s)
 	}
 	return key, mod
 }
