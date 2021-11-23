@@ -8,8 +8,15 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func (ct *Cointop) initlog() {
-	filename := "/tmp/cointop.log"
+func (ct *Cointop) setLogConfiguration() {
+	if os.Getenv("DEBUG") != "" {
+		log.SetLevel(log.DebugLevel)
+		ct.setLogOutputFile()
+	}
+}
+
+func (ct *Cointop) setLogOutputFile() {
+	filename := pathutil.NormalizePath(":PREFERRED_TEMP_DIR:/cointop.log")
 	debugFile := os.Getenv("DEBUG_FILE")
 	if debugFile != "" {
 		filename = pathutil.NormalizePath(debugFile)

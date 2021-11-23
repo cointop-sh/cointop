@@ -224,10 +224,6 @@ var DefaultFavoriteChar = "*"
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
-	if os.Getenv("DEBUG") != "" {
-		log.SetLevel(log.DebugLevel)
-	}
-
 	if config == nil {
 		config = &Config{}
 	}
@@ -317,7 +313,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 			Input:       NewInputView(),
 		},
 	}
-	ct.initlog()
+
+	ct.setLogConfiguration()
 
 	err := ct.SetupConfig()
 	if err != nil {
