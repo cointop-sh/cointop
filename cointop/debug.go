@@ -20,9 +20,6 @@ func (ct *Cointop) setLogOutputFile() {
 	debugFile := os.Getenv("DEBUG_FILE")
 	if debugFile != "" {
 		filename = pathutil.NormalizePath(debugFile)
-		if filename != debugFile && os.Getenv("DEBUG") != "" {
-			fmt.Printf("Writing debug log to %s\n", filename)
-		}
 	}
 	f, err := os.OpenFile(filename, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
@@ -30,4 +27,5 @@ func (ct *Cointop) setLogOutputFile() {
 	}
 	log.SetOutput(f)
 	ct.logfile = f
+	fmt.Printf("Writing debug log to %s\n", filename)
 }
