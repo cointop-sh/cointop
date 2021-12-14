@@ -11,8 +11,8 @@ func main() {
 
 	// Auth Part
 	var (
-		apiKey    = "sJpK9ooVd60yhhFmV2Er7FXnI3AKLpE38UJ20qXvTxnc74yRw19kuqC0yPhGNq1q"
-		secretKey = "kujQnkruJeFgI64YKqCLPg3R3sucRqv83V4yUisNoqqnQtUO4ouu7MEKf5lvscwx"
+		apiKey    = "your apiKey"
+		secretKey = "your secretKey"
 	)
 	binance.UseTestnet = true
 	client := binance.NewClient(apiKey, secretKey)
