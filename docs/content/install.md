@@ -9,10 +9,10 @@ There are multiple ways you can install cointop depending on the platform you're
 
 ## From source (always latest and recommended)
 
-Make sure to have [go](https://golang.org/) (1.12+) installed, then do:
+Make sure to have [go](https://golang.org/) (1.17+) installed, then do:
 
 ```bash
-go get github.com/cointop-sh/cointop
+go install github.com/cointop-sh/cointop@latest
 ```
 
 The cointop executable will be under `~/go/bin/cointop` so make sure `$GOPATH/bin` is added to the `$PATH` variable if not already.
