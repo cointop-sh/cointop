@@ -47,11 +47,14 @@ type ConfigFileConfig struct {
 	API               interface{}            `toml:"api"`
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
+	CoinStructHash    interface{}            `toml:"coin_struct_version"`
 	CacheDir          interface{}            `toml:"cache_dir"`
-	CompactNotation   interface{}            `toml:"compact_notation"`
-	EnableMouse       interface{}            `toml:"enable_mouse"`
-	Table             map[string]interface{} `toml:"table"`
-	Chart             map[string]interface{} `toml:"chart"`
+
+	CompactNotation interface{} `toml:"compact_notation"`
+	EnableMouse     interface{} `toml:"enable_mouse"`
+
+	Table map[string]interface{} `toml:"table"`
+	Chart map[string]interface{} `toml:"chart"`
 }
 
 // SetupConfig loads config file
@@ -278,7 +281,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		"height":    ct.State.chartHeight,
 	}
 
-	var inputs = &ConfigFileConfig{
+	inputs := &ConfigFileConfig{
 		API:               ct.apiChoice,
 		Colorscheme:       ct.colorschemeName,
 		CoinMarketCap:     cmcIfc,
@@ -293,6 +296,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
+		CoinStructHash:    getStructHash(Coin{}),
 		CompactNotation:   ct.State.compactNotation,
 		EnableMouse:       ct.State.enableMouse,
 	}

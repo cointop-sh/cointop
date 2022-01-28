@@ -2,8 +2,10 @@ package cointop
 
 import (
 	"bytes"
+	"crypto/sha256"
 	"encoding/gob"
 	"fmt"
+	"reflect"
 	"regexp"
 	"strings"
 	"sync"
@@ -65,4 +67,35 @@ func normalizeFloatString(input string, allowNegative bool) string {
 	}
 
 	return ""
+}
+
+func getStructHash(x interface{}) string {
+	raw := make(map[string]string)
+	collectTypeFields(reflect.TypeOf(x), raw)
+
+	h := sha256.New()
+	h.Write([]byte(fmt.Sprintf("%v", raw)))
+
+	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func collectTypeFields(t reflect.Type, m map[string]string) {
+	// Return if not struct or pointer to struct.
+	if t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	if t.Kind() != reflect.Struct {
+		return
+	}
+
+	// Iterate through fields collecting names in map.
+	for i := 0; i < t.NumField(); i++ {
+		sf := t.Field(i)
+		m[sf.Name] = fmt.Sprintf("%v", sf)
+
+		// Recurse into anonymous fields.
+		if t.Kind() == reflect.Struct {
+			collectTypeFields(sf.Type, m)
+		}
+	}
 }
