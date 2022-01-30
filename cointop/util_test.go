@@ -3,35 +3,6 @@ package cointop
 import "testing"
 
 func Test_getStructHash(t *testing.T) {
-	type SCoin struct {
-		Name       string
-		Properties struct {
-			P7D  int
-			P10D int
-		}
-	}
-	type SCoin1 struct {
-		Name       string
-		Properties struct {
-			P7D  int
-			P10D int
-		}
-	}
-	type SCoin2 struct {
-		Name       interface{}
-		Properties struct {
-			P7D  int
-			P10D int
-		}
-	}
-	type SCoin3 struct {
-		Name       string
-		Age        int
-		Properties *struct {
-			P7D  int
-			P10D int
-		}
-	}
 	type args struct {
 		str1 interface{}
 		str2 interface{}
@@ -45,32 +16,61 @@ func Test_getStructHash(t *testing.T) {
 		{
 			name: "the same structs",
 			args: args{
-				str1: SCoin{},
-				str2: SCoin{},
-			},
-			want: true,
-		},
-		{
-			name: "different structs but have similar fields",
-			args: args{
-				str1: SCoin{},
-				str2: SCoin1{},
+				str1: struct {
+					Name       string
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
+				str2: struct {
+					Name       string
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
 			},
 			want: true,
 		},
 		{
 			name: "different structs but have similar fields and different field type",
 			args: args{
-				str1: SCoin{},
-				str2: SCoin2{},
+				str1: struct {
+					Name       string
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
+				str2: struct {
+					Name       rune
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
 			},
 			want: false,
 		},
 		{
 			name: "different structs and different fields",
 			args: args{
-				str1: SCoin{},
-				str2: SCoin3{},
+				str1: struct {
+					Name       string
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
+				str2: struct {
+					Name       string
+					Age        int
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
 			},
 			want: false,
 		},
