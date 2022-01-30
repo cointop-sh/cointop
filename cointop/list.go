@@ -174,7 +174,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	}
 
 	time.AfterFunc(10*time.Millisecond, func() {
-		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+		ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.coins, true)
 		ct.UpdateTable()
 	})
 }

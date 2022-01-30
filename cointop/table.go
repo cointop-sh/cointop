@@ -80,16 +80,10 @@ func (ct *Cointop) UpdateTable() error {
 	} else if ct.IsPortfolioVisible() {
 		ct.State.coins = ct.GetPortfolioSlice()
 	} else {
-		// TODO: maintain state of previous sorting
-		if ct.State.sortBy == "holdings" {
-			ct.State.sortBy = "rank"
-			ct.State.sortDesc = false
-		}
-
 		ct.State.coins = ct.GetTableCoinsSlice()
 	}
 
-	ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+	ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.coins, true)
 	go ct.RefreshTable()
 	return nil
 }
@@ -274,6 +268,11 @@ func (ct *Cointop) ToggleTableFullscreen() error {
 func (ct *Cointop) SetSelectedView(viewName string) {
 	ct.State.lastSelectedView = ct.State.selectedView
 	ct.State.selectedView = viewName
+
+	// init sort constraint for the view if it hasn't been seen before
+	if _, found := ct.State.viewSorts[viewName]; !found {
+		ct.State.viewSorts[viewName] = &sortConstraint{DefaultSortBy, false}
+	}
 }
 
 // ToggleSelectedView toggles between current table view and last selected table view
