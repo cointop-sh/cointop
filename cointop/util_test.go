@@ -23,7 +23,7 @@ func Test_getStructHash(t *testing.T) {
 						P10D int
 					}
 				}{},
-				str2: struct {
+				str2: &struct {
 					Name       string
 					Properties struct {
 						P7D  int
