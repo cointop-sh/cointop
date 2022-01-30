@@ -269,7 +269,7 @@ func (ct *Cointop) SetSelectedView(viewName string) {
 	ct.State.lastSelectedView = ct.State.selectedView
 	ct.State.selectedView = viewName
 
-	// init sort constraint for the view in case user travels it in the first time
+	// init sort constraint for the view if it hasn't been seen before
 	if _, found := ct.State.viewSorts[viewName]; !found {
 		ct.State.viewSorts[viewName] = &sortConstraint{DefaultSortBy, false}
 	}

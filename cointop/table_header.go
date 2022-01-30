@@ -217,11 +217,11 @@ func (ct *Cointop) UpdateTableHeader() error {
 		arrow := " "
 		colorfn := baseColor
 		if !noSort {
-			corSortCons := ct.State.viewSorts[ct.State.selectedView]
-			if corSortCons.sortBy == col {
+			currentSortCons := ct.State.viewSorts[ct.State.selectedView]
+			if currentSortCons.sortBy == col {
 				colorfn = ct.colorscheme.TableHeaderColumnActiveSprintf()
 				arrow = ArrowUp
-				if corSortCons.sortDesc {
+				if currentSortCons.sortDesc {
 					arrow = ArrowDown
 				}
 			}

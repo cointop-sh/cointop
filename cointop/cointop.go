@@ -289,11 +289,11 @@ func NewCointop(config *Config) (*Cointop, error) {
 			selectedChartRange:    DefaultChartRange,
 			shortcutKeys:          DefaultShortcuts(),
 			selectedView:          CoinsView,
+			page:                  0,
+			perPage:               int(perPage),
 			viewSorts: map[string]*sortConstraint{
 				CoinsView: {DefaultSortBy, false},
 			},
-			page:    0,
-			perPage: int(perPage),
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry),
 			},

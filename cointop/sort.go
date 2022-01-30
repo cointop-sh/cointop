@@ -89,7 +89,7 @@ func (ct *Cointop) Sort(sortCons *sortConstraint, list []*Coin, renderHeaders bo
 // SortAsc sorts list of coins in ascending order
 func (ct *Cointop) SortAsc() error {
 	log.Debug("SortAsc()")
-	ct.State.viewSorts[ct.State.selectedView].sortDesc = true
+	ct.State.viewSorts[ct.State.selectedView].sortDesc = false
 	ct.UpdateTable()
 	return nil
 }
