@@ -9,9 +9,10 @@ func Test_getStructHash(t *testing.T) {
 	}
 
 	tests := []struct {
-		name string
-		args args
-		want bool
+		name    string
+		args    args
+		wantErr bool
+		want    bool
 	}{
 		{
 			name: "the same structs",
@@ -74,11 +75,34 @@ func Test_getStructHash(t *testing.T) {
 			},
 			want: false,
 		},
+		{
+			name: "error occurs at str1 when struct is nil",
+			args: args{
+				str1: nil,
+				str2: struct {
+					Name       string
+					Age        int
+					Properties struct {
+						P7D  int
+						P10D int
+					}
+				}{},
+			},
+			wantErr: true,
+			want:    false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			cp := getStructHash(tt.args.str1) == getStructHash(tt.args.str2)
-			if cp != tt.want {
+			hash1, err1 := getStructHash(tt.args.str1)
+			hash2, _ := getStructHash(tt.args.str2)
+
+			if err1 != nil && !tt.wantErr {
+				t.Errorf("getStructHash() error = %v, wantErr %v", err1, tt.wantErr)
+				return
+			}
+
+			if cp := hash1 == hash2; cp != tt.want {
 				t.Errorf("getStructHash() = %v, want %v", cp, tt.want)
 			}
 		})

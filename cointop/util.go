@@ -2,16 +2,15 @@ package cointop
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/gob"
 	"fmt"
-	"reflect"
 	"regexp"
 	"strings"
 	"sync"
 
 	"github.com/cointop-sh/cointop/pkg/open"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/blake2b"
 )
 
 // OpenLink opens the url in a browser
@@ -69,30 +68,11 @@ func normalizeFloatString(input string, allowNegative bool) string {
 	return ""
 }
 
-func getStructHash(x interface{}) string {
-	raw := make(map[string]string)
-	collectTypeFieldsAsMap(reflect.TypeOf(x), raw)
-
-	h := sha256.New()
-	h.Write([]byte(fmt.Sprintf("%v", raw)))
-
-	return fmt.Sprintf("%x", h.Sum(nil))
-}
-
-func collectTypeFieldsAsMap(t reflect.Type, m map[string]string) {
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
-	}
-	if t.Kind() != reflect.Struct {
-		return
+func getStructHash(x interface{}) (string, error) {
+	b, err := GetBytes(x)
+	if err != nil {
+		return "", err
 	}
 
-	for i := 0; i < t.NumField(); i++ {
-		sf := t.Field(i)
-		m[sf.Name] = fmt.Sprintf("%v", sf)
-
-		if t.Kind() == reflect.Struct {
-			collectTypeFieldsAsMap(sf.Type, m)
-		}
-	}
+	return fmt.Sprintf("%x", blake2b.Sum256(b)), nil
 }

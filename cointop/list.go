@@ -31,7 +31,8 @@ func (ct *Cointop) UpdateCoins() error {
 
 	// cache miss or coin struct has been changed from the last time
 	isCacheMissed := allCoinsSlugMap == nil
-	isCoinStructHashChanged := getStructHash(Coin{}) != ct.config.CoinStructHash
+	currentCoinHash, _ := getStructHash(Coin{})
+	isCoinStructHashChanged := currentCoinHash != ct.config.CoinStructHash
 	if isCacheMissed || isCoinStructHashChanged {
 		log.Debug("UpdateCoins() cache miss or coin struct has changed")
 		ch := make(chan []types.Coin)
