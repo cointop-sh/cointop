@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/cointop-sh/cointop/pkg/ui"
@@ -203,6 +204,17 @@ func (ct *Cointop) RowLink() string {
 	return ct.api.CoinLink(coin.Slug)
 }
 
+// RowLink returns the row url link
+func (ct *Cointop) RowAltLink() string {
+	log.Debug("RowAltLink()")
+	coin := ct.HighlightedRowCoin()
+	if coin == nil {
+		return ""
+	}
+
+	return ct.GetAltCoinLink(coin)
+}
+
 // RowLinkShort returns a shortened version of the row url link
 func (ct *Cointop) RowLinkShort() string {
 	log.Debug("RowLinkShort()")
@@ -225,6 +237,20 @@ func (ct *Cointop) RowLinkShort() string {
 	}
 
 	return ""
+}
+
+func (ct *Cointop) GetAltCoinLink(coin *Coin) string {
+	if ct.State.altCoinLink == "" {
+		return ct.api.CoinLink(coin.Slug)
+	}
+
+	url := ct.State.altCoinLink
+	url = strings.Replace(url, "{{ID}}", coin.ID, -1)
+	url = strings.Replace(url, "{{NAME}}", coin.Name, -1)
+	url = strings.Replace(url, "{{RANK}}", strconv.Itoa(coin.Rank), -1)
+	url = strings.Replace(url, "{{SLUG}}", coin.Slug, -1)
+	url = strings.Replace(url, "{{SYMBOL}}", coin.Symbol, -1)
+	return url
 }
 
 // ToggleTableFullscreen toggles the table fullscreen mode

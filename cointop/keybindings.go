@@ -132,6 +132,8 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 		fn = ct.Keyfn(ct.NavigateLastLine)
 	case "open_link":
 		fn = ct.Keyfn(ct.OpenLink)
+	case "open_alt_link":
+		fn = ct.Keyfn(ct.OpenAltLink)
 	case "refresh":
 		fn = ct.Keyfn(ct.Refresh)
 	case "sort_column_asc":

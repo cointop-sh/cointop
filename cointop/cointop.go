@@ -99,6 +99,7 @@ type State struct {
 	favoritesCompactNotation bool
 	portfolioCompactNotation bool
 	enableMouse              bool
+	altCoinLink              string
 }
 
 // Cointop cointop
@@ -198,6 +199,9 @@ var DefaultCompactNotation = false
 
 // DefaultEnableMouse ...
 var DefaultEnableMouse = true
+
+// DefaultAltCoinLink ...
+var DefaultAltCoinLink = ""
 
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
@@ -305,6 +309,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			},
 			compactNotation:          DefaultCompactNotation,
 			enableMouse:              DefaultEnableMouse,
+			altCoinLink:              DefaultAltCoinLink,
 			tableCompactNotation:     DefaultCompactNotation,
 			favoritesCompactNotation: DefaultCompactNotation,
 			portfolioCompactNotation: DefaultCompactNotation,

@@ -49,12 +49,11 @@ type ConfigFileConfig struct {
 	RefreshRate       interface{}            `toml:"refresh_rate"`
 	CoinStructHash    interface{}            `toml:"coin_struct_version"`
 	CacheDir          interface{}            `toml:"cache_dir"`
-
-	CompactNotation interface{} `toml:"compact_notation"`
-	EnableMouse     interface{} `toml:"enable_mouse"`
-
-	Table map[string]interface{} `toml:"table"`
-	Chart map[string]interface{} `toml:"chart"`
+	CompactNotation   interface{}            `toml:"compact_notation"`
+	EnableMouse       interface{}            `toml:"enable_mouse"`
+	AltCoinLink       interface{}            `toml:"alt_coin_link"` // TODO: should really be in API-specific section
+	Table             map[string]interface{} `toml:"table"`
+	Chart             map[string]interface{} `toml:"chart"`
 }
 
 // SetupConfig loads config file
@@ -77,6 +76,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadCacheDirFromConfig,
 		ct.loadCompactNotationFromConfig,
 		ct.loadEnableMouseFromConfig,
+		ct.loadAltCoinLinkFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -301,6 +301,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		CoinStructHash:    currentCoinHash,
 		CompactNotation:   ct.State.compactNotation,
 		EnableMouse:       ct.State.enableMouse,
+		AltCoinLink:       ct.State.altCoinLink,
 	}
 
 	var b bytes.Buffer
@@ -523,6 +524,16 @@ func (ct *Cointop) loadEnableMouseFromConfig() error {
 	log.Debug("loadEnableMouseFromConfig()")
 	if enableMouse, ok := ct.config.EnableMouse.(bool); ok {
 		ct.State.enableMouse = enableMouse
+	}
+
+	return nil
+}
+
+// loadAltCoinLinkFromConfig loads AltCoinLink setting from config file to struct
+func (ct *Cointop) loadAltCoinLinkFromConfig() error {
+	log.Debug("loadAltCoinLinkFromConfig()")
+	if altCoinLink, ok := ct.config.AltCoinLink.(string); ok {
+		ct.State.altCoinLink = altCoinLink
 	}
 
 	return nil

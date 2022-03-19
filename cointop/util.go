@@ -20,6 +20,13 @@ func (ct *Cointop) OpenLink() error {
 	return nil
 }
 
+// OpenLink opens the alternate url in a browser
+func (ct *Cointop) OpenAltLink() error {
+	log.Debug("OpenAltLink()")
+	open.URL(ct.RowAltLink())
+	return nil
+}
+
 // GetBytes returns the interface in bytes form
 func GetBytes(key interface{}) ([]byte, error) {
 	var buf bytes.Buffer

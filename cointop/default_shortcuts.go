@@ -20,6 +20,7 @@ func DefaultShortcuts() map[string]string {
 		"ctrl+d":     "page_down",
 		"ctrl+f":     "open_search",
 		"ctrl+n":     "next_page",
+		"ctrl+o":     "open_alt_link",
 		"ctrl+p":     "previous_page",
 		"ctrl+r":     "refresh",
 		"ctrl+R":     "refresh",
