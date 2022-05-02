@@ -265,7 +265,7 @@ docker-run-ssh:
 	docker run -p 2222:22 -v ~/.ssh/demo:/keys -v ~/.cache/cointop:/tmp/cointop_config --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
 
 ssh-server:
-	go run cmd/cointop/cointop.go server -p 2222
+	go run cmd/cointop/cointop.go server -p 2222 -k ~/.ssh/demo/id_rsa
 
 ssh-client:
 	ssh localhost -p 2222
