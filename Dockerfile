@@ -1,4 +1,5 @@
 FROM golang:alpine AS build
+#----------------- prime --
 ARG VERSION
 RUN wget \
   --output-document "/cointop-$VERSION.tar.gz" \
