@@ -67,7 +67,7 @@ type State struct {
 	keepRowFocusOnSort         bool
 	lastSelectedRowIndex       int
 	marketBarHeight            int
-	maxPages                   int
+	maxPages                   uint
 	page                       int
 	perPage                    int
 	portfolio                  *Portfolio
@@ -282,7 +282,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			hidePortfolioBalances: config.HidePortfolioBalances,
 			keepRowFocusOnSort:    false,
 			marketBarHeight:       1,
-			maxPages:              int(maxPages),
+			maxPages:              maxPages,
 			onlyTable:             config.OnlyTable,
 			onlyChart:             config.OnlyChart,
 			refreshRate:           60 * time.Second,
@@ -423,7 +423,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 	if ct.apiChoice == CoinMarketCap {
 		ct.api = api.NewCMC(ct.apiKeys.cmc)
 	} else if ct.apiChoice == CoinGecko {
-		ct.api = api.NewCG(perPage, maxPages)
+		ct.api = api.NewCG(perPage, ct.State.maxPages)
 	} else {
 		return nil, ErrInvalidAPIChoice
 	}

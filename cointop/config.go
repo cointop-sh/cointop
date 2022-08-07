@@ -52,6 +52,7 @@ type ConfigFileConfig struct {
 	CompactNotation   interface{}            `toml:"compact_notation"`
 	EnableMouse       interface{}            `toml:"enable_mouse"`
 	AltCoinLink       interface{}            `toml:"alt_coin_link"` // TODO: should really be in API-specific section
+	MaxPages          interface{}            `toml:"max_pages"`
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -79,6 +80,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadAltCoinLinkFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
+		ct.loadMaxPagesFromConfig,
 	}
 
 	for _, f := range loaders {
@@ -302,6 +304,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		CompactNotation:   ct.State.compactNotation,
 		EnableMouse:       ct.State.enableMouse,
 		AltCoinLink:       ct.State.altCoinLink,
+		MaxPages:          ct.State.maxPages,
 	}
 
 	var b bytes.Buffer
@@ -741,6 +744,15 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 			return ErrInvalidPriceAlert
 		}
 		ct.State.priceAlerts.SoundEnabled = enabled
+	}
+
+	return nil
+}
+
+func (ct *Cointop) loadMaxPagesFromConfig() error {
+	log.Debug("loadMaxPagesFromConfig()")
+	if MaxPages, ok := ct.config.MaxPages.(int64); ok {
+		ct.State.maxPages = uint(MaxPages)
 	}
 
 	return nil
