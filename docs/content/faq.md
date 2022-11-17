@@ -517,6 +517,22 @@ draft: false
   cointop server -k ~/.ssh/id_rsa [...]
   ```
 
+## How do I fix the error `no matching host key type found. Their offer: ssh-rsa` when trying to SSH?
+
+Use the following flag when connecting to the SSH server:
+
+  ```bash
+  ssh -oHostKeyAlgorithms=+ssh-rsa cointop.sh
+  ```
+
+You can also add this config to the `~/.ssh/config` file so you don't have to use the flag every time:
+
+```
+Host cointop.sh
+  HostName cointop.sh
+  HostKeyAlgorithms=+ssh-rsa
+```
+
 ## Why doesn't the version number work when I install with `go get`?
 
   The version number is read from the git tag during the build process but this requires the `GO111MODULE` environment variable to be set in order for Go to read the build information:

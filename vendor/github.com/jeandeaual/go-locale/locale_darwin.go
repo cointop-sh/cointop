@@ -1,3 +1,4 @@
+//go:build darwin && !ios
 // +build darwin,!ios
 
 package locale
@@ -10,12 +11,14 @@ import (
 	"syscall"
 )
 
-func execCommand(cmd string, args ...string) (status int, out []byte, err error) {
+func execCommand(cmd string, args ...string) (status int, out string, err error) {
+	var bytesOut []byte
 	status = -1
 	command := exec.Command(cmd, args...)
 
 	// Execute the command and get the standard and error outputs
-	out, err = command.CombinedOutput()
+	bytesOut, err = command.CombinedOutput()
+	out = string(bytesOut)
 	if err != nil {
 		return
 	}
@@ -35,17 +38,23 @@ func GetLocale() (string, error) {
 		return "", fmt.Errorf("cannot determine locale: %v (output: %s)", err, output)
 	}
 
-	return strings.TrimRight(strings.Replace(string(output), "_", "-", 1), "\n"), nil
+	// defaults read -g AppleLocale can return a string containing additional
+	// information after the locale, e.g. "en_US@currency=USD"
+	if idx := strings.Index(output, "@"); idx != -1 {
+		output = output[:idx]
+	}
+
+	return strings.TrimRight(strings.Replace(output, "_", "-", 1), "\n"), nil
 }
 
 // appleLanguagesRegex is used to parse the output of "defaults read -g AppleLanguages"
 // e.g.:
 // (
-//     "en-US",
+//     en,
 //     "fr-FR",
 //     "ja-JP"
 // )
-var appleLanguagesRegex = regexp.MustCompile(`"([a-z]{2}-[A-Z]{2})"`)
+var appleLanguagesRegex = regexp.MustCompile(`([a-z]{2}(?:-[A-Z]{2})?)`)
 
 // GetLocales retrieves the IETF BCP 47 language tags set on the system.
 func GetLocales() ([]string, error) {
@@ -54,7 +63,7 @@ func GetLocales() ([]string, error) {
 		return nil, fmt.Errorf("cannot determine locale: %v (output: %s)", err, output)
 	}
 
-	matches := appleLanguagesRegex.FindAllStringSubmatch(string(output), -1)
+	matches := appleLanguagesRegex.FindAllStringSubmatch(output, -1)
 	if len(matches) == 0 {
 		return nil, fmt.Errorf("invalid output from \"defaults read -g AppleLanguages\": %s", output)
 	}

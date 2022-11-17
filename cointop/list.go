@@ -29,9 +29,12 @@ func (ct *Cointop) UpdateCoins() error {
 		log.Debug("UpdateCoins() soft cache hit")
 	}
 
-	// cache miss
-	if allCoinsSlugMap == nil {
-		log.Debug("UpdateCoins() cache miss")
+	// cache miss or coin struct has been changed from the last time
+	isCacheMissed := allCoinsSlugMap == nil
+	currentCoinHash, _ := getStructHash(Coin{})
+	isCoinStructHashChanged := currentCoinHash != ct.config.CoinStructHash
+	if isCacheMissed || isCoinStructHashChanged {
+		log.Debug("UpdateCoins() cache miss or coin struct has changed")
 		ch := make(chan []types.Coin)
 		err = ct.api.GetAllCoinData(ct.State.currencyConversion, ch)
 		if err != nil {
@@ -174,7 +177,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	}
 
 	time.AfterFunc(10*time.Millisecond, func() {
-		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+		ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.coins, true)
 		ct.UpdateTable()
 	})
 }

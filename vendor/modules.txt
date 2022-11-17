@@ -5,8 +5,8 @@ github.com/BurntSushi/toml/internal
 # github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d
 ## explicit
 github.com/acarl005/stripansi
-# github.com/anaskhan96/soup v1.0.1
-## explicit
+# github.com/anaskhan96/soup v1.2.4
+## explicit; go 1.13
 github.com/anaskhan96/soup
 # github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be
 ## explicit; go 1.13
@@ -23,7 +23,7 @@ github.com/antonmedv/expr/optimizer
 github.com/antonmedv/expr/parser
 github.com/antonmedv/expr/parser/lexer
 github.com/antonmedv/expr/vm
-# github.com/creack/pty v1.1.16
+# github.com/creack/pty v1.1.17
 ## explicit; go 1.13
 github.com/creack/pty
 # github.com/fatih/color v1.13.0
@@ -82,14 +82,14 @@ github.com/gliderlabs/ssh
 # github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4
 ## explicit
 github.com/go-toast/toast
-# github.com/godbus/dbus/v5 v5.0.4
+# github.com/godbus/dbus/v5 v5.0.6
 ## explicit; go 1.12
 github.com/godbus/dbus/v5
 # github.com/goodsign/monday v1.0.0
 ## explicit; go 1.13
 github.com/goodsign/monday
-# github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1
-## explicit
+# github.com/gopherjs/gopherjs v0.0.0-20211111143520-d0d5ecc1a356
+## explicit; go 1.17
 github.com/gopherjs/gopherjs/js
 # github.com/gopherjs/gopherwasm v1.1.0
 ## explicit
@@ -97,15 +97,13 @@ github.com/gopherjs/gopherwasm/js
 # github.com/inconshreveable/mousetrap v1.0.0
 ## explicit
 github.com/inconshreveable/mousetrap
-# github.com/jeandeaual/go-locale v0.0.0-20210323163322-5cf4ff553a8d
+# github.com/jeandeaual/go-locale v0.0.0-20211014152413-b809787f45c8
 ## explicit; go 1.12
 github.com/jeandeaual/go-locale
-# github.com/lucasb-eyer/go-colorful v1.0.3
+# github.com/lucasb-eyer/go-colorful v1.2.0
 ## explicit; go 1.12
 github.com/lucasb-eyer/go-colorful
-# github.com/maruel/panicparse v1.6.1
-## explicit; go 1.11
-# github.com/mattn/go-colorable v0.1.9
+# github.com/mattn/go-colorable v0.1.11
 ## explicit; go 1.13
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.14
@@ -146,23 +144,24 @@ github.com/spf13/pflag
 # github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af
 ## explicit
 github.com/tadvi/systray
-# golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
+# golang.org/x/crypto v0.0.0-20220315160706-3147a52a75dd
 ## explicit; go 1.17
+golang.org/x/crypto/blake2b
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/chacha20
 golang.org/x/crypto/curve25519
 golang.org/x/crypto/curve25519/internal/field
 golang.org/x/crypto/ed25519
-golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/poly1305
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/ssh
 golang.org/x/crypto/ssh/internal/bcrypt_pbkdf
-# golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
-## explicit; go 1.11
+# golang.org/x/net v0.0.0-20211118161319-6a13c67c3ce4
+## explicit; go 1.17
 golang.org/x/net/html
 golang.org/x/net/html/atom
-# golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c
+golang.org/x/net/html/charset
+# golang.org/x/sys v0.0.0-20211117180635-dee7805ff2e1
 ## explicit; go 1.17
 golang.org/x/sys/cpu
 golang.org/x/sys/internal/unsafeheader
@@ -170,13 +169,21 @@ golang.org/x/sys/plan9
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 golang.org/x/sys/windows/registry
-# golang.org/x/term v0.0.0-20201210144234-2321bbc49cbf
-## explicit; go 1.11
+# golang.org/x/term v0.0.0-20210927222741-03fcf44c2211
+## explicit; go 1.17
 golang.org/x/term
 # golang.org/x/text v0.3.7
 ## explicit; go 1.17
 golang.org/x/text/encoding
+golang.org/x/text/encoding/charmap
+golang.org/x/text/encoding/htmlindex
+golang.org/x/text/encoding/internal
 golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/encoding/japanese
+golang.org/x/text/encoding/korean
+golang.org/x/text/encoding/simplifiedchinese
+golang.org/x/text/encoding/traditionalchinese
+golang.org/x/text/encoding/unicode
 golang.org/x/text/feature/plural
 golang.org/x/text/internal
 golang.org/x/text/internal/catmsg
@@ -186,7 +193,9 @@ golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/number
 golang.org/x/text/internal/stringset
 golang.org/x/text/internal/tag
+golang.org/x/text/internal/utf8internal
 golang.org/x/text/language
 golang.org/x/text/message
 golang.org/x/text/message/catalog
+golang.org/x/text/runes
 golang.org/x/text/transform

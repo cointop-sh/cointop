@@ -19,7 +19,7 @@ import (
 )
 
 // FilePerm is the default file permissions
-var FilePerm = os.FileMode(0644)
+var FilePerm = os.FileMode(0o644)
 
 // ErrInvalidPriceAlert is error for invalid price alert value
 var ErrInvalidPriceAlert = errors.New("invalid price alert value")
@@ -47,9 +47,11 @@ type ConfigFileConfig struct {
 	API               interface{}            `toml:"api"`
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
+	CoinStructHash    interface{}            `toml:"coin_struct_version"`
 	CacheDir          interface{}            `toml:"cache_dir"`
 	CompactNotation   interface{}            `toml:"compact_notation"`
 	EnableMouse       interface{}            `toml:"enable_mouse"`
+	AltCoinLink       interface{}            `toml:"alt_coin_link"` // TODO: should really be in API-specific section
 	Table             map[string]interface{} `toml:"table"`
 	Chart             map[string]interface{} `toml:"chart"`
 }
@@ -74,6 +76,7 @@ func (ct *Cointop) SetupConfig() error {
 		ct.loadCacheDirFromConfig,
 		ct.loadCompactNotationFromConfig,
 		ct.loadEnableMouseFromConfig,
+		ct.loadAltCoinLinkFromConfig,
 		ct.loadPriceAlertsFromConfig,
 		ct.loadPortfolioFromConfig,
 	}
@@ -278,7 +281,9 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		"height":    ct.State.chartHeight,
 	}
 
-	var inputs = &ConfigFileConfig{
+	currentCoinHash, _ := getStructHash(Coin{})
+
+	inputs := &ConfigFileConfig{
 		API:               ct.apiChoice,
 		Colorscheme:       ct.colorschemeName,
 		CoinMarketCap:     cmcIfc,
@@ -293,8 +298,10 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
 		Chart:             chartMapIfc,
+		CoinStructHash:    currentCoinHash,
 		CompactNotation:   ct.State.compactNotation,
 		EnableMouse:       ct.State.enableMouse,
+		AltCoinLink:       ct.State.altCoinLink,
 	}
 
 	var b bytes.Buffer
@@ -517,6 +524,16 @@ func (ct *Cointop) loadEnableMouseFromConfig() error {
 	log.Debug("loadEnableMouseFromConfig()")
 	if enableMouse, ok := ct.config.EnableMouse.(bool); ok {
 		ct.State.enableMouse = enableMouse
+	}
+
+	return nil
+}
+
+// loadAltCoinLinkFromConfig loads AltCoinLink setting from config file to struct
+func (ct *Cointop) loadAltCoinLinkFromConfig() error {
+	log.Debug("loadAltCoinLinkFromConfig()")
+	if altCoinLink, ok := ct.config.AltCoinLink.(string); ok {
+		ct.State.altCoinLink = altCoinLink
 	}
 
 	return nil

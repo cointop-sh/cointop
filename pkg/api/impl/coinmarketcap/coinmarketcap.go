@@ -77,8 +77,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int) ([]apitypes.C
 		}
 
 		ret = append(ret, apitypes.Coin{
-			// TODO: Fix ID
-			ID:               util.FormatID(v.Name),
+			ID:               util.FormatID(fmt.Sprint(v.ID)),
 			Name:             util.FormatName(v.Name),
 			Symbol:           util.FormatSymbol(v.Symbol),
 			Rank:             util.FormatRank(v.CMCRank),
@@ -431,7 +430,7 @@ func getChartInterval(start, end int64) string {
 	return interval
 }
 
-// GetExchangeRate gets the current excange rate between two currencies
+// GetExchangeRate gets the current exchange rate between two currencies
 func (s *Service) GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) {
 	if convertFrom == convertTo {
 		return 1.0, nil

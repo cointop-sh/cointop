@@ -10,12 +10,20 @@ import (
 
 	"github.com/cointop-sh/cointop/pkg/open"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/blake2b"
 )
 
 // OpenLink opens the url in a browser
 func (ct *Cointop) OpenLink() error {
 	log.Debug("OpenLink()")
 	open.URL(ct.RowLink())
+	return nil
+}
+
+// OpenLink opens the alternate url in a browser
+func (ct *Cointop) OpenAltLink() error {
+	log.Debug("OpenAltLink()")
+	open.URL(ct.RowAltLink())
 	return nil
 }
 
@@ -65,4 +73,13 @@ func normalizeFloatString(input string, allowNegative bool) string {
 	}
 
 	return ""
+}
+
+func getStructHash(x interface{}) (string, error) {
+	b, err := GetBytes(x)
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", blake2b.Sum256(b)), nil
 }

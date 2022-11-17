@@ -631,7 +631,7 @@ func (ct *Cointop) SetPortfolioHoldings() error {
 
 // PortfolioEntry returns a portfolio entry
 func (ct *Cointop) PortfolioEntry(c *Coin) (*PortfolioEntry, bool) {
-	//log.Debug("PortfolioEntry()") // too many
+	// log.Debug("PortfolioEntry()") // too many
 	if c == nil {
 		return &PortfolioEntry{}, true
 	}
@@ -830,7 +830,7 @@ func (ct *Cointop) PrintHoldingsTable(options *TablePrintOptions) error {
 			return fmt.Errorf("the option %q is not a valid column name", sortBy)
 		}
 
-		ct.Sort(sortBy, sortDesc, holdings, true)
+		ct.Sort(&sortConstraint{sortBy: sortBy, sortDesc: sortDesc}, holdings, true)
 	}
 
 	if _, ok := outputFormats[format]; !ok {

@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/cointop-sh/cointop/pkg/ui"
@@ -80,16 +81,10 @@ func (ct *Cointop) UpdateTable() error {
 	} else if ct.IsPortfolioVisible() {
 		ct.State.coins = ct.GetPortfolioSlice()
 	} else {
-		// TODO: maintain state of previous sorting
-		if ct.State.sortBy == "holdings" {
-			ct.State.sortBy = "rank"
-			ct.State.sortDesc = false
-		}
-
 		ct.State.coins = ct.GetTableCoinsSlice()
 	}
 
-	ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+	ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.coins, true)
 	go ct.RefreshTable()
 	return nil
 }
@@ -209,6 +204,17 @@ func (ct *Cointop) RowLink() string {
 	return ct.api.CoinLink(coin.Slug)
 }
 
+// RowLink returns the row url link
+func (ct *Cointop) RowAltLink() string {
+	log.Debug("RowAltLink()")
+	coin := ct.HighlightedRowCoin()
+	if coin == nil {
+		return ""
+	}
+
+	return ct.GetAltCoinLink(coin)
+}
+
 // RowLinkShort returns a shortened version of the row url link
 func (ct *Cointop) RowLinkShort() string {
 	log.Debug("RowLinkShort()")
@@ -231,6 +237,20 @@ func (ct *Cointop) RowLinkShort() string {
 	}
 
 	return ""
+}
+
+func (ct *Cointop) GetAltCoinLink(coin *Coin) string {
+	if ct.State.altCoinLink == "" {
+		return ct.api.CoinLink(coin.Slug)
+	}
+
+	url := ct.State.altCoinLink
+	url = strings.Replace(url, "{{ID}}", coin.ID, -1)
+	url = strings.Replace(url, "{{NAME}}", coin.Name, -1)
+	url = strings.Replace(url, "{{RANK}}", strconv.Itoa(coin.Rank), -1)
+	url = strings.Replace(url, "{{SLUG}}", coin.Slug, -1)
+	url = strings.Replace(url, "{{SYMBOL}}", coin.Symbol, -1)
+	return url
 }
 
 // ToggleTableFullscreen toggles the table fullscreen mode
@@ -274,6 +294,11 @@ func (ct *Cointop) ToggleTableFullscreen() error {
 func (ct *Cointop) SetSelectedView(viewName string) {
 	ct.State.lastSelectedView = ct.State.selectedView
 	ct.State.selectedView = viewName
+
+	// init sort constraint for the view if it hasn't been seen before
+	if _, found := ct.State.viewSorts[viewName]; !found {
+		ct.State.viewSorts[viewName] = &sortConstraint{DefaultSortBy, false}
+	}
 }
 
 // ToggleSelectedView toggles between current table view and last selected table view

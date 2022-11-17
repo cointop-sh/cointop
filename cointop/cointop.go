@@ -35,6 +35,11 @@ type Views struct {
 	Input       *InputView
 }
 
+type sortConstraint struct {
+	sortBy   string
+	sortDesc bool
+}
+
 // State is the state preferences of cointop
 type State struct {
 	allCoins           []*Coin
@@ -77,8 +82,7 @@ type State struct {
 	selectedView               string
 	lastSelectedView           string
 	shortcutKeys               map[string]string
-	sortDesc                   bool
-	sortBy                     string
+	viewSorts                  map[string]*sortConstraint
 	tableOffsetX               int
 	onlyTable                  bool
 	onlyChart                  bool
@@ -95,6 +99,7 @@ type State struct {
 	favoritesCompactNotation bool
 	portfolioCompactNotation bool
 	enableMouse              bool
+	altCoinLink              string
 }
 
 // Cointop cointop
@@ -195,6 +200,9 @@ var DefaultCompactNotation = false
 // DefaultEnableMouse ...
 var DefaultEnableMouse = true
 
+// DefaultAltCoinLink ...
+var DefaultAltCoinLink = ""
+
 // DefaultMaxChartWidth ...
 var DefaultMaxChartWidth = 175
 
@@ -224,10 +232,6 @@ var DefaultFavoriteChar = "*"
 
 // NewCointop initializes cointop
 func NewCointop(config *Config) (*Cointop, error) {
-	if os.Getenv("DEBUG") != "" {
-		log.SetLevel(log.DebugLevel)
-	}
-
 	if config == nil {
 		config = &Config{}
 	}
@@ -284,9 +288,12 @@ func NewCointop(config *Config) (*Cointop, error) {
 			refreshRate:           60 * time.Second,
 			selectedChartRange:    DefaultChartRange,
 			shortcutKeys:          DefaultShortcuts(),
-			sortBy:                DefaultSortBy,
+			selectedView:          CoinsView,
 			page:                  0,
 			perPage:               int(perPage),
+			viewSorts: map[string]*sortConstraint{
+				CoinsView: {DefaultSortBy, false},
+			},
 			portfolio: &Portfolio{
 				Entries: make(map[string]*PortfolioEntry),
 			},
@@ -302,6 +309,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 			},
 			compactNotation:          DefaultCompactNotation,
 			enableMouse:              DefaultEnableMouse,
+			altCoinLink:              DefaultAltCoinLink,
 			tableCompactNotation:     DefaultCompactNotation,
 			favoritesCompactNotation: DefaultCompactNotation,
 			portfolioCompactNotation: DefaultCompactNotation,
@@ -317,7 +325,8 @@ func NewCointop(config *Config) (*Cointop, error) {
 			Input:       NewInputView(),
 		},
 	}
-	ct.initlog()
+
+	ct.setLogConfiguration()
 
 	err := ct.SetupConfig()
 	if err != nil {
@@ -452,7 +461,7 @@ func NewCointop(config *Config) (*Cointop, error) {
 		if max > 100 {
 			max = 100
 		}
-		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.allCoins, false)
+		ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.allCoins, false)
 		ct.State.coins = ct.State.allCoins[0:max]
 	}
 

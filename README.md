@@ -94,7 +94,7 @@ Cointop has been mentioned in:
 
 [![BTC Tip Jar](https://img.shields.io/badge/BTC-tip-yellow.svg?logo=bitcoin&style=flat)](https://www.blockchain.com/btc/address/3KdMW53vUMLPEC33xhHAUx4EFtvmXQF8Kf) `3KdMW53vUMLPEC33xhHAUx4EFtvmXQF8Kf`
 
-[![ETH Tip Jar](https://img.shields.io/badge/ETH-tip-blue.svg?logo=ethereum&style=flat)](https://etherscan.io/address/0x0072cdd7c3d9963ba69506ECf50e16E963B35bb1) `0x0072cdd7c3d9963ba69506ECf50e16E963B35bb1`
+[![ETH Tip Jar](https://img.shields.io/badge/ETH-tip-blue.svg?logo=ethereum&style=flat)](https://etherscan.io/address/0x9ed3D6793a6b74d8c9A998f5C4b50a25947D53aF) `0x9ed3D6793a6b74d8c9A998f5C4b50a25947D53aF`
 
 Thank you for tips! 🙏
 

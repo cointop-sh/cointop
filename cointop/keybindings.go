@@ -51,28 +51,30 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	mod := tcell.ModNone
 
 	// translate legacy and special names for keys
-	keyName := strings.TrimSpace(strings.Replace(s, "+", "-", -1))
-	split := strings.Split(keyName, "-")
-	if len(split) > 1 {
-		m := strings.ToLower(strings.TrimSpace(split[0]))
-		k := strings.TrimSpace(split[1])
-		k = keyMap(k)
-		if k == " " {
-			k = "Space" // fix mod+space
-		}
+	keyName := keyMap(strings.TrimSpace(s))
+	if len(keyName) > 1 {
+		keyName = strings.Replace(keyName, "+", "-", -1)
 
-		if m == "alt" {
-			mod = tcell.ModAlt
-			keyName = k
-		} else if m == "ctrl" {
-			// let the lookup handle it
-			keyName = m + "-" + k
-		} else {
-			keyName = m + "-" + k
+		split := strings.Split(keyName, "-")
+		if len(split) > 1 {
+			m := strings.ToLower(strings.TrimSpace(split[0]))
+			k := strings.TrimSpace(split[1])
+			k = keyMap(k)
+			if k == " " {
+				k = "Space" // fix mod+space
+			}
+
+			if m == "alt" {
+				mod = tcell.ModAlt
+				keyName = k
+			} else if m == "ctrl" {
+				// let the lookup handle it
+				keyName = m + "-" + k
+			} else {
+				keyName = m + "-" + k
+			}
+			// TODO: other mods?
 		}
-		// TODO: other mods?
-	} else {
-		keyName = keyMap(keyName)
 	}
 
 	// First try looking up keyname directly
@@ -95,7 +97,7 @@ func (ct *Cointop) ParseKeys(s string) (interface{}, tcell.ModMask) {
 	}
 
 	if key == nil {
-		log.Debugf("Could not map key descriptio '%s' to key", s)
+		log.Debugf("Could not map key '%s' to key", s)
 	}
 	return key, mod
 }
@@ -130,6 +132,8 @@ func (ct *Cointop) SetKeybindingAction(shortcutKey string, action string) error 
 		fn = ct.Keyfn(ct.NavigateLastLine)
 	case "open_link":
 		fn = ct.Keyfn(ct.OpenLink)
+	case "open_alt_link":
+		fn = ct.Keyfn(ct.OpenAltLink)
 	case "refresh":
 		fn = ct.Keyfn(ct.Refresh)
 	case "sort_column_asc":
