@@ -8,7 +8,7 @@ Release:        6%{?dist}
 Summary:        Interactive terminal based UI application for tracking cryptocurrencies
 License:        Apache-2.0
 URL:            https://cointop.sh
-Source0:        https://github.com/miguelmota/%{cointop}/archive/v%{version}.tar.gz
+Source0:        https://github.com/cointop-sh/%{cointop}/archive/v%{version}.tar.gz
 
 BuildRequires:  gcc
 BuildRequires:  golang >= 1.14
@@ -20,11 +20,11 @@ cointop is a fast and lightweight interactive terminal based UI application for 
 %setup -q -n %{name}-%{version}
 
 %build
-mkdir -p ./_build/src/github.com/miguelmota
-ln -s $(pwd) ./_build/src/github.com/miguelmota/%{name}
+mkdir -p ./_build/src/github.com/cointop-sh
+ln -s $(pwd) ./_build/src/github.com/cointop-sh/%{name}
 
 export GOPATH=$(pwd)/_build:%{gopath}
-GO111MODULE=off go build -ldflags="-linkmode=external -compressdwarf=false -X github.com/miguelmota/cointop/cointop.version=%{version}" -o x .
+GO111MODULE=off go build -ldflags="-linkmode=external -compressdwarf=false -X github.com/cointop-sh/cointop/cointop.version=%{version}" -o x .
 
 %install
 install -d %{buildroot}%{_bindir}

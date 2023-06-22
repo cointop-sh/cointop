@@ -27,15 +27,15 @@ import (
 */
 type MBarChart struct {
 	Block
-	BarColor   [NumberofColors]Attribute
+	BarColor   [NumberOfColors]Attribute
 	TextColor  Attribute
-	NumColor   [NumberofColors]Attribute
-	Data       [NumberofColors][]int
+	NumColor   [NumberOfColors]Attribute
+	Data       [NumberOfColors][]int
 	DataLabels []string
 	BarWidth   int
 	BarGap     int
 	labels     [][]rune
-	dataNum    [NumberofColors][][]rune
+	dataNum    [NumberOfColors][][]rune
 	numBar     int
 	scale      float64
 	max        int
@@ -102,11 +102,11 @@ func (bc *MBarChart) layout() {
 				bc.BarColor[i] = ColorBlack
 			} else {
 				bc.BarColor[i] = bc.BarColor[i-1] + 1
-				if bc.BarColor[i] > NumberofColors {
+				if bc.BarColor[i] > NumberOfColors {
 					bc.BarColor[i] = ColorBlack
 				}
 			}
-			bc.NumColor[i] = (NumberofColors + 1) - bc.BarColor[i] //Make NumColor opposite of barColor for visibility
+			bc.NumColor[i] = (NumberOfColors + 1) - bc.BarColor[i] //Make NumColor opposite of barColor for visibility
 		}
 	}
 

@@ -19,7 +19,7 @@ func (p *patcher) Exit(node *ast.Node) {
 	}
 }
 
-// EvaluateExpression evaulates a simple math expression string to a float64
+// EvaluateExpressionToFloat64 evaulates a simple math expression string to a float64
 func EvaluateExpressionToFloat64(input string, env interface{}) (float64, error) {
 	input = strings.TrimSpace(input)
 	if input == "" {
@@ -42,4 +42,24 @@ func EvaluateExpressionToFloat64(input string, env interface{}) (float64, error)
 		f64 = float64(ival)
 	}
 	return f64, nil
+}
+
+func EvaluateExpressionToString(input string, env interface{}) (string, error) {
+	input = strings.TrimSpace(input)
+	if input == "" {
+		return "", nil
+	}
+	program, err := expr.Compile(input, expr.Env(env))
+	if err != nil {
+		return "", err
+	}
+	result, err := expr.Run(program, env)
+	if err != nil {
+		return "", err
+	}
+	s, ok := result.(string)
+	if !ok {
+		return "", errors.New("expression did not return string type")
+	}
+	return s, nil
 }

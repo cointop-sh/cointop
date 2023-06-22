@@ -1,22 +1,30 @@
 package cmd
 
 import (
-	"github.com/miguelmota/cointop/cointop"
-	"github.com/miguelmota/cointop/pkg/filecache"
+	"fmt"
+	"os"
+
+	"github.com/cointop-sh/cointop/cointop"
 	"github.com/spf13/cobra"
 )
 
-// ResetCmd ...
+// ResetCmd will wipe cache and config file
 func ResetCmd() *cobra.Command {
-	cacheDir := filecache.DefaultCacheDir
+	config := os.Getenv("COINTOP_CONFIG")
+	cacheDir := os.Getenv("COINTOP_CACHE_DIR")
 
 	resetCmd := &cobra.Command{
 		Use:   "reset",
 		Short: "Resets the config and clear the cache",
 		Long:  `The reset command resets the config and clears the cache`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// NOTE: if reset command, reset but don't run cointop
-			return cointop.Reset(&cointop.ResetConfig{
+			ct, err := cointop.NewCointop(&cointop.Config{
+				ConfigFilepath: config,
+			})
+			if err != nil {
+				return err
+			}
+			return ct.Reset(&cointop.ResetConfig{
 				Log:      true,
 				CacheDir: cacheDir,
 			})
@@ -24,6 +32,7 @@ func ResetCmd() *cobra.Command {
 	}
 
 	resetCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, "Cache directory")
+	resetCmd.Flags().StringVarP(&config, "config", "c", config, fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
 
 	return resetCmd
 }

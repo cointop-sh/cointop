@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/miguelmota/cointop/cointop"
+	"github.com/cointop-sh/cointop/cointop"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +17,7 @@ func HoldingsCmd() *cobra.Command {
 	var config string
 	var sortBy string
 	var sortDesc bool
-	var format string = "table"
+	var format = "table"
 	var humanReadable bool
 	var filter []string
 	var cols []string

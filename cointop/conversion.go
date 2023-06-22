@@ -3,15 +3,18 @@ package cointop
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 
-	color "github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/pad"
+	fcolor "github.com/fatih/color"
+
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/mattn/go-runewidth"
 	log "github.com/sirupsen/logrus"
 )
 
-// FiatCurrencyNames is a mpa of currency symbols to names.
+// FiatCurrencyNames is a map of currency symbols to names.
 // Keep these in alphabetical order.
 var FiatCurrencyNames = map[string]string{
 	"AUD": "Australian Dollar",
@@ -175,9 +178,10 @@ func (ct *Cointop) UpdateConvertMenu() error {
 		}
 		shortcut := string(alphanumericcharacters[i])
 		if key == ct.State.currencyConversion {
-			shortcut = ct.colorscheme.MenuLabelActive(color.Bold("*"))
-			key = ct.colorscheme.Menu(color.Bold(key))
-			currency = ct.colorscheme.MenuLabelActive(color.Bold(currency))
+			Bold := fcolor.New(fcolor.Bold).SprintFunc()
+			shortcut = ct.colorscheme.MenuLabelActive(Bold("*"))
+			key = ct.colorscheme.Menu(Bold(key))
+			currency = ct.colorscheme.MenuLabelActive(Bold(currency))
 		} else {
 			key = ct.colorscheme.Menu(key)
 			currency = ct.colorscheme.MenuLabel(currency)
@@ -231,6 +235,10 @@ func (ct *Cointop) SetCurrencyConverstion(convert string) error {
 func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 	log.Debug("SetCurrencyConverstionFn()")
 	return func() error {
+		if !ct.State.convertMenuVisible {
+			return nil
+		}
+
 		ct.HideConvertMenu()
 
 		if err := ct.SetCurrencyConverstion(convert); err != nil {
@@ -240,7 +248,7 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 		if err := ct.Save(); err != nil {
 			return err
 		}
-
+		go ct.UpdateCurrentPageCoins()
 		go ct.RefreshAll()
 		return nil
 	}
@@ -249,7 +257,14 @@ func (ct *Cointop) SetCurrencyConverstionFn(convert string) func() error {
 // CurrencySymbol returns the symbol for the currency conversion
 func (ct *Cointop) CurrencySymbol() string {
 	log.Debug("CurrencySymbol()")
-	return CurrencySymbol(ct.State.currencyConversion)
+	symbol := CurrencySymbol(ct.State.currencyConversion)
+
+	width := runewidth.StringWidth(symbol)
+	if width > 1 {
+		symbol = pad.Right(symbol, width, " ")
+	}
+
+	return symbol
 }
 
 // ShowConvertMenu shows the convert menu view
@@ -292,4 +307,41 @@ func CurrencySymbol(currency string) string {
 	}
 
 	return "?"
+}
+
+// ConversionMouseLeftClick is called on mouse left click event
+func (ct *Cointop) ConversionMouseLeftClick() error {
+	v, x, y, err := ct.g.GetViewRelativeMousePosition(ct.g.CurrentEvent)
+	if err != nil {
+		return err
+	}
+
+	// Find the menu entry that includes the mouse position
+	line := v.BufferLines()[y]
+	matches := regexp.MustCompile(`\[ . \] \w+ [^\[]+`).FindAllStringIndex(line, -1)
+	for _, match := range matches {
+		if x >= match[0] && x <= match[1] {
+			s := line[match[0]:match[1]]
+			convert := strings.Split(s, " ")[3]
+			return ct.SetCurrencyConverstionFn(convert)()
+		}
+	}
+	return nil
+}
+
+// Convert converts an amount to another currency type
+func (ct *Cointop) Convert(convertFrom, convertTo string, amount float64) (float64, error) {
+	convertFrom = strings.ToLower(convertFrom)
+	convertTo = strings.ToLower(convertTo)
+
+	if convertFrom == convertTo {
+		return amount, nil
+	}
+
+	rate, err := ct.api.GetExchangeRate(convertFrom, convertTo, true)
+	if err != nil {
+		return 0, err
+	}
+
+	return rate * amount, nil
 }

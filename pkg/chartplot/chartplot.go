@@ -1,7 +1,7 @@
 package chartplot
 
 import (
-	"github.com/miguelmota/cointop/pkg/termui"
+	"github.com/cointop-sh/cointop/pkg/termui"
 )
 
 // ChartPlot ...
@@ -53,6 +53,11 @@ func (c *ChartPlot) SetData(data []float64) {
 	// use exponential notation.
 	// NOTE: data should be the correct width for rendering - see GetChartDataSize()
 	c.t.Data = data
+}
+
+// SetDataLabels ...
+func (c *ChartPlot) SetDataLabels(labels []string) {
+	c.t.DataLabels = labels
 }
 
 // GetChartDataSize ...

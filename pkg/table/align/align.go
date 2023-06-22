@@ -8,8 +8,8 @@ import (
 	"github.com/acarl005/stripansi"
 )
 
-// AlignLeft align left
-func AlignLeft(t string, n int) string {
+// Left align left
+func Left(t string, n int) string {
 	s := stripansi.Strip(t)
 	slen := utf8.RuneCountInString(s)
 	if slen > n {
@@ -19,8 +19,8 @@ func AlignLeft(t string, n int) string {
 	return fmt.Sprintf("%s%s", t, strings.Repeat(" ", n-slen))
 }
 
-// AlignRight align right
-func AlignRight(t string, n int) string {
+// Right align right
+func Right(t string, n int) string {
 	s := stripansi.Strip(t)
 	slen := utf8.RuneCountInString(s)
 	if slen > n {
@@ -30,8 +30,8 @@ func AlignRight(t string, n int) string {
 	return fmt.Sprintf("%s%s", strings.Repeat(" ", n-slen), t)
 }
 
-// AlignCenter align center
-func AlignCenter(t string, n int) string {
+// Center align center
+func Center(t string, n int) string {
 	s := stripansi.Strip(t)
 	slen := utf8.RuneCountInString(s)
 	if slen > n {

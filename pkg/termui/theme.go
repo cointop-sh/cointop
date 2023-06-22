@@ -111,7 +111,7 @@ func lookUpAttr(clrmap map[string]Attribute, name string) Attribute {
 
 	ns := strings.Split(name, ".")
 	for i := range ns {
-		nn := strings.Join(ns[i:len(ns)], ".")
+		nn := strings.Join(ns[i:], ".")
 		a, ok = ColorMap[nn]
 		if ok {
 			break
@@ -121,7 +121,7 @@ func lookUpAttr(clrmap map[string]Attribute, name string) Attribute {
 	return a
 }
 
-// 0<=r,g,b <= 5
+// ColorRGB return an Attribute for the given RGB (value 0-5)
 func ColorRGB(r, g, b int) Attribute {
 	within := func(n int) int {
 		if n < 0 {

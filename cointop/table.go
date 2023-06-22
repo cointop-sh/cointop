@@ -3,9 +3,10 @@ package cointop
 import (
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/ui"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -14,8 +15,7 @@ type TableView = ui.View
 
 // NewTableView returns a new table view
 func NewTableView() *TableView {
-	var view *TableView = ui.NewView("table")
-	return view
+	return ui.NewView("table")
 }
 
 const dots = "..."
@@ -81,16 +81,10 @@ func (ct *Cointop) UpdateTable() error {
 	} else if ct.IsPortfolioVisible() {
 		ct.State.coins = ct.GetPortfolioSlice()
 	} else {
-		// TODO: maintain state of previous sorting
-		if ct.State.sortBy == "holdings" {
-			ct.State.sortBy = "rank"
-			ct.State.sortDesc = false
-		}
-
 		ct.State.coins = ct.GetTableCoinsSlice()
 	}
 
-	ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+	ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.coins, true)
 	go ct.RefreshTable()
 	return nil
 }
@@ -98,7 +92,7 @@ func (ct *Cointop) UpdateTable() error {
 // GetTableCoinsSlice returns a slice of the table rows
 func (ct *Cointop) GetTableCoinsSlice() []*Coin {
 	log.Debug("GetTableCoinsSlice()")
-	sliced := []*Coin{}
+	var sliced []*Coin
 	start := ct.State.page * ct.State.perPage
 	end := start + ct.State.perPage
 	allCoins := ct.AllCoins()
@@ -198,7 +192,27 @@ func (ct *Cointop) RowLink() string {
 		return ""
 	}
 
-	return ct.api.CoinLink(coin.Name)
+	// TODO: Can remove this one after some releases
+	// because it is a way to force old client refresh coin to have a slug
+	if coin.Slug == "" {
+		if err := ct.UpdateCoin(coin); err != nil {
+			log.Debugf("RowLink() Update coin got err %s", err.Error())
+			return ""
+		}
+	}
+
+	return ct.api.CoinLink(coin.Slug)
+}
+
+// RowLink returns the row url link
+func (ct *Cointop) RowAltLink() string {
+	log.Debug("RowAltLink()")
+	coin := ct.HighlightedRowCoin()
+	if coin == nil {
+		return ""
+	}
+
+	return ct.GetAltCoinLink(coin)
 }
 
 // RowLinkShort returns a shortened version of the row url link
@@ -223,6 +237,20 @@ func (ct *Cointop) RowLinkShort() string {
 	}
 
 	return ""
+}
+
+func (ct *Cointop) GetAltCoinLink(coin *Coin) string {
+	if ct.State.altCoinLink == "" {
+		return ct.api.CoinLink(coin.Slug)
+	}
+
+	url := ct.State.altCoinLink
+	url = strings.Replace(url, "{{ID}}", coin.ID, -1)
+	url = strings.Replace(url, "{{NAME}}", coin.Name, -1)
+	url = strings.Replace(url, "{{RANK}}", strconv.Itoa(coin.Rank), -1)
+	url = strings.Replace(url, "{{SLUG}}", coin.Slug, -1)
+	url = strings.Replace(url, "{{SYMBOL}}", coin.Symbol, -1)
+	return url
 }
 
 // ToggleTableFullscreen toggles the table fullscreen mode
@@ -266,6 +294,11 @@ func (ct *Cointop) ToggleTableFullscreen() error {
 func (ct *Cointop) SetSelectedView(viewName string) {
 	ct.State.lastSelectedView = ct.State.selectedView
 	ct.State.selectedView = viewName
+
+	// init sort constraint for the view if it hasn't been seen before
+	if _, found := ct.State.viewSorts[viewName]; !found {
+		ct.State.viewSorts[viewName] = &sortConstraint{DefaultSortBy, false}
+	}
 }
 
 // ToggleSelectedView toggles between current table view and last selected table view

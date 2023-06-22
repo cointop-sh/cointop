@@ -11,19 +11,20 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
-	"github.com/miguelmota/cointop/pkg/pathutil"
-	"github.com/miguelmota/cointop/pkg/toml"
+	"github.com/cointop-sh/cointop/pkg/pathutil"
+	"github.com/cointop-sh/cointop/pkg/toml"
 	log "github.com/sirupsen/logrus"
 )
 
 // FilePerm is the default file permissions
-var FilePerm = os.FileMode(0644)
+var FilePerm = os.FileMode(0o644)
 
 // ErrInvalidPriceAlert is error for invalid price alert value
 var ErrInvalidPriceAlert = errors.New("invalid price alert value")
 
-// PossibleConfigPaths are the the possible config file paths.
+// PossibleConfigPaths are the possible config file paths.
 // NOTE: this is to support previous default config filepaths
 var PossibleConfigPaths = []string{
 	":PREFERRED_CONFIG_HOME:/cointop/config.toml",
@@ -46,57 +47,44 @@ type ConfigFileConfig struct {
 	API               interface{}            `toml:"api"`
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
+	CoinStructHash    interface{}            `toml:"coin_struct_version"`
 	CacheDir          interface{}            `toml:"cache_dir"`
+	CompactNotation   interface{}            `toml:"compact_notation"`
+	EnableMouse       interface{}            `toml:"enable_mouse"`
+	AltCoinLink       interface{}            `toml:"alt_coin_link"` // TODO: should really be in API-specific section
 	Table             map[string]interface{} `toml:"table"`
+	Chart             map[string]interface{} `toml:"chart"`
 }
 
 // SetupConfig loads config file
 func (ct *Cointop) SetupConfig() error {
-	log.Debug("SetupConfig()")
-	if err := ct.CreateConfigIfNotExists(); err != nil {
-		return err
+	type loadConfigFunc func() error
+	loaders := []loadConfigFunc{
+		ct.CreateConfigIfNotExists,
+		ct.ParseConfig,
+		ct.loadTableConfig,
+		ct.loadChartConfig,
+		ct.loadShortcutsFromConfig,
+		ct.loadFavoritesFromConfig,
+		ct.loadCurrencyFromConfig,
+		ct.loadDefaultViewFromConfig,
+		ct.loadDefaultChartRangeFromConfig,
+		ct.loadAPIKeysFromConfig,
+		ct.loadAPIChoiceFromConfig,
+		ct.loadColorschemeFromConfig,
+		ct.loadRefreshRateFromConfig,
+		ct.loadCacheDirFromConfig,
+		ct.loadCompactNotationFromConfig,
+		ct.loadEnableMouseFromConfig,
+		ct.loadAltCoinLinkFromConfig,
+		ct.loadPriceAlertsFromConfig,
+		ct.loadPortfolioFromConfig,
 	}
-	if err := ct.ParseConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadTableConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadShortcutsFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadFavoritesFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadCurrencyFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadDefaultViewFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadDefaultChartRangeFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadAPIKeysFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadAPIChoiceFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadColorschemeFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadRefreshRateFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadCacheDirFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadPriceAlertsFromConfig(); err != nil {
-		return err
-	}
-	if err := ct.loadPortfolioFromConfig(); err != nil {
-		return err
+
+	for _, f := range loaders {
+		if err := f(); err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -147,7 +135,7 @@ func (ct *Cointop) ConfigFilePath() string {
 	return pathutil.NormalizePath(ct.configFilepath)
 }
 
-// ConfigPath return the config file path
+// MakeConfigDir creates the directory for the config file
 func (ct *Cointop) MakeConfigDir() error {
 	log.Debug("MakeConfigDir()")
 	path := ct.ConfigDirPath()
@@ -231,48 +219,39 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		return favoritesIfc[i].(string) < favoritesIfc[j].(string)
 	})
 
-	var favoritesBySymbolIfc []interface{}
 	favoritesMapIfc := map[string]interface{}{
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		"symbols": favoritesBySymbolIfc,
-		"names":   favoritesIfc,
+		"names":            favoritesIfc,
+		"columns":          ct.State.favoritesTableColumns,
+		"character":        ct.State.favoriteChar,
+		"compact_notation": ct.State.favoritesCompactNotation,
 	}
 
-	var favoritesColumnsIfc interface{} = ct.State.favoritesTableColumns
-	favoritesMapIfc["columns"] = favoritesColumnsIfc
-
-	portfolioIfc := map[string]interface{}{}
 	var holdingsIfc [][]string
 	for name := range ct.State.portfolio.Entries {
 		entry, ok := ct.State.portfolio.Entries[name]
 		if !ok || entry.Coin == "" {
 			continue
 		}
-		var amount string = strconv.FormatFloat(entry.Holdings, 'f', -1, 64)
-		var coinName string = entry.Coin
-		var tuple []string = []string{coinName, amount}
+		tuple := []string{
+			entry.Coin,
+			strconv.FormatFloat(entry.Holdings, 'f', -1, 64),
+			strconv.FormatFloat(entry.BuyPrice, 'f', -1, 64),
+			entry.BuyCurrency,
+		}
 		holdingsIfc = append(holdingsIfc, tuple)
 	}
 	sort.Slice(holdingsIfc, func(i, j int) bool {
 		return holdingsIfc[i][0] < holdingsIfc[j][0]
 	})
-	portfolioIfc["holdings"] = holdingsIfc
-
-	var columnsIfc interface{} = ct.State.portfolioTableColumns
-	portfolioIfc["columns"] = columnsIfc
-
-	var currencyIfc interface{} = ct.State.currencyConversion
-	var defaultViewIfc interface{} = ct.State.defaultView
-	var defaultChartRangeIfc interface{} = ct.State.defaultChartRange
-	var colorschemeIfc interface{} = ct.colorschemeName
-	var refreshRateIfc interface{} = uint(ct.State.refreshRate.Seconds())
-	var cacheDirIfc interface{} = ct.State.cacheDir
+	portfolioIfc := map[string]interface{}{
+		"holdings":         holdingsIfc,
+		"columns":          ct.State.portfolioTableColumns,
+		"compact_notation": ct.State.portfolioCompactNotation,
+	}
 
 	cmcIfc := map[string]interface{}{
 		"pro_api_key": ct.apiKeys.cmc,
 	}
-
-	var apiChoiceIfc interface{} = ct.apiChoice
 
 	var priceAlertsIfc []interface{}
 	for _, priceAlert := range ct.State.priceAlerts.Entries {
@@ -291,26 +270,38 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		//"sound":  ct.State.priceAlerts.SoundEnabled,
 	}
 
-	var coinsTableColumnsIfc interface{} = ct.State.coinsTableColumns
-	tableMapIfc := map[string]interface{}{}
-	tableMapIfc["columns"] = coinsTableColumnsIfc
-	var keepRowFocusOnSortIfc interface{} = ct.State.keepRowFocusOnSort
-	tableMapIfc["keep_row_focus_on_sort"] = keepRowFocusOnSortIfc
+	tableMapIfc := map[string]interface{}{
+		"columns":                ct.State.coinsTableColumns,
+		"keep_row_focus_on_sort": ct.State.keepRowFocusOnSort,
+		"compact_notation":       ct.State.tableCompactNotation,
+	}
 
-	var inputs = &ConfigFileConfig{
-		API:               apiChoiceIfc,
-		Colorscheme:       colorschemeIfc,
+	chartMapIfc := map[string]interface{}{
+		"max_width": ct.State.maxChartWidth,
+		"height":    ct.State.chartHeight,
+	}
+
+	currentCoinHash, _ := getStructHash(Coin{})
+
+	inputs := &ConfigFileConfig{
+		API:               ct.apiChoice,
+		Colorscheme:       ct.colorschemeName,
 		CoinMarketCap:     cmcIfc,
-		Currency:          currencyIfc,
-		DefaultView:       defaultViewIfc,
-		DefaultChartRange: defaultChartRangeIfc,
+		Currency:          ct.State.currencyConversion,
+		DefaultView:       ct.State.defaultView,
+		DefaultChartRange: ct.State.defaultChartRange,
 		Favorites:         favoritesMapIfc,
-		RefreshRate:       refreshRateIfc,
+		RefreshRate:       uint(ct.State.refreshRate.Seconds()),
 		Shortcuts:         shortcutsIfcs,
 		Portfolio:         portfolioIfc,
 		PriceAlerts:       priceAlertsMapIfc,
-		CacheDir:          cacheDirIfc,
+		CacheDir:          ct.State.cacheDir,
 		Table:             tableMapIfc,
+		Chart:             chartMapIfc,
+		CoinStructHash:    currentCoinHash,
+		CompactNotation:   ct.State.compactNotation,
+		EnableMouse:       ct.State.enableMouse,
+		AltCoinLink:       ct.State.altCoinLink,
 	}
 
 	var b bytes.Buffer
@@ -334,6 +325,27 @@ func (ct *Cointop) loadTableConfig() error {
 	keepRowFocusOnSortIfc, ok := ct.config.Table["keep_row_focus_on_sort"]
 	if ok {
 		ct.State.keepRowFocusOnSort = keepRowFocusOnSortIfc.(bool)
+	}
+
+	if compactNotation, ok := ct.config.Table["compact_notation"]; ok {
+		ct.State.tableCompactNotation = compactNotation.(bool)
+	}
+
+	return nil
+}
+
+// LoadChartConfig loads chart config from toml config into state struct
+func (ct *Cointop) loadChartConfig() error {
+	log.Debugf("loadChartConfig()")
+	maxChartWidthIfc, ok := ct.config.Chart["max_width"]
+	if ok {
+		ct.State.maxChartWidth = int(maxChartWidthIfc.(int64))
+	}
+
+	chartHeightIfc, ok := ct.config.Chart["height"]
+	if ok {
+		ct.State.chartHeight = int(chartHeightIfc.(int64))
+		ct.State.lastChartHeight = ct.State.chartHeight
 	}
 	return nil
 }
@@ -367,14 +379,44 @@ func (ct *Cointop) loadTableColumnsFromConfig() error {
 // LoadShortcutsFromConfig loads keyboard shortcuts from config file to struct
 func (ct *Cointop) loadShortcutsFromConfig() error {
 	log.Debug("loadShortcutsFromConfig()")
+
+	// Load the shortcut config into a key:action map (filtering to actions that exist). Keep track of actions.
+	config := make(map[string]string)
+	actions := make(map[string]bool)
 	for k, ifc := range ct.config.Shortcuts {
 		if v, ok := ifc.(string); ok {
 			if !ct.ActionExists(v) {
+				log.Debugf("Shortcut '%s'=>%s is not a valid action", k, v)
 				continue
 			}
-			ct.State.shortcutKeys[k] = v
+			config[k] = v
+			actions[v] = true
 		}
 	}
+
+	// Count how many keys are configured per action.
+	actionCount := make(map[string]int)
+	for _, action := range ct.State.shortcutKeys {
+		actionCount[action] += 1
+	}
+
+	// merge defaults into the loaded config - if the key is not defined, and the action is not found, add it
+	for key, action := range ct.State.shortcutKeys {
+		if _, ok := config[key]; ok {
+			// k is already in the config - ignore it
+		} else if _, ok := actions[action]; ok {
+			if actionCount[action] == 1 {
+				// action is already in the config - ignore it
+			} else {
+				// there are multiple bindings, add them anyway
+				config[key] = action // add action
+			}
+		} else {
+			config[key] = action // add action
+		}
+	}
+	ct.State.shortcutKeys = config
+
 	return nil
 }
 
@@ -467,6 +509,36 @@ func (ct *Cointop) loadCacheDirFromConfig() error {
 	return nil
 }
 
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadCompactNotationFromConfig() error {
+	log.Debug("loadCompactNotationFromConfig()")
+	if compactNotation, ok := ct.config.CompactNotation.(bool); ok {
+		ct.State.compactNotation = compactNotation
+	}
+
+	return nil
+}
+
+// loadCompactNotationFromConfig loads compact-notation setting from config file to struct
+func (ct *Cointop) loadEnableMouseFromConfig() error {
+	log.Debug("loadEnableMouseFromConfig()")
+	if enableMouse, ok := ct.config.EnableMouse.(bool); ok {
+		ct.State.enableMouse = enableMouse
+	}
+
+	return nil
+}
+
+// loadAltCoinLinkFromConfig loads AltCoinLink setting from config file to struct
+func (ct *Cointop) loadAltCoinLinkFromConfig() error {
+	log.Debug("loadAltCoinLinkFromConfig()")
+	if altCoinLink, ok := ct.config.AltCoinLink.(string); ok {
+		ct.State.altCoinLink = altCoinLink
+	}
+
+	return nil
+}
+
 // LoadAPIChoiceFromConfig loads API choices from config file to struct
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
 	log.Debug("loadAPIKeysFromConfig()")
@@ -482,18 +554,21 @@ func (ct *Cointop) loadAPIChoiceFromConfig() error {
 func (ct *Cointop) loadFavoritesFromConfig() error {
 	log.Debug("loadFavoritesFromConfig()")
 	for k, valueIfc := range ct.config.Favorites {
+		if k == "character" {
+			if favoriteChar, ok := valueIfc.(string); ok {
+				if utf8.RuneCountInString(favoriteChar) != 1 {
+					return fmt.Errorf("invalid favorite-character. Must be one-character")
+				}
+				ct.State.favoriteChar = favoriteChar
+			}
+		} else if k == "compact_notation" {
+			ct.State.favoritesCompactNotation = valueIfc.(bool)
+		}
 		ifcs, ok := valueIfc.([]interface{})
 		if !ok {
 			continue
 		}
 		switch k {
-		// DEPRECATED: favorites by 'symbol' is deprecated because of collisions. Kept for backward compatibility.
-		case "symbols":
-			for _, ifc := range ifcs {
-				if v, ok := ifc.(string); ok {
-					ct.State.favoritesBySymbol[strings.ToUpper(v)] = true
-				}
-			}
 		case "names":
 			for _, ifc := range ifcs {
 				if v, ok := ifc.(string); ok {
@@ -542,33 +617,9 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				}
 			}
 		} else if key == "holdings" {
-			holdingsIfc, ok := valueIfc.([]interface{})
-			if !ok {
-				continue
-			}
-
-			for _, itemIfc := range holdingsIfc {
-				tupleIfc, ok := itemIfc.([]interface{})
-				if !ok {
-					continue
-				}
-				if len(tupleIfc) > 2 {
-					continue
-				}
-				name, ok := tupleIfc[0].(string)
-				if !ok {
-					continue
-				}
-
-				holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
-				if err != nil {
-					return nil
-				}
-
-				if err := ct.SetPortfolioEntry(name, holdings); err != nil {
-					return err
-				}
-			}
+			// Defer until the end to work around premature-save issue
+		} else if key == "compact_notation" {
+			ct.State.portfolioCompactNotation = valueIfc.(bool)
 		} else {
 			// Backward compatibility < v1.6.0
 			holdings, err := ct.InterfaceToFloat64(valueIfc)
@@ -576,12 +627,62 @@ func (ct *Cointop) loadPortfolioFromConfig() error {
 				return err
 			}
 
-			if err := ct.SetPortfolioEntry(key, holdings); err != nil {
+			if err := ct.SetPortfolioEntry(key, holdings, 0.0, ""); err != nil {
 				return err
 			}
 		}
 	}
 
+	// Process holdings last because it causes a ct.Save()
+	if valueIfc, ok := ct.config.Portfolio["holdings"]; ok {
+		if holdingsIfc, ok := valueIfc.([]interface{}); ok {
+			ct.loadPortfolioHoldingsFromConfig(holdingsIfc)
+		}
+	}
+
+	return nil
+}
+
+func (ct *Cointop) loadPortfolioHoldingsFromConfig(holdingsIfc []interface{}) error {
+	for _, itemIfc := range holdingsIfc {
+		tupleIfc, ok := itemIfc.([]interface{})
+		if !ok {
+			continue
+		}
+		if len(tupleIfc) > 4 {
+			continue
+		}
+		name, ok := tupleIfc[0].(string)
+		if !ok {
+			continue // was not a string
+		}
+
+		holdings, err := ct.InterfaceToFloat64(tupleIfc[1])
+		if err != nil {
+			return err // was not a float64
+		}
+
+		buyPrice := 0.0
+		if len(tupleIfc) >= 3 {
+			if buyPrice, err = ct.InterfaceToFloat64(tupleIfc[2]); err != nil {
+				return err
+			}
+		}
+
+		buyCurrency := ""
+		if len(tupleIfc) >= 4 {
+			if parseCurrency, ok := tupleIfc[3].(string); !ok {
+				return err // was not a string
+			} else {
+				buyCurrency = parseCurrency
+			}
+		}
+
+		// Watch out - this calls ct.Save() which may save a half-loaded configuration
+		if err := ct.SetPortfolioEntry(name, holdings, buyPrice, buyCurrency); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
@@ -645,7 +746,7 @@ func (ct *Cointop) loadPriceAlertsFromConfig() error {
 	return nil
 }
 
-// GetColorschemeColors loads colors from colorsheme file to struct
+// GetColorschemeColors loads colors from colorscheme file to struct
 func (ct *Cointop) GetColorschemeColors() (map[string]interface{}, error) {
 	log.Debug("GetColorschemeColors()")
 	var colors map[string]interface{}

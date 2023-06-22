@@ -4,12 +4,14 @@ import (
 	"sync"
 	"time"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/api/types"
 	log "github.com/sirupsen/logrus"
 )
 
-var coinslock sync.Mutex
-var updatecoinsmux sync.Mutex
+var (
+	coinslock      sync.Mutex
+	updatecoinsmux sync.Mutex
+)
 
 // UpdateCoins updates coins view
 func (ct *Cointop) UpdateCoins() error {
@@ -27,9 +29,12 @@ func (ct *Cointop) UpdateCoins() error {
 		log.Debug("UpdateCoins() soft cache hit")
 	}
 
-	// cache miss
-	if allCoinsSlugMap == nil {
-		log.Debug("UpdateCoins() cache miss")
+	// cache miss or coin struct has been changed from the last time
+	isCacheMissed := allCoinsSlugMap == nil
+	currentCoinHash, _ := getStructHash(Coin{})
+	isCoinStructHashChanged := currentCoinHash != ct.config.CoinStructHash
+	if isCacheMissed || isCoinStructHashChanged {
+		log.Debug("UpdateCoins() cache miss or coin struct has changed")
 		ch := make(chan []types.Coin)
 		err = ct.api.GetAllCoinData(ct.State.currencyConversion, ch)
 		if err != nil {
@@ -43,6 +48,22 @@ func (ct *Cointop) UpdateCoins() error {
 		ct.processCoinsMap(allCoinsSlugMap)
 	}
 
+	return nil
+}
+
+// UpdateCurrentPageCoins updates all the coins in the current page
+func (ct *Cointop) UpdateCurrentPageCoins() error {
+	log.Debugf("UpdateCurrentPageCoins(%d)", len(ct.State.coins))
+	currentPageCoins := make([]string, len(ct.State.coins))
+	for i, entry := range ct.State.coins {
+		currentPageCoins[i] = entry.Name
+	}
+
+	coins, err := ct.api.GetCoinDataBatch(currentPageCoins, ct.State.currencyConversion)
+	if err != nil {
+		return err
+	}
+	go ct.processCoins(coins)
 	return nil
 }
 
@@ -69,7 +90,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	for _, v := range coins {
 		k := v.Name
 
-		// Fix for https://github.com/miguelmota/cointop/issues/59
+		// Fix for https://github.com/cointop-sh/cointop/issues/59
 		// some APIs returns rank 0 for new coins
 		// or coins with low market cap data so we need to put them
 		// at the end of the list
@@ -94,6 +115,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 			PercentChange30D: v.PercentChange30D,
 			PercentChange1Y:  v.PercentChange1Y,
 			LastUpdated:      v.LastUpdated,
+			Slug:             v.Slug,
 		})
 		if ilast != nil {
 			last, _ := ilast.(*Coin)
@@ -114,7 +136,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	})
 
 	if len(ct.State.allCoins) < size {
-		list := []*Coin{}
+		var list []*Coin
 		for _, v := range coins {
 			k := v.Name
 			icoin, _ := ct.State.allCoinsSlugMap.Load(k)
@@ -146,6 +168,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 					c.PercentChange1Y = cm.PercentChange1Y
 					c.LastUpdated = cm.LastUpdated
 					c.Favorite = cm.Favorite
+					c.Slug = cm.Slug
 				}
 			}
 
@@ -154,7 +177,7 @@ func (ct *Cointop) processCoins(coins []types.Coin) {
 	}
 
 	time.AfterFunc(10*time.Millisecond, func() {
-		ct.Sort(ct.State.sortBy, ct.State.sortDesc, ct.State.coins, true)
+		ct.Sort(ct.State.viewSorts[ct.State.selectedView], ct.State.coins, true)
 		ct.UpdateTable()
 	})
 }

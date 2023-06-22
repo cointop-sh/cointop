@@ -1,0 +1,49 @@
+examples/getlocale/getlocale
+examples/getlocale/getlocale.exe
+examples/getlocale-gui/getlocale-gui
+examples/getlocale-gui/getlocale-gui.exe
+
+### Go ###
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Fyne Cross build folder
+fyne-cross/
+
+### Linux ###
+*~
+
+### Vim ###
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# Auto-generated tag files
+tags
+
+# Persistent undo
+[._]*.un~
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history

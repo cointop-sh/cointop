@@ -46,7 +46,7 @@ refresh_rate = 60
 
 [shortcuts]
   "$" = "last_page"
-  0 = "first_page"
+  0 = "move_to_first_page_first_row"
   1 = "sort_column_1h_change"
   2 = "sort_column_24h_change"
   7 = "sort_column_7d_change"
@@ -133,6 +133,7 @@ Action|Description
 ----|------|
 `first_chart_range`|Select first chart date range (e.g. 24H)
 `first_page`|Go to first page
+`move_to_first_page_first_row`|Go to first row on the first page
 `enlarge_chart`|Increase chart height
 `help`|Show help
 `hide_currency_convert_menu`|Hide currency convert menu

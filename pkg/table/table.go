@@ -8,8 +8,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/acarl005/stripansi"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/table/align"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/table/align"
 )
 
 // Table table
@@ -205,11 +205,11 @@ func (t *Table) Fprint(w io.Writer) {
 			var s string
 			switch c.align {
 			case AlignLeft:
-				s = align.AlignLeft(c.name+" ", c.width)
+				s = align.Left(c.name+" ", c.width)
 			case AlignRight:
-				s = align.AlignRight(c.name+" ", c.width)
+				s = align.Right(c.name+" ", c.width)
 			case AlignCenter:
-				s = align.AlignCenter(c.name+" ", c.width)
+				s = align.Center(c.name+" ", c.width)
 			}
 
 			fmt.Fprintf(w, "%s", s)
@@ -237,11 +237,11 @@ func (t *Table) Fprint(w io.Writer) {
 			var s string
 			switch c.align {
 			case AlignLeft:
-				s = align.AlignLeft(v, c.width)
+				s = align.Left(v, c.width)
 			case AlignRight:
-				s = align.AlignRight(v, c.width)
+				s = align.Right(v, c.width)
 			case AlignCenter:
-				s = align.AlignCenter(v, c.width)
+				s = align.Center(v, c.width)
 			}
 
 			fmt.Fprintf(w, "%s", s)

@@ -17,6 +17,8 @@ type Coin struct {
 	PercentChange30D float64 `json:"percentChange30D"`
 	PercentChange1Y  float64 `json:"percentChange1Y"`
 	LastUpdated      string  `json:"lastUpdated"`
+	// Slug uses to access the coin's info web page
+	Slug string `json:"slug"`
 }
 
 // GlobalMarketData struct

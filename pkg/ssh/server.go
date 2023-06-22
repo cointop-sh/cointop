@@ -1,4 +1,5 @@
-//+build !windows
+//go:build !windows
+// +build !windows
 
 package ssh
 
@@ -16,9 +17,9 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/cointop-sh/cointop/pkg/pathutil"
 	"github.com/creack/pty"
 	"github.com/gliderlabs/ssh"
-	"github.com/miguelmota/cointop/pkg/pathutil"
 	gossh "golang.org/x/crypto/ssh"
 )
 
@@ -196,6 +197,9 @@ func (s *Server) ListenAndServe() error {
 
 			cmd := exec.CommandContext(cmdCtx, s.executableBinary, flags...)
 			cmd.Env = append(sshSession.Environ(), fmt.Sprintf("TERM=%s", ptyReq.Term))
+			if proxy, ok := os.LookupEnv("HTTPS_PROXY"); ok {
+				cmd.Env = append(cmd.Env, fmt.Sprintf("HTTPS_PROXY=%s", proxy))
+			}
 
 			f, err := pty.Start(cmd)
 			if err != nil {
@@ -238,7 +242,7 @@ func (s *Server) ListenAndServe() error {
 
 	err := s.sshServer.SetOption(ssh.HostKeyFile(s.hostKeyFile))
 	if err != nil {
-		return err
+		return fmt.Errorf("error setting HostKeyFile: %s: %v", s.hostKeyFile, err)
 	}
 
 	return s.sshServer.ListenAndServe()

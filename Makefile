@@ -1,4 +1,5 @@
 VERSION = $$(git describe --abbrev=0 --tags)
+COMMIT_TAG = $$(git tag --points-at HEAD)
 VERSION_DATE = $$(git log -1 --pretty='%ad' --date=format:'%Y-%m-%d' $(VERSION))
 COMMIT_REV = $$(git rev-list -n 1 $(VERSION))
 MAINTAINER = "Miguel Mota"
@@ -30,18 +31,18 @@ debug:
 
 .PHONY: build
 build:
-	go build -ldflags "-X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop main.go
+	go build -ldflags "-X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/cointop main.go
 
 # http://macappstore.org/upx
 build-mac: clean-mac
-	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/macos/cointop && upx bin/macos/cointop
+	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/macos/cointop && upx bin/macos/cointop
 
 build-linux: clean-linux
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/linux/cointop && upx bin/linux/cointop
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/linux/cointop && upx bin/linux/cointop
 
 build-multiple: clean
-	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop64 && upx bin/cointop64 && \
-	env GOARCH=386 go build -ldflags "-s -w -X github.com/miguelmota/cointop/cointop.version=$(VERSION)" -o bin/cointop32 && upx bin/cointop32
+	env GOARCH=amd64 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/cointop64 && upx bin/cointop64 && \
+	env GOARCH=386 go build -ldflags "-s -w -X github.com/cointop-sh/cointop/cointop.version=$(VERSION)" -o bin/cointop32 && upx bin/cointop32
 
 install: build
 	sudo mv bin/cointop /usr/local/bin
@@ -96,7 +97,7 @@ snap-clean:
 
 snap-stage:
 	# https://github.com/elopio/go/issues/2
-	mv go.mod go.mod~ ;GO111MODULE=off GOFLAGS="-ldflags=-s -ldflags=-w -ldflags=-X=github.com/miguelmota/cointop/cointop.version=$(VERSION)" snapcraft stage; mv go.mod~ go.mod
+	mv go.mod go.mod~ ;GO111MODULE=off GOFLAGS="-ldflags=-s -ldflags=-w -ldflags=-X=github.com/cointop-sh/cointop/cointop.version=$(VERSION)" snapcraft stage; mv go.mod~ go.mod
 
 snap-install:
 	sudo apt install snapd
@@ -176,7 +177,7 @@ rpm-dirs:
 	chmod -R a+rwx ~/rpmbuild
 
 rpm-download:
-	wget https://github.com/miguelmota/cointop/archive/$(VERSION).tar.gz -O ~/rpmbuild/SOURCES/$(VERSION).tar.gz
+	wget https://github.com/cointop-sh/cointop/archive/$(VERSION).tar.gz -O ~/rpmbuild/SOURCES/$(VERSION).tar.gz
 
 copr-install-cli:
 	sudo dnf install -y copr-cli
@@ -210,7 +211,7 @@ brew-test:
 	brew test cointop.rb
 
 brew-tap:
-	brew tap cointop/cointop https://github.com/miguelmota/cointop
+	brew tap cointop/cointop https://github.com/cointop-sh/cointop
 
 brew-untap:
 	brew untap cointop/cointop
@@ -228,11 +229,22 @@ release:
 	rm -rf dist
 	VERSION=$(VERSION) goreleaser
 
+docker-login:
+	docker login
+
+docker-login-ci:
+	docker login -u $(DOCKER_USER) -p $(DOCKER_PASS)
+
 docker-build:
 	docker build --build-arg VERSION=$(VERSION) --build-arg MAINTAINER=$(MAINTAINER) -t cointop/cointop .
 
 docker-tag:
 	docker tag cointop/cointop:latest cointop/cointop:$(VERSION)
+
+docker-tag-ci:
+	docker tag cointop/cointop:latest cointop/cointop:$(CIRCLE_SHA1)
+	docker tag cointop/cointop:latest cointop/cointop:$(CIRCLE_BRANCH)
+	test $(COMMIT_TAG) && docker tag cointop/cointop:latest cointop/cointop:$(COMMIT_TAG); true
 
 docker-run:
 	docker run -it cointop/cointop
@@ -241,13 +253,19 @@ docker-push:
 	docker push cointop/cointop:$(VERSION)
 	docker push cointop/cointop:latest
 
+docker-push-ci:
+	docker push cointop/cointop:$(CIRCLE_SHA1)
+	docker push cointop/cointop:$(CIRCLE_BRANCH)
+	test $(COMMIT_TAG) && docker push cointop/cointop:$(COMMIT_TAG); true
+	test $(CIRCLE_BRANCH) == "master" && docker push cointop/cointop:latest; true
+
 docker-build-and-push: docker-build docker-tag docker-push
 
 docker-run-ssh:
 	docker run -p 2222:22 -v ~/.ssh/demo:/keys -v ~/.cache/cointop:/tmp/cointop_config --entrypoint cointop -it cointop/cointop server -k /keys/id_rsa
 
 ssh-server:
-	go run cmd/cointop/cointop.go server -p 2222
+	go run cmd/cointop/cointop.go server -p 2222 -k ~/.ssh/demo/id_rsa
 
 ssh-client:
 	ssh localhost -p 2222

@@ -9,8 +9,11 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/api/vendors/coingecko/format"
-	"github.com/miguelmota/cointop/pkg/api/vendors/coingecko/v3/types"
+	"os"
+
+	"github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/format"
+	"github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
+	log "github.com/sirupsen/logrus"
 )
 
 var baseURL = "https://api.coingecko.com/api/v3"
@@ -31,6 +34,11 @@ func NewClient(httpClient *http.Client) *Client {
 // helper
 // doReq HTTP client
 func doReq(req *http.Request, client *http.Client) ([]byte, error) {
+	debugHttp := os.Getenv("DEBUG_HTTP") != ""
+	if debugHttp {
+		log.Debugf("doReq %s %s", req.Method, req.URL)
+	}
+
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -41,6 +49,10 @@ func doReq(req *http.Request, client *http.Client) ([]byte, error) {
 		return nil, err
 	}
 	if 200 != resp.StatusCode {
+		if debugHttp {
+			log.Warnf("doReq Got Status '%s' from %s %s", resp.Status, req.Method, req.URL)
+			log.Debugf("doReq Got Body: %s", body)
+		}
 		return nil, fmt.Errorf("%s", body)
 	}
 	return body, nil
@@ -198,7 +210,7 @@ func (c *Client) CoinsID(id string, localization bool, tickers bool, marketData 
 		return nil, fmt.Errorf("id is required")
 	}
 	params := url.Values{}
-	params.Add("localization", format.Bool2String(sparkline))
+	params.Add("localization", format.Bool2String(localization))
 	params.Add("tickers", format.Bool2String(tickers))
 	params.Add("market_data", format.Bool2String(marketData))
 	params.Add("community_data", format.Bool2String(communityData))

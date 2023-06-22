@@ -7,15 +7,15 @@ draft: false
 
 There are multiple ways you can install cointop depending on the platform you're on.
 
-## From source (always latest and recommeded)
+## From source (always latest and recommended)
 
-Make sure to have [go](https://golang.org/) (1.12+) installed, then do:
+Make sure to have [go](https://golang.org/) (1.17+) installed, then do:
 
 ```bash
-go get github.com/miguelmota/cointop
+go install github.com/cointop-sh/cointop@latest
 ```
 
-The cointop executable will be under `~/go/bin/cointop` so make sure `$GOPATH/bin` is added to the `$PATH` variable if not already.
+The cointop executable will be under your GOPATH so make sure `$GOPATH/bin` is added to the `$PATH` variable if not already.
 
 Now you can run cointop:
 
@@ -25,14 +25,14 @@ cointop
 
 ## Binary (all platforms)
 
-You can download the binary from the [releases](https://github.com/miguelmota/cointop/releases) page.
+You can download the binary from the [releases](https://github.com/cointop-sh/cointop/releases) page.
 
 ```bash
-curl -o- https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh | bash
+curl -o- https://raw.githubusercontent.com/cointop-sh/cointop/master/install.sh | bash
 ```
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/miguelmota/cointop/master/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/cointop-sh/cointop/master/install.sh | bash
 ```
 
 ## Homebrew (macOS)
@@ -69,7 +69,7 @@ Note: snaps don't work in Windows WSL. See this [issue thread](https://forum.sna
 
 cointop is available as a [copr](https://copr.fedorainfracloud.org/coprs/miguelmota/cointop/) package.
 
-First, enable the respository
+First, enable the repository
 
 ```bash
 sudo dnf copr enable miguelmota/cointop -y
@@ -143,11 +143,11 @@ nix-env -iA nixpkgs.cointop
 
 ## AppImage (Linux)
 
-You can download the AppImage from the [releases](https://github.com/miguelmota/cointop/releases) page.
+You can download the AppImage from the [releases](https://github.com/cointop-sh/cointop/releases) page.
 
 ```bash
-VERSION=$(curl --silent "https://api.github.com/repos/miguelmota/cointop/releases/latest" | grep -Po --color=never '"tag_name": ".\K.*?(?=")')
-URL="https://github.com/miguelmota/cointop/releases/download/v$VERSION/cointop-v$VERSION.glibc2.32-x86_64.AppImage"
+VERSION=$(curl --silent "https://api.github.com/repos/cointop-sh/cointop/releases/latest" | grep -Po --color=never '"tag_name": ".\K.*?(?=")')
+URL="https://github.com/cointop-sh/cointop/releases/download/v$VERSION/cointop-v$VERSION.glibc2.32-x86_64.AppImage"
 wget $URL
 ```
 
@@ -176,10 +176,10 @@ sudo pkg install cointop
 Install [Go](https://golang.org/doc/install) and [git](https://git-scm.com/download/win), then:
 
 ```powershell
-go get -u github.com/miguelmota/cointop
+go get -u github.com/cointop-sh/cointop
 ```
 
-You'll need additional font support for Windows. Please see the [wiki](https://github.com/miguelmota/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
+You'll need additional font support for Windows. Please see the [wiki](https://github.com/cointop-sh/cointop/wiki/Windows-Command-Prompt-and-WSL-Font-Support) for instructions.
 
 ## Docker
 
@@ -197,4 +197,4 @@ docker run -v ~/.cache/cointop:/root/.config/cointop -it cointop/cointop
 
 ## Binaries
 
-You can find pre-built binaries on the [releases](https://github.com/miguelmota/cointop/releases) page.
+You can find pre-built binaries on the [releases](https://github.com/cointop-sh/cointop/releases) page.

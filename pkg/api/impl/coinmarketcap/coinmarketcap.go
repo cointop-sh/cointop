@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	apitypes "github.com/miguelmota/cointop/pkg/api/types"
-	util "github.com/miguelmota/cointop/pkg/api/util"
+	apitypes "github.com/cointop-sh/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/api/util"
 	cmc "github.com/miguelmota/go-coinmarketcap/pro/v1"
 	cmcv2 "github.com/miguelmota/go-coinmarketcap/v2"
 )
@@ -77,7 +77,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int) ([]apitypes.C
 		}
 
 		ret = append(ret, apitypes.Coin{
-			ID:               util.FormatID(v.Name),
+			ID:               util.FormatID(fmt.Sprint(v.ID)),
 			Name:             util.FormatName(v.Name),
 			Symbol:           util.FormatSymbol(v.Symbol),
 			Rank:             util.FormatRank(v.CMCRank),
@@ -90,6 +90,7 @@ func (s *Service) getPaginatedCoinData(convert string, offset int) ([]apitypes.C
 			PercentChange7D:  util.FormatPercentChange(quote.PercentChange7D),
 			Volume24H:        util.FormatVolume(v.Quote[convert].Volume24H),
 			LastUpdated:      util.FormatLastUpdated(v.LastUpdated),
+			Slug:             util.FormatSlug(v.Slug),
 		})
 	}
 	return ret, nil
@@ -135,7 +136,7 @@ func (s *Service) GetCoinData(name string, convert string) (apitypes.Coin, error
 
 // GetCoinDataBatch gets all data of specified coins.
 func (s *Service) GetCoinDataBatch(names []string, convert string) ([]apitypes.Coin, error) {
-	ret := []apitypes.Coin{}
+	var ret []apitypes.Coin
 	coins, err := s.getPaginatedCoinData(convert, 0)
 	if err != nil {
 		return ret, err
@@ -297,7 +298,6 @@ func (s *Service) GetGlobalMarketData(convert string) (apitypes.GlobalMarketData
 	market, err := s.client.GlobalMetrics.LatestQuotes(&cmc.QuoteOptions{
 		Convert: convert,
 	})
-
 	if err != nil {
 		return ret, err
 	}
@@ -332,9 +332,8 @@ func (s *Service) Price(name string, convert string) (float64, error) {
 }
 
 // CoinLink returns the URL link for the coin
-func (s *Service) CoinLink(name string) string {
-	slug := util.NameToSlug(name)
-	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s", slug)
+func (s *Service) CoinLink(slug string) string {
+	return fmt.Sprintf("https://coinmarketcap.com/currencies/%s/", slug)
 }
 
 // SupportedCurrencies returns a list of supported currencies
@@ -429,4 +428,12 @@ func getChartInterval(start, end int64) string {
 		interval = "1d"
 	}
 	return interval
+}
+
+// GetExchangeRate gets the current exchange rate between two currencies
+func (s *Service) GetExchangeRate(convertFrom, convertTo string, cached bool) (float64, error) {
+	if convertFrom == convertTo {
+		return 1.0, nil
+	}
+	return 0, fmt.Errorf("unsupported currency conversion: %s => %s", convertFrom, convertTo)
 }

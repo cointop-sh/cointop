@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/miguelmota/cointop/cointop"
+	"github.com/cointop-sh/cointop/cointop"
 	"github.com/spf13/cobra"
 )
 
@@ -60,21 +60,27 @@ See git.io/cointop for more info.`,
 				return nil
 			}
 
-			// NOTE: if reset flag enabled, reset and run cointop
-			if reset {
-				if err := cointop.Reset(&cointop.ResetConfig{
-					Log: !silent,
-				}); err != nil {
+			// wipe before starting program
+			if reset || clean {
+				ct, err := cointop.NewCointop(&cointop.Config{
+					CacheDir:       cacheDir,
+					ConfigFilepath: config,
+				})
+				if err != nil {
 					return err
 				}
-			}
-
-			// NOTE: if clean flag enabled, clean and run cointop
-			if clean {
-				if err := cointop.Clean(&cointop.CleanConfig{
-					Log: !silent,
-				}); err != nil {
-					return err
+				if reset {
+					if err := ct.Reset(&cointop.ResetConfig{
+						Log: !silent,
+					}); err != nil {
+						return err
+					}
+				} else if clean {
+					if err := ct.Clean(&cointop.CleanConfig{
+						Log: !silent,
+					}); err != nil {
+						return err
+					}
 				}
 			}
 

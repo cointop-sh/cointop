@@ -47,9 +47,6 @@ wasm
 .config
 .bz2
 
-# flatpak
-.flatpak-builder
-build-dir
 #repo
 # do not ignore .flathub
 # do not ignore .rpm
@@ -60,6 +57,7 @@ build-dir
 .appimage_workspace
 
 todo.txt
+.vscode
 
 docs/public
 deploy_docs.sh

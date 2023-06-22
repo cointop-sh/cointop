@@ -1,6 +1,8 @@
 package cointop
 
-import log "github.com/sirupsen/logrus"
+import (
+	log "github.com/sirupsen/logrus"
+)
 
 // Coin is the row structure
 type Coin struct {
@@ -23,8 +25,10 @@ type Coin struct {
 	// for favorites
 	Favorite bool
 	// for portfolio
-	Holdings float64
-	Balance  float64
+	Holdings    float64
+	Balance     float64
+	BuyPrice    float64
+	BuyCurrency string
 }
 
 // AllCoins returns a slice of all the coins
@@ -88,5 +92,38 @@ func (ct *Cointop) CoinByID(id string) *Coin {
 			return coin
 		}
 	}
+	return nil
+}
+
+// UpdateCoin updates coin info after fetching from API
+func (ct *Cointop) UpdateCoin(coin *Coin) error {
+	log.Debug("UpdateCoin()")
+	v, err := ct.api.GetCoinData(coin.Name, ct.State.currencyConversion)
+	if err != nil {
+		log.Debugf("UpdateCoin() could not fetch coin data %s", coin.Name)
+		return err
+	}
+
+	coin = &Coin{
+		ID:               v.ID,
+		Name:             v.Name,
+		Symbol:           v.Symbol,
+		Rank:             v.Rank,
+		Price:            v.Price,
+		Volume24H:        v.Volume24H,
+		MarketCap:        v.MarketCap,
+		AvailableSupply:  v.AvailableSupply,
+		TotalSupply:      v.TotalSupply,
+		PercentChange1H:  v.PercentChange1H,
+		PercentChange24H: v.PercentChange24H,
+		PercentChange7D:  v.PercentChange7D,
+		PercentChange30D: v.PercentChange30D,
+		PercentChange1Y:  v.PercentChange1Y,
+		LastUpdated:      v.LastUpdated,
+		Slug:             v.Slug,
+	}
+
+	ct.State.allCoinsSlugMap.Store(coin.Name, coin)
+
 	return nil
 }

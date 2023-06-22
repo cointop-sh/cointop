@@ -24,7 +24,7 @@ make deps
 Installing from source
 
 ```bash
-make brew/build
+make brew-build
 ```
 
 ## Flatpak
@@ -44,7 +44,7 @@ sudo flatpak install flathub org.freedesktop.Sdk.Extension.golang
 Building flatpak package
 
 ```bash
-make flatpak/build
+make flatpak-build
 ```
 
 ## Copr
@@ -52,18 +52,18 @@ make flatpak/build
 Install dependencies
 
 ```bash
-make copr/install/cli
-make rpm/install/deps
-make rpm/dirs
+make copr-install-cli
+make rpm-install-deps
+make rpm-dirs
 ```
 
 Build package
 
 ```bash
-make rpm/cp/specs
-make rpm/download
-make rpm/build
-make copr/build
+make rpm-cp-specs
+make rpm-download
+make rpm-build
+make copr-build
 ```
 
 ## Snap
@@ -71,5 +71,13 @@ make copr/build
 Building snap
 
 ```bash
-make snap/build
+make snap-build
+```
+
+## Docker
+
+Build Docker image
+
+```bash
+make docker-build
 ```

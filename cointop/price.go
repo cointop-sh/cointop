@@ -5,8 +5,8 @@ import (
 	"math"
 	"strings"
 
-	"github.com/miguelmota/cointop/pkg/api"
-	"github.com/miguelmota/cointop/pkg/humanize"
+	"github.com/cointop-sh/cointop/pkg/api"
+	"github.com/cointop-sh/cointop/pkg/humanize"
 )
 
 // PriceConfig is the config options for the coin price method

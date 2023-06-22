@@ -5,13 +5,12 @@
 package termui
 
 import (
-	"fmt"
+	"errors"
 	"path"
-	"strconv"
 	"sync"
 	"time"
 
-	"github.com/miguelmota/termbox-go"
+	"github.com/gdamore/tcell/v2"
 )
 
 type Event struct {
@@ -29,82 +28,86 @@ type EvtKbd struct {
 	KeyStr string
 }
 
-func evtKbd(e termbox.Event) EvtKbd {
+func evtKbd(e tcell.EventKey) EvtKbd {
 	ek := EvtKbd{}
 
-	k := string(e.Ch)
+	k := string(e.Rune())
 	pre := ""
 	mod := ""
 
-	if e.Mod == termbox.ModAlt {
+	if e.Modifiers() == tcell.ModAlt {
 		mod = "M-"
 	}
-	if e.Ch == 0 {
-		if e.Key > 0xFFFF-12 {
-			k = "<f" + strconv.Itoa(0xFFFF-int(e.Key)+1) + ">"
-		} else if e.Key > 0xFFFF-25 {
-			ks := []string{"<insert>", "<delete>", "<home>", "<end>", "<previous>", "<next>", "<up>", "<down>", "<left>", "<right>"}
-			k = ks[0xFFFF-int(e.Key)-12]
-		}
+	if e.Rune() == 0 {
+		// Doesn't appear to be used by cointop
 
-		if e.Key <= 0x7F {
-			pre = "C-"
-			k = fmt.Sprintf("%v", 'a'-1+int(e.Key))
-			kmap := map[termbox.Key][2]string{
-				termbox.KeyCtrlSpace:     {"C-", "<space>"},
-				termbox.KeyBackspace:     {"", "<backspace>"},
-				termbox.KeyTab:           {"", "<tab>"},
-				termbox.KeyEnter:         {"", "<enter>"},
-				termbox.KeyEsc:           {"", "<escape>"},
-				termbox.KeyCtrlBackslash: {"C-", "\\"},
-				termbox.KeyCtrlSlash:     {"C-", "/"},
-				termbox.KeySpace:         {"", "<space>"},
-				termbox.KeyCtrl8:         {"C-", "8"},
-			}
-			if sk, ok := kmap[e.Key]; ok {
-				pre = sk[0]
-				k = sk[1]
-			}
-		}
+		// TODO: FIXME
+		// if e.Key > 0xFFFF-12 {
+		// 	k = "<f" + strconv.Itoa(0xFFFF-int(e.Key)+1) + ">"
+		// } else if e.Key > 0xFFFF-25 {
+		// 	ks := []string{"<insert>", "<delete>", "<home>", "<end>", "<previous>", "<next>", "<up>", "<down>", "<left>", "<right>"}
+		// 	k = ks[0xFFFF-int(e.Key)-12]
+		// }
+
+		// TODO: FIXME
+		// if e.Key <= 0x7F {
+		// 	pre = "C-"
+		// 	k = fmt.Sprintf("%v", 'a'-1+int(e.Key))
+		// 	kmap := map[termbox.Key][2]string{
+		// 		termbox.KeyCtrlSpace:     {"C-", "<space>"}, // TODO: FIXME
+		// 		termbox.KeyBackspace:     {"", "<backspace>"},
+		// 		termbox.KeyTab:           {"", "<tab>"},
+		// 		termbox.KeyEnter:         {"", "<enter>"},
+		// 		termbox.KeyEsc:           {"", "<escape>"},
+		// 		termbox.KeyCtrlBackslash: {"C-", "\\"},
+		// 		termbox.KeyCtrlSlash:     {"C-", "/"},
+		// 		termbox.KeySpace:         {"", "<space>"},
+		// 		termbox.KeyCtrl8:         {"C-", "8"}, // TODO: FIXME
+		// 	}
+		// 	if sk, ok := kmap[e.Key]; ok {
+		// 		pre = sk[0]
+		// 		k = sk[1]
+		// 	}
+		// }
 	}
 
 	ek.KeyStr = pre + mod + k
 	return ek
 }
 
-func crtTermboxEvt(e termbox.Event) Event {
-	systypemap := map[termbox.EventType]string{
-		termbox.EventKey:       "keyboard",
-		termbox.EventResize:    "window",
-		termbox.EventMouse:     "mouse",
-		termbox.EventError:     "error",
-		termbox.EventInterrupt: "interrupt",
-	}
-	ne := Event{From: "/sys", Time: time.Now().Unix()}
-	typ := e.Type
-	ne.Type = systypemap[typ]
-
-	switch typ {
-	case termbox.EventKey:
-		kbd := evtKbd(e)
-		ne.Path = "/sys/kbd/" + kbd.KeyStr
-		ne.Data = kbd
-	case termbox.EventResize:
+func crtTermboxEvt(e tcell.Event) Event {
+	ne := Event{From: "/sys", Time: e.When().Unix()}
+	switch tev := e.(type) {
+	case *tcell.EventResize:
 		wnd := EvtWnd{}
-		wnd.Width = e.Width
-		wnd.Height = e.Height
+		wnd.Width, wnd.Height = tev.Size()
 		ne.Path = "/sys/wnd/resize"
 		ne.Data = wnd
-	case termbox.EventError:
-		err := EvtErr(e.Err)
-		ne.Path = "/sys/err"
-		ne.Data = err
-	case termbox.EventMouse:
+		ne.Type = "window"
+		// log.Debugf("XXX Resized to %d,%d", wnd.Width, wnd.Height)
+		return ne
+	case *tcell.EventMouse:
 		m := EvtMouse{}
-		m.X = e.MouseX
-		m.Y = e.MouseY
+		m.X, m.Y = tev.Position()
 		ne.Path = "/sys/mouse"
 		ne.Data = m
+		ne.Type = "mouse"
+		return ne
+	case *tcell.EventKey:
+		kbd := evtKbd(*tev)
+		ne.Path = "/sys/kbd/" + kbd.KeyStr
+		ne.Data = kbd
+		ne.Type = "keyboard"
+		return ne
+	case *tcell.EventError:
+		ne.Path = "/sys/err"
+		ne.Data = errors.New(tev.Error())
+		ne.Type = "error"
+		return ne
+	case *tcell.EventInterrupt:
+		ne.Type = "interrupt"
+	default:
+		ne.Type = "" // TODO: unhandled event?
 	}
 	return ne
 }
@@ -122,17 +125,18 @@ type EvtMouse struct {
 
 type EvtErr error
 
-func hookTermboxEvt() {
-	for {
-		e := termbox.PollEvent()
-
-		for _, c := range sysEvtChs {
-			func(ch chan Event) {
-				ch <- crtTermboxEvt(e)
-			}(c)
-		}
-	}
-}
+// func hookTermboxEvt() {
+// 	log.Debugf("XXX hookTermboxEvt")
+// 	for {
+// 		e := termbox.PollEvent()
+// 		log.Debugf("XXX event %s", e)
+// 		for _, c := range sysEvtChs {
+// 			func(ch chan Event) {
+// 				ch <- crtTermboxEvt(e)
+// 			}(c)
+// 		}
+// 	}
+// }
 
 func NewSysEvtCh() chan Event {
 	ec := make(chan Event)
@@ -223,9 +227,9 @@ func findMatch(mux map[string]func(Event), path string) string {
 
 }
 
-// Remove all existing defined Handlers from the map
+// ResetHandlers Remove all existing defined Handlers from the map
 func (es *EvtStream) ResetHandlers() {
-	for Path, _ := range es.Handlers {
+	for Path := range es.Handlers {
 		delete(es.Handlers, Path)
 	}
 	return

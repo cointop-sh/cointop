@@ -7,10 +7,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/miguelmota/cointop/pkg/chartplot"
-	"github.com/miguelmota/cointop/pkg/timedata"
-	"github.com/miguelmota/cointop/pkg/timeutil"
-	"github.com/miguelmota/cointop/pkg/ui"
+	"github.com/cointop-sh/cointop/pkg/chartplot"
+	"github.com/cointop-sh/cointop/pkg/timedata"
+	"github.com/cointop-sh/cointop/pkg/timeutil"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -25,8 +25,7 @@ type ChartView = ui.View
 
 // NewChartView returns a new chart view
 func NewChartView() *ChartView {
-	var view *ChartView = ui.NewView("chart")
-	return view
+	return ui.NewView("chart")
 }
 
 var chartLock sync.Mutex
@@ -50,17 +49,17 @@ func ChartRanges() []string {
 // ChartRangesMap returns map of chart range time ranges
 func ChartRangesMap() map[string]time.Duration {
 	return map[string]time.Duration{
-		"All Time": time.Duration(24 * 7 * 4 * 12 * 5 * time.Hour),
-		"YTD":      time.Duration(1 * time.Second), // this will be calculated
-		"1Y":       time.Duration(24 * 7 * 4 * 12 * time.Hour),
-		"6M":       time.Duration(24 * 7 * 4 * 6 * time.Hour),
-		"3M":       time.Duration(24 * 7 * 4 * 3 * time.Hour),
-		"1M":       time.Duration(24 * 7 * 4 * time.Hour),
-		"7D":       time.Duration(24 * 7 * time.Hour),
-		"3D":       time.Duration(24 * 3 * time.Hour),
-		"24H":      time.Duration(24 * time.Hour),
-		"6H":       time.Duration(6 * time.Hour),
-		"1H":       time.Duration(1 * time.Hour),
+		"All Time": 10 * 365 * 24 * time.Hour,
+		"YTD":      1 * time.Second, // this will be calculated
+		"1Y":       365 * 24 * time.Hour,
+		"6M":       365 / 2 * 24 * time.Hour,
+		"3M":       365 / 4 * 24 * time.Hour,
+		"1M":       365 / 12 * 24 * time.Hour,
+		"7D":       24 * 7 * time.Hour,
+		"3D":       24 * 3 * time.Hour,
+		"24H":      24 * time.Hour,
+		"6H":       6 * time.Hour,
+		"1H":       1 * time.Hour,
 	}
 }
 
@@ -103,7 +102,7 @@ func (ct *Cointop) UpdateChart() error {
 	return nil
 }
 
-// ChartPoints calculates the the chart points
+// ChartPoints calculates the chart points
 func (ct *Cointop) ChartPoints(symbol string, name string) error {
 	log.Debug("ChartPoints()")
 	maxX := ct.ChartWidth()
@@ -119,7 +118,7 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 
 	rangeseconds := ct.chartRangesMap[ct.State.selectedChartRange]
 	if ct.State.selectedChartRange == "YTD" {
-		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
+		ytd := time.Now().Unix() - timeutil.BeginningOfYear().Unix()
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
 
@@ -172,23 +171,28 @@ func (ct *Cointop) ChartPoints(symbol string, name string) error {
 		}
 	}
 
-	// Resample cachedata
-	timeQuantum := timedata.CalculateTimeQuantum(cacheData)
-	newStart := time.Unix(start, 0).Add(timeQuantum)
-	newEnd := time.Unix(end, 0).Add(-timeQuantum)
-	timeData := timedata.ResampleTimeSeriesData(cacheData, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
-
-	// Extract just the values from the data
+	var labels []string
 	var data []float64
-	for i := range timeData {
-		value := timeData[i][1]
-		if math.IsNaN(value) {
-			value = 0.0
+	timeQuantum := timedata.CalculateTimeQuantum(cacheData) // will be 0 if <2 points
+	if timeQuantum > 0 {
+		// Resample cachedata
+		newStart := cacheData[0][0] // use the first data point
+		newEnd := time.Unix(end, 0).Add(-timeQuantum)
+		timeData := timedata.ResampleTimeSeriesData(cacheData, newStart, float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+		labels = timedata.BuildTimeSeriesLabels(timeData)
+
+		// Extract just the values from the data
+		for i := range timeData {
+			value := timeData[i][1]
+			if math.IsNaN(value) {
+				value = 0.0
+			}
+			data = append(data, value)
 		}
-		data = append(data, value)
 	}
 
 	chart.SetData(data)
+	chart.SetDataLabels(labels)
 	ct.State.chartPoints = chart.GetChartPoints(maxX)
 
 	return nil
@@ -211,7 +215,7 @@ func (ct *Cointop) PortfolioChart() error {
 	selectedChartRange := ct.State.selectedChartRange // cache here
 	rangeseconds := ct.chartRangesMap[selectedChartRange]
 	if selectedChartRange == "YTD" {
-		ytd := time.Now().Unix() - int64(timeutil.BeginningOfYear().Unix())
+		ytd := time.Now().Unix() - timeutil.BeginningOfYear().Unix()
 		rangeseconds = time.Duration(ytd) * time.Second
 	}
 
@@ -280,39 +284,53 @@ func (ct *Cointop) PortfolioChart() error {
 			break // use the first one
 		}
 	}
-	newStart := time.Unix(start, 0).Add(timeQuantum)
-	newEnd := time.Unix(end, 0).Add(-timeQuantum)
 
-	// Resample and sum data
+	// If there is data, resample and sum
 	var data []float64
-	for _, cacheData := range allCacheData {
-		coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
-		// sum (excluding NaN)
-		for i := range coinData {
-			price := coinData[i][1]
-			if math.IsNaN(price) {
-				price = 0.0
+	var labels []string
+	if timeQuantum > 0 {
+		newStart := time.Unix(start, 0).Add(timeQuantum)
+		newEnd := time.Unix(end, 0).Add(-timeQuantum)
+
+		// Resample and sum data
+		for i, cacheData := range allCacheData {
+			coinData := timedata.ResampleTimeSeriesData(cacheData.data, float64(newStart.UnixMilli()), float64(newEnd.UnixMilli()), chart.GetChartDataSize(maxX))
+			if i == 0 {
+				labels = timedata.BuildTimeSeriesLabels(coinData)
 			}
-			sum := cacheData.coin.Holdings * price
-			if i < len(data) {
-				data[i] += sum
-			} else {
-				data = append(data, sum)
+			// sum (excluding NaN)
+			for i := range coinData {
+				price := coinData[i][1]
+				if math.IsNaN(price) {
+					price = 0.0
+				}
+				sum := cacheData.coin.Holdings * price
+				if i < len(data) {
+					data[i] += sum
+				} else {
+					data = append(data, sum)
+				}
 			}
 		}
-	}
 
-	// Scale Portfolio Balances to hide value
-	if ct.State.hidePortfolioBalances {
-		var lastPrice = data[len(data)-1]
-		if lastPrice > 0.0 {
-			for i, price := range data {
-				data[i] = 100 * price / lastPrice
+		// Scale Portfolio Balances to hide value
+		if ct.State.hidePortfolioBalances {
+			scalePrice := 0.0
+			for _, price := range data {
+				if price > scalePrice {
+					scalePrice = price
+				}
+			}
+			if scalePrice > 0.0 {
+				for i, price := range data {
+					data[i] = 100 * price / scalePrice
+				}
 			}
 		}
 	}
 
 	chart.SetData(data)
+	chart.SetDataLabels(labels)
 	ct.State.chartPoints = chart.GetChartPoints(maxX)
 
 	return nil
@@ -328,6 +346,10 @@ func (ct *Cointop) ShortenChart() error {
 	ct.State.chartHeight = candidate
 	ct.State.lastChartHeight = ct.State.chartHeight
 
+	if err := ct.Save(); err != nil {
+		return err
+	}
+
 	go ct.UpdateChart()
 	return nil
 }
@@ -341,6 +363,10 @@ func (ct *Cointop) EnlargeChart() error {
 	}
 	ct.State.chartHeight = candidate
 	ct.State.lastChartHeight = ct.State.chartHeight
+
+	if err := ct.Save(); err != nil {
+		return err
+	}
 
 	go ct.UpdateChart()
 	return nil
@@ -439,8 +465,8 @@ func (ct *Cointop) ShowChartLoader() error {
 func (ct *Cointop) ChartWidth() int {
 	log.Debug("ChartWidth()")
 	w := ct.Width()
-	max := 175
-	if w > max {
+	max := ct.State.maxChartWidth
+	if max > 0 && w > max {
 		return max
 	}
 

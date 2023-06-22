@@ -6,11 +6,12 @@ import (
 	"strings"
 	"time"
 
-	types "github.com/miguelmota/cointop/pkg/api/types"
-	"github.com/miguelmota/cointop/pkg/color"
-	"github.com/miguelmota/cointop/pkg/humanize"
-	"github.com/miguelmota/cointop/pkg/pad"
-	"github.com/miguelmota/cointop/pkg/ui"
+	fcolor "github.com/fatih/color"
+
+	"github.com/cointop-sh/cointop/pkg/api/types"
+	"github.com/cointop-sh/cointop/pkg/humanize"
+	"github.com/cointop-sh/cointop/pkg/pad"
+	"github.com/cointop-sh/cointop/pkg/ui"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,8 +20,7 @@ type MarketbarView = ui.View
 
 // NewMarketbarView returns a new marketbar view
 func NewMarketbarView() *MarketbarView {
-	var view *MarketbarView = ui.NewView("marketbar")
-	return view
+	return ui.NewView("marketbar")
 }
 
 // UpdateMarketbar updates the market bar view
@@ -29,7 +29,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 	maxX := ct.Width()
 	logo := "❯❯❯cointop"
 	if ct.colorschemeName == "cointop" {
-		logo = fmt.Sprintf("%s%s%s%s", color.Green("❯"), color.Cyan("❯"), color.Green("❯"), color.Cyan("cointop"))
+		Green := fcolor.New(fcolor.FgGreen).SprintFunc()
+		Cyan := fcolor.New(fcolor.FgCyan).SprintFunc()
+		logo = fmt.Sprintf("%s%s%s%s", Green("❯"), Cyan("❯"), Green("❯"), Cyan("cointop"))
 	}
 	var content string
 
@@ -40,6 +42,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		if !(ct.State.currencyConversion == "BTC" || ct.State.currencyConversion == "ETH" || total < 1) {
 			total = math.Round(total*1e2) / 1e2
 			totalstr = humanize.Monetaryf(total, 2)
+		}
+		if ct.State.compactNotation {
+			totalstr = humanize.ScaleNumericf(total, 3)
 		}
 
 		timeframe := ct.State.selectedChartRange
@@ -54,7 +59,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 
 		var percentChange24H float64
 		for _, p := range ct.GetPortfolioSlice() {
-			n := ((p.Balance / total) * p.PercentChange24H)
+			n := (p.Balance / total) * p.PercentChange24H
 			if math.IsNaN(n) {
 				continue
 			}
@@ -89,8 +94,9 @@ func (ct *Cointop) UpdateMarketbar() error {
 		}
 
 		content = fmt.Sprintf(
-			"%sTotal Portfolio Value: %s • 24H: %s",
+			"%sTotal Portfolio Value %s: %s • 24H: %s",
 			chartInfo,
+			ct.State.currencyConversion,
 			ct.colorscheme.MarketBarLabelActive(totalstr),
 			percentChange24Hstr,
 		)
@@ -139,7 +145,7 @@ func (ct *Cointop) UpdateMarketbar() error {
 		chartInfo := ""
 		if !ct.State.hideChart {
 			chartInfo = fmt.Sprintf(
-				"[ Chart: %s %s ] ",
+				"[ Chart: %s %s] ",
 				ct.colorscheme.MarketBarLabelActive(chartname),
 				timeframe,
 			)
@@ -154,12 +160,20 @@ func (ct *Cointop) UpdateMarketbar() error {
 			separator2 = "\n" + offset
 		}
 
+		marketCapStr := humanize.Monetaryf(market.TotalMarketCapUSD, 0)
+		volumeStr := humanize.Monetaryf(market.Total24HVolumeUSD, 0)
+		if ct.State.compactNotation {
+			marketCapStr = humanize.ScaleNumericf(market.TotalMarketCapUSD, 3)
+			volumeStr = humanize.ScaleNumericf(market.Total24HVolumeUSD, 3)
+		}
+
 		content = fmt.Sprintf(
-			"%sGlobal ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
+			"%sGlobal %s ▶ Market Cap: %s %s 24H Volume: %s %s BTC Dominance: %.2f%%",
 			chartInfo,
-			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Monetaryf(market.TotalMarketCapUSD, 0)),
+			ct.State.currencyConversion,
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), marketCapStr),
 			separator1,
-			fmt.Sprintf("%s%s", ct.CurrencySymbol(), humanize.Monetaryf(market.Total24HVolumeUSD, 0)),
+			fmt.Sprintf("%s%s", ct.CurrencySymbol(), volumeStr),
 			separator2,
 			market.BitcoinPercentageOfMarketCap,
 		)

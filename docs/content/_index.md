@@ -3,7 +3,7 @@ title: "Intro"
 date: 2020-01-01T00:00:00-00:00
 draft: false
 ---
-[`cointop`](https://github.com/miguelmota/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
+[`cointop`](https://github.com/cointop-sh/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
 The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and shortcut keys are inspired by [`vim`](https://en.wikipedia.org/wiki/Vim_(text_editor)).
 
@@ -11,24 +11,19 @@ The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and sh
 
 ## Features
 
-- Quick sort shortcuts
-- Custom key bindings configuration
-- Vim inspired shortcut keys
-- Fast pagination
-- Charts for coins and global market graphs
-- Quick chart date range change
-- Fuzzy searching for finding coins
-- Currency conversion
-- Save and view favorite coins
-- Portfolio tracking of holdings
-- 256-color support
-- Custom colorschemes
-- Help menu
-- Offline cache
-- Supports multiple coin stat APIs
-- Auto-refresh
-- Works on macOS, Linux, and Windows
-- It's very lightweight; can be left running indefinitely
+- **Shortcut keys**: Vim-inspired shortcut keys, custom key bindings configuration
+- **Colorschemes**: Custom colorscheme configuration, 256-color and 24-bit support
+- **Favorites**: Save and view favorite coins
+- **Portfolio**: Portfolio tracking of holdings, view profit & loss
+- **Charts**: Charts for coin price history and global market graphs
+- **Search**: Fuzzy searching for finding coins
+- **Conversion**: Currency conversion
+- **Price Alerts**: Price alerts with desktop notifications
+- **Multiple APIs**: Supports multiple coin data APIs; CoinGecko and CoinMarketCap
+- **Mouse**: Mouse support
+- **Offline**: Offline cache
+- **Fast**: Fast sort shortcuts, pagination, chart date range change, auto-refresh
+- **Lightweight**: It's very lightweight; can be left running indefinitely
 
 ## In action
 
