@@ -191,10 +191,7 @@ func (s *Server) ListenAndServe() error {
 				}
 			}
 
-			for _, arg := range cmdUserArgs {
-				flags = append(flags, arg)
-			}
-
+			flags = append(flags, cmdUserArgs...)
 			cmd := exec.CommandContext(cmdCtx, s.executableBinary, flags...)
 			cmd.Env = append(sshSession.Environ(), fmt.Sprintf("TERM=%s", ptyReq.Term))
 			if proxy, ok := os.LookupEnv("HTTPS_PROXY"); ok {
