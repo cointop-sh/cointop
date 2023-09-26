@@ -709,11 +709,16 @@ func (ct *Cointop) GetPortfolioSlice() []*Coin {
 
 	for _, p := range ct.State.portfolio.Entries {
 		coinIfc, _ := ct.State.allCoinsSlugMap.Load(p.Coin)
-		coin, ok := coinIfc.(*Coin)
+		originalCoin, ok := coinIfc.(*Coin)
 		if !ok {
 			log.Errorf("Could not find coin %s", p.Coin)
 			continue
 		}
+
+		// making a deep copy should prevent us from corrupting the global map ranking when
+		// we update the Portfolio ranking for coins
+		coin := originalCoin.DeepCopy()
+
 		coin.Holdings = p.Holdings
 		coin.BuyPrice = p.BuyPrice
 		coin.BuyCurrency = p.BuyCurrency
