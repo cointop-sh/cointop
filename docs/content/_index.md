@@ -3,6 +3,14 @@ title: "Intro"
 date: 2020-01-01T00:00:00-00:00
 draft: false
 ---
+<h3 align="center">
+  <br />
+  <img src="https://user-images.githubusercontent.com/168240/39561871-51cda852-4e5d-11e8-926b-7692d43143e8.png" alt="logo" width="400" />
+  <br />
+  <br />
+  <br />
+</h3>
+
 [`cointop`](https://github.com/cointop-sh/cointop) is a fast and lightweight interactive terminal based UI application for tracking and monitoring cryptocurrency coin stats in real-time.
 
 The interface is inspired by [`htop`](https://en.wikipedia.org/wiki/Htop) and shortcut keys are inspired by [`vim`](https://en.wikipedia.org/wiki/Vim_(text_editor)).
