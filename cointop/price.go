@@ -3,6 +3,7 @@ package cointop
 import (
 	"fmt"
 	"math"
+	"os"
 	"strings"
 
 	"github.com/cointop-sh/cointop/pkg/api"
@@ -57,7 +58,9 @@ func GetCoinPrices(config *PricesConfig) ([]string, error) {
 	if config.APIChoice == CoinMarketCap {
 		priceAPI = api.NewCMC("")
 	} else if config.APIChoice == CoinGecko {
-		priceAPI = api.NewCG(0, 0)
+		priceAPI = api.NewCG(&api.CoinGeckoConfig{
+			ApiKey: os.Getenv("COINGECKO_PRO_API_KEY"),
+		})
 	} else {
 		return nil, ErrInvalidAPIChoice
 	}

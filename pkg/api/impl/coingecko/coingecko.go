@@ -26,6 +26,7 @@ var ErrNotFound = errors.New("not found")
 type Config struct {
 	PerPage  uint
 	MaxPages uint
+	ApiKey   string
 }
 
 // Service service
@@ -52,7 +53,7 @@ func NewCoinGecko(config *Config) *Service {
 		maxPages = uint(math.Ceil(math.Max(float64(maxResults)/float64(maxResultsPerPage), 1)))
 	}
 
-	client := gecko.NewClient(nil)
+	client := gecko.NewClient(nil, config.ApiKey)
 	svc := &Service{
 		client:            client,
 		maxResultsPerPage: uint(math.Min(float64(maxResults), float64(maxResultsPerPage))),

@@ -2,6 +2,7 @@ package cointop
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/cointop-sh/cointop/pkg/api"
 )
@@ -22,7 +23,9 @@ func PrintBitcoinDominance(config *DominanceConfig) error {
 	if config.APIChoice == CoinMarketCap {
 		coinAPI = api.NewCMC("")
 	} else if config.APIChoice == CoinGecko {
-		coinAPI = api.NewCG(0, 0)
+		coinAPI = api.NewCG(&api.CoinGeckoConfig{
+			ApiKey: os.Getenv("COINGECKO_PRO_API_KEY"),
+		})
 	} else {
 		return ErrInvalidAPIChoice
 	}

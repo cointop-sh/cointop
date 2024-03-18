@@ -122,6 +122,27 @@ draft: false
   cointop --coinmarketcap-api-key=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   ```
 
+## How do I add my CoinGecko Pro API key?
+
+  Add the API key in the cointop config file:
+
+  ```toml
+  [coingecko]
+    pro_api_key = "CG-xxxxxxxxxxxxxxxxxxxxxxxx"
+  ```
+
+  Alternatively, you can export the environment variable `COINGECKO_PRO_API_KEY` containing the API key in your `~/.bashrc`
+
+  ```bash
+  export COINGECKO_PRO_API_KEY=CG-xxxxxxxxxxxxxxxxxxxxxxxx
+  ```
+
+  You may also set the API key on start:
+
+  ```bash
+  cointop --coingecko-api-key=CG-xxxxxxxxxxxxxxxxxxxxxxxx
+  ```
+
 ## I can I add my own API to cointop?
 
   Fork cointop and add the API that implements the API [interface](https://github.com/cointop-sh/cointop/blob/master/cointop/common/api/interface.go) to [`cointop/cointop/common/api/impl/`](https://github.com/cointop-sh/cointop/tree/master/cointop/common/api/impl). You can use the CoinGecko [implementation](https://github.com/cointop-sh/cointop/blob/master/cointop/common/api/impl/coingecko/coingecko.go) as reference.

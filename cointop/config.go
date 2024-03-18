@@ -44,6 +44,7 @@ type ConfigFileConfig struct {
 	DefaultView       interface{}            `toml:"default_view"`
 	DefaultChartRange interface{}            `toml:"default_chart_range"`
 	CoinMarketCap     map[string]interface{} `toml:"coinmarketcap"`
+	CoinGecko         map[string]interface{} `toml:"coingecko"`
 	API               interface{}            `toml:"api"`
 	Colorscheme       interface{}            `toml:"colorscheme"`
 	RefreshRate       interface{}            `toml:"refresh_rate"`
@@ -253,6 +254,10 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		"pro_api_key": ct.apiKeys.cmc,
 	}
 
+	coingeckoIfc := map[string]interface{}{
+		"pro_api_key": ct.apiKeys.coingecko,
+	}
+
 	var priceAlertsIfc []interface{}
 	for _, priceAlert := range ct.State.priceAlerts.Entries {
 		if priceAlert.Expired {
@@ -287,6 +292,7 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 		API:               ct.apiChoice,
 		Colorscheme:       ct.colorschemeName,
 		CoinMarketCap:     cmcIfc,
+		CoinGecko:         coingeckoIfc,
 		Currency:          ct.State.currencyConversion,
 		DefaultView:       ct.State.defaultView,
 		DefaultChartRange: ct.State.defaultChartRange,
@@ -476,6 +482,12 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 			ct.apiKeys.cmc = value.(string)
 		}
 	}
+	for key, value := range ct.config.CoinGecko {
+		k := strings.TrimSpace(strings.ToLower(key))
+		if k == "pro_api_key" {
+			ct.apiKeys.coingecko = value.(string)
+		}
+	}
 	return nil
 }
 
@@ -541,7 +553,7 @@ func (ct *Cointop) loadAltCoinLinkFromConfig() error {
 
 // LoadAPIChoiceFromConfig loads API choices from config file to struct
 func (ct *Cointop) loadAPIChoiceFromConfig() error {
-	log.Debug("loadAPIKeysFromConfig()")
+	log.Debug("loadAPIChoiceFromConfig()")
 	apiChoice, ok := ct.config.API.(string)
 	if ok {
 		apiChoice = strings.TrimSpace(strings.ToLower(apiChoice))

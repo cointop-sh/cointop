@@ -169,6 +169,7 @@ type Config struct {
 	Colorscheme           string
 	ConfigFilepath        string
 	CoinMarketCapAPIKey   string
+	CoinGeckoAPIKey       string
 	NoPrompts             bool
 	HideMarketbar         bool
 	HideChart             bool
@@ -185,7 +186,8 @@ type Config struct {
 
 // APIKeys is api keys structure
 type APIKeys struct {
-	cmc string
+	cmc       string
+	coingecko string
 }
 
 // DefaultCurrency ...
@@ -383,6 +385,14 @@ func NewCointop(config *Config) (*Cointop, error) {
 		}
 	}
 
+	// prompt for CoinGecko api key if not found
+	if config.CoinGeckoAPIKey != "" {
+		ct.apiKeys.coingecko = config.CoinGeckoAPIKey
+		if err := ct.SaveConfig(); err != nil {
+			return nil, err
+		}
+	}
+
 	if config.Colorscheme != "" {
 		ct.colorschemeName = config.Colorscheme
 	}
@@ -420,10 +430,34 @@ func NewCointop(config *Config) (*Cointop, error) {
 		}
 	}
 
+	if ct.apiChoice == CoinGecko && ct.apiKeys.coingecko == "" {
+		apiKey := os.Getenv("COINGECKO_PRO_API_KEY")
+		if apiKey == "" {
+			// if !config.NoPrompts {
+			// 	apiKey, err = ct.ReadAPIKeyFromStdin("CoinGecko Pro")
+			// 	if err != nil {
+			// 		return nil, err
+			// 	}
+
+			// 	ct.apiKeys.coingecko = apiKey
+			// }
+		} else {
+			ct.apiKeys.coingecko = apiKey
+		}
+
+		if err := ct.SaveConfig(); err != nil {
+			return nil, err
+		}
+	}
+
 	if ct.apiChoice == CoinMarketCap {
 		ct.api = api.NewCMC(ct.apiKeys.cmc)
 	} else if ct.apiChoice == CoinGecko {
-		ct.api = api.NewCG(perPage, maxPages)
+		ct.api = api.NewCG(&api.CoinGeckoConfig{
+			PerPage:  perPage,
+			MaxPages: maxPages,
+			ApiKey:   ct.apiKeys.coingecko,
+		})
 	} else {
 		return nil, ErrInvalidAPIChoice
 	}

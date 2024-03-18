@@ -31,6 +31,7 @@ func RootCmd() *cobra.Command {
 	config := os.Getenv("COINTOP_CONFIG")
 	apiChoice := os.Getenv("COINTOP_API")
 	cmcAPIKey := os.Getenv("CMC_PRO_API_KEY")
+	coingeckoAPIKey := os.Getenv("COINGECKO_PRO_API_KEY")
 	perPage := cointop.DefaultPerPage
 	maxPages := cointop.DefaultMaxPages
 
@@ -102,6 +103,7 @@ See git.io/cointop for more info.`,
 				NoCache:               noCache,
 				ConfigFilepath:        config,
 				CoinMarketCapAPIKey:   cmcAPIKey,
+				CoinGeckoAPIKey:       coingeckoAPIKey,
 				APIChoice:             apiChoice,
 				Colorscheme:           colorscheme,
 				HideMarketbar:         hideMarketbar,
@@ -140,7 +142,8 @@ See git.io/cointop for more info.`,
 	rootCmd.Flags().UintVarP(&perPage, "per-page", "", perPage, "Per page")
 	rootCmd.Flags().UintVarP(&maxPages, "max-pages", "", maxPages, "Max number of pages")
 	rootCmd.Flags().StringVarP(&config, "config", "c", config, fmt.Sprintf("Config filepath. (default %s)", cointop.DefaultConfigFilepath))
-	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", cmcAPIKey, "Set the CoinMarketCap API key")
+	rootCmd.Flags().StringVarP(&cmcAPIKey, "coinmarketcap-api-key", "", cmcAPIKey, "Set the CoinMarketCap Pro API key")
+	rootCmd.Flags().StringVarP(&coingeckoAPIKey, "coingecko-api-key", "", coingeckoAPIKey, "Set the CoinGecko Pro API key")
 	rootCmd.Flags().StringVarP(&apiChoice, "api", "", apiChoice, "API choice. Available choices are \"coinmarketcap\" and \"coingecko\"")
 	rootCmd.Flags().StringVarP(&colorscheme, "colorscheme", "", colorscheme, fmt.Sprintf("Colorscheme to use (default \"cointop\").\n%s", cointop.ColorschemeHelpString()))
 	rootCmd.Flags().StringVarP(&cacheDir, "cache-dir", "", cacheDir, fmt.Sprintf("Cache directory (default %s)", cointop.DefaultCacheDir))
