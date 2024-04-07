@@ -20,14 +20,15 @@ import (
 type Client struct {
 	httpClient *http.Client
 	apiKey     string
+	proApiKey  string
 }
 
 // NewClient create new client object
-func NewClient(httpClient *http.Client, apiKey string) *Client {
+func NewClient(httpClient *http.Client, apiKey string, proApiKey string) *Client {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
-	return &Client{httpClient: httpClient, apiKey: apiKey}
+	return &Client{httpClient: httpClient, apiKey: apiKey, proApiKey: proApiKey}
 }
 
 // helper
@@ -64,8 +65,11 @@ func (c *Client) getApiUrl(path string, params *url.Values) string {
 		urlParams = *params
 	}
 	if c.apiKey != "" {
+		urlParams.Add("x_cg_demo_api_key", c.apiKey)
+	}
+	if c.proApiKey != "" {
 		subdomain = "pro-api"
-		urlParams.Add("x_cg_pro_api_key", c.apiKey)
+		urlParams.Add("x_cg_pro_api_key", c.proApiKey)
 	}
 	url := fmt.Sprintf("https://%s.coingecko.com/api/v3%s?%s", subdomain, path, urlParams.Encode())
 	return url

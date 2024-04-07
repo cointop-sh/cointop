@@ -255,7 +255,8 @@ func (ct *Cointop) ConfigToToml() ([]byte, error) {
 	}
 
 	coingeckoIfc := map[string]interface{}{
-		"pro_api_key": ct.apiKeys.coingecko,
+		"api_key":     ct.apiKeys.coingecko,
+		"pro_api_key": ct.apiKeys.coingeckoPro,
 	}
 
 	var priceAlertsIfc []interface{}
@@ -484,8 +485,11 @@ func (ct *Cointop) loadAPIKeysFromConfig() error {
 	}
 	for key, value := range ct.config.CoinGecko {
 		k := strings.TrimSpace(strings.ToLower(key))
-		if k == "pro_api_key" {
+		if k == "api_key" {
 			ct.apiKeys.coingecko = value.(string)
+		}
+		if k == "pro_api_key" {
+			ct.apiKeys.coingeckoPro = value.(string)
 		}
 	}
 	return nil

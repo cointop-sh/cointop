@@ -170,6 +170,7 @@ type Config struct {
 	ConfigFilepath        string
 	CoinMarketCapAPIKey   string
 	CoinGeckoAPIKey       string
+	CoinGeckoProAPIKey    string
 	NoPrompts             bool
 	HideMarketbar         bool
 	HideChart             bool
@@ -186,8 +187,9 @@ type Config struct {
 
 // APIKeys is api keys structure
 type APIKeys struct {
-	cmc       string
-	coingecko string
+	cmc          string
+	coingecko    string
+	coingeckoPro string
 }
 
 // DefaultCurrency ...
@@ -385,9 +387,15 @@ func NewCointop(config *Config) (*Cointop, error) {
 		}
 	}
 
-	// prompt for CoinGecko api key if not found
 	if config.CoinGeckoAPIKey != "" {
 		ct.apiKeys.coingecko = config.CoinGeckoAPIKey
+		if err := ct.SaveConfig(); err != nil {
+			return nil, err
+		}
+	}
+
+	if config.CoinGeckoProAPIKey != "" {
+		ct.apiKeys.coingeckoPro = config.CoinGeckoProAPIKey
 		if err := ct.SaveConfig(); err != nil {
 			return nil, err
 		}
@@ -431,10 +439,10 @@ func NewCointop(config *Config) (*Cointop, error) {
 	}
 
 	if ct.apiChoice == CoinGecko && ct.apiKeys.coingecko == "" {
-		apiKey := os.Getenv("COINGECKO_PRO_API_KEY")
+		apiKey := os.Getenv("COINGECKO_API_KEY")
 		if apiKey == "" {
 			// if !config.NoPrompts {
-			// 	apiKey, err = ct.ReadAPIKeyFromStdin("CoinGecko Pro")
+			// 	apiKey, err = ct.ReadAPIKeyFromStdin("CoinGecko")
 			// 	if err != nil {
 			// 		return nil, err
 			// 	}
@@ -450,13 +458,34 @@ func NewCointop(config *Config) (*Cointop, error) {
 		}
 	}
 
+	if ct.apiChoice == CoinGecko && ct.apiKeys.coingeckoPro == "" {
+		apiKey := os.Getenv("COINGECKO_PRO_API_KEY")
+		if apiKey == "" {
+			// if !config.NoPrompts {
+			// 	apiKey, err = ct.ReadAPIKeyFromStdin("CoinGecko Pro")
+			// 	if err != nil {
+			// 		return nil, err
+			// 	}
+
+			// 	ct.apiKeys.coingeckoPro = apiKey
+			// }
+		} else {
+			ct.apiKeys.coingeckoPro = apiKey
+		}
+
+		if err := ct.SaveConfig(); err != nil {
+			return nil, err
+		}
+	}
+
 	if ct.apiChoice == CoinMarketCap {
 		ct.api = api.NewCMC(ct.apiKeys.cmc)
 	} else if ct.apiChoice == CoinGecko {
 		ct.api = api.NewCG(&api.CoinGeckoConfig{
-			PerPage:  perPage,
-			MaxPages: maxPages,
-			ApiKey:   ct.apiKeys.coingecko,
+			PerPage:   perPage,
+			MaxPages:  maxPages,
+			ApiKey:    ct.apiKeys.coingecko,
+			ProApiKey: ct.apiKeys.coingeckoPro,
 		})
 	} else {
 		return nil, ErrInvalidAPIChoice

@@ -59,7 +59,8 @@ func GetCoinPrices(config *PricesConfig) ([]string, error) {
 		priceAPI = api.NewCMC("")
 	} else if config.APIChoice == CoinGecko {
 		priceAPI = api.NewCG(&api.CoinGeckoConfig{
-			ApiKey: os.Getenv("COINGECKO_PRO_API_KEY"),
+			ApiKey:    os.Getenv("COINGECKO_API_KEY"),
+			ProApiKey: os.Getenv("COINGECKO_PRO_API_KEY"),
 		})
 	} else {
 		return nil, ErrInvalidAPIChoice

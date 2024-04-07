@@ -97,7 +97,7 @@ draft: false
 
   Run cointop with the `--clean` flag to delete the cache. If you're still not seeing any data, then please [submit an issue](https://github.com/cointop-sh/cointop/issues/new).
 
-## How do I get a CoinMarketCap Pro API key?
+## How do I get a CoinMarketCap Pro (Paid) API key?
 
   Create an account on [CoinMarketCap](https://pro.coinmarketcap.com/signup) and visit the [Account](https://pro.coinmarketcap.com/account) page to copy your Pro API key.
 
@@ -122,7 +122,28 @@ draft: false
   cointop --coinmarketcap-api-key=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   ```
 
-## How do I add my CoinGecko Pro API key?
+## How do I add my CoinGecko Demo (Free) API key?
+
+  Add the API key in the cointop config file:
+
+  ```toml
+  [coingecko]
+    api_key = "CG-xxxxxxxxxxxxxxxxxxxxxxxx"
+  ```
+
+  Alternatively, you can export the environment variable `COINGECKO_API_KEY` containing the API key in your `~/.bashrc`
+
+  ```bash
+  export COINGECKO_API_KEY=CG-xxxxxxxxxxxxxxxxxxxxxxxx
+  ```
+
+  You may also set the API key on start:
+
+  ```bash
+  cointop --coingecko-api-key=CG-xxxxxxxxxxxxxxxxxxxxxxxx
+  ```
+
+## How do I add my CoinGecko Pro (Paid) API key?
 
   Add the API key in the cointop config file:
 
@@ -140,7 +161,7 @@ draft: false
   You may also set the API key on start:
 
   ```bash
-  cointop --coingecko-api-key=CG-xxxxxxxxxxxxxxxxxxxxxxxx
+  cointop --coingecko-pro-api-key=CG-xxxxxxxxxxxxxxxxxxxxxxxx
   ```
 
 ## I can I add my own API to cointop?

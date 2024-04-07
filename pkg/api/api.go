@@ -6,9 +6,10 @@ import (
 )
 
 type CoinGeckoConfig struct {
-	PerPage  uint
-	MaxPages uint
-	ApiKey   string
+	PerPage   uint
+	MaxPages  uint
+	ApiKey    string
+	ProApiKey string
 }
 
 // NewCMC new CoinMarketCap API
@@ -24,8 +25,9 @@ func NewCC() {
 // NewCG new CoinGecko API
 func NewCG(config *CoinGeckoConfig) Interface {
 	return cg.NewCoinGecko(&cg.Config{
-		PerPage:  config.PerPage,
-		MaxPages: config.MaxPages,
-		ApiKey:   config.ApiKey,
+		PerPage:   config.PerPage,
+		MaxPages:  config.MaxPages,
+		ApiKey:    config.ApiKey,
+		ProApiKey: config.ProApiKey,
 	})
 }

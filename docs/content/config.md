@@ -123,6 +123,9 @@ refresh_rate = 60
 
 [coinmarketcap]
   pro_api_key = ""
+
+[coingecko]
+  pro_api_key = ""
 ```
 
 ## List of actions
