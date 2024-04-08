@@ -31,6 +31,34 @@ type Coin struct {
 	BuyCurrency string
 }
 
+// DeepCopy returns a deep copy of a 'Coin' object, making it alright to modify
+// the rank of the coin object without updating the global state.
+func (c *Coin) DeepCopy() *Coin {
+	return &Coin{
+		ID:               c.ID,
+		Name:             c.Name,
+		Slug:             c.Slug,
+		Symbol:           c.Symbol,
+		Rank:             c.Rank,
+		Price:            c.Price,
+		Volume24H:        c.Volume24H,
+		MarketCap:        c.MarketCap,
+		AvailableSupply:  c.AvailableSupply,
+		TotalSupply:      c.TotalSupply,
+		PercentChange1H:  c.PercentChange1H,
+		PercentChange24H: c.PercentChange24H,
+		PercentChange7D:  c.PercentChange7D,
+		PercentChange30D: c.PercentChange30D,
+		PercentChange1Y:  c.PercentChange1Y,
+		LastUpdated:      c.LastUpdated,
+		Favorite:         c.Favorite,
+		Holdings:         c.Holdings,
+		Balance:          c.Balance,
+		BuyPrice:         c.BuyPrice,
+		BuyCurrency:      c.BuyCurrency,
+	}
+}
+
 // AllCoins returns a slice of all the coins
 func (ct *Cointop) AllCoins() []*Coin {
 	log.Debug("AllCoins()")
