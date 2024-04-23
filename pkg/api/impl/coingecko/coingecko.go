@@ -12,7 +12,6 @@ import (
 	apitypes "github.com/cointop-sh/cointop/pkg/api/types"
 	"github.com/cointop-sh/cointop/pkg/api/util"
 	gecko "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3"
-	"github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
 	geckoTypes "github.com/cointop-sh/cointop/pkg/api/vendors/coingecko/v3/types"
 )
 
@@ -36,7 +35,7 @@ type Service struct {
 	maxResultsPerPage uint
 	maxPages          uint
 	cacheMap          sync.Map
-	cachedRates       *types.ExchangeRatesItem
+	cachedRates       *geckoTypes.ExchangeRatesItem
 }
 
 // NewCoinGecko new service
@@ -151,7 +150,7 @@ func (s *Service) GetCoinGraphData(convert, symbol, name string, start, end int6
 }
 
 // GetExchangeRates returns the exchange rates from the backend, or a cached copy if requested and available
-func (s *Service) GetExchangeRates(cached bool) (*types.ExchangeRatesItem, error) {
+func (s *Service) GetExchangeRates(cached bool) (*geckoTypes.ExchangeRatesItem, error) {
 	if s.cachedRates == nil || !cached {
 		rates, err := s.client.ExchangeRates()
 		if err != nil {
