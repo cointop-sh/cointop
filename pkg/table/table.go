@@ -147,7 +147,7 @@ func (t *Table) Format() *Table {
 			}
 
 			if c.formatFn != nil {
-				r.strValues[j] = fmt.Sprintf("%s", c.formatFn(v))
+				r.strValues[j] = c.formatFn(v)
 			} else if c.format != "" {
 				r.strValues[j] = fmt.Sprintf(c.format, v)
 			} else {
