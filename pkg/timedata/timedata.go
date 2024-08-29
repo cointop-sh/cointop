@@ -8,9 +8,36 @@ import (
 	"github.com/cointop-sh/cointop/pkg/humanize"
 )
 
+// Point is a point on a line
+type Point struct {
+	X float64
+	Y float64
+}
+
 // ResampleTimeSeriesData resamples the given [timestamp,value] data to numsteps between start-end (returns numSteps+1 points).
 // If the data does not extend past start/end then there will likely be NaN in the output data.
 func ResampleTimeSeriesData(data [][]float64, start float64, end float64, numSteps int) [][]float64 {
+	// Use linear interpolation for upsampling
+	if numSteps > len(data) {
+		return LinearInterpolateTimeSeriesData(data, start, end, numSteps)
+	}
+
+	// Use FTTB for downsampling
+	var points []Point
+	for _, item := range data {
+		points = append(points, Point{X: item[0], Y: item[1]})
+	}
+
+	resultPoints := LTTB(points, numSteps)
+
+	var newData [][]float64
+	for _, item := range resultPoints {
+		newData = append(newData, []float64{item.X, item.Y})
+	}
+	return newData
+}
+
+func LinearInterpolateTimeSeriesData(data [][]float64, start float64, end float64, numSteps int) [][]float64 {
 	var newData [][]float64
 	l := len(data)
 	step := (end - start) / float64(numSteps)
