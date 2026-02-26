@@ -4,11 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
-
-permissions:
-  contents: read
-
+    branches: [ mas....
 jobs:
 
   build:
